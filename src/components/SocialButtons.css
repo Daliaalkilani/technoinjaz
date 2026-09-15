@@ -1,0 +1,107 @@
+﻿/* حاوية أزرار التواصل الاجتماعي */
+.social-buttons-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  direction: ltr; /* للحفاظ على ترتيب الأيقونات الموحد */
+}
+
+/* الزر الأساسي بتأثير التدرج والـ SVG */
+.social-btn {
+  cursor: pointer;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.social-btn svg {
+  color: #ffffff;
+  width: 20px;
+  height: 20px;
+  z-index: 9;
+  transition: transform 0.25s ease;
+}
+
+/* ألوان التدرجات الخاصة بكل منصة */
+.social-btn.linkedin {
+  background: linear-gradient(135deg, #0077b5 0%, #00a0dc 100%);
+}
+
+.social-btn.github {
+  background: linear-gradient(135deg, #24292e 0%, #833ab4 50%, #fcb045 100%);
+}
+
+.social-btn.email {
+  background: linear-gradient(135deg, #ea4335 0%, #ff5252 100%);
+}
+
+/* الطبقة الداخلية الداكنة التي تنكمش عند التمرير لتكشف التدرج الكامل */
+.social-btn::before {
+  content: "";
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  background-color: #161626;
+  border-radius: 50%;
+  z-index: -1;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1), height 0.35s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease;
+}
+
+/* تأثير التمرير والنقر */
+.social-btn:hover {
+  transform: translateY(-2px) scale(1.08);
+}
+
+.social-btn:hover::before {
+  width: 0px;
+  height: 0px;
+  border-width: 0px;
+}
+
+.social-btn:hover svg {
+  transform: scale(1.15);
+}
+
+.social-btn:active {
+  transform: scale(0.88);
+}
+
+/* توهج خاص لكل منصة عند التمرير */
+.social-btn.linkedin:hover {
+  box-shadow: 0 6px 20px rgba(0, 119, 181, 0.55);
+}
+
+.social-btn.github:hover {
+  box-shadow: 0 6px 20px rgba(131, 58, 180, 0.55);
+}
+
+.social-btn.email:hover {
+  box-shadow: 0 6px 20px rgba(234, 67, 53, 0.55);
+}
+
+/* الحجم الكبير (داخل صفحة الملف التعريفي) */
+.social-buttons-wrapper.large .social-btn {
+  width: 48px;
+  height: 48px;
+}
+
+.social-buttons-wrapper.large .social-btn::before {
+  width: 42px;
+  height: 42px;
+}
+
+.social-buttons-wrapper.large .social-btn svg {
+  width: 23px;
+  height: 23px;
+}

@@ -1,0 +1,107 @@
+/* Magic UI InteractiveHoverButton Styles */
+.interactive-hover-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 9999px;
+  border: 1px solid rgba(139, 92, 246, 0.45);
+  background: rgba(15, 15, 28, 0.88);
+  padding: 10px 22px;
+  text-align: center;
+  font-family: 'Readex Pro', sans-serif;
+  font-weight: 600;
+  font-size: 13.5px;
+  color: #ffffff;
+  outline: none;
+  user-select: none;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35), 0 0 15px rgba(82, 39, 255, 0.25);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.interactive-hover-btn:hover {
+  border-color: rgba(168, 85, 247, 0.85);
+  box-shadow: 0 6px 25px rgba(82, 39, 255, 0.55), 0 0 20px rgba(0, 210, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+.interactive-hover-btn:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+/* Default content with small glowing dot */
+.interactive-hover-btn-default {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+}
+
+.interactive-hover-btn-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #00d2ff;
+  box-shadow: 0 0 8px #00d2ff;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease;
+  transform-origin: center;
+  flex-shrink: 0;
+}
+
+.interactive-hover-btn-text {
+  display: inline-block;
+  color: #ffffff;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+}
+
+/* On hover: dot expands to fill the entire button */
+.interactive-hover-btn:hover .interactive-hover-btn-dot {
+  transform: scale(45);
+  background: linear-gradient(135deg, #5227ff 0%, #7c3aed 60%, #00d2ff 100%);
+}
+
+.interactive-hover-btn:hover .interactive-hover-btn-text {
+  transform: translateX(20px);
+  opacity: 0;
+}
+
+/* Hover content that slides into view */
+.interactive-hover-btn-hover {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #ffffff;
+  font-weight: 700;
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.interactive-hover-btn:hover .interactive-hover-btn-hover {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.interactive-hover-btn-arrow {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.interactive-hover-btn:hover .interactive-hover-btn-arrow {
+  transform: translate(-2px, -2px) scale(1.15);
+}

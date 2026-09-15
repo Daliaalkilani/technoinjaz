@@ -1,0 +1,85 @@
+/* حاوية عنصر لحظات مع الفريق ثلاثي الأبعاد */
+.team-moments-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 700px;
+  background-color: #050508;
+  overflow: hidden;
+  user-select: none;
+}
+
+.team-moments-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: none;
+}
+
+/* زر التمرير إلى قسم الفريق */
+.moments-scroll-indicator {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 22px;
+
+  background: rgba(18, 16, 30, 0.75);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: 999px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  color: #e2e8f0;
+  font-family: 'Readex Pro', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(82, 39, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  direction: rtl;
+}
+
+.moments-scroll-indicator:hover {
+  background: rgba(82, 39, 255, 0.25);
+  border-color: #7c3aed;
+  color: #ffffff;
+  transform: translateX(-50%) translateY(-4px);
+  box-shadow: 0 15px 35px rgba(82, 39, 255, 0.4);
+}
+
+.scroll-text {
+  letter-spacing: 0.3px;
+}
+
+.scroll-arrow {
+  font-size: 16px;
+  animation: bounceDown 1.8s infinite ease-in-out;
+  color: #a78bfa;
+}
+
+@keyframes bounceDown {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+}
+
+@media (max-width: 768px) {
+  .team-moments-wrapper {
+    min-height: 550px;
+  }
+
+  .moments-scroll-indicator {
+    bottom: 20px;
+    font-size: 13px;
+    padding: 8px 18px;
+  }
+}

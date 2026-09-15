@@ -1,0 +1,26 @@
+.scroll-reveal {
+  margin: 0 auto;
+  max-width: 980px;
+  text-align: center;
+  padding: 0 16px;
+  user-select: none;
+}
+
+.scroll-reveal-text {
+  font-family: 'Readex Pro', sans-serif;
+  font-size: clamp(1.75rem, 3.8vw, 3.2rem);
+  line-height: 1.65;
+  font-weight: 700;
+  color: #f1f5f9;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  margin: 0;
+}
+
+.word {
+  display: inline-block;
+  margin: 0 0.16em;
+  transform-origin: center;
+}
+
+
