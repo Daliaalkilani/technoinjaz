@@ -456,3 +456,38 @@
     font-weight: 700;
   }
 }
+
+/* ==========================================================================
+   Bottom Welcome Toast
+   ========================================================================== */
+.auth-bottom-toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.auth-bottom-toast-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 28px;
+  background: rgba(10, 25, 47, 0.95);
+  border: 1px solid rgba(0, 210, 255, 0.4);
+  border-radius: 999px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 210, 255, 0.25);
+  backdrop-filter: blur(16px);
+  color: #ffffff;
+  font-family: 'Readex Pro', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.auth-toast-icon {
+  color: #00d2ff;
+  flex-shrink: 0;
+}

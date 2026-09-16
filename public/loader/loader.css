@@ -1,0 +1,410 @@
+/*
+ * TECHNO ENJAZ — Standalone Centered Loading Screen
+ * Space backdrop, orbit rings, rocket artwork, engine thrust.
+ */
+
+#te-loader {
+  --bg: #080e15;
+  --text: #edf6f7;
+  --muted: #9bafb9;
+  --teal: #30dfc4;
+  --violet: #8572ed;
+  --line: #233540;
+  --engine: 0;
+  --charge: 0;
+  --rocket-width: clamp(210px, 28vw, 290px);
+  --rocket-height: calc(var(--rocket-width) * 1.069452);
+  --scene-height: calc(var(--rocket-height) + 70px);
+  --orbit-size: calc(var(--rocket-width) + 90px);
+  --button-size: calc(var(--rocket-width) * 0.240731);
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --mono: Consolas, "Liberation Mono", monospace;
+  position: fixed;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: hidden;
+  color-scheme: dark;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  direction: rtl;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.85s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.85s ease, transform 0.85s ease, filter 0.85s ease;
+  pointer-events: auto;
+}
+
+#te-loader.te-fade-out {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(1.04);
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+#te-loader *,
+#te-loader *::before,
+#te-loader *::after { box-sizing: border-box; }
+#te-loader [hidden] { display: none !important; }
+#te-loader button {
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  color: inherit;
+  cursor: default;
+  touch-action: manipulation;
+  margin: 0;
+  border: 0;
+  background: transparent;
+}
+#te-loader button:disabled { cursor: default; }
+#te-loader img { display: block; max-width: none; border: 0; }
+#te-loader svg { display: block; flex-shrink: 0; fill: none; }
+#te-loader button svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+#te-loader .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Background canvas & ambient nebula glow */
+#te-loader #space {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  z-index: 0;
+}
+
+#te-loader .ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 550px 440px at 50% 50%, #164a422b, transparent 80%),
+    radial-gradient(ellipse 500px 300px at 50% 70%, #4c38751c, transparent 80%);
+}
+
+/* Main loader container */
+#te-loader .loader-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+/* Centered Stage */
+#te-loader .stage {
+  position: relative;
+  isolation: isolate;
+  width: var(--orbit-size);
+  height: var(--scene-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  margin: auto;
+}
+
+/* Orbit system rings */
+#te-loader .orbit-system {
+  position: absolute;
+  z-index: 0;
+  left: 50%;
+  top: calc(50% - 11px);
+  width: var(--orbit-size);
+  height: var(--orbit-size);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: .95;
+  transition: opacity 500ms ease;
+}
+
+#te-loader .orbit-static,
+#te-loader .orbit-rotating {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#te-loader .orbit-rotating {
+  animation: te-orbit 42s linear infinite;
+}
+
+/* Launch floor & base glow */
+#te-loader .launch-floor {
+  position: absolute;
+  z-index: 0;
+  left: 50%;
+  top: calc(50% + var(--rocket-height) * .5 - 16px);
+  width: calc(var(--rocket-width) + 34px);
+  height: 28px;
+  border: 1px solid #38695e66;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse, #26d4b519, transparent 67%);
+  pointer-events: none;
+  transition: opacity 400ms ease;
+}
+
+#te-loader .launch-floor::before {
+  content: "";
+  position: absolute;
+  inset: -7px -20px;
+  border: 1px solid #39635733;
+  border-radius: 50%;
+}
+
+#te-loader .launch-floor div {
+  position: absolute;
+  inset: 5px 45px;
+  border: 1px solid #30b69833;
+  border-radius: 50%;
+}
+
+#te-loader .launch-floor span {
+  position: absolute;
+  inset: -10px;
+  background: radial-gradient(ellipse, #4affa66b, transparent 65%);
+  border-radius: 50%;
+  opacity: var(--engine);
+}
+
+/* Cruise Halo */
+#te-loader .cruise-halo {
+  position: absolute;
+  z-index: 0;
+  left: 50%;
+  top: 48%;
+  width: var(--orbit-size);
+  height: var(--orbit-size);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, transparent 35%, #38dfb919 48%, transparent 65%);
+  opacity: 0;
+  transition: opacity 600ms ease;
+  pointer-events: none;
+}
+
+/* Rocket Anchor and Body */
+#te-loader .rocket-anchor {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  top: calc(50% - var(--rocket-height) * .5 - 15px);
+  width: var(--rocket-width);
+  height: var(--rocket-height);
+  transform: translateX(-50%);
+  direction: ltr;
+  cursor: default;
+  pointer-events: none;
+}
+
+#te-loader .rocket {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+  cursor: default;
+}
+
+#te-loader .rocket-body {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+  cursor: default;
+  filter: drop-shadow(0 8px 24px #20cfb31f);
+}
+
+#te-loader .rocket-backlight {
+  position: absolute;
+  inset: 0 -10%;
+  background: radial-gradient(ellipse, #2cdcc633, transparent 68%);
+  filter: blur(22px);
+  opacity: calc(.2 + var(--charge) * .5);
+  pointer-events: none;
+}
+
+/* Logo Core (Central Circle of Brand) */
+#te-loader .logo-core,
+#te-loader .launch-button {
+  position: absolute;
+  z-index: 5;
+  left: 48.9034%;
+  top: 83.3984%;
+  width: var(--button-size);
+  height: var(--button-size);
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  line-height: 1;
+  transform: translate(-50%, -50%);
+  isolation: isolate;
+  pointer-events: none;
+  cursor: default;
+}
+
+#te-loader .button-art {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  user-select: none;
+  pointer-events: none;
+}
+
+#te-loader .charge-gauge {
+  position: absolute;
+  left: -13%;
+  top: -13%;
+  width: 126%;
+  height: 126%;
+  transform: rotate(-90deg);
+  overflow: visible;
+  pointer-events: none;
+  fill: none !important;
+}
+
+#te-loader .charge-gauge circle,
+#te-loader .gauge-track,
+#te-loader .gauge-fill {
+  fill: none !important;
+}
+
+#te-loader .gauge-track {
+  stroke: #64bcb56b;
+  stroke-width: 1;
+}
+
+#te-loader .gauge-fill {
+  stroke: #a0ffe1;
+  stroke-width: 1.6;
+  stroke-dasharray: 289.03;
+  stroke-dashoffset: 289.03;
+  filter: drop-shadow(0 0 4px #67f5db);
+}
+
+/* Engine exhausts & thrusters */
+#te-loader .engine {
+  position: absolute;
+  z-index: 1;
+  opacity: var(--engine);
+  transform-origin: 50% 0;
+  transform: scaleY(calc(.35 + var(--engine) * .65));
+  pointer-events: none;
+}
+
+#te-loader .engine-center {
+  top: 90%;
+  left: 36.9034%;
+  width: 24%;
+  height: calc(var(--rocket-width) * .6);
+}
+
+#te-loader .engine-left,
+#te-loader .engine-right {
+  top: 98%;
+  width: 8%;
+  height: calc(var(--rocket-width) * .34);
+  opacity: calc(var(--engine) * .55);
+}
+
+#te-loader .engine-left { left: 8.1%; }
+#te-loader .engine-right { right: 8.1%; }
+
+#te-loader .engine-plume {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(33% 0, 67% 0, 89% 18%, 73% 48%, 61% 80%, 50% 100%, 39% 80%, 27% 48%, 11% 18%);
+  background: linear-gradient(#e9fff9, #63ffe0 9%, #28d7cc 27%, #6c6df37a 64%, transparent);
+  filter: blur(2px);
+  animation: te-flame 190ms ease-in-out infinite alternate;
+}
+
+#te-loader .engine-core {
+  position: absolute;
+  left: 38%;
+  right: 38%;
+  top: 0;
+  height: 61%;
+  background: linear-gradient(#ffffff, #c7fff1 20%, #57ffcda6 55%, transparent);
+  clip-path: polygon(25% 0, 75% 0, 100% 20%, 50% 100%, 0 20%);
+  filter: blur(1px);
+  animation: te-flame 130ms ease-in-out infinite alternate-reverse;
+}
+
+#te-loader .engine-aura {
+  position: absolute;
+  inset: -20% -85% -5%;
+  background: radial-gradient(ellipse at 50% 20%, #3effc838, #33dbda18 30%, transparent 67%);
+  filter: blur(13px);
+}
+
+/* Phase transitions */
+#te-loader:not([data-phase="idle"]) .button-pulse { animation: none; opacity: 0; }
+#te-loader[data-phase="flight"] .launch-floor,
+#te-loader[data-phase="cruise"] .launch-floor { opacity: 0; }
+#te-loader[data-phase="cruise"] .orbit-system { opacity: .7; }
+#te-loader[data-phase="cruise"] .cruise-halo { opacity: 1; }
+#te-loader[data-phase="success"] .check-icon { opacity: 1; }
+#te-loader[data-phase="success"] .power-icon { opacity: 0; }
+#te-loader[data-phase="success"] .orbit-system { opacity: .75; }
+
+/* Keyframe animations */
+@keyframes te-orbit { to { transform: rotate(360deg); } }
+@keyframes te-breath {
+  0% { transform: scale(.96); opacity: 0; }
+  25% { opacity: .4; }
+  100% { transform: scale(1.45); opacity: 0; }
+}
+@keyframes te-flame {
+  from { transform: scaleX(.9) scaleY(.87); }
+  to { transform: scaleX(1.05) scaleY(1.06); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  #te-loader { --rocket-width: 210px; }
+}
+@media (max-width: 380px) {
+  #te-loader { --rocket-width: 175px; }
+}

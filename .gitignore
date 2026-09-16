@@ -11,6 +11,10 @@ node_modules
 dist
 dist-ssr
 *.local
+test-screenshots*
+verify-*.js
+*.docx
+*.doc
 
 # Editor directories and files
 .vscode/*

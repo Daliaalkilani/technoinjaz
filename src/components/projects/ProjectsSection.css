@@ -1,0 +1,191 @@
+/* Projects Section Styling - Cinematic Engineering Aesthetic */
+.projects-section {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #030508;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 5vw, 4rem);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Subtle architectural ambient background glow */
+.projects-section::before {
+  content: '';
+  position: absolute;
+  top: 20%;
+  left: 30%;
+  width: 50vw;
+  height: 50vw;
+  max-width: 650px;
+  max-height: 650px;
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.05) 0%, rgba(3, 5, 8, 0) 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Interactive WebGL Grid Distortion Background */
+.projects-grid-distortion-wrapper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 0;
+  pointer-events: auto;
+}
+
+.projects-grid-distortion-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  opacity: 0.72;
+  filter: contrast(1.15) brightness(0.92);
+  transition: opacity 0.4s ease;
+}
+
+.projects-grid-distortion-vignette {
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse at 70% 50%, rgba(3, 5, 8, 0.3) 0%, rgba(3, 5, 8, 0.78) 68%, #030508 100%),
+    linear-gradient(to bottom, #030508 0%, transparent 18%, transparent 82%, #030508 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.projects-container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  align-items: center;
+  gap: clamp(2rem, 5vw, 5rem);
+  direction: rtl;
+}
+
+.projects-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+  text-align: right;
+  user-select: none;
+}
+
+.projects-heading {
+  margin: 0;
+  font-size: clamp(2.5rem, 5.5vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  font-family: 'Readex Pro', sans-serif;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8);
+}
+
+.projects-statement {
+  margin: 0;
+  font-size: clamp(1.05rem, 1.8vw, 1.45rem);
+  font-weight: 400;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.72);
+  font-family: 'Readex Pro', sans-serif;
+  max-width: 500px;
+}
+
+.projects-view-all-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  max-width: 100%;
+  align-self: flex-start;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  padding: 0.85rem 1.6rem;
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(56, 189, 248, 0.25) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  border-radius: 999px;
+  color: #ffffff;
+  font-family: 'Readex Pro', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(14, 165, 233, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.projects-view-all-btn:hover {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.3) 0%, rgba(56, 189, 248, 0.45) 100%);
+  border-color: rgba(56, 189, 248, 0.8);
+  box-shadow: 0 6px 28px rgba(14, 165, 233, 0.4);
+  transform: translateY(-2px);
+}
+
+.projects-view-all-btn:active {
+  transform: translateY(0);
+}
+
+/* 3D Infinite Spiral Container */
+.projects-spiral-wrapper {
+  position: relative;
+  width: 100%;
+  height: 600px;
+  overflow: hidden;
+  direction: ltr; /* Keeps 3D transform space independent from text RTL */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .projects-container {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .projects-intro {
+    align-items: center;
+    text-align: center;
+  }
+
+  .projects-statement {
+    max-width: 600px;
+  }
+
+  .projects-spiral-wrapper {
+    height: 500px;
+  }
+}
+
+@media (max-width: 640px) {
+  .projects-section {
+    padding: 3.5rem 1rem 4.5rem;
+  }
+
+  .projects-heading {
+    font-size: clamp(2rem, 7vw, 2.75rem);
+  }
+
+  .projects-statement {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .projects-spiral-wrapper {
+    height: 420px;
+  }
+}

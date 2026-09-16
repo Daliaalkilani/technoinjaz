@@ -267,47 +267,14 @@ export default function TeamMomentsRing({ onScrollDown }) {
       x.fillText('لحظات الفريق', cx, cy);
 
       // سطر تعريفي أنيق تحته بخط Readex Pro
-      x.shadowBlur = 18 * K;
-      x.shadowOffsetY = 4 * K;
-      x.font = `700 ${Math.round(30 * K)}px "Readex Pro", sans-serif`;
-      x.letterSpacing = `${Math.round(7 * K)}px`;
-      x.fillStyle = 'rgba(196, 181, 253, 0.9)';
-      x.fillText('TEAM MOMENTS & MEMORIES', cx, cy + 110 * K);
-
       x.restore();
     }
 
-    /* رسم الملاحظات الجانبية بخط Readex Pro */
+    /* رسم الملاحظات الجانبية */
     function buildLabels() {
       labelLayer = mkc(Math.max(1, W), Math.max(1, H));
-      const x = labelLayer.getContext('2d');
-      const cap = 22 * K;
-
-      x.save();
-
-      // نصوص تزيين جانبية بجوار الحلقة بخط Readex Pro
-      const pitch = 36 * K;
-      x.font = `600 ${cap * 1.1}px "Readex Pro", sans-serif`;
-      x.fillStyle = 'rgba(255, 255, 255, 0.85)';
-
-      // الجانب الأيمن (عربي)
-      x.textAlign = 'right';
-      x.direction = 'rtl';
-      const rightNotes = ['في الميدان', 'والمعارض', 'وروح التعاون'];
-      rightNotes.forEach((line, idx) => {
-        x.fillText(line, d2sx(2600), d2sy(980) + idx * pitch);
-      });
-
-      // الجانب الأيسر
-      x.textAlign = 'left';
-      x.direction = 'ltr';
-      const leftNotes = ['Creative Process', 'Engineering Minds', 'Built Together'];
-      leftNotes.forEach((line, idx) => {
-        x.fillText(line, d2sx(260), d2sy(1140) + idx * pitch);
-      });
-
-      x.restore();
     }
+
 
     function resize() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);

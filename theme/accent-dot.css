@@ -1,0 +1,75 @@
+/* ==========================================================================
+   FACETED SUMMIT — ACCENT CIRCLE (.fx-dot) & LIST MARKERS (.fx-list)
+   ========================================================================== */
+
+/* Standalone / trailing accent dot */
+.fx-dot {
+  display: inline-block;
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  background:
+    var(--grad-circle) padding-box,
+    var(--grad-ring) border-box;
+  vertical-align: baseline;
+  margin-inline-start: 0.1em;
+  margin-inline-end: 0.05em;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+/* Dot in Tier 1 title sizing */
+.fx-1 .fx-dot {
+  width: 0.48em;
+  height: 0.48em;
+  border-width: 1.5px;
+}
+
+/* List with gradient-circle bullets */
+ul.fx-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  padding-inline-start: 1.6em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+ul.fx-list li {
+  position: relative;
+  font-family: var(--fx-font-display);
+  font-size: var(--fx-text-sm);
+  line-height: 1.6;
+  color: var(--text);
+}
+
+[dir="rtl"] ul.fx-list li,
+:lang(ar) ul.fx-list li {
+  font-family: var(--fx-font-arabic);
+}
+
+ul.fx-list li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: -1.6em;
+  top: 0.48em;
+  width: 0.62em;
+  height: 0.62em;
+  border-radius: 50%;
+  border: 1.5px solid transparent;
+  background:
+    var(--grad-circle) padding-box,
+    var(--grad-ring) border-box;
+  box-sizing: border-box;
+}
+
+@media (forced-colors: active) {
+  .fx-dot,
+  ul.fx-list li::before {
+    background: none !important;
+    border-color: CanvasText !important;
+    background-color: CanvasText !important;
+  }
+}

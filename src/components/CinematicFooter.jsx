@@ -89,7 +89,7 @@ MagneticButton.displayName = "MagneticButton";
 const MarqueeLogo = () => (
   <img
     src="/techno-logo.png"
-    alt="TECHNO INJAZ"
+    alt="شعار تكنو إنجاز"
     className="footer-marquee-logo"
   />
 );
@@ -97,7 +97,7 @@ const MarqueeLogo = () => (
 const MarqueeItem = () => (
   <div className="footer-marquee-item">
     <span>الابتكار التقني</span> <MarqueeLogo />
-    <span>TECHNO INJAZ</span> <MarqueeLogo />
+    <span>تكنو إنجاز</span> <MarqueeLogo />
     <span>مسار التميز والريادة</span> <MarqueeLogo />
     <span>حلول رقمية مبتكرة</span> <MarqueeLogo />
     <span>فريق ملهم</span> <MarqueeLogo />
@@ -191,7 +191,7 @@ export function CinematicFooter() {
           ref={giantTextRef}
           className="footer-giant-bg-text"
         >
-          TECHNO
+          تكنو إنجاز
         </div>
 
         {/* 1. Diagonal Sleek Marquee (Top of footer) */}
@@ -218,7 +218,7 @@ export function CinematicFooter() {
             <span className="footer-stay-updated-text">ابقَ على اطلاع</span>
             <div className="footer-curved-input-box" dir="ltr">
               <CurvedInput
-                placeholder="your.email@gmail.com"
+                placeholder="أدخل بريدك الإلكتروني"
                 buttonText="اشتراك"
                 theme="dark"
                 bend={28}
@@ -296,10 +296,7 @@ export function CinematicFooter() {
                 المقالات
               </MagneticButton>
               <MagneticButton as="a" href="#videos" className="footer-glass-pill footer-pill-secondary">
-                الفديوهات
-              </MagneticButton>
-              <MagneticButton as="a" href="#" onClick={(e) => { e.preventDefault(); scrollToTop(); }} className="footer-glass-pill footer-pill-secondary">
-                العودة للبداية
+                الفيديوهات
               </MagneticButton>
             </div>
           </div>
@@ -309,7 +306,7 @@ export function CinematicFooter() {
         <div className="footer-bottom-bar">
           {/* Copyright */}
           <div className="footer-copyright">
-            © 2026 تكنو إنجاز - TECHNO INJAZ. جميع الحقوق محفوظة.
+            © 2026 تكنو إنجاز. جميع الحقوق محفوظة.
           </div>
 
           {/* Back to top button */}

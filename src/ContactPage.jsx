@@ -178,7 +178,7 @@ export default function ContactPage({ onBack }) {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      placeholder="name@example.com"
+                      placeholder="أدخل بريدك الإلكتروني"
                       className="form-input"
                     />
                   </div>
@@ -300,7 +300,7 @@ export default function ContactPage({ onBack }) {
                   rel="noopener noreferrer"
                   className="map-external-link"
                 >
-                  <span>فتح في Google Maps</span>
+                  <span>فتح في خرائط جوجل</span>
                   <ExternalLink size={14} />
                 </a>
               </div>

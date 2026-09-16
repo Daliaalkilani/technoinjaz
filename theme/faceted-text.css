@@ -1,0 +1,191 @@
+/* ==========================================================================
+   FACETED SUMMIT — TYPOGRAPHY STYLES & TIERS
+   ========================================================================== */
+
+/* Base font declaration */
+.fx-text,
+.fx-1,
+.fx-2,
+.fx-3 {
+  font-family: var(--fx-font-display);
+  letter-spacing: -0.02em;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+[dir="rtl"] .fx-text,
+[dir="rtl"] .fx-1,
+[dir="rtl"] .fx-2,
+[dir="rtl"] .fx-3,
+:lang(ar) .fx-text,
+:lang(ar) .fx-1,
+:lang(ar) .fx-2,
+:lang(ar) .fx-3 {
+  font-family: var(--fx-font-arabic);
+  letter-spacing: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Per-Word Box (.fx-w) and Core Facet Gradient Implementation
+   -------------------------------------------------------------------------- */
+.fx-text {
+  display: inline-block;
+  line-height: 1.12;
+  margin: 0;
+}
+
+/* Each word owns its gradient box so wrapping never stretches the proportions */
+.fx-text .fx-w {
+  display: inline-block;
+  white-space: pre;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  transition: background-position 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* When an element is a single word or hasn't been split yet */
+.fx-text:not(:has(.fx-w)) {
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  transition: background-position 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* --------------------------------------------------------------------------
+   TIER 1 (.fx-1): Hero titles, H1, H2, logotype, hero numbers
+   Body gradient + both angled facets + hairlines (min size: 28px)
+   -------------------------------------------------------------------------- */
+.fx-1 {
+  font-size: clamp(var(--fx-text-lg), 4vw, var(--fx-text-hero));
+  font-weight: 800;
+}
+
+.fx-1 .fx-w,
+.fx-1:not(:has(.fx-w)) {
+  background-image:
+    /* Layer 1: Right-lower facet (150deg) */
+    linear-gradient(150deg,
+      transparent 0 var(--facet-start),
+      var(--bg) var(--facet-start) calc(var(--facet-start) + var(--facet-gap)),
+      #4193BD calc(var(--facet-start) + var(--facet-gap)),
+      var(--brand-indigo) 100%),
+    /* Layer 2: Left-lower facet (210deg mirror) */
+    linear-gradient(210deg,
+      transparent 0 var(--facet-start),
+      var(--bg) var(--facet-start) calc(var(--facet-start) + var(--facet-gap)),
+      #4193BD calc(var(--facet-start) + var(--facet-gap)),
+      var(--brand-indigo) 100%),
+    /* Layer 3: Main body gradient (180deg vertical) */
+    var(--grad-body);
+}
+
+/* Tier-1 interactive motion on hover/focus:
+   The two facet layers shift 2-3px along their diagonal while body stays fixed */
+.fx-1:hover .fx-w,
+.fx-1:focus-within .fx-w,
+.fx-1:hover:not(:has(.fx-w)),
+.fx-1:focus-within:not(:has(.fx-w)) {
+  background-position: 2px -2px, -2px -2px, 0 0;
+}
+
+/* --------------------------------------------------------------------------
+   TIER 2 (.fx-2): H3, H4, buttons, nav brand
+   Body gradient only (min size: 18px)
+   -------------------------------------------------------------------------- */
+.fx-2 {
+  font-size: clamp(var(--fx-text-sm), 2.2vw, var(--fx-text-md));
+  font-weight: 700;
+}
+
+.fx-2 .fx-w,
+.fx-2:not(:has(.fx-w)) {
+  background-image: var(--grad-body);
+}
+
+/* --------------------------------------------------------------------------
+   TIER 3 (.fx-3): Body copy, captions, form labels
+   Flat WCAG-compliant text (NO gradient, NO facets)
+   -------------------------------------------------------------------------- */
+.fx-3 {
+  font-size: var(--fx-text-sm);
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--text);
+  max-width: 75ch;
+}
+
+.fx-3 strong,
+.fx-3 b,
+.fx-3 em,
+.fx-3 .fx-strong {
+  color: var(--text-strong);
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   Selection & Robustness
+   -------------------------------------------------------------------------- */
+.fx-text::selection,
+.fx-text *::selection {
+  color: var(--bg) !important;
+  -webkit-text-fill-color: var(--bg) !important;
+  background: var(--brand-teal) !important;
+}
+
+/* Screen reader only utility */
+.fx-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Fallback when background-clip: text is unsupported */
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  .fx-text,
+  .fx-text .fx-w {
+    color: var(--brand-teal) !important;
+    -webkit-text-fill-color: currentColor !important;
+    background: none !important;
+  }
+}
+
+/* Fallback class for manual toggling or forced testing */
+.fx-fallback-mode .fx-text,
+.fx-fallback-mode .fx-text .fx-w {
+  color: var(--brand-teal) !important;
+  -webkit-text-fill-color: currentColor !important;
+  background: none !important;
+}
+
+/* Forced Colors (High Contrast) Mode */
+@media (forced-colors: active) {
+  .fx-text,
+  .fx-text .fx-w {
+    background: none !important;
+    color: CanvasText !important;
+    -webkit-text-fill-color: CanvasText !important;
+    forced-color-adjust: auto !important;
+  }
+}
+
+/* Reduced Motion Mode */
+@media (prefers-reduced-motion: reduce) {
+  .fx-text,
+  .fx-text .fx-w {
+    transition: none !important;
+    background-position: 0 0 !important;
+  }
+}

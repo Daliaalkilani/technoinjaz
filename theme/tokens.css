@@ -1,0 +1,81 @@
+/* ==========================================================================
+   FACETED SUMMIT — BRAND DESIGN TOKENS
+   Measured directly from Asset-1@4x.png
+   ========================================================================== */
+
+:root {
+  /* Exact measured brand palette */
+  --brand-mint: #0AEEC3;        /* Apex of the A - gradient start */
+  --brand-turq-light: #14DEC2;  /* Upper body */
+  --brand-turq: #1FCDC1;        /* Upper-mid body */
+  --brand-teal: #26BFBE;        /* Dominant brand color - 21.4% */
+  --brand-teal-deep: #2FB0BE;   /* Lower body */
+  --brand-teal-blue: #399FBE;   /* Legs of the A */
+  --brand-steel: #428EC0;       /* Shaded facet slices */
+  --brand-slate: #4E7FBD;       /* Base of wings - gradient end */
+  --brand-indigo: #5A6CBC;      /* Darkest facet tone */
+  --brand-violet: #5D54F2;      /* Circle, bottom-left edge */
+  --brand-aqua: #14BCA3;        /* Circle, top-right edge */
+  --brand-ring-right: #5361E8;  /* Accent ring right stop */
+  --brand-ring-left: #15BAA5;   /* Accent ring left stop */
+
+  /* Gradients */
+  --grad-body: linear-gradient(180deg,
+    var(--brand-mint) 0%,
+    #1AD3C1 25%,
+    var(--brand-teal) 50%,
+    #3A9DBF 75%,
+    var(--brand-slate) 100%
+  );
+  --grad-facet: linear-gradient(var(--facet-angle), #4193BD, var(--brand-indigo));
+  --grad-circle: linear-gradient(45deg, var(--brand-violet), var(--brand-aqua));
+  --grad-ring: linear-gradient(225deg, var(--brand-ring-right), var(--brand-ring-left));
+
+  /* Geometry cuts */
+  --facet-angle: 150deg;        /* 30° from vertical; mirrored facet uses 210deg */
+  --facet-start: 62%;           /* Where the cut begins along the gradient axis (covers 25-30% of area) */
+  --facet-gap: 1.5px;           /* Hairline slit width in page background color */
+
+  /* Surfaces & legibility (WCAG contrast compliant) */
+  --bg: #0B1626;
+  --bg-surface: #0f1c30;
+  --bg-surface-elevated: #15243d;
+  --text: #B8E8E4;              /* Ratio: 13.6:1 against #0B1626 */
+  --text-strong: #26BFBE;       /* Ratio: 8.0:1 against #0B1626 */
+  --border-subtle: rgba(38, 191, 190, 0.2);
+
+  /* Typography Families */
+  --fx-font-display: 'Outfit', 'Cairo', system-ui, sans-serif;
+  --fx-font-arabic: 'Cairo', 'IBM Plex Sans Arabic', 'Readex Pro', sans-serif;
+  --fx-font-body: 'Outfit', 'Cairo', system-ui, sans-serif;
+
+  /* Major-third type scale: 14 / 17.5 / 22 / 28 / 35 / 44 / 55 / 68 px */
+  --fx-text-xs: 14px;
+  --fx-text-sm: 17.5px;
+  --fx-text-md: 22px;
+  --fx-text-lg: 28px;           /* Tier 1 minimum size */
+  --fx-text-xl: 35px;
+  --fx-text-2xl: 44px;
+  --fx-text-3xl: 55px;
+  --fx-text-hero: 68px;
+}
+
+:root[data-theme="light"] {
+  --bg: #F6FBFB;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #eaf4f4;
+  --text: #1B6484;              /* Darkened brand teal, ratio: 6.3:1 against #F6FBFB */
+  --text-strong: #17587A;
+  --border-subtle: rgba(27, 100, 132, 0.2);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #F6FBFB;
+    --bg-surface: #ffffff;
+    --bg-surface-elevated: #eaf4f4;
+    --text: #1B6484;
+    --text-strong: #17587A;
+    --border-subtle: rgba(27, 100, 132, 0.2);
+  }
+}

@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import './SocialButtons.css';
 
 /**
@@ -21,8 +21,8 @@ export default function SocialButtons({ socials = {}, size = 'medium' }) {
           target="_blank"
           rel="noopener noreferrer"
           className="social-btn linkedin"
-          title="LinkedIn"
-          aria-label="LinkedIn"
+          title="لينكد إن"
+          aria-label="لينكد إن"
           onClick={handleClick}
         >
           <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -38,8 +38,8 @@ export default function SocialButtons({ socials = {}, size = 'medium' }) {
           target="_blank"
           rel="noopener noreferrer"
           className="social-btn github"
-          title="GitHub"
-          aria-label="GitHub"
+          title="غيت هاب"
+          aria-label="غيت هاب"
           onClick={handleClick}
         >
           <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -57,8 +57,8 @@ export default function SocialButtons({ socials = {}, size = 'medium' }) {
         <a
           href={email.startsWith('mailto:') ? email : `mailto:${email}`}
           className="social-btn email"
-          title={`Email: ${email}`}
-          aria-label="Email"
+          title={`البريد الإلكتروني: ${email}`}
+          aria-label="البريد الإلكتروني"
           onClick={handleClick}
         >
           <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">

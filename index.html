@@ -2,16 +2,79 @@
 <html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/techno-logo.png" />
-    <link rel="apple-touch-icon" href="/techno-logo.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>تكنو إنجاز | TECHNO INJAZ</title>
+    <link rel="icon" type="image/webp" href="/loader/assets/brand.webp" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <title>تكنو إنجاز</title>
+    <link rel="stylesheet" href="/loader/loader.css" />
   </head>
   <body>
+    <!-- Techno Enjaz Interactive Rocket Loading Screen -->
+    <div id="te-loader" data-phase="idle">
+      <canvas id="space" aria-hidden="true"></canvas>
+      <div class="ambient" aria-hidden="true"></div>
+
+      <main class="loader-container">
+        <div class="stage" id="stage">
+          <div class="orbit-system" aria-hidden="true">
+            <svg class="orbit-static" viewBox="0 0 400 400">
+              <defs>
+                <linearGradient id="orbit-grad" x1="0" y1="0" x2="1" y2="1">
+                  <stop stop-color="#25ddc2" stop-opacity=".4"/>
+                  <stop offset=".52" stop-color="#25ddc2" stop-opacity=".02"/>
+                  <stop offset="1" stop-color="#7561ed" stop-opacity=".3"/>
+                </linearGradient>
+              </defs>
+              <circle cx="200" cy="200" r="184" fill="none" stroke="url(#orbit-grad)" stroke-width=".8"/>
+              <circle cx="200" cy="200" r="153" fill="none" stroke="#729096" stroke-opacity=".14" stroke-width=".7" stroke-dasharray="2 10"/>
+              <path d="M200 4v9m0 374v9M4 200h9m374 0h9" stroke="#6b9c9d" stroke-width="1" stroke-opacity=".45"/>
+            </svg>
+            <svg class="orbit-rotating" viewBox="0 0 400 400">
+              <circle cx="200" cy="200" r="184" stroke="none" fill="none"/>
+              <path d="M53 89A184 184 0 0 1 144 25" stroke="#21d9bf" stroke-opacity=".6" fill="none" stroke-width="1.3"/>
+              <circle cx="144" cy="25" r="3" fill="#52ebd3"/>
+              <path d="M335 325A184 184 0 0 1 252 376" stroke="#7262d5" stroke-opacity=".7" fill="none" stroke-width="1"/>
+              <circle cx="252" cy="376" r="2" fill="#8c7af0"/>
+            </svg>
+          </div>
+          <div class="launch-floor" aria-hidden="true"><div></div><span></span></div>
+          <div class="cruise-halo" aria-hidden="true"></div>
+
+          <div class="rocket-anchor" id="rocket-anchor">
+            <div class="rocket" id="rocket">
+              <div class="rocket-backlight" aria-hidden="true"></div>
+              <div class="engine engine-center" id="engine-center" aria-hidden="true">
+                <div class="engine-aura"></div>
+                <div class="engine-plume"></div>
+                <div class="engine-core"></div>
+              </div>
+              <div class="engine engine-left" aria-hidden="true">
+                <div class="engine-plume"></div>
+                <div class="engine-core"></div>
+              </div>
+              <div class="engine engine-right" aria-hidden="true">
+                <div class="engine-plume"></div>
+                <div class="engine-core"></div>
+              </div>
+              <img class="rocket-body" src="/loader/assets/rocket-body.webp" width="1915" height="2048" alt="شعار تكنو إنجاز" draggable="false">
+              <div class="logo-core" id="launch-button" aria-hidden="true">
+                <img class="button-art" src="/loader/assets/launch-button.webp" alt="" draggable="false">
+                <svg class="charge-gauge" viewBox="0 0 100 100" aria-hidden="true">
+                  <circle class="gauge-track" cx="50" cy="50" r="46" fill="none"/>
+                  <circle class="gauge-fill" id="gauge-fill" cx="50" cy="50" r="46" fill="none"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sr-only" id="announcer" aria-live="polite" aria-atomic="true"></div>
+      </main>
+    </div>
+
     <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <script src="/loader/loader.js"></script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

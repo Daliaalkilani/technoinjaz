@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faceted Summit — Typography Theme Proof & Verification</title>
+  
+  <!-- Google Fonts: Outfit & Cairo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Faceted Summit Theme Stylesheets -->
+  <link rel="stylesheet" href="../theme/tokens.css">
+  <link rel="stylesheet" href="../theme/faceted-text.css">
+  <link rel="stylesheet" href="../theme/accent-dot.css">
+
+  <style>
+    /* Demo Page Layout Styles */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--fx-font-display);
+      line-height: 1.6;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      min-height: 100vh;
+    }
+
+    [dir="rtl"] body {
+      font-family: var(--fx-font-arabic);
+    }
+
+    /* Container */
+    .demo-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* Sticky Top Control Toolbar */
+    .demo-toolbar {
+      position: sticky;
+      top: 16px;
+      z-index: 100;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      padding: 10px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(12px);
+      margin-bottom: 48px;
+    }
+
+    .demo-toolbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-strong);
+    }
+
+    .demo-toolbar-brand img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
+
+    .demo-toolbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .demo-toggle-btn {
+      background: rgba(38, 191, 190, 0.1);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-strong);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .demo-toggle-btn:hover {
+      background: rgba(38, 191, 190, 0.25);
+      border-color: var(--brand-teal);
+    }
+
+    .demo-checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* Section Cards */
+    .demo-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      padding: 40px;
+      margin-bottom: 40px;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .demo-section-header {
+      margin-bottom: 28px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .demo-section-tag {
+      font-size: 12px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--brand-teal);
+      background: rgba(38, 191, 190, 0.12);
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    /* 1. Side-by-Side Proof */
+    .demo-proof-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 48px;
+    }
+
+    .demo-proof-logo-card {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .demo-proof-logo-img {
+      width: 240px;
+      height: 240px;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 25px rgba(0, 210, 255, 0.2));
+    }
+
+    .demo-proof-content {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .demo-proof-title {
+      font-size: 68px;
+      line-height: 1.05;
+      margin: 0;
+    }
+
+    .demo-proof-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .demo-metric-pill {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .demo-metric-val {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--brand-mint);
+    }
+
+    .demo-metric-lbl {
+      font-size: 12px;
+      color: var(--text);
+      opacity: 0.8;
+    }
+
+    /* 2. Hero Section */
+    .demo-hero-content {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 20px;
+    }
+
+    .demo-btn {
+      padding: 14px 28px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--brand-teal);
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(38, 191, 190, 0.15);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      text-decoration: none;
+    }
+
+    .demo-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(38, 191, 190, 0.35);
+    }
+
+    /* 3. Ladder Stack */
+    .demo-ladder-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .demo-ladder-item {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      align-items: baseline;
+      gap: 20px;
+      border-bottom: 1px dashed var(--border-subtle);
+      padding-bottom: 20px;
+    }
+
+    .demo-ladder-meta {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--brand-steel);
+    }
+
+    /* 5. Stats Row */
+    .demo-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .demo-stat-card {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 28px 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .demo-stat-num {
+      font-size: 55px;
+      line-height: 1;
+      margin: 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .demo-proof-grid {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+      .demo-proof-logo-img {
+        width: 180px;
+        height: 180px;
+      }
+      .demo-ladder-item {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .demo-stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .demo-proof-title {
+        font-size: 44px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="demo-container">
+
+    <!-- Top Sticky Control Bar -->
+    <header class="demo-toolbar">
+      <div class="demo-toolbar-brand">
+        <img src="assets/logo.png" alt="Logo">
+        <span>FACETED SUMMIT // إثبات المطابقة</span>
+      </div>
+
+      <div class="demo-toolbar-actions">
+        <button id="themeToggle" class="demo-toggle-btn" type="button" title="تبديل السمة">
+          <span id="themeIcon">☀️</span>
+          <span id="themeLabel">الوضع الفاتح</span>
+        </button>
+
+        <button id="dirToggle" class="demo-toggle-btn" type="button" title="تبديل الاتجاه">
+          <span>🌐</span>
+          <span id="dirLabel">LTR (English)</span>
+        </button>
+
+        <label class="demo-checkbox-label" title="معاينة وضع البديل المسطح">
+          <input type="checkbox" id="fallbackToggle">
+          <span>وضع البديل (Fallback)</span>
+        </label>
+      </div>
+    </header>
+
+    <!-- SECTION 1: Side-by-Side Proof (Acceptance Artifact) -->
+    <section class="demo-section" id="proof">
+      <div class="demo-section-header">
+        <div>
+          <span class="demo-section-tag">§6.1 الإثبات والتحقق الحصري</span>
+          <h2 style="margin: 6px 0 0 0; font-size: 24px; color: #ffffff;">المطابقة جنباً إلى جنب مع الشعار الأصلي</h2>
+        </div>
+        <span class="demo-ladder-meta">68px Tier 1 vs 240px Logo</span>
+      </div>
+
+      <div class="demo-proof-grid">
+        <div class="demo-proof-logo-card">
+          <img src="assets/logo.png" alt="Techno Enjaz Brand Logo" class="demo-proof-logo-img">
+          <span class="demo-metric-lbl">الشعار المقاس: Asset-1@4x.png</span>
+        </div>
+
+        <div class="demo-proof-content">
+          <!-- Tier 1 Heading with matching colors & facets -->
+          <h1 class="fx-text fx-1 demo-proof-title" data-fx>
+            تكنو إنجاز.
+          </h1>
+
+          <h1 class="fx-text fx-1 demo-proof-title" data-fx lang="en" dir="ltr">
+            FACETED SUMMIT.
+          </h1>
+
+          <p class="fx-3">
+            تم استخراج كافة التدرجات من الشعار بدقة: <strong class="fx-strong">60% تدرج النعناعي والإردوازي</strong>، و<strong class="fx-strong">29% الأوجه المنحوتة بزاوية 150° و210°</strong> بفجوة 1.5px، و<strong class="fx-strong">11% النقطة الدائرية</strong> ذات الحلقة المتعاكسة.
+          </p>
+
+          <div class="demo-proof-metrics">
+            <div class="demo-metric-pill">
+              <div class="demo-metric-val">#0AEEC3</div>
+              <div class="demo-metric-lbl">Mint (Apex)</div>
+            </div>
+            <div class="demo-metric-pill">
+              <div class="demo-metric-val">#26BFBE</div>
+              <div class="demo-metric-lbl">Teal (21.4%)</div>
+            </div>
+            <div class="demo-metric-pill">
+              <div class="demo-metric-val">#4E7FBD</div>
+              <div class="demo-metric-lbl">Slate (Base)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: Hero Sample -->
+    <section class="demo-section" id="hero">
+      <div class="demo-section-header">
+        <span class="demo-section-tag">§6.2 نموذج الهيرو</span>
+        <span class="demo-ladder-meta">Tier 1 + Tier 3 + Tier 2</span>
+      </div>
+
+      <div class="demo-hero-content">
+        <h2 class="fx-text fx-1" data-fx style="font-size: 52px;">
+          نحوّل الفكرة الهندسية إلى واقع.
+        </h2>
+
+        <p class="fx-3">
+          نبتكر منظومات برمجية فائقة الأمان والأداء تجمع بين معمارية السحاب والذكاء الاصطناعي التوليدي، مع الالتزام التام بأعلى معايير التوسع الهندسي وقواعد التصميم النظيفة.
+        </p>
+
+        <a href="#ladder" class="fx-text fx-2 demo-btn" data-fx>
+          استكشف سلم التدرج الهرمي
+        </a>
+      </div>
+    </section>
+
+    <!-- SECTION 3: Hierarchy Ladder -->
+    <section class="demo-section" id="ladder">
+      <div class="demo-section-header">
+        <span class="demo-section-tag">§6.3 سلم التدرج الهرمي للمستويات</span>
+        <span class="demo-ladder-meta">Tiers 1, 2, 3 Comparison</span>
+      </div>
+
+      <div class="demo-ladder-stack">
+        <div class="demo-ladder-item">
+          <span class="demo-ladder-meta">H1 (Tier 1 / 44px)</span>
+          <h1 class="fx-text fx-1" data-fx style="font-size: 44px; margin: 0;">
+            أنظمة الذكاء الاصطناعي والتحقق.
+          </h1>
+        </div>
+
+        <div class="demo-ladder-item">
+          <span class="demo-ladder-meta">H2 (Tier 1 / 35px)</span>
+          <h2 class="fx-text fx-1" data-fx style="font-size: 35px; margin: 0;">
+            معمارية السحاب وقواعد البيانات الموزعة.
+          </h2>
+        </div>
+
+        <div class="demo-ladder-item">
+          <span class="demo-ladder-meta">H3 (Tier 2 / 22px)</span>
+          <h3 class="fx-text fx-2" data-fx style="font-size: 22px; margin: 0;">
+            خوارزميات الرؤية الحاسوبية والتحليل الحيوي
+          </h3>
+        </div>
+
+        <div class="demo-ladder-item">
+          <span class="demo-ladder-meta">H4 (Tier 2 / 17.5px)</span>
+          <h4 class="fx-text fx-2" data-fx style="font-size: 17.5px; margin: 0;">
+            بنية التشفير المتطورة ومراقبة التهديدات
+          </h4>
+        </div>
+
+        <div class="demo-ladder-item">
+          <span class="demo-ladder-meta">Body (Tier 3 / 17.5px)</span>
+          <p class="fx-3" style="margin: 0;">
+            النصوص العادية تأتي بلون مستقر ومريح للعين <strong class="fx-strong">#B8E8E4</strong> على الخلفية الداكنة، يحقق نسبة تباين <strong class="fx-strong">13.6:1</strong> متفوقة على معايير WCAG AAA بدون أي تدرج لوني لضمان مقروئية تامة.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: List with Accent Circle Bullets -->
+    <section class="demo-section" id="list">
+      <div class="demo-section-header">
+        <span class="demo-section-tag">§6.4 القائمة النقطية ذات النقطة المتدرجة</span>
+        <span class="demo-ladder-meta">ul.fx-list with .fx-dot markers</span>
+      </div>
+
+      <ul class="fx-list">
+        <li>
+          <strong>خوارزميات بيومترية دقيقة:</strong> مطابقة فورية لملامح الوجه وسجلات الدخول بسرعة فائقة.
+        </li>
+        <li>
+          <strong>بنية سحابية هجينة:</strong> استمرارية أعمال بدون انقطاع مع مزامنة متزامنة وآمنة.
+        </li>
+        <li>
+          <strong>لوحة تحكم إشرافية متقدمة:</strong> عرض المؤشرات الحيوية وتحليلات الأداء لحظياً.
+        </li>
+        <li>
+          <strong>حماية استباقية وإنذار مبكر:</strong> استشعار المحاولات المشبوهة والتصدي الآلي للثغرات.
+        </li>
+      </ul>
+    </section>
+
+    <!-- SECTION 5: Stats Row -->
+    <section class="demo-section" id="stats">
+      <div class="demo-section-header">
+        <span class="demo-section-tag">§6.5 شريط الإحصائيات والأرقام البارزة</span>
+        <span class="demo-ladder-meta">Tier 1 Numbers + Tier 3 Labels</span>
+      </div>
+
+      <div class="demo-stats-grid">
+        <div class="demo-stat-card">
+          <div class="fx-text fx-1 demo-stat-num" data-fx>99.9%</div>
+          <div class="fx-3">نسبة دقة المطابقة والخوارزميات</div>
+        </div>
+
+        <div class="demo-stat-card">
+          <div class="fx-text fx-1 demo-stat-num" data-fx>+50</div>
+          <div class="fx-3">منظومة هندسية تم نشرها بنجاح</div>
+        </div>
+
+        <div class="demo-stat-card">
+          <div class="fx-text fx-1 demo-stat-num" data-fx>0.02s</div>
+          <div class="fx-3">زمن الاستجابة والمعالجة اللحظية</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: Fallback Preview -->
+    <section class="demo-section" id="fallback">
+      <div class="demo-section-header">
+        <span class="demo-section-tag">§6.6 فحص البديل التوافقي</span>
+        <span class="demo-ladder-meta">@supports fallback: Flat Teal #26BFBE</span>
+      </div>
+
+      <div class="demo-hero-content">
+        <p class="fx-3">
+          في حال كان المتصفح قديماً أو لا يدعم <code style="background: rgba(38,191,190,0.15); padding: 2px 6px; border-radius: 4px;">background-clip: text</code>، يتراجع النص تلقائياً إلى اللون الصلب النظيف <strong class="fx-strong">#26BFBE</strong> كما يمكنك اختباره عبر تفعيل خيار <em>وضع البديل (Fallback)</em> في الشريط العلوي:
+        </p>
+
+        <div style="padding: 24px; border: 1px dashed var(--border-subtle); border-radius: 16px; width: 100%;">
+          <div class="fx-text fx-1" style="font-size: 36px; color: var(--brand-teal) !important; background: none !important; -webkit-text-fill-color: currentColor !important;">
+            معاينة وضع البديل المسطح (Flat Fallback)
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Progressive Enhancement Script -->
+  <script src="../theme/faceted-text.js"></script>
+
+  <!-- Demo Interactive Controls Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const themeToggle = document.getElementById('themeToggle');
+      const themeLabel = document.getElementById('themeLabel');
+      const themeIcon = document.getElementById('themeIcon');
+      const dirToggle = document.getElementById('dirToggle');
+      const dirLabel = document.getElementById('dirLabel');
+      const fallbackToggle = document.getElementById('fallbackToggle');
+      const root = document.documentElement;
+
+      // Theme toggle: Dark <-> Light
+      themeToggle.addEventListener('click', () => {
+        const currentTheme = root.getAttribute('data-theme') || 'dark';
+        const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', nextTheme);
+
+        if (nextTheme === 'light') {
+          themeLabel.textContent = 'الوضع الداكن';
+          themeIcon.textContent = '🌙';
+        } else {
+          themeLabel.textContent = 'الوضع الفاتح';
+          themeIcon.textContent = '☀️';
+        }
+      });
+
+      // Direction toggle: RTL <-> LTR
+      dirToggle.addEventListener('click', () => {
+        const currentDir = root.getAttribute('dir') || 'rtl';
+        const nextDir = currentDir === 'rtl' ? 'ltr' : 'rtl';
+        root.setAttribute('dir', nextDir);
+        root.setAttribute('lang', nextDir === 'rtl' ? 'ar' : 'en');
+        dirLabel.textContent = nextDir === 'rtl' ? 'LTR (English)' : 'RTL (العربية)';
+      });
+
+      // Fallback toggle
+      fallbackToggle.addEventListener('change', (e) => {
+        if (e.target.checked) {
+          document.body.classList.add('fx-fallback-mode');
+        } else {
+          document.body.classList.remove('fx-fallback-mode');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

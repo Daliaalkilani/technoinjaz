@@ -1,16 +1,82 @@
-# React + Vite
+﻿# تكنو إنجاز | TECHNO ENJAZ
+### منصة هندسة البرمجيات والحلول التقنية المتطورة
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+> **"نحوّل الفكرة الهندسية إلى واقع"**
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🌟 نظرة عامة على المشروع
 
-## React Compiler
+**تكنو إنجاز (TECHNO ENJAZ)** هي منصة ويب تفاعلية حديثة ذات طابع هندسي سينمائي داكن (Cinematic Dark Engineering)، مصممة لتقديم خدمات هندسة البرمجيات، النظم الذكية، وتوثيق المشاريع والأبحاث التقنية بأحدث تقنيات الويب الحركية ثلاثية الأبعاد.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the Oxlint configuration
+## 🧩 المكونات والأقسام الرئيسية
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+### 1. الواجهة التفاعلية الرئيسية (ScrollExpand Hero)
+- حركة توسع سينمائية سلسة تعتمد على نسبة التمرير (`Scroll-driven expansion`).
+- شعار تكنو إنجاز المضيء (`Asset-1@4x`).
+- خط عربي هندسي معتمد (**Readex Pro**).
+- أزرار تفاعلية للإجراء السريع (*استكشف أعمالنا* / *تقديم طلب مشروع*).
+
+### 2. قسم المشاريع (InfiniteSpiral)
+- تجربة بصرية ثلاثية الأبعاد تفاعلية تعتمد على مكون `InfiniteSpiral` من React Bits.
+- استعراض واقعي لمخططات النظم وهيكليات قواعد البيانات وخوارزميات التحكم.
+- إمكانية التفاعل الكامل بالماوس أو اللمس (Drag / Touch / Wheel).
+
+### 3. قسم الفيديوهات (CardSwap Showcase)
+- استعراض ديناميكي للعروض الحية والتجارب الميدانية عبر مكون `CardSwap`.
+- تبديل سلس للبطاقات ثلاثية الأبعاد (3D Swapping) مع مؤقت زمني وتوقف عند التمرير (`pauseOnHover`).
+- بطاقات فيديو مدعومة بمؤشرات الدقة (`4K`, `3D`, `LIVE`) وأزرار تشغيل متوهجة.
+
+### 4. قسم المقالات والأبحاث (MagicBento Grid)
+- شبكة Bento تفاعلية متقدمة تعرض أحدث الدراسات والأبحاث التقنية.
+- تأثيرات النجوم الجزيئية (`Particle Stars`)، وكشاف التتبع اللحظي لمؤشر الفأرة (`Global Spotlight`).
+- توهج حوافي شعاعي (`Border Glow`) وجاذبية ثلاثية الأبعاد (`3D Tilt & Magnetism`).
+- احتواء متوازن للرسومات البيانية بحيث تكون مصغرة ومؤطرة بأناقة داخل حدود البطاقات.
+
+---
+
+## 🛠️ التقنيات المستخدمة (Tech Stack)
+
+- **الواجهة الأساسية:** React 19 + TypeScript
+- **أداة البناء والتطوير:** Vite 8
+- **محرك الحركات ثلاثية الأبعاد:** GSAP (GreenSock Animation Platform)
+- **مكونات الحركة المتقدمة:** React Bits (`ScrollExpand`, `InfiniteSpiral`, `CardSwap`, `MagicBento`)
+- **الخطوط والطباعة:** Google Font (`Readex Pro`)
+- **التصميم:** Vanilla CSS3 مع متغيرات الألوان الزجاجية والتوهج النيوني (`Glassmorphism & Cyber Glow`)
+
+---
+
+## 🚀 التشغيل السريع محلياً
+
+```bash
+# 1. استنساخ المستودع
+git clone https://github.com/rwanhbhab58-ard/tecno.git
+cd tecno
+
+# 2. تثبيت الحزم
+npm install
+
+# 3. تشغيل خادم التطوير
+npm run dev
+
+# أو في PowerShell إذا واجهت قيود تشغيل:
+cmd /c npm run dev
+```
+
+افتح المتصفح على الرابط المحلي:
+👉 `http://localhost:5173/`
+
+---
+
+## 📦 البناء للإنتاج (Production Build)
+
+```bash
+npm run build
+npm run preview
+```
+
+---
+
+© 2026 تكنو إنجاز — TECHNO ENJAZ. جميع الحقوق محفوظة.

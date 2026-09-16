@@ -1,5 +1,5 @@
-import React from "react";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import type * as React from "react";
+import { ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import "./interactive-hover-button.css";
 
