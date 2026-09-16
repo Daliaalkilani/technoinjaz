@@ -41,19 +41,22 @@ export default function ContactPage({ onBack }) {
     e.preventDefault();
     if (!formData.name.trim() || !formData.inquiry.trim()) return;
 
-    // تجهيز نص رسالة واتساب اختيارياً للمستخدم لتسهيل الإرسال الفوري
-    const whatsappText = encodeURIComponent(
-      `*استفسار جديد عبر الموقع*\n` +
-      `👤 *الاسم:* ${formData.name}\n` +
-      `🎓 *الاختصاص:* ${formData.specialization || '-'}\n` +
-      `🏛 *الجامعة:* ${formData.university || '-'}\n` +
-      `📧 *الإيميل:* ${formData.email || '-'}\n` +
-      `📱 *الهاتف:* ${formData.phone || '-'}\n` +
-      `💬 *الاستفسار:*\n${formData.inquiry}`
+    // تجهيز نص الاستفسار لإرساله إلى بريد تكنو إنجاز الرسمي info@technoenjaz.com
+    const emailSubject = encodeURIComponent(`استفسار جديد عبر الموقع من: ${formData.name}`);
+    const emailBody = encodeURIComponent(
+      `استفسار جديد عبر موقع تكنو إنجاز:\n\n` +
+      `👤 الاسم: ${formData.name}\n` +
+      `🎓 الاختصاص: ${formData.specialization || 'غير محدد'}\n` +
+      `🏛 الجامعة: ${formData.university || 'غير محدد'}\n` +
+      `📧 البريد الإلكتروني: ${formData.email || 'غير محدد'}\n` +
+      `📱 رقم الهاتف: ${formData.phone || 'غير محدد'}\n\n` +
+      `💬 نص الاستفسار:\n${formData.inquiry}\n`
     );
 
-    // فتح واتساب مباشرة في نافذة جديدة مع تفاصيل الاستفسار
-    window.open(`https://wa.me/963958794195?text=${whatsappText}`, '_blank');
+    const mailtoUrl = `mailto:info@technoenjaz.com?subject=${emailSubject}&body=${emailBody}`;
+
+    // فتح عميل البريد الإلكتروني لإرسال الاستفسار إلى info@technoenjaz.com
+    window.location.href = mailtoUrl;
 
     setSubmitted(true);
   };
@@ -85,34 +88,57 @@ export default function ContactPage({ onBack }) {
               هل لديك أي استشكال أو استفهام أو استفسار؟
             </h2>
             <p className="contact-panel-subtitle">
-              املأ البيانات التالية وسيقوم فريق تكنو إنجاز بالرد المباشر وتقديم كامل الدعم لك.
+              املأ البيانات التالية ليتم إرسال استفسارك مباشرة إلى البريد الرسمي <span style={{ color: '#00d2ff', fontWeight: 700, direction: 'ltr', display: 'inline-block' }}>info@technoenjaz.com</span> وسيقوم فريق تكنو إنجاز بالرد وتقديم كامل الدعم لك.
             </p>
 
             {submitted ? (
               <div className="form-success-alert">
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '8px' }}>
                   <CheckCircle2 size={22} color="#10b981" />
-                  <span style={{ fontSize: '16px', fontWeight: 800 }}>تم تحضير وإرسال استفسارك بنجاح!</span>
+                  <span style={{ fontSize: '16px', fontWeight: 800 }}>تم توجيه استفسارك إلى info@technoenjaz.com بنجاح!</span>
                 </div>
                 <p style={{ margin: 0, fontSize: '13px', opacity: 0.9 }}>
-                  شكراً لتواصلك معنا، سنرد على استفسارك بأقرب وقت ممكن.
+                  شكراً لتواصلك معنا، كما يمكنك أيضاً إرسال نفس الاستفسار مباشرة عبر واتساب للمتابعة اللحظية.
                 </p>
-                <button
-                  onClick={() => { setSubmitted(false); setFormData({ name: '', specialization: '', university: '', email: '', phone: '', inquiry: '' }); }}
-                  style={{
-                    marginTop: '16px',
-                    padding: '8px 18px',
-                    background: 'rgba(16, 185, 129, 0.2)',
-                    border: '1px solid rgba(16, 185, 129, 0.4)',
-                    borderRadius: '8px',
-                    color: '#ffffff',
-                    cursor: 'pointer',
-                    fontFamily: "'Readex Pro', sans-serif",
-                    fontSize: '12.5px'
-                  }}
-                >
-                  إرسال استفسار آخر
-                </button>
+                <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap', marginTop: '16px' }}>
+                  <a
+                    href={`https://wa.me/963958794195?text=${encodeURIComponent(`مرحباً تكنو إنجاز، أرسلت استفساراً من ${formData.name || ''}:\n${formData.inquiry || ''}`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      padding: '8px 18px',
+                      background: 'rgba(37, 211, 102, 0.2)',
+                      border: '1px solid rgba(37, 211, 102, 0.45)',
+                      borderRadius: '8px',
+                      color: '#25d366',
+                      textDecoration: 'none',
+                      fontFamily: "'Readex Pro', sans-serif",
+                      fontSize: '12.5px',
+                      fontWeight: 600,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}
+                  >
+                    <MessageCircle size={15} />
+                    <span>متابعة عبر واتساب</span>
+                  </a>
+                  <button
+                    onClick={() => { setSubmitted(false); setFormData({ name: '', specialization: '', university: '', email: '', phone: '', inquiry: '' }); }}
+                    style={{
+                      padding: '8px 18px',
+                      background: 'rgba(255, 255, 255, 0.08)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      color: '#ffffff',
+                      cursor: 'pointer',
+                      fontFamily: "'Readex Pro', sans-serif",
+                      fontSize: '12.5px'
+                    }}
+                  >
+                    إرسال استفسار آخر
+                  </button>
+                </div>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="contact-form">
@@ -243,6 +269,25 @@ export default function ContactPage({ onBack }) {
                   </span>
                 </div>
               </div>
+
+              {/* البريد الإلكتروني الرسمي */}
+              <a
+                href="mailto:info@technoenjaz.com"
+                className="info-card clickable"
+              >
+                <div className="info-icon-box cyan">
+                  <Mail size={22} />
+                </div>
+                <div className="info-text-box">
+                  <span className="info-title">البريد الإلكتروني الرسمي</span>
+                  <span className="info-value" dir="ltr" style={{ textAlign: 'right' }}>
+                    info@technoenjaz.com
+                  </span>
+                </div>
+                <span className="info-badge-action email">
+                  مراسلة ↗
+                </span>
+              </a>
 
               {/* التواصل المباشر عبر واتساب */}
               <a

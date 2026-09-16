@@ -16,6 +16,7 @@ import {
   Globe, 
   Flame 
 } from 'lucide-react';
+import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import './LiveProjectsShowcase.css';
 
 export interface LiveProject {
@@ -29,164 +30,178 @@ export interface LiveProject {
   highlights: string[];
   color: string;
   iconName: string;
+  image: string;
 }
 
 const liveProjectsList: LiveProject[] = [
   {
     id: 'hisab-erp',
     title: 'نظام حساب ERP السحابي',
-    subtitle: 'Hisab ERP Cloud',
+    subtitle: 'نظام سحابي لإدارة الموارد المحاسبية والإدارية',
     category: 'أنظمة ومؤسسية',
     url: 'https://hisab-erp.pages.dev/login',
     displayDomain: 'hisab-erp.pages.dev',
-    description: 'نظام ERP متكامل لإدارة الموارد المحاسبية والإدارية للشركات، الفواتير الإلكترونية المعتمدة، وإدارة المخزون والمبيعات لحظياً.',
-    highlights: ['Cloud ERP', 'E-Invoicing', 'Finance'],
+    description: 'نظام متكامل لإدارة الموارد المحاسبية والإدارية للشركات، الفواتير الإلكترونية المعتمدة، وإدارة المخزون والمبيعات لحظياً.',
+    highlights: ['إدارة سحابية', 'فوترة إلكترونية', 'حسابات ومخزون'],
     color: '#0aeec3',
-    iconName: 'database'
+    iconName: 'database',
+    image: '/projects-live/hisab-erp.jpg'
   },
   {
     id: 'projectforge',
     title: 'منصة بروجكت فورج',
-    subtitle: 'ProjectForge Workspace',
+    subtitle: 'مساحة عمل لإدارة وتنسيق الفرق البرمجية',
     category: 'أنظمة ومؤسسية',
     url: 'https://projectforge-e3q.pages.dev/',
     displayDomain: 'projectforge-e3q.pages.dev',
-    description: 'منصة رشيقة (Agile/Kanban) لتنسيق فرق التطوير البرمجي والهندسي، جدولة المهام، وتتبع الإنجاز في الوقت الفعلي.',
-    highlights: ['Agile Workspace', 'Kanban Board', 'Team Sync'],
+    description: 'منصة متقدمة لتنسيق فرق التطوير البرمجي والهندسي، جدولة المهام، وتتبع الإنجاز في الوقت الفعلي عبر لوحات تفاعلية.',
+    highlights: ['إدارة المشاريع', 'لوحات كانبان', 'مزامنة المهام'],
     color: '#38bdf8',
-    iconName: 'activity'
+    iconName: 'activity',
+    image: '/projects-live/projectforge.jpg'
   },
   {
     id: 'interactive-cv',
     title: 'السيرة الذاتية التفاعلية',
-    subtitle: 'Interactive 3D Portfolio',
+    subtitle: 'معرض أعمال وسيرة مهنية تفاعلية',
     category: 'هويات رقمية',
     url: 'https://cv.abdalgani.com/',
     displayDomain: 'cv.abdalgani.com',
     description: 'واجهة رقمية تفاعلية حديثة تستعرض المسار المهني والخبرات والمشاريع الهندسية المنجزة بأسلوب مبتكر وجذاب.',
-    highlights: ['Interactive 3D', 'Digital CV', 'Portfolio'],
+    highlights: ['تفاعل ثلاثي الأبعاد', 'سيرة ذاتية', 'معرض أعمال'],
     color: '#a855f7',
-    iconName: 'sparkles'
+    iconName: 'sparkles',
+    image: '/projects-live/interactive-cv.jpg'
   },
   {
     id: 'taima-alwani',
     title: 'منصة تيماء علواني',
-    subtitle: 'Taima Alwani Showcase',
+    subtitle: 'منصة الهوية الرقمية والأعمال الإبداعية',
     category: 'هويات رقمية',
     url: 'https://taima-alwani.pages.dev/',
     displayDomain: 'taima-alwani.pages.dev',
     description: 'موقع شخصي ومهني أنيق بتصميم عصري يعكس الهوية الرقمية، الأعمال الإبداعية، والخبرات المتخصصة.',
-    highlights: ['Personal Brand', 'Modern UI/UX', 'Showcase'],
+    highlights: ['هوية رقمية', 'تصميم عصري', 'معرض إبداعي'],
     color: '#ec4899',
-    iconName: 'laptop'
+    iconName: 'laptop',
+    image: '/projects-live/taima-alwani.jpg'
   },
   {
     id: 'rebuild-dn9',
     title: 'بوابة الأعمال والمشاريع',
-    subtitle: 'Modern Web Platform',
+    subtitle: 'بوابة شاملة لتطبيقات الويب الحديثة',
     category: 'هويات رقمية',
     url: 'https://abdalgani-rebuild-dn9.pages.dev/',
     displayDomain: 'abdalgani-rebuild-dn9.pages.dev',
     description: 'منصة برمجية حديثة تستعرض أحدث التطبيقات والنماذج البرمجية المبنية بتقنيات الويب الحديثة وعالية الأداء.',
-    highlights: ['Full-Stack Web', 'Modern Architecture', 'Apps'],
+    highlights: ['تطبيقات متكاملة', 'معمارية سحابية', 'أداء متقدم'],
     color: '#10b981',
-    iconName: 'server'
+    iconName: 'server',
+    image: '/projects-live/rebuild-dn9.jpg'
   },
   {
     id: 'khazama-store',
     title: 'متجر خزامة السحابي',
-    subtitle: 'Khazama Store',
+    subtitle: 'متجر تجارة إلكترونية فائق السرعة',
     category: 'تطبيقات ومتاجر',
     url: 'https://khazama-store.abdalganih2.workers.dev/',
     displayDomain: 'khazama-store.workers.dev',
-    description: 'متجر رقمي فائق السرعة يعمل على الحافة السحابية (Edge Cloud Workers) لتقديم تجربة تسوق فورية وسلسة وآمنة.',
-    highlights: ['Edge Workers', 'Serverless Store', 'Cloudflare'],
+    description: 'متجر رقمي فائق السرعة يعمل على الحافة السحابية لتقديم تجربة تسوق فورية وسلسة وآمنة.',
+    highlights: ['معالجة سحابية', 'تسوق رقمي', 'أمان عالي'],
     color: '#f59e0b',
-    iconName: 'flame'
+    iconName: 'flame',
+    image: '/projects-live/khazama-store.jpg'
   },
   {
     id: 'modeya',
     title: 'منصة مضيئة للأزياء',
-    subtitle: 'Modeya Fashion',
+    subtitle: 'منصة تسوق رقمية فاخرة للأزياء',
     category: 'تطبيقات ومتاجر',
     url: 'https://modeya.abdalgani.com/',
     displayDomain: 'modeya.abdalgani.com',
     description: 'منصة تسوق رقمية فاخرة مخصصة لخطوط الأزياء والتصميم العصري، مع تجربة استعراض المنتجات وسلة الشراء المتقدمة.',
-    highlights: ['Luxury Fashion', 'E-Commerce', 'Payment Flow'],
+    highlights: ['أزياء راقية', 'تجارة إلكترونية', 'دفع إلكتروني'],
     color: '#f43f5e',
-    iconName: 'sparkles'
+    iconName: 'sparkles',
+    image: '/projects-live/modeya.jpg'
   },
   {
     id: 'dermocean',
     title: 'منصة ديرم أوشن',
-    subtitle: 'Dermocean Care',
+    subtitle: 'منصة متخصصة في العناية بالبشرة والحلول الجلدية',
     category: 'تطبيقات ومتاجر',
     url: 'https://dermocean-preview.pages.dev/',
     displayDomain: 'dermocean-preview.pages.dev',
     description: 'واجهة رقمية متخصصة في مستحضرات ومنتجات العناية بالبشرة، مع استعراض علمي دقيق للمكونات والحلول الجلدية.',
-    highlights: ['Dermatology', 'Care Catalog', 'Medical Beauty'],
+    highlights: ['عناية بالبشرة', 'كتالوج متقدم', 'حلول تجميلية'],
     color: '#06b6d4',
-    iconName: 'activity'
+    iconName: 'activity',
+    image: '/projects-live/dermocean.jpg'
   },
   {
     id: 'wpu-cover',
     title: 'مصمم أغلفة الكتب',
-    subtitle: 'WPU Book Cover',
+    subtitle: 'أداة تفاعلية لتصميم وتوليد أغلفة الكتب',
     category: 'أدوات ومختبرات',
     url: 'https://wpu-cover.pages.dev/',
     displayDomain: 'wpu-cover.pages.dev',
     description: 'أداة تفاعلية ذكية لتصميم وتوليد أغلفة الكتب والأبحاث والمنشورات العلمية بجودة طباعية احترافية.',
-    highlights: ['Book Covers', 'Design Generator', 'Export High-Res'],
+    highlights: ['أغلفة كتب', 'توليد تصاميم', 'تصدير عالي الدقة'],
     color: '#8b5cf6',
-    iconName: 'layers'
+    iconName: 'layers',
+    image: '/projects-live/wpu-cover.jpg'
   },
   {
     id: 'md-2-pdf',
     title: 'محول الماركداون الذكي',
-    subtitle: 'MD to PDF Converter',
+    subtitle: 'محرك تحويل المستندات إلى ملفات جاهزة للطباعة',
     category: 'أدوات ومختبرات',
     url: 'https://md-2-pdf.pages.dev/',
     displayDomain: 'md-2-pdf.pages.dev',
-    description: 'محرك تحويل سريع وعالي الدقة لمستندات Markdown إلى ملفات PDF جاهزة للطباعة والتوزيع بمظهر احترافي.',
-    highlights: ['Markdown Engine', 'PDF Exporter', 'Dev Tool'],
+    description: 'محرك تحويل سريع وعالي الدقة لمستندات النصوص والماركداون إلى ملفات جاهزة للطباعة والتوزيع بمظهر احترافي.',
+    highlights: ['محرك نصوص', 'تصدير وثائق', 'أدوات مكتبية'],
     color: '#3b82f6',
-    iconName: 'laptop'
+    iconName: 'laptop',
+    image: '/projects-live/md-2-pdf.jpg'
   },
   {
     id: 'cablexperts',
     title: 'منصة خبراء الكابلات',
-    subtitle: 'Cable Experts Co.',
+    subtitle: 'بوابة حلول وتوريدات كابلات الطاقة والاتصالات',
     category: 'أنظمة ومؤسسية',
     url: 'https://cabltexperts.com/',
     displayDomain: 'cabltexperts.com',
     description: 'منصة هندسية رائدة لشركة متخصصة في توريد وتوزيع كابلات الجهد العالي والمتوسط والاتصالات للمشاريع الكبرى.',
-    highlights: ['Power Cables', 'Engineering Specs', 'Industrial'],
+    highlights: ['كابلات صناعية', 'مواصفات هندسية', 'توريدات معتمدة'],
     color: '#eab308',
-    iconName: 'server'
+    iconName: 'server',
+    image: '/projects-live/cablexperts.jpg'
   },
   {
     id: 'cableksa',
     title: 'كابلات السعودية',
-    subtitle: 'Cable KSA Portal',
+    subtitle: 'البوابة الوطنية لأنظمة ومواصفات الكابلات',
     category: 'أنظمة ومؤسسية',
     url: 'https://cableksa.com/',
     displayDomain: 'cableksa.com',
     description: 'البوابة الشاملة لتوريدات وأنظمة الكابلات المعتمدة في المملكة العربية السعودية، توفر كتالوجات فنية ومواصفات قياسية.',
-    highlights: ['Saudi Infrastructure', 'Cables Catalog', 'ISO Standards'],
+    highlights: ['بنية تحتية', 'كتالوج معتمد', 'مواصفات قياسية'],
     color: '#22c55e',
-    iconName: 'globe'
+    iconName: 'globe',
+    image: '/projects-live/cableksa.jpg'
   },
   {
     id: 'arduino-lab',
     title: 'مختبر آردوينو التفاعلي',
-    subtitle: 'Arduino Virtual Lab',
+    subtitle: 'بيئة محاكاة تفاعلية لاختبار الدوائر الإلكترونية',
     category: 'أدوات ومختبرات',
     url: 'https://arduino-lab.pages.dev/',
     displayDomain: 'arduino-lab.pages.dev',
     description: 'بيئة محاكاة تفاعلية لتجربة وبرمجة دوائر الأردوينو والحساسات الإلكترونية واختبار الأكواد الهندسية افتراضياً.',
-    highlights: ['Arduino Simulation', 'IoT Sensors', 'Interactive Circuit'],
+    highlights: ['محاكاة إلكترونية', 'حساسات ذكية', 'دوائر تفاعلية'],
     color: '#14b8a6',
-    iconName: 'activity'
+    iconName: 'activity',
+    image: '/projects-live/arduino-lab.jpg'
   }
 ];
 
@@ -204,33 +219,26 @@ const renderIcon = (name: string, color: string, size = 22) => {
   }
 };
 
-const categories = [
-  'الكل',
-  'أنظمة ومؤسسية',
-  'تطبيقات ومتاجر',
-  'أدوات ومختبرات',
-  'هويات رقمية'
-];
-
 const AUTO_INTERVAL_MS = 4500;
 
 export const LiveProjectsShowcase: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('الكل');
+  const { lang, t } = useThemeLanguage();
   const [viewMode, setViewMode] = useState<'animated' | 'grid'>('animated');
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
 
-  const filteredProjects = selectedCategory === 'الكل'
-    ? liveProjectsList
-    : liveProjectsList.filter(p => p.category === selectedCategory);
+  const activeProject = liveProjectsList[currentIndex % liveProjectsList.length] || liveProjectsList[0];
+  const activeTrans = t.liveProjects.projects[activeProject.id];
+  const activeTitle = activeTrans?.title || activeProject.title;
+  const activeSubtitle = activeTrans?.subtitle || activeProject.subtitle;
+  const activeDescription = activeTrans?.description || activeProject.description;
+  const activeHighlights = activeTrans?.highlights || activeProject.highlights;
 
-  const activeProject = filteredProjects[currentIndex % filteredProjects.length] || liveProjectsList[0];
-
-  // Divide projects for dual-track infinite marquee
-  const track1Projects = [...liveProjectsList.slice(0, 7), ...liveProjectsList.slice(0, 7)];
-  const track2Projects = [...liveProjectsList.slice(7), ...liveProjectsList.slice(7)];
+  // Seamless continuous dual-track infinite marquee with full duplicates
+  const track1Projects = [...liveProjectsList, ...liveProjectsList];
+  const track2Projects = [...[...liveProjectsList].reverse(), ...[...liveProjectsList].reverse()];
 
   // Automatic transition timer
   useEffect(() => {
@@ -244,7 +252,7 @@ export const LiveProjectsShowcase: React.FC = () => {
     const timer = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) {
-          setCurrentIndex(c => (c + 1) % filteredProjects.length);
+          setCurrentIndex(c => (c + 1) % liveProjectsList.length);
           return 0;
         }
         return prev + increment;
@@ -252,20 +260,20 @@ export const LiveProjectsShowcase: React.FC = () => {
     }, stepMs);
 
     return () => clearInterval(timer);
-  }, [isPlaying, isHovered, viewMode, filteredProjects.length]);
+  }, [isPlaying, isHovered, viewMode]);
 
   const handleNext = () => {
     setProgress(0);
-    setCurrentIndex(c => (c + 1) % filteredProjects.length);
+    setCurrentIndex(c => (c + 1) % liveProjectsList.length);
   };
 
   const handlePrev = () => {
     setProgress(0);
-    setCurrentIndex(c => (c - 1 + filteredProjects.length) % filteredProjects.length);
+    setCurrentIndex(c => (c - 1 + liveProjectsList.length) % liveProjectsList.length);
   };
 
   const handleSelectProject = (project: LiveProject) => {
-    const idx = filteredProjects.findIndex(p => p.id === project.id);
+    const idx = liveProjectsList.findIndex(p => p.id === project.id);
     if (idx !== -1) {
       setCurrentIndex(idx);
       setProgress(0);
@@ -273,25 +281,13 @@ export const LiveProjectsShowcase: React.FC = () => {
   };
 
   return (
-    <div className="live-projects-container">
+    <div className="live-projects-container" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
       {/* Control Toolbar */}
       <div className="live-projects-toolbar">
-        {/* Category Filter Chips */}
-        <div className="live-projects-categories">
-          {categories.map(cat => (
-            <button
-              key={cat}
-              type="button"
-              className={`category-chip ${selectedCategory === cat ? 'active' : ''}`}
-              onClick={() => {
-                setSelectedCategory(cat);
-                setCurrentIndex(0);
-                setProgress(0);
-              }}
-            >
-              {cat} {cat === 'الكل' ? `(${liveProjectsList.length})` : ''}
-            </button>
-          ))}
+        <div className="live-projects-counter-info">
+          <span className="live-projects-count-badge">
+            {t.liveProjects.countBadge.replace('{count}', String(liveProjectsList.length))}
+          </span>
         </div>
 
         {/* View Mode Toggle */}
@@ -300,19 +296,19 @@ export const LiveProjectsShowcase: React.FC = () => {
             type="button"
             className={`view-toggle-btn ${viewMode === 'animated' ? 'active' : ''}`}
             onClick={() => setViewMode('animated')}
-            title="عرض تلقائي متحرك"
+            title={t.liveProjects.autoMode}
           >
             <Radio size={16} />
-            <span>عرض تلقائي متحرك</span>
+            <span>{t.liveProjects.autoMode}</span>
           </button>
           <button
             type="button"
             className={`view-toggle-btn ${viewMode === 'grid' ? 'active' : ''}`}
             onClick={() => setViewMode('grid')}
-            title="عرض شبكة المشاريع"
+            title={t.liveProjects.gridMode}
           >
             <LayoutGrid size={16} />
-            <span>شبكة المشاريع</span>
+            <span>{t.liveProjects.gridMode}</span>
           </button>
         </div>
       </div>
@@ -331,11 +327,10 @@ export const LiveProjectsShowcase: React.FC = () => {
               style={{ background: `radial-gradient(circle, ${activeProject.color}25 0%, transparent 70%)` }} 
             />
 
-            {/* Top Bar: Status Badge & Navigation Controls */}
+            {/* Top Bar: Controls */}
             <div className="spotlight-top-controls">
-              <div className="spotlight-badge">
-                <span className="spotlight-badge-dot" />
-                <span>مشروع نشط ويعمل الآن أونلاين</span>
+              <div className="spotlight-project-number">
+                <span>{t.liveProjects.projectWord} {currentIndex + 1} {t.liveProjects.ofWord} {liveProjectsList.length}</span>
               </div>
 
               <div className="spotlight-nav-actions">
@@ -343,7 +338,7 @@ export const LiveProjectsShowcase: React.FC = () => {
                   type="button"
                   className="spotlight-btn-icon"
                   onClick={() => setIsPlaying(!isPlaying)}
-                  title={isPlaying ? 'إيقاف مؤقت' : 'تشغيل تلقائي'}
+                  title={isPlaying ? 'Pause' : 'Play'}
                 >
                   {isPlaying ? <Pause size={17} /> : <Play size={17} />}
                 </button>
@@ -351,7 +346,7 @@ export const LiveProjectsShowcase: React.FC = () => {
                   type="button"
                   className="spotlight-btn-icon"
                   onClick={handlePrev}
-                  title="المشروع السابق"
+                  title="Previous"
                 >
                   <ChevronRight size={19} />
                 </button>
@@ -359,7 +354,7 @@ export const LiveProjectsShowcase: React.FC = () => {
                   type="button"
                   className="spotlight-btn-icon"
                   onClick={handleNext}
-                  title="المشروع التالي"
+                  title="Next"
                 >
                   <ChevronLeft size={19} />
                 </button>
@@ -369,15 +364,12 @@ export const LiveProjectsShowcase: React.FC = () => {
             {/* Spotlight Grid Content */}
             <div className="spotlight-content-grid">
               <div className="spotlight-details">
-                <span className="spotlight-category-tag" style={{ color: activeProject.color }}>
-                  {activeProject.category}
-                </span>
-                <h2 className="spotlight-title">{activeProject.title}</h2>
-                <div className="spotlight-subtitle">{activeProject.subtitle}</div>
-                <p className="spotlight-desc">{activeProject.description}</p>
+                <h2 className="spotlight-title">{activeTitle}</h2>
+                <div className="spotlight-subtitle">{activeSubtitle}</div>
+                <p className="spotlight-desc">{activeDescription}</p>
 
                 <div className="spotlight-tags">
-                  {activeProject.highlights.map(tag => (
+                  {activeHighlights.map(tag => (
                     <span key={tag} className="spotlight-tag-item">
                       #{tag}
                     </span>
@@ -391,17 +383,13 @@ export const LiveProjectsShowcase: React.FC = () => {
                     rel="noopener noreferrer"
                     className="spotlight-launch-btn"
                   >
-                    <span>زيارة وتجربة المشروع الحي</span>
+                    <span>{t.liveProjects.visitLive}</span>
                     <ExternalLink size={17} />
                   </a>
-
-                  <div className="spotlight-url-display">
-                    <span>{activeProject.displayDomain}</span>
-                  </div>
                 </div>
               </div>
 
-              {/* Browser Mockup Window */}
+              {/* Browser Mockup Window with Captured Live Website Screenshot */}
               <div className="spotlight-preview-window">
                 <div className="preview-window-header">
                   <div className="preview-window-dots">
@@ -413,16 +401,23 @@ export const LiveProjectsShowcase: React.FC = () => {
                     <span>https://{activeProject.displayDomain}</span>
                   </div>
                 </div>
-                <div className="preview-window-body">
-                  <div 
-                    className="preview-hero-icon"
-                    style={{ background: `${activeProject.color}18`, border: `1px solid ${activeProject.color}50` }}
+                <div className="preview-window-body preview-image-container">
+                  <img
+                    src={activeProject.image}
+                    alt={activeTitle}
+                    className="preview-project-image"
+                  />
+                  <a
+                    href={activeProject.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="preview-image-overlay"
                   >
-                    {renderIcon(activeProject.iconName, activeProject.color, 32)}
-                  </div>
-                  <div className="preview-hero-title">{activeProject.title}</div>
-                  <div className="preview-hero-subtitle">{activeProject.subtitle}</div>
-                  <div className="preview-hero-domain">{activeProject.displayDomain}</div>
+                    <span className="preview-overlay-btn">
+                      <span>{t.liveProjects.visitMockup}</span>
+                      <ExternalLink size={16} />
+                    </span>
+                  </a>
                 </div>
               </div>
             </div>
@@ -443,125 +438,146 @@ export const LiveProjectsShowcase: React.FC = () => {
           <div className="marquee-section-header">
             <h3 className="marquee-section-title">
               <Sparkles size={20} color="#0aeec3" />
-              <span>استعراض متحرك لكافة المشاريع الحية (13 مشروعاً)</span>
+              <span>{t.liveProjects.marqueeTitle.replace('{count}', String(liveProjectsList.length))}</span>
             </h3>
           </div>
 
-          <div className="marquee-wrapper">
+          <div className="marquee-wrapper" dir="ltr">
             {/* Track 1: Moving left */}
             <div className="marquee-track track-left">
-              {track1Projects.map((project, idx) => (
-                <div
-                  key={`track1-${project.id}-${idx}`}
-                  className={`marquee-card ${activeProject.id === project.id ? 'active-selected' : ''}`}
-                  onClick={() => handleSelectProject(project)}
-                >
-                  <div className="marquee-card-top">
-                    <span className="marquee-card-badge">🟢 مباشر</span>
-                    <div 
-                      className="marquee-card-icon"
-                      style={{ background: `${project.color}18` }}
-                    >
-                      {renderIcon(project.iconName, project.color, 18)}
+              {track1Projects.map((project, idx) => {
+                const pTrans = t.liveProjects.projects[project.id];
+                const pTitle = pTrans?.title || project.title;
+                const pSub = pTrans?.subtitle || project.subtitle;
+                const pDesc = pTrans?.description || project.description;
+                return (
+                  <div
+                    key={`track1-${project.id}-${idx}`}
+                    className={`marquee-card ${activeProject.id === project.id ? 'active-selected' : ''}`}
+                    onClick={() => handleSelectProject(project)}
+                    dir={lang === 'ar' ? 'rtl' : 'ltr'}
+                  >
+                    <div className="marquee-card-top">
+                      <div className="marquee-card-thumb-wrap">
+                        <img src={project.image} alt={pTitle} className="marquee-card-thumb-img" loading="lazy" />
+                      </div>
+                      <div 
+                        className="marquee-card-icon"
+                        style={{ background: `${project.color}18` }}
+                      >
+                        {renderIcon(project.iconName, project.color, 18)}
+                      </div>
+                    </div>
+                    <h4 className="marquee-card-title">{pTitle}</h4>
+                    <div className="marquee-card-subtitle">{pSub}</div>
+                    <p className="marquee-card-desc">{pDesc}</p>
+                    <div className="marquee-card-footer">
+                      <a
+                        href={project.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="marquee-card-link-btn"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <span>{t.liveProjects.launch}</span>
+                        <ExternalLink size={13} />
+                      </a>
                     </div>
                   </div>
-                  <h4 className="marquee-card-title">{project.title}</h4>
-                  <div className="marquee-card-subtitle">{project.subtitle}</div>
-                  <p className="marquee-card-desc">{project.description}</p>
-                  <div className="marquee-card-footer">
-                    <span className="marquee-card-domain">{project.displayDomain}</span>
-                    <a
-                      href={project.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="marquee-card-link-btn"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <span>تشغيل</span>
-                      <ExternalLink size={13} />
-                    </a>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Track 2: Moving right */}
             <div className="marquee-track track-right">
-              {track2Projects.map((project, idx) => (
-                <div
-                  key={`track2-${project.id}-${idx}`}
-                  className={`marquee-card ${activeProject.id === project.id ? 'active-selected' : ''}`}
-                  onClick={() => handleSelectProject(project)}
-                >
-                  <div className="marquee-card-top">
-                    <span className="marquee-card-badge">🟢 مباشر</span>
-                    <div 
-                      className="marquee-card-icon"
-                      style={{ background: `${project.color}18` }}
-                    >
-                      {renderIcon(project.iconName, project.color, 18)}
+              {track2Projects.map((project, idx) => {
+                const pTrans = t.liveProjects.projects[project.id];
+                const pTitle = pTrans?.title || project.title;
+                const pSub = pTrans?.subtitle || project.subtitle;
+                const pDesc = pTrans?.description || project.description;
+                return (
+                  <div
+                    key={`track2-${project.id}-${idx}`}
+                    className={`marquee-card ${activeProject.id === project.id ? 'active-selected' : ''}`}
+                    onClick={() => handleSelectProject(project)}
+                    dir={lang === 'ar' ? 'rtl' : 'ltr'}
+                  >
+                    <div className="marquee-card-top">
+                      <div className="marquee-card-thumb-wrap">
+                        <img src={project.image} alt={pTitle} className="marquee-card-thumb-img" loading="lazy" />
+                      </div>
+                      <div 
+                        className="marquee-card-icon"
+                        style={{ background: `${project.color}18` }}
+                      >
+                        {renderIcon(project.iconName, project.color, 18)}
+                      </div>
+                    </div>
+                    <h4 className="marquee-card-title">{pTitle}</h4>
+                    <div className="marquee-card-subtitle">{pSub}</div>
+                    <p className="marquee-card-desc">{pDesc}</p>
+                    <div className="marquee-card-footer">
+                      <a
+                        href={project.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="marquee-card-link-btn"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <span>{t.liveProjects.launch}</span>
+                        <ExternalLink size={13} />
+                      </a>
                     </div>
                   </div>
-                  <h4 className="marquee-card-title">{project.title}</h4>
-                  <div className="marquee-card-subtitle">{project.subtitle}</div>
-                  <p className="marquee-card-desc">{project.description}</p>
-                  <div className="marquee-card-footer">
-                    <span className="marquee-card-domain">{project.displayDomain}</span>
-                    <a
-                      href={project.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="marquee-card-link-btn"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <span>تشغيل</span>
-                      <ExternalLink size={13} />
-                    </a>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </>
       ) : (
         /* Full Grid Mode */
         <div className="live-projects-grid">
-          {filteredProjects.map(project => (
-            <div key={project.id} className="grid-card">
-              <div className="grid-card-header">
-                <div 
-                  className="grid-card-icon"
-                  style={{ background: `${project.color}18`, border: `1px solid ${project.color}35` }}
-                >
-                  {renderIcon(project.iconName, project.color, 22)}
+          {liveProjectsList.map(project => {
+            const pTrans = t.liveProjects.projects[project.id];
+            const pTitle = pTrans?.title || project.title;
+            const pSub = pTrans?.subtitle || project.subtitle;
+            const pDesc = pTrans?.description || project.description;
+            const pHighlights = pTrans?.highlights || project.highlights;
+            return (
+              <div key={project.id} className="grid-card" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+                <div className="grid-card-thumb">
+                  <img src={project.image} alt={pTitle} className="grid-card-img" loading="lazy" />
                 </div>
-                <span className="spotlight-badge" style={{ padding: '0.2rem 0.75rem', fontSize: '0.75rem' }}>
-                  <span className="spotlight-badge-dot" />
-                  <span>يعمل الآن</span>
-                </span>
+                <div className="grid-card-header">
+                  <div 
+                    className="grid-card-icon"
+                    style={{ background: `${project.color}18`, border: `1px solid ${project.color}35` }}
+                  >
+                    {renderIcon(project.iconName, project.color, 22)}
+                  </div>
+                </div>
+                <h3 className="grid-card-title">{pTitle}</h3>
+                <div className="grid-card-subtitle">{pSub}</div>
+                <p className="grid-card-desc">{pDesc}</p>
+                <div className="spotlight-tags" style={{ margin: 0 }}>
+                  {pHighlights.map(tag => (
+                    <span key={tag} className="spotlight-tag-item">#{tag}</span>
+                  ))}
+                </div>
+                <div className="grid-card-footer">
+                  <a
+                    href={project.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="grid-card-btn"
+                  >
+                    <span>{t.liveProjects.openProject}</span>
+                    <ExternalLink size={15} />
+                  </a>
+                </div>
               </div>
-              <h3 className="grid-card-title">{project.title}</h3>
-              <div className="grid-card-subtitle">{project.subtitle}</div>
-              <p className="grid-card-desc">{project.description}</p>
-              <div className="spotlight-tags" style={{ margin: 0 }}>
-                {project.highlights.map(tag => (
-                  <span key={tag} className="spotlight-tag-item">#{tag}</span>
-                ))}
-              </div>
-              <div className="grid-card-footer">
-                <span className="marquee-card-domain">{project.displayDomain}</span>
-                <a
-                  href={project.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="grid-card-btn"
-                >
-                  <span>فتح المشروع الحي</span>
-                  <ExternalLink size={15} />
-                </a>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

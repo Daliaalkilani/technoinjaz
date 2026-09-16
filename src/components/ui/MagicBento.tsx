@@ -90,17 +90,6 @@ const calculateSpotlightValues = (radius: number) => ({
   fadeDistance: radius * 0.75
 });
 
-const updateCardGlowProperties = (card: HTMLElement, mouseX: number, mouseY: number, glow: number, radius: number) => {
-  const rect = card.getBoundingClientRect();
-  const relativeX = ((mouseX - rect.left) / rect.width) * 100;
-  const relativeY = ((mouseY - rect.top) / rect.height) * 100;
-
-  card.style.setProperty('--glow-x', `${relativeX}%`);
-  card.style.setProperty('--glow-y', `${relativeY}%`);
-  card.style.setProperty('--glow-intensity', glow.toString());
-  card.style.setProperty('--glow-radius', `${radius}px`);
-};
-
 interface ParticleCardProps {
   children: React.ReactNode;
   className?: string;
@@ -395,16 +384,57 @@ const GlobalSpotlight: React.FC<GlobalSpotlightProps> = ({
     document.body.appendChild(spotlight);
     spotlightRef.current = spotlight;
 
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!spotlightRef.current || !gridRef.current) return;
+    let isGridVisible = false;
+    let cardRectsCache: Array<{ element: HTMLElement; rect: DOMRect; centerX: number; centerY: number; maxRadius: number }> = [];
+    let sectionRect: DOMRect | null = null;
 
+    const updateRects = () => {
+      if (!gridRef.current || !isGridVisible) return;
       const section = gridRef.current.closest('.bento-section');
-      const rect = section?.getBoundingClientRect();
+      sectionRect = section?.getBoundingClientRect() || null;
+      const cards = gridRef.current.querySelectorAll<HTMLElement>('.magic-bento-card');
+      cardRectsCache = Array.from(cards).map(card => {
+        const r = card.getBoundingClientRect();
+        return {
+          element: card,
+          rect: r,
+          centerX: r.left + r.width / 2,
+          centerY: r.top + r.height / 2,
+          maxRadius: Math.max(r.width, r.height) / 2
+        };
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isGridVisible = entry.isIntersecting;
+        if (isGridVisible) {
+          updateRects();
+        } else {
+          if (spotlightRef.current) {
+            spotlightRef.current.style.opacity = '0';
+          }
+        }
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(gridRef.current);
+
+    const handleScrollOrResize = () => {
+      if (isGridVisible) updateRects();
+    };
+    window.addEventListener('scroll', handleScrollOrResize, { passive: true });
+    window.addEventListener('resize', handleScrollOrResize);
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isGridVisible || !spotlightRef.current || !gridRef.current) return;
+
+      if (!sectionRect) updateRects();
+      const rect = sectionRect;
       const mouseInside =
         rect && e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom;
 
       isInsideSection.current = mouseInside || false;
-      const cards = gridRef.current.querySelectorAll<HTMLElement>('.magic-bento-card');
 
       if (!mouseInside) {
         gsap.to(spotlightRef.current, {
@@ -412,8 +442,8 @@ const GlobalSpotlight: React.FC<GlobalSpotlightProps> = ({
           duration: 0.3,
           ease: 'power2.out'
         });
-        cards.forEach(card => {
-          card.style.setProperty('--glow-intensity', '0');
+        cardRectsCache.forEach(item => {
+          item.element.style.setProperty('--glow-intensity', '0');
         });
         return;
       }
@@ -421,13 +451,9 @@ const GlobalSpotlight: React.FC<GlobalSpotlightProps> = ({
       const { proximity, fadeDistance } = calculateSpotlightValues(spotlightRadius);
       let minDistance = Infinity;
 
-      cards.forEach(card => {
-        const cardElement = card;
-        const cardRect = cardElement.getBoundingClientRect();
-        const centerX = cardRect.left + cardRect.width / 2;
-        const centerY = cardRect.top + cardRect.height / 2;
+      cardRectsCache.forEach(item => {
         const distance =
-          Math.hypot(e.clientX - centerX, e.clientY - centerY) - Math.max(cardRect.width, cardRect.height) / 2;
+          Math.hypot(e.clientX - item.centerX, e.clientY - item.centerY) - item.maxRadius;
         const effectiveDistance = Math.max(0, distance);
 
         minDistance = Math.min(minDistance, effectiveDistance);
@@ -439,7 +465,12 @@ const GlobalSpotlight: React.FC<GlobalSpotlightProps> = ({
           glowIntensity = (fadeDistance - effectiveDistance) / (fadeDistance - proximity);
         }
 
-        updateCardGlowProperties(cardElement, e.clientX, e.clientY, glowIntensity, spotlightRadius);
+        const relativeX = ((e.clientX - item.rect.left) / item.rect.width) * 100;
+        const relativeY = ((e.clientY - item.rect.top) / item.rect.height) * 100;
+        item.element.style.setProperty('--glow-x', `${relativeX}%`);
+        item.element.style.setProperty('--glow-y', `${relativeY}%`);
+        item.element.style.setProperty('--glow-intensity', glowIntensity.toString());
+        item.element.style.setProperty('--glow-radius', `${spotlightRadius}px`);
       });
 
       gsap.to(spotlightRef.current, {
@@ -465,8 +496,8 @@ const GlobalSpotlight: React.FC<GlobalSpotlightProps> = ({
 
     const handleMouseLeave = () => {
       isInsideSection.current = false;
-      gridRef.current?.querySelectorAll<HTMLElement>('.magic-bento-card').forEach(card => {
-        card.style.setProperty('--glow-intensity', '0');
+      cardRectsCache.forEach(item => {
+        item.element.style.setProperty('--glow-intensity', '0');
       });
       if (spotlightRef.current) {
         gsap.to(spotlightRef.current, {
@@ -477,10 +508,13 @@ const GlobalSpotlight: React.FC<GlobalSpotlightProps> = ({
       }
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mousemove', handleMouseMove, { passive: true });
     document.addEventListener('mouseleave', handleMouseLeave);
 
     return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', handleScrollOrResize);
+      window.removeEventListener('resize', handleScrollOrResize);
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseleave', handleMouseLeave);
       if (spotlight.parentNode) {

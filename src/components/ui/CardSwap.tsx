@@ -165,28 +165,55 @@ const CardSwap: React.FC<CardSwapProps> = ({
       });
     };
 
-    swap();
-    intervalRef.current = window.setInterval(swap, delay);
+    let isVisible = false;
+    const startInterval = () => {
+      clearInterval(intervalRef.current);
+      if (isVisible) {
+        intervalRef.current = window.setInterval(swap, delay);
+      }
+    };
 
-    if (pauseOnHover) {
-      const node = container.current!;
+    const stopInterval = () => {
+      clearInterval(intervalRef.current);
+    };
+
+    const observer = new IntersectionObserver(([entry]) => {
+      isVisible = entry.isIntersecting;
+      if (isVisible) {
+        startInterval();
+      } else {
+        stopInterval();
+      }
+    }, { threshold: 0.05 });
+
+    if (container.current) {
+      observer.observe(container.current);
+    }
+
+    if (pauseOnHover && container.current) {
+      const node = container.current;
       const pause = () => {
         tlRef.current?.pause();
-        clearInterval(intervalRef.current);
+        stopInterval();
       };
       const resume = () => {
         tlRef.current?.play();
-        intervalRef.current = window.setInterval(swap, delay);
+        startInterval();
       };
       node.addEventListener('mouseenter', pause);
       node.addEventListener('mouseleave', resume);
       return () => {
+        observer.disconnect();
         node.removeEventListener('mouseenter', pause);
         node.removeEventListener('mouseleave', resume);
-        clearInterval(intervalRef.current);
+        stopInterval();
       };
     }
-    return () => clearInterval(intervalRef.current);
+
+    return () => {
+      observer.disconnect();
+      stopInterval();
+    };
   }, [cardDistance, verticalDistance, delay, pauseOnHover, skewAmount, easing]);
 
   const rendered = childArr.map((child, i) =>

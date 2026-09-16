@@ -41,15 +41,14 @@
   z-index: 999999;
   opacity: 1;
   visibility: visible;
-  transition: opacity 0.85s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.85s ease, transform 0.85s ease, filter 0.85s ease;
+  will-change: opacity;
+  transition: opacity 0.4s cubic-bezier(0.2, 0, 0.2, 1), visibility 0.4s ease;
   pointer-events: auto;
 }
 
 #te-loader.te-fade-out {
   opacity: 0;
   visibility: hidden;
-  transform: scale(1.04);
-  filter: blur(8px);
   pointer-events: none;
 }
 
@@ -251,14 +250,12 @@
   user-select: none;
   pointer-events: none;
   cursor: default;
-  filter: drop-shadow(0 8px 24px #20cfb31f);
 }
 
 #te-loader .rocket-backlight {
   position: absolute;
   inset: 0 -10%;
-  background: radial-gradient(ellipse, #2cdcc633, transparent 68%);
-  filter: blur(22px);
+  background: radial-gradient(ellipse, rgba(44, 220, 198, 0.3) 0%, rgba(44, 220, 198, 0.08) 45%, transparent 70%);
   opacity: calc(.2 + var(--charge) * .5);
   pointer-events: none;
 }
@@ -320,7 +317,6 @@
   stroke-width: 1.6;
   stroke-dasharray: 289.03;
   stroke-dashoffset: 289.03;
-  filter: drop-shadow(0 0 4px #67f5db);
 }
 
 /* Engine exhausts & thrusters */
@@ -356,8 +352,6 @@
   inset: 0;
   clip-path: polygon(33% 0, 67% 0, 89% 18%, 73% 48%, 61% 80%, 50% 100%, 39% 80%, 27% 48%, 11% 18%);
   background: linear-gradient(#e9fff9, #63ffe0 9%, #28d7cc 27%, #6c6df37a 64%, transparent);
-  filter: blur(2px);
-  animation: te-flame 190ms ease-in-out infinite alternate;
 }
 
 #te-loader .engine-core {
@@ -368,15 +362,12 @@
   height: 61%;
   background: linear-gradient(#ffffff, #c7fff1 20%, #57ffcda6 55%, transparent);
   clip-path: polygon(25% 0, 75% 0, 100% 20%, 50% 100%, 0 20%);
-  filter: blur(1px);
-  animation: te-flame 130ms ease-in-out infinite alternate-reverse;
 }
 
 #te-loader .engine-aura {
   position: absolute;
   inset: -20% -85% -5%;
-  background: radial-gradient(ellipse at 50% 20%, #3effc838, #33dbda18 30%, transparent 67%);
-  filter: blur(13px);
+  background: radial-gradient(ellipse at 50% 20%, rgba(62, 255, 200, 0.28), rgba(51, 219, 218, 0.12) 30%, transparent 67%);
 }
 
 /* Phase transitions */

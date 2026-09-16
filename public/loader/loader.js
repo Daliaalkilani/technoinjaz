@@ -31,13 +31,13 @@
 
   let width = 0, height = 0, dpr = 1, anchor = null, stars = [], particles = [], waves = [], trail = [];
   let rafId = 0, lastFrame = performance.now(), hiddenAt = 0, lastClock = '', lastPaintedProgress = -1;
-  let particleBudget = 340, emissionDebt = 0, arrivalPose = null, resetTimer = 0;
+  let particleBudget = 30, emissionDebt = 0, arrivalPose = null, resetTimer = 0;
   let userMotionOverride = null;
   let fadeOutDone = false;
 
   const state = {
     phase: 'idle', active: false, progress: 0, indeterminate: false,
-    demo: config.demo !== false, loop: false, duration: 4200, startedAt: 0, arrivalAt: 0,
+    demo: config.demo !== false, loop: false, duration: 2500, startedAt: 0, arrivalAt: 0,
     readyRequested: false, sound: false, calm: false,
     charge: 0, engine: 0, warp: 0, destroyed: false, runId: 0,
     pose: { x: 0, y: 0, s: 1, r: 0, opacity: 1 },
@@ -64,79 +64,20 @@
         el.style.display = 'none';
         destroy();
         emit('completed');
-      }, 850);
+      }, 420);
     }
   }
 
   /* Sound synthesised locally and only enabled after user gesture */
   class SoundFX {
-    constructor() { this.context = null; this.nodes = []; this.gain = null; this.tone = null; }
-    init() {
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      if (!AudioContext) return false;
-      try {
-        this.context ||= new AudioContext();
-        if (this.context.state === 'suspended') this.context.resume().catch(() => {});
-        return true;
-      } catch (_) { return false; }
-    }
-    chirp(from = 390, to = 750, duration = .16, volume = .025) {
-      if (!state.sound || !this.init()) return;
-      const c = this.context, now = c.currentTime;
-      const osc = c.createOscillator(), g = c.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(from, now);
-      osc.frequency.exponentialRampToValueAtTime(to, now + duration);
-      g.gain.setValueAtTime(0, now);
-      g.gain.linearRampToValueAtTime(volume, now + .02);
-      g.gain.exponentialRampToValueAtTime(.0001, now + duration);
-      osc.connect(g); g.connect(c.destination);
-      osc.start(now); osc.stop(now + duration + .02);
-    }
-    start() {
-      if (!state.sound || !this.init()) return;
-      this.stop();
-      const c = this.context, now = c.currentTime;
-      const bufferSize = Math.floor(c.sampleRate * 1.5);
-      const buffer = c.createBuffer(1, bufferSize, c.sampleRate);
-      const data = buffer.getChannelData(0);
-      let lastOut = 0;
-      for (let i = 0; i < bufferSize; i++) {
-        const white = Math.random() * 2 - 1;
-        data[i] = (lastOut + (.02 * white)) / 1.02;
-        lastOut = data[i];
-      }
-      const noise = c.createBufferSource();
-      noise.buffer = buffer; noise.loop = true;
-      const filter = c.createBiquadFilter();
-      filter.type = 'lowpass'; filter.frequency.setValueAtTime(120, now);
-      this.gain = c.createGain(); this.gain.gain.setValueAtTime(0, now);
-      noise.connect(filter); filter.connect(this.gain); this.gain.connect(c.destination);
-      noise.start(now);
-      this.tone = c.createOscillator();
-      const toneGain = c.createGain(); toneGain.gain.setValueAtTime(0, now);
-      this.tone.type = 'triangle'; this.tone.frequency.setValueAtTime(65, now);
-      this.tone.connect(toneGain); toneGain.connect(c.destination);
-      this.tone.start(now);
-      this.nodes.push(noise, filter, this.gain, this.tone, toneGain);
-    }
-    update(engine, charge) {
-      if (!state.sound || !this.gain || !this.context) return;
-      const now = this.context.currentTime;
-      const targetGain = .003 + engine * .035 + charge * .007;
-      this.gain.gain.setTargetAtTime(targetGain, now, .08);
-    }
-    stop() {
-      for (const node of this.nodes) { try { if (node.stop) node.stop(); node.disconnect(); } catch (_) {} }
-      this.nodes = []; this.gain = null; this.tone = null;
-    }
-    success() {
-      this.stop();
-      this.chirp(523.25, 523.25, .5, .014);
-      this.chirp(659.25, 659.25, .65, .010);
-      this.chirp(783.99, 783.99, .8, .009);
-    }
-    destroy() { this.stop(); if (this.context) this.context.close().catch(() => {}); }
+    constructor() { this.context = null; }
+    init() { return false; }
+    chirp() {}
+    start() {}
+    update() {}
+    stop() {}
+    success() {}
+    destroy() {}
   }
   const audio = new SoundFX();
 
@@ -169,10 +110,10 @@
     }
     const anchorEl = $('rocket-anchor') || $('stage');
     if (anchorEl) anchor = anchorEl.getBoundingClientRect();
-    particleBudget = width < 721 ? 160 : 340;
+    particleBudget = width < 721 ? 40 : 80;
     let seed = 41923;
     const random = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
-    stars = Array.from({ length: Math.round(clamp(width * height / 11500, 40, 150)) }, () => ({
+    stars = Array.from({ length: Math.round(clamp(width * height / 22000, 25, 70)) }, () => ({
       x: random() * width, y: random() * height, r: random() * .9 + .25,
       a: random() * .35 + .07, depth: random() * .8 + .2, twinkle: random() * 6.28
     }));
@@ -253,7 +194,7 @@
     reset(true);
     state.runId += 1;
     state.demo = true;
-    state.duration = Number(options.duration || 4200);
+    state.duration = Number(options.duration || 2500);
     state.active = true; state.startedAt = performance.now();
     setPhase('charging');
     audio.start(); audio.chirp(); addWave(point(.489, .834));
@@ -279,10 +220,10 @@
       return;
     }
 
-    // Charging phase: 0 -> 1100ms
-    if (elapsed < 1100) {
+    // Charging phase: 0 -> 750ms
+    if (elapsed < 750) {
       setPhase('charging');
-      const t = clamp(elapsed / 1100);
+      const t = clamp(elapsed / 750);
       state.charge = t; state.engine = 0; state.warp = 0;
       state.pose = {
         x: Math.sin(now * .026) * t * .35,
@@ -292,10 +233,10 @@
         opacity: 1
       };
     }
-    // Ignition phase: 1100ms -> 1850ms
-    else if (elapsed < 1850) {
+    // Ignition phase: 750ms -> 1400ms
+    else if (elapsed < 1400) {
       setPhase('ignition');
-      const t = clamp((elapsed - 1100) / 750);
+      const t = clamp((elapsed - 750) / 650);
       state.charge = 1;
       state.engine = .25 + .75 * t;
       state.warp = t * .12;
@@ -307,10 +248,10 @@
         opacity: 1
       };
     }
-    // Flight & Liftoff phase: 1850ms -> 4200ms
+    // Flight & Liftoff phase: 1400ms -> 2500ms
     else {
       setPhase('flight');
-      const t = clamp((elapsed - 1850) / 2350);
+      const t = clamp((elapsed - 1400) / 1100);
       const travel = (anchor && anchor.top ? anchor.top + anchor.height + 400 : 900);
       state.charge = 1;
       state.engine = 1;
@@ -320,11 +261,11 @@
         y: -travel * Math.pow(t, 2.2),
         s: Math.max(.15, 1.018 - t * .55),
         r: -Math.sin(t * Math.PI) * 10,
-        opacity: 1 - clamp((t - .90) / .10)
+        opacity: 1 - clamp((t - .85) / .15)
       };
 
       // Trigger seamless background fade-out as rocket ascends into space
-      if (t >= 0.82 && !fadeOutDone) {
+      if (t >= 0.72 && !fadeOutDone) {
         triggerFadeOut();
       }
 
@@ -338,28 +279,37 @@
     }
   }
 
+  let lastEngine = -1, lastCharge = -1;
   function applyPose() {
     const p = state.pose;
     if (rocket) {
       rocket.style.transform = `translate3d(${p.x.toFixed(2)}px,${p.y.toFixed(2)}px,0) rotate(${p.r.toFixed(2)}deg) scale(${p.s.toFixed(4)})`;
       rocket.style.opacity = p.opacity.toFixed(3);
     }
-    if (loaderEl) {
-      loaderEl.style.setProperty('--engine', state.engine.toFixed(3));
-      loaderEl.style.setProperty('--charge', state.charge.toFixed(3));
+    const eng = Math.round(state.engine * 50) / 50;
+    const chg = Math.round(state.charge * 50) / 50;
+    if (loaderEl && (eng !== lastEngine || chg !== lastCharge)) {
+      if (eng !== lastEngine) {
+        lastEngine = eng;
+        loaderEl.style.setProperty('--engine', eng.toString());
+      }
+      if (chg !== lastCharge) {
+        lastCharge = chg;
+        loaderEl.style.setProperty('--charge', chg.toString());
+      }
     }
     const gf = $('gauge-fill');
     if (gf) gf.style.strokeDashoffset = String(289.03 * (1 - state.charge));
   }
 
   function emitParticles(dt) {
-    if (state.calm || !state.active || particles.length >= particleBudget) return;
-    emissionDebt += dt * (state.phase === 'charging' ? 35 : state.engine > .1 ? 130 * state.engine : 0);
-    const count = Math.min(8, Math.floor(emissionDebt)); emissionDebt -= count;
+    if (state.calm || !state.active || particles.length >= 30) return;
+    emissionDebt += dt * (state.phase === 'charging' ? 25 : state.engine > .1 ? 70 * state.engine : 0);
+    const count = Math.min(4, Math.floor(emissionDebt)); emissionDebt -= count;
     for (let i = 0; i < count; i++) {
       if (state.phase === 'charging') {
-        const target = point(.489, .834), a = Math.random() * 6.283, r = 65 + Math.random() * 115;
-        const life = .5 + Math.random() * .3;
+        const target = point(.489, .834), a = Math.random() * 6.283, r = 50 + Math.random() * 80;
+        const life = .4 + Math.random() * .2;
         particles.push({
           x: target.x + Math.cos(a) * r, y: target.y + Math.sin(a) * r * .72,
           vx: 0, vy: 0, life, maxLife: life, size: .8 + Math.random(), type: 'charge', purple: i % 4 === 0
@@ -368,59 +318,51 @@
         const base = point(.489 + (Math.random() - .5) * .08, .98);
         const vy = (160 + Math.random() * 260) * (state.phase === 'ignition' ? .6 : 1.15);
         const vx = (Math.random() - .5) * (state.phase === 'ignition' ? 65 : 42);
-        const life = .35 + Math.random() * .5;
+        const life = .3 + Math.random() * .4;
         particles.push({
           x: base.x, y: base.y, vx, vy, life, maxLife: life,
-          size: 1 + Math.random() * 2.2, type: 'engine', purple: Math.random() < .28
+          size: 1 + Math.random() * 1.8, type: 'engine', purple: Math.random() < .28
         });
       }
     }
   }
 
   function draw(now, dt) {
-    if (!ctx || !canvas) return;
+    if (!ctx || !canvas || state.destroyed) return;
     ctx.clearRect(0, 0, width, height);
+    if (fadeOutDone) return;
 
-    // Starfield
+    // Batched Starfield
+    ctx.fillStyle = 'rgba(215, 248, 245, 0.45)';
+    ctx.beginPath();
     for (let i = 0; i < stars.length; i++) {
       const s = stars[i];
       if (state.active && state.warp > .05) {
         s.y += dt * (40 + state.warp * 720 * s.depth);
         if (s.y > height + 20) { s.y = -10; s.x = Math.random() * width; }
-        const len = 1 + state.warp * 30 * s.depth;
-        ctx.strokeStyle = `rgba(175,248,235,${s.a * (1 + state.warp)})`;
-        ctx.lineWidth = Math.max(.5, s.r * .8);
-        ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(s.x, s.y - len); ctx.stroke();
-      } else {
-        const tw = .7 + Math.sin(now * .0025 + s.twinkle) * .3;
-        ctx.fillStyle = `rgba(215,248,245,${s.a * tw})`;
-        ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.283); ctx.fill();
       }
+      ctx.moveTo(s.x + s.r, s.y);
+      ctx.arc(s.x, s.y, s.r, 0, 6.283);
     }
+    ctx.fill();
 
-    // Engine plume particles
-    for (let i = particles.length - 1; i >= 0; i--) {
-      const p = particles[i]; p.life -= dt;
-      if (p.life <= 0) { particles.splice(i, 1); continue; }
-      if (p.type === 'charge') {
-        const target = point(.489, .834);
-        p.x += (target.x - p.x) * dt * 4.2; p.y += (target.y - p.y) * dt * 4.2;
-      } else {
-        p.x += p.vx * dt; p.y += p.vy * dt; if (p.type === 'burst') p.vy += 18 * dt;
+    // Batched Particles
+    if (particles.length > 0) {
+      ctx.fillStyle = 'rgba(111, 247, 218, 0.65)';
+      ctx.beginPath();
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i]; p.life -= dt;
+        if (p.life <= 0) { particles.splice(i, 1); continue; }
+        if (p.type === 'charge') {
+          const target = point(.489, .834);
+          p.x += (target.x - p.x) * dt * 4.2; p.y += (target.y - p.y) * dt * 4.2;
+        } else {
+          p.x += p.vx * dt; p.y += p.vy * dt; if (p.type === 'burst') p.vy += 18 * dt;
+        }
+        ctx.moveTo(p.x + p.size, p.y);
+        ctx.arc(p.x, p.y, Math.max(.35, p.size), 0, 6.283);
       }
-      const a = clamp(p.life / p.maxLife) * .75;
-      ctx.fillStyle = p.purple ? `rgba(135,114,239,${a})` : `rgba(111,247,218,${a})`;
-      ctx.beginPath(); ctx.arc(p.x, p.y, Math.max(.35, p.size), 0, 6.283); ctx.fill();
-    }
-
-    // Expanding shockwaves
-    for (let i = waves.length - 1; i >= 0; i--) {
-      const w = waves[i]; w.life += dt;
-      if (w.life >= w.duration) { waves.splice(i, 1); continue; }
-      const t = w.life / w.duration, radius = 24 + ease(t) * w.max;
-      ctx.strokeStyle = `rgba(87,240,207,${.28 * (1 - t) * (1 - t)})`;
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.ellipse(w.x, w.y, radius, radius * (w.floor ? .17 : 1), 0, 0, 6.283); ctx.stroke();
+      ctx.fill();
     }
   }
 

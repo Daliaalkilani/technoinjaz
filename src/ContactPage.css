@@ -396,6 +396,12 @@
   border: 1px solid rgba(37, 211, 102, 0.3);
 }
 
+.info-badge-action.email {
+  background: rgba(0, 210, 255, 0.15);
+  color: #00d2ff;
+  border: 1px solid rgba(0, 210, 255, 0.3);
+}
+
 .info-badge-action.insta {
   background: rgba(225, 48, 108, 0.15);
   color: #f472b6;
@@ -478,4 +484,59 @@
   .contact-container {
     padding: 20px 16px 60px;
   }
+}
+
+/* =========================================================
+   LIGHT MODE OVERRIDES FOR CONTACT PAGE
+   ========================================================= */
+[data-theme="light"] .contact-page-wrapper {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+[data-theme="light"] .contact-hero-title {
+  color: #0f172a;
+  text-shadow: none;
+}
+
+[data-theme="light"] .contact-hero-desc {
+  color: #334155;
+}
+
+[data-theme="light"] .contact-form-panel,
+[data-theme="light"] .contact-info-card,
+[data-theme="light"] .contact-map-card {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .contact-panel-title {
+  color: #0f172a;
+}
+
+[data-theme="light"] .contact-panel-subtitle {
+  color: #475569;
+}
+
+[data-theme="light"] .contact-input,
+[data-theme="light"] .contact-textarea {
+  background: #f8fafc;
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #0f172a;
+}
+
+[data-theme="light"] .contact-input:focus,
+[data-theme="light"] .contact-textarea:focus {
+  background: #ffffff;
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+[data-theme="light"] .contact-label {
+  color: #334155;
+}
+
+[data-theme="light"] .map-iframe {
+  filter: none;
 }

@@ -1,22 +1,23 @@
 import React from 'react';
 import MagicBento from './MagicBento';
-import GridDistortion from '../ui/GridDistortion';
 import heroBgDistortion from '../../assets/hero-bg-distortion.png';
+import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import '../projects/ProjectsSection.css';
 import './ArticlesSection.css';
 
 const ArticlesSection: React.FC = () => {
+  const { lang, t } = useThemeLanguage();
+
   return (
-    <section id="articles" className="articles-section">
-      {/* Interactive Grid Distortion Background */}
-      <div className="projects-grid-distortion-wrapper">
+    <section id="articles" className="articles-section" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+      {/* Static Background Image with Gradient Blend (No Mouse Interaction) */}
+      <div className="projects-grid-distortion-wrapper" style={{ pointerEvents: 'none' }}>
         <div className="projects-grid-distortion-inner">
-          <GridDistortion
-            imageSrc={heroBgDistortion}
-            grid={49}
-            mouse={0.1}
-            strength={0.05}
-            relaxation={0.53}
+          <img
+            src={heroBgDistortion}
+            alt=""
+            aria-hidden="true"
+            className="projects-bg-static-img"
           />
         </div>
         {/* Ambient vignette and smooth dark gradient blend */}
@@ -26,9 +27,9 @@ const ArticlesSection: React.FC = () => {
       <div className="articles-container">
         {/* Section Header */}
         <div className="articles-header">
-          <h2 className="articles-title">مقالاتنا الهندسية</h2>
+          <h2 className="articles-title">{t.articles.heading}</h2>
           <p className="articles-subtitle">
-            دراسات وأبحاث تقنية توثق التجارب المعمارية والخوارزميات المبتكرة في مشاريع تكنو إنجاز
+            {t.articles.subtitle}
           </p>
         </div>
 

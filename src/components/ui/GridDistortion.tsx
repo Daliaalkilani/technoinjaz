@@ -189,51 +189,103 @@ export const GridDistortion = ({
       });
     };
 
-    container.addEventListener('mousemove', handleMouseMove);
+    let isVisible = false;
+    let activityTimer = 0;
+
+    const wakeUp = () => {
+      if (isVisible && !animationIdRef.current) {
+        animate();
+      }
+    };
+
+    const handleMouseMoveWrapped = (e: MouseEvent) => {
+      handleMouseMove(e);
+      wakeUp();
+    };
+
+    container.addEventListener('mousemove', handleMouseMoveWrapped, { passive: true });
     container.addEventListener('mouseleave', handleMouseLeave);
 
     handleResize();
 
     const animate = () => {
-      animationIdRef.current = requestAnimationFrame(animate);
+      if (!isVisible) {
+        animationIdRef.current = null;
+        return;
+      }
 
       if (!renderer || !scene || !camera) return;
 
-      uniforms.time.value += 0.05;
+      uniforms.time.value += 0.03;
 
       const data = dataTexture.image.data;
       if (!data) return;
 
+      let maxDiff = 0;
       for (let i = 0; i < size * size; i++) {
         data[i * 4] *= relaxation;
         data[i * 4 + 1] *= relaxation;
+        const diff = Math.abs(data[i * 4]) + Math.abs(data[i * 4 + 1]);
+        if (diff > maxDiff) maxDiff = diff;
       }
 
       const gridMouseX = size * mouseState.x;
       const gridMouseY = size * mouseState.y;
       const maxDist = size * mouse;
 
-      for (let i = 0; i < size; i++) {
-        for (let j = 0; j < size; j++) {
-          const distSq = Math.pow(gridMouseX - i, 2) + Math.pow(gridMouseY - j, 2);
-          if (distSq < maxDist * maxDist) {
-            const index = 4 * (i + size * j);
-            const power = Math.min(maxDist / Math.sqrt(distSq), 10);
-            data[index] += strength * 100 * mouseState.vX * power;
-            data[index + 1] -= strength * 100 * mouseState.vY * power;
+      if (Math.abs(mouseState.vX) > 0.001 || Math.abs(mouseState.vY) > 0.001) {
+        for (let i = 0; i < size; i++) {
+          for (let j = 0; j < size; j++) {
+            const distSq = Math.pow(gridMouseX - i, 2) + Math.pow(gridMouseY - j, 2);
+            if (distSq < maxDist * maxDist) {
+              const index = 4 * (i + size * j);
+              const power = Math.min(maxDist / Math.sqrt(distSq), 10);
+              data[index] += strength * 100 * mouseState.vX * power;
+              data[index + 1] -= strength * 100 * mouseState.vY * power;
+            }
           }
         }
+        maxDiff = 1;
       }
 
       dataTexture.needsUpdate = true;
       renderer.render(scene, camera);
+
+      // If distortion has settled and mouse is still, pause animation until next wakeUp
+      if (maxDiff < 0.01 && Math.abs(mouseState.vX) < 0.001 && Math.abs(mouseState.vY) < 0.001) {
+        activityTimer++;
+        if (activityTimer > 60) {
+          animationIdRef.current = null;
+          return;
+        }
+      } else {
+        activityTimer = 0;
+      }
+
+      animationIdRef.current = requestAnimationFrame(animate);
     };
 
-    animate();
+    const intersectionObserver = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+        if (isVisible) {
+          wakeUp();
+        } else {
+          if (animationIdRef.current) {
+            cancelAnimationFrame(animationIdRef.current);
+            animationIdRef.current = null;
+          }
+        }
+      },
+      { threshold: 0.05 }
+    );
+    intersectionObserver.observe(container);
 
     return () => {
+      intersectionObserver.disconnect();
       if (animationIdRef.current) {
         cancelAnimationFrame(animationIdRef.current);
+        animationIdRef.current = null;
       }
 
       if (resizeObserverRef.current) {
@@ -242,7 +294,7 @@ export const GridDistortion = ({
         window.removeEventListener('resize', handleResize);
       }
 
-      container.removeEventListener('mousemove', handleMouseMove);
+      container.removeEventListener('mousemove', handleMouseMoveWrapped);
       container.removeEventListener('mouseleave', handleMouseLeave);
 
       if (renderer) {

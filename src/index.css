@@ -1,5 +1,31 @@
 @import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700;800&display=swap');
 
+:root {
+  --bg-main: #030508;
+  --bg-surface: #0a0e1a;
+  --bg-card: rgba(13, 16, 26, 0.65);
+  --bg-navbar: #000000;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --text-main: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.72);
+  --text-faint: rgba(255, 255, 255, 0.45);
+  --accent-cyan: #00d2ff;
+  --accent-teal: #0aeec3;
+}
+
+[data-theme="light"] {
+  --bg-main: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-card: rgba(255, 255, 255, 0.9);
+  --bg-navbar: rgba(255, 255, 255, 0.9);
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --text-main: #0f172a;
+  --text-muted: #334155;
+  --text-faint: #64748b;
+  --accent-cyan: #0284c7;
+  --accent-teal: #0d9488;
+}
+
 *,
 *::before,
 *::after {
@@ -14,11 +40,12 @@ body {
   min-height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #030508;
-  color: #ffffff;
+  background-color: var(--bg-main);
+  color: var(--text-main);
   font-family: 'Readex Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #root {
@@ -26,6 +53,8 @@ body {
   min-height: 100%;
   margin: 0;
   padding: 0;
+  background-color: var(--bg-main);
+  color: var(--text-main);
 }
 
 /* ==========================================================================
@@ -104,6 +133,65 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+/* Language Capsule Toggle [ عربي | EN ] */
+.lang-capsule-toggle {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 9999px;
+  padding: 3px;
+  gap: 3px;
+  backdrop-filter: blur(8px);
+}
+
+.lang-pill-btn {
+  padding: 4px 12px;
+  border-radius: 9999px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  line-height: 1.2;
+}
+
+.lang-pill-btn:hover {
+  color: #00d2ff;
+}
+
+.lang-pill-btn.active {
+  background: linear-gradient(135deg, #00d2ff, #0aeec3);
+  color: #030712;
+  box-shadow: 0 2px 10px rgba(0, 210, 255, 0.4);
+}
+
+/* Theme Toggle Button (Sun / Moon) */
+.theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fbbf24;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(8px);
+}
+
+.theme-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(251, 191, 36, 0.5);
+  box-shadow: 0 0 14px rgba(251, 191, 36, 0.35);
+  transform: rotate(15deg) scale(1.05);
 }
 
 .navbar-auth-btn {
@@ -271,4 +359,107 @@ body {
   line-height: 1.65;
   margin: 0;
 }
+
+/* ==========================================================================
+   SCROLL PERFORMANCE & DEFERRED RENDERING (Modern Web Guidance)
+   ========================================================================== */
+.scroll-deferred-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 800px;
+}
+
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+/* ==========================================================================
+   LIGHT MODE OVERRIDES FOR GLOBAL STYLES & NAVBAR
+   ========================================================================== */
+[data-theme="light"] .top-navbar-container {
+  background-color: rgba(255, 255, 255, 0.88);
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .navbar-brand-text {
+  color: #0f172a;
+  text-shadow: none;
+}
+
+[data-theme="light"] .navbar-brand-link:hover .navbar-brand-text {
+  color: #0284c7;
+}
+
+[data-theme="light"] .lang-capsule-toggle {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .lang-pill-btn {
+  color: #475569;
+}
+
+[data-theme="light"] .lang-pill-btn.active {
+  background: linear-gradient(135deg, #0284c7, #0d9488);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+}
+
+[data-theme="light"] .theme-toggle-btn {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #0284c7;
+}
+
+[data-theme="light"] .theme-toggle-btn:hover {
+  background: rgba(2, 132, 199, 0.1);
+  border-color: rgba(2, 132, 199, 0.4);
+  box-shadow: 0 0 12px rgba(2, 132, 199, 0.25);
+}
+
+[data-theme="light"] .navbar-auth-btn {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #0f172a;
+}
+
+[data-theme="light"] .navbar-auth-btn:hover {
+  background: rgba(2, 132, 199, 0.1);
+  border-color: rgba(2, 132, 199, 0.4);
+  color: #0284c7;
+  box-shadow: 0 0 14px rgba(2, 132, 199, 0.2);
+}
+
+[data-theme="light"] .tab-page-title {
+  color: #0f172a;
+  text-shadow: none;
+}
+
+[data-theme="light"] .tab-page-subtitle {
+  color: #334155;
+}
+
+[data-theme="light"] .tab-page-card {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .tab-page-card:hover {
+  border-color: rgba(2, 132, 199, 0.4);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .tab-page-card-title {
+  color: #0f172a;
+}
+
+[data-theme="light"] .tab-page-card-desc {
+  color: #475569;
+}
+
 

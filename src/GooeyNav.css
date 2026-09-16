@@ -238,3 +238,45 @@
     opacity: 0;
   }
 }
+
+/* =========================================================
+   LIGHT MODE OVERRIDES FOR GOOEY NAV
+   ========================================================= */
+[data-theme="light"] .gooey-nav-container nav ul {
+  color: #334155;
+  text-shadow: none;
+}
+
+[data-theme="light"] .gooey-nav-container nav ul li {
+  color: #334155;
+}
+
+[data-theme="light"] .gooey-nav-container nav ul li a {
+  color: inherit;
+}
+
+[data-theme="light"] .gooey-nav-container nav ul li:hover {
+  color: #0284c7;
+}
+
+[data-theme="light"] .gooey-nav-container nav ul li.active {
+  color: #ffffff;
+  text-shadow: none;
+}
+
+[data-theme="light"] .gooey-nav-container nav ul li.active a {
+  color: #ffffff;
+}
+
+[data-theme="light"] .gooey-nav-container nav ul li.active::after {
+  background: linear-gradient(135deg, #0284c7, #0d9488);
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+}
+
+[data-theme="light"] .gooey-nav-container .effect.filter {
+  display: none !important;
+}
+
+[data-theme="light"] .gooey-nav-container .effect.text {
+  display: none !important;
+}

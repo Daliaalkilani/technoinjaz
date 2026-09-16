@@ -23,13 +23,6 @@ export const LinePath = ({ className = '', scrollYProgress }: { className?: stri
       style={{ display: 'block', width: '100%', height: 'auto', maxHeight: '520px' }}
     >
       <defs>
-        <filter id="techGlow" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="8" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
         <linearGradient id="techBlueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="#00f2fe" />
           <stop offset="40%" stopColor="#00d2ff" />
@@ -47,14 +40,25 @@ export const LinePath = ({ className = '', scrollYProgress }: { className?: stri
         strokeLinejoin="round"
       />
 
+      {/* هالة التوهج السريعة عبر مسار عريض نصف شفاف عالي الأداء */}
+      <motion.path
+        d={PATH_D}
+        stroke="rgba(0, 210, 255, 0.28)"
+        strokeWidth="38"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        style={{
+          pathLength,
+        }}
+      />
+
       {/* المسار المضيء التفاعلي المتتبع لحركة التمرير */}
       <motion.path
         d={PATH_D}
         stroke="url(#techBlueGradient)"
-        strokeWidth="20"
+        strokeWidth="18"
         strokeLinecap="round"
         strokeLinejoin="round"
-        filter="url(#techGlow)"
         style={{
           pathLength,
         }}

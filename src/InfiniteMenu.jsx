@@ -621,7 +621,14 @@ class InfiniteGridMenu {
     this.#updateProjectionMatrix(gl);
   }
 
+  isPlaying = false;
+  rafId = null;
+
   run(time = 0) {
+    if (!this.isPlaying) {
+      this.rafId = null;
+      return;
+    }
     this.#deltaTime = Math.min(32, time - this.#time);
     this.#time = time;
     this.#deltaFrames = this.#deltaTime / this.TARGET_FRAME_DURATION;
@@ -630,7 +637,26 @@ class InfiniteGridMenu {
     this.#animate(this.#deltaTime);
     this.#render();
 
-    requestAnimationFrame(t => this.run(t));
+    this.rafId = requestAnimationFrame(t => this.run(t));
+  }
+
+  play() {
+    if (this.isPlaying) return;
+    this.isPlaying = true;
+    this.#time = performance.now();
+    this.rafId = requestAnimationFrame(t => this.run(t));
+  }
+
+  pause() {
+    this.isPlaying = false;
+    if (this.rafId) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
+  }
+
+  destroy() {
+    this.pause();
   }
 
   #init(onInit) {
@@ -948,15 +974,28 @@ export default function InfiniteMenu({
       setActiveItem(items[itemIndex]);
     };
 
+    let observer;
     if (canvas) {
       sketch = new InfiniteGridMenu(
         canvas,
         items.length ? items : defaultItems,
         handleActiveItem,
         setIsMoving,
-        sk => sk.run(),
+        null,
         scale
       );
+
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            sketch?.play();
+          } else {
+            sketch?.pause();
+          }
+        },
+        { threshold: 0.02 }
+      );
+      observer.observe(canvas);
     }
 
     const handleResize = () => {
@@ -969,7 +1008,9 @@ export default function InfiniteMenu({
     handleResize();
 
     return () => {
+      observer?.disconnect();
       window.removeEventListener('resize', handleResize);
+      sketch?.destroy();
     };
   }, [items, scale]);
 

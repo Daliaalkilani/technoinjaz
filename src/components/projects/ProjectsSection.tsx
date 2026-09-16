@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import InfiniteSpiral, { type InfiniteSpiralItem } from '../ui/InfiniteSpiral';
-import GridDistortion from '../ui/GridDistortion';
 import heroBgDistortion from '../../assets/hero-bg-distortion.png';
+import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import './ProjectsSection.css';
 
 import ch4_01 from '../../assets/projects/techno-projects/chapter4-01.webp';
@@ -48,6 +48,7 @@ const ProjectsSection = ({
   onNavigateToProjects,
   showNavigateButton = true
 }: ProjectsSectionProps) => {
+  const { lang, t } = useThemeLanguage();
   const [isMobile, setIsMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 640 : false));
 
   useEffect(() => {
@@ -59,16 +60,15 @@ const ProjectsSection = ({
   }, []);
 
   return (
-    <section className="projects-section" id="projects" aria-label="قسم المشاريع">
-      {/* Interactive Grid Distortion Background right after Hero */}
-      <div className="projects-grid-distortion-wrapper">
+    <section className="projects-section" id="projects" aria-label="قسم المشاريع" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+      {/* Static Background Image with Gradient Blend (No Mouse Interaction) */}
+      <div className="projects-grid-distortion-wrapper" style={{ pointerEvents: 'none' }}>
         <div className="projects-grid-distortion-inner">
-          <GridDistortion
-            imageSrc={heroBgDistortion}
-            grid={49}
-            mouse={0.1}
-            strength={0.05}
-            relaxation={0.53}
+          <img
+            src={heroBgDistortion}
+            alt=""
+            aria-hidden="true"
+            className="projects-bg-static-img"
           />
         </div>
         {/* Ambient vignette and smooth dark gradient blend */}
@@ -77,9 +77,9 @@ const ProjectsSection = ({
 
       <div className="projects-container">
         <div className="projects-intro">
-          <h2 className="projects-heading">مشاريعنا</h2>
+          <h2 className="projects-heading">{t.hero.projectsHeading}</h2>
           <p className="projects-statement">
-            أفكار هندسية تتحول إلى حلول واقعية
+            {t.hero.projectsStatement}
           </p>
           {showNavigateButton && (
             <button
@@ -87,8 +87,8 @@ const ProjectsSection = ({
               className="projects-view-all-btn"
               onClick={onNavigateToProjects || (() => { window.location.hash = '#projects'; })}
             >
-              <span>استكشف كافة المشاريع في صفحة المشاريع</span>
-              <ArrowLeft size={18} />
+              <span>{t.hero.exploreProjects}</span>
+              {lang === 'ar' ? <ArrowLeft size={18} /> : <ArrowRight size={18} />}
             </button>
           )}
         </div>

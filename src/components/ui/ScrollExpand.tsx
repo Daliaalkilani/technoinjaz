@@ -165,6 +165,8 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
       return;
     }
 
+    let trackPageOffset = 0;
+
     const measure = () => {
       const c = propsRef.current;
       stageH = c.useWindowScroll
@@ -176,6 +178,10 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
 
       const w = root.clientWidth || window.innerWidth || stageH;
       stage.style.setProperty('--se-title-size', `${clamp(w * 0.065, 22, 68)}px`);
+
+      if (c.useWindowScroll) {
+        trackPageOffset = track.getBoundingClientRect().top + window.scrollY;
+      }
     };
 
     const readProgress = () => {
@@ -183,7 +189,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
       if (!c.enabled) return 1;
       const span = stageH * Math.max(0.01, c.scrollDistance);
       if (c.useWindowScroll) {
-        const top = track.getBoundingClientRect().top;
+        const top = trackPageOffset - window.scrollY;
         return clamp(-top / span, 0, 1);
       }
       return clamp(root.scrollTop / span, 0, 1);
@@ -262,6 +268,8 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
         src={src}
         alt={alt}
         draggable={false}
+        fetchPriority="high"
+        decoding="async"
       />
     );
 

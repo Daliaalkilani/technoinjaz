@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import ScrollProgress from '@/registry/magicui/scroll-progress';
 import { Skiper19 } from '@/components/ui/svg-follow-scroll';
 import GooeyNav from './GooeyNav';
@@ -7,36 +7,51 @@ import TeamMomentsRing from './components/TeamMomentsRing';
 import InfiniteMenu from './InfiniteMenu';
 import Orb from './Orb';
 import CinematicFooter from './components/CinematicFooter';
-import ProfilePage from './ProfilePage';
-import ContactPage from './ContactPage';
-import AuthPage from './AuthPage';
-import LiveProjectsShowcase from './components/projects/LiveProjectsShowcase';
 import VideosSection from './components/videos/VideosSection';
 import ArticlesSection from './components/articles/ArticlesSection';
-import { LogIn, Cpu, Video, Sparkles, BookOpen } from 'lucide-react';
+import { LogIn, Cpu, Video, Sparkles, BookOpen, Sun, Moon } from 'lucide-react';
 import { teamMembers } from './data/teamData';
+import { useThemeLanguage } from './context/ThemeLanguageContext';
+
+const ProfilePage = lazy(() => import('./ProfilePage'));
+const ContactPage = lazy(() => import('./ContactPage'));
+const AuthPage = lazy(() => import('./AuthPage'));
+const LiveProjectsShowcase = lazy(() => import('./components/projects/LiveProjectsShowcase'));
 
 interface NavItem {
   label: string;
   href: string;
 }
 
-const navItems: NavItem[] = [
-  { label: 'الرئيسية', href: '#top' },
-  { label: 'المشاريع', href: '#projects' },
-  { label: 'الفيديوهات', href: '#videos' },
-  { label: 'المقالات', href: '#articles' },
-  { label: 'من نحن', href: '#about' },
-  { label: 'تواصل معنا', href: '#contact' },
-];
-
 export default function App() {
+  const { theme, lang, toggleTheme, setLang, t } = useThemeLanguage();
+  const [isLoaderDone, setIsLoaderDone] = useState(false);
   const [currentTab, setCurrentTab] = useState<'home' | 'projects' | 'videos' | 'articles' | 'about'>('home');
   const [selectedMember, setSelectedMember] = useState<any>(null);
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [activeNavIndex, setActiveNavIndex] = useState(0);
+
+  // Defer heavy 3D canvases until rocket loader finishes
+  useEffect(() => {
+    const onLoaderComplete = () => setIsLoaderDone(true);
+    window.addEventListener('techno:completed', onLoaderComplete);
+    const timer = setTimeout(() => setIsLoaderDone(true), 2700);
+    return () => {
+      window.removeEventListener('techno:completed', onLoaderComplete);
+      clearTimeout(timer);
+    };
+  }, []);
+
+  const navItems: NavItem[] = [
+    { label: t.nav.home, href: '#top' },
+    { label: t.nav.projects, href: '#projects' },
+    { label: t.nav.videos, href: '#videos' },
+    { label: t.nav.articles, href: '#articles' },
+    { label: t.nav.about, href: '#about' },
+    { label: t.nav.contact, href: '#contact' },
+  ];
 
   // Synchronize hash for back-forward and direct link navigation
   useEffect(() => {
@@ -180,11 +195,15 @@ export default function App() {
 
   // If a team member is selected, show their full profile page
   if (selectedMember) {
-    return <ProfilePage member={selectedMember} onBack={handleBackToMenu} />;
+    return (
+      <Suspense fallback={<div style={{ minHeight: '100vh', backgroundColor: '#050508' }} />}>
+        <ProfilePage member={selectedMember} onBack={handleBackToMenu} />
+      </Suspense>
+    );
   }
 
   return (
-    <main style={{ width: '100%', minHeight: '100vh', backgroundColor: '#050508' }}>
+    <main style={{ width: '100%', minHeight: '100vh', backgroundColor: 'var(--bg-main)' }} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
       {/* Scroll indicator */}
       <ScrollProgress className="top-0" />
 
@@ -198,14 +217,14 @@ export default function App() {
             e.preventDefault();
             handleNavItemSelect(navItems[0], 0);
           }}
-          title="تكنو إنجاز | الرئيسية"
+          title={`${t.nav.brand} | ${t.nav.home}`}
         >
           <img
             src="/techno-logo.png"
-            alt="شعار تكنو إنجاز"
+            alt={t.nav.brand}
             className="navbar-brand-logo"
           />
-          <span className="navbar-brand-text">تكنو إنجاز</span>
+          <span className="navbar-brand-text">{t.nav.brand}</span>
         </a>
 
         {/* Center Interactive GooeyNav Menu */}
@@ -224,48 +243,86 @@ export default function App() {
           />
         </div>
 
-        {/* End Actions: Login / Register Button */}
+        {/* End Actions: Language Switcher, Theme Toggle, Login */}
         <div className="navbar-end-actions">
+          {/* Language Capsule Toggle [ عربي | EN ] */}
+          <div className="lang-capsule-toggle" title="Switch Language / تبديل اللغة">
+            <button
+              type="button"
+              className={`lang-pill-btn ${lang === 'ar' ? 'active' : ''}`}
+              onClick={() => setLang('ar')}
+              aria-label="اللغة العربية"
+            >
+              عربي
+            </button>
+            <button
+              type="button"
+              className={`lang-pill-btn ${lang === 'en' ? 'active' : ''}`}
+              onClick={() => setLang('en')}
+              aria-label="English Language"
+            >
+              EN
+            </button>
+          </div>
+
+          {/* Theme Toggle Button (Sun / Moon) */}
+          <button
+            type="button"
+            className="theme-toggle-btn"
+            onClick={toggleTheme}
+            title={theme === 'dark' ? t.theme.light : t.theme.dark}
+            aria-label="Toggle Theme"
+          >
+            {theme === 'dark' ? (
+              <Sun size={18} />
+            ) : (
+              <Moon size={18} />
+            )}
+          </button>
+
+          {/* Login Button */}
           <button
             type="button"
             className={`navbar-auth-btn ${isAuthOpen ? 'active' : ''}`}
             onClick={() => handleOpenAuth('login')}
-            title="تسجيل الدخول أو إنشاء حساب جديد"
+            title={t.nav.login}
           >
             <span className="navbar-auth-btn-icon">
               <LogIn size={15} />
             </span>
-            <span>تسجيل الدخول</span>
+            <span>{t.nav.login}</span>
           </button>
         </div>
       </nav>
 
       {/* Page Content: AuthPage, ContactPage, Dedicated Tabs, or Homepage */}
       {isAuthOpen ? (
-        <AuthPage
-          initialMode={authMode}
-          onBack={handleBackFromAuth}
-        />
+        <Suspense fallback={<div style={{ minHeight: '60vh', backgroundColor: 'var(--bg-main)' }} />}>
+          <AuthPage
+            initialMode={authMode}
+            onBack={handleBackFromAuth}
+          />
+        </Suspense>
       ) : isContactOpen ? (
-        <ContactPage onBack={handleBackFromContact} />
+        <Suspense fallback={<div style={{ minHeight: '60vh', backgroundColor: 'var(--bg-main)' }} />}>
+          <ContactPage onBack={handleBackFromContact} />
+        </Suspense>
       ) : currentTab === 'projects' ? (
         <div className="tab-page-container">
           <div className="tab-page-header">
-            <h1 className="tab-page-title">مشاريع ومنظومات تكنو إنجاز</h1>
-            <p className="tab-page-subtitle">
-              استكشف 13 مشروعاً برمجياً ومنظومة هندسية تعمل الآن ومتاحة للتجربة الحية والمباشرة
-            </p>
+            <h1 className="tab-page-title">{t.liveProjects.pageTitle}</h1>
+            <p className="tab-page-subtitle">{t.liveProjects.pageSubtitle}</p>
           </div>
 
-          <LiveProjectsShowcase />
+          <Suspense fallback={<div style={{ minHeight: '60vh', backgroundColor: 'var(--bg-main)' }} />}>
+            <LiveProjectsShowcase />
+          </Suspense>
         </div>
       ) : currentTab === 'videos' ? (
         <div className="tab-page-container">
           <div className="tab-page-header">
-            <h1 className="tab-page-title">فيديوهات وعروض تكنو إنجاز</h1>
-            <p className="tab-page-subtitle">
-              عروض مرئية تفاعلية توثق إنجازاتنا الهندسية ومراحل تطوير الأنظمة والبرمجيات المتقدمة
-            </p>
+            <h1 className="tab-page-title">{t.videos.pageTitle}</h1>
+            <p className="tab-page-subtitle">{t.videos.pageSubtitle}</p>
           </div>
 
           <VideosSection showNavigateButton={false} />
@@ -275,30 +332,24 @@ export default function App() {
               <div className="tab-page-card-icon">
                 <Video size={26} />
               </div>
-              <h3 className="tab-page-card-title">عروض تفاعلية ثلاثية الأبعاد</h3>
-              <p className="tab-page-card-desc">
-                استكشف مجسمات الأنظمة والمعماريات الهندسية بتفاصيل واقعية تحاكي تشغيل البرمجيات في بيئات العمل الحقيقية.
-              </p>
+              <h3 className="tab-page-card-title">{t.videos.card1Title}</h3>
+              <p className="tab-page-card-desc">{t.videos.card1Desc}</p>
             </div>
 
             <div className="tab-page-card">
               <div className="tab-page-card-icon">
                 <Sparkles size={26} />
               </div>
-              <h3 className="tab-page-card-title">عروض مرئية فائقة الوضوح</h3>
-              <p className="tab-page-card-desc">
-                توثيق عالي الدقة يوضح طريقة تفاعل المستخدمين مع منصاتنا وتكامل الحلول البرمجية مع مختلف الأجهزة.
-              </p>
+              <h3 className="tab-page-card-title">{t.videos.card2Title}</h3>
+              <p className="tab-page-card-desc">{t.videos.card2Desc}</p>
             </div>
           </div>
         </div>
       ) : currentTab === 'articles' ? (
         <div className="tab-page-container">
           <div className="tab-page-header">
-            <h1 className="tab-page-title">مقالات وأبحاث تكنو إنجاز</h1>
-            <p className="tab-page-subtitle">
-              دراسات وأبحاث تقنية توثق التجارب المعمارية والخوارزميات المبتكرة في مشاريع تكنو إنجاز
-            </p>
+            <h1 className="tab-page-title">{t.articles.pageTitle}</h1>
+            <p className="tab-page-subtitle">{t.articles.pageSubtitle}</p>
           </div>
 
           <ArticlesSection />
@@ -308,9 +359,13 @@ export default function App() {
               <div className="tab-page-card-icon">
                 <BookOpen size={26} />
               </div>
-              <h3 className="tab-page-card-title">أبحاث الذكاء الاصطناعي التوليدي</h3>
+              <h3 className="tab-page-card-title">
+                {lang === 'ar' ? 'أبحاث الذكاء الاصطناعي التوليدي' : 'Generative AI Research'}
+              </h3>
               <p className="tab-page-card-desc">
-                سلسلة مقالات تخصصية تناقش بنية النماذج العصبية المتقدمة وكيفية تسخيرها في تسريع دورة الإنتاج البرمجي.
+                {lang === 'ar' 
+                  ? 'سلسلة مقالات تخصصية تناقش بنية النماذج العصبية المتقدمة وكيفية تسخيرها في تسريع دورة الإنتاج البرمجي.' 
+                  : 'Specialized articles discussing neural models and their application in accelerating development cycles.'}
               </p>
             </div>
 
@@ -318,9 +373,13 @@ export default function App() {
               <div className="tab-page-card-icon">
                 <Cpu size={26} />
               </div>
-              <h3 className="tab-page-card-title">المعمارية النظيفة وهندسة النظم</h3>
+              <h3 className="tab-page-card-title">
+                {lang === 'ar' ? 'المعمارية النظيفة وهندسة النظم' : 'Clean Architecture & Systems'}
+              </h3>
               <p className="tab-page-card-desc">
-                رؤى هندسية تطبيقية حول بناء أنظمة قابلة للتوسع وتصميم واجهات برمجية متماسكة ومرنة للمستقبل.
+                {lang === 'ar'
+                  ? 'رؤى هندسية تطبيقية حول بناء أنظمة قابلة للتوسع وتصميم واجهات برمجية متماسكة ومرنة للمستقبل.'
+                  : 'Engineering insights on building scalable systems and cohesive, future-proof APIs.'}
               </p>
             </div>
           </div>
@@ -328,6 +387,7 @@ export default function App() {
       ) : currentTab === 'about' ? (
         <section
           id="about"
+          className="scroll-deferred-section"
           style={{
             position: 'relative',
             width: '100%',
@@ -341,29 +401,29 @@ export default function App() {
               textAlign: 'center',
               maxWidth: '850px',
               margin: '0 auto',
-              direction: 'rtl'
+              direction: lang === 'ar' ? 'rtl' : 'ltr'
             }}
           >
             <h2
               style={{
                 fontSize: 'clamp(2rem, 3.5vw, 3rem)',
                 fontWeight: 800,
-                color: '#ffffff',
+                color: 'var(--text-main)',
                 marginBottom: '14px',
                 letterSpacing: '-0.02em',
                 textShadow: '0 0 25px rgba(0, 210, 255, 0.2)'
               }}
             >
-              من نحن
+              {t.about.heading}
             </h2>
             <p
               style={{
                 fontSize: 'clamp(1rem, 1.3vw, 1.15rem)',
-                color: 'rgba(255, 255, 255, 0.72)',
+                color: 'var(--text-muted)',
                 lineHeight: 1.7
               }}
             >
-              نخبة من المهندسين والمبتكرين في تكنو إنجاز يسخّرون الذكاء الاصطناعي والهندسة المتطورة لبناء حلول تقنية استثنائية
+              {t.about.subtitle}
             </p>
           </div>
 
@@ -438,7 +498,7 @@ export default function App() {
               }}
             />
 
-            {/* Space Orb Background */}
+            {/* Space Orb Background (deferred until loader done) */}
             <div
               style={{
                 position: 'absolute',
@@ -450,13 +510,15 @@ export default function App() {
                 overflow: 'hidden'
               }}
             >
-              <Orb
-                hoverIntensity={0.24}
-                rotateOnHover
-                hue={360}
-                forceHoverState={false}
-                backgroundColor="#000000"
-              />
+              {isLoaderDone && (
+                <Orb
+                  hoverIntensity={0.24}
+                  rotateOnHover
+                  hue={360}
+                  forceHoverState={false}
+                  backgroundColor="#000000"
+                />
+              )}
             </div>
 
             {/* Members Count Badge */}
@@ -472,7 +534,7 @@ export default function App() {
                 justifyContent: 'flex-end',
                 alignItems: 'center',
                 pointerEvents: 'none',
-                direction: 'rtl'
+                direction: lang === 'ar' ? 'rtl' : 'ltr'
               }}
             >
               <div
@@ -487,7 +549,7 @@ export default function App() {
                   backdropFilter: 'blur(10px)'
                 }}
               >
-                {teamMembers.length} أعضاء متاحين
+                {teamMembers.length} {lang === 'ar' ? 'أعضاء متاحين' : 'Available Members'}
               </div>
             </header>
 
@@ -514,6 +576,7 @@ export default function App() {
           {/* 2. "من نحن" (About Us / Team Showcase) */}
           <section
             id="about"
+            className="scroll-deferred-section"
             style={{
               position: 'relative',
               width: '100%',
@@ -527,29 +590,29 @@ export default function App() {
                 textAlign: 'center',
                 maxWidth: '850px',
                 margin: '0 auto',
-                direction: 'rtl'
+                direction: lang === 'ar' ? 'rtl' : 'ltr'
               }}
             >
               <h2
                 style={{
                   fontSize: 'clamp(2rem, 3.5vw, 3rem)',
                   fontWeight: 800,
-                  color: '#ffffff',
+                  color: 'var(--text-main)',
                   marginBottom: '14px',
                   letterSpacing: '-0.02em',
                   textShadow: '0 0 25px rgba(0, 210, 255, 0.2)'
                 }}
               >
-                من نحن
+                {t.about.heading}
               </h2>
               <p
                 style={{
                   fontSize: 'clamp(1rem, 1.3vw, 1.15rem)',
-                  color: 'rgba(255, 255, 255, 0.72)',
+                  color: 'var(--text-muted)',
                   lineHeight: 1.7
                 }}
               >
-                نخبة من المهندسين والمبتكرين في تكنو إنجاز يسخّرون الذكاء الاصطناعي والهندسة المتطورة لبناء حلول تقنية استثنائية
+                {t.about.subtitle}
               </p>
             </div>
 
@@ -624,7 +687,7 @@ export default function App() {
                 }}
               />
 
-              {/* Space Orb Background */}
+              {/* Space Orb Background (deferred until loader done) */}
               <div
                 style={{
                   position: 'absolute',
@@ -636,13 +699,15 @@ export default function App() {
                   overflow: 'hidden'
                 }}
               >
-                <Orb
-                  hoverIntensity={0.24}
-                  rotateOnHover
-                  hue={360}
-                  forceHoverState={false}
-                  backgroundColor="#000000"
-                />
+                {isLoaderDone && (
+                  <Orb
+                    hoverIntensity={0.24}
+                    rotateOnHover
+                    hue={360}
+                    forceHoverState={false}
+                    backgroundColor="#000000"
+                  />
+                )}
               </div>
 
               {/* Members Count Badge */}
@@ -658,7 +723,7 @@ export default function App() {
                   justifyContent: 'flex-end',
                   alignItems: 'center',
                   pointerEvents: 'none',
-                  direction: 'rtl'
+                  direction: lang === 'ar' ? 'rtl' : 'ltr'
                 }}
               >
                 <div
@@ -673,7 +738,7 @@ export default function App() {
                     backdropFilter: 'blur(10px)'
                   }}
                 >
-                  {teamMembers.length} أعضاء متاحين
+                  {teamMembers.length} {lang === 'ar' ? 'أعضاء متاحين' : 'Available Members'}
                 </div>
               </header>
 

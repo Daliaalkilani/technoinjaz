@@ -101,7 +101,14 @@ const InfiniteSpiral = ({
     });
     resizeObserver.observe(root);
     const intersectionObserver = new IntersectionObserver(([entry]) => {
+      const wasVisible = visibleRef.current;
       visibleRef.current = entry.isIntersecting;
+      if (entry.isIntersecting && (!frameId || !wasVisible)) {
+        previousTime = performance.now();
+        if (!frameId) {
+          frameId = requestAnimationFrame(render);
+        }
+      }
     });
     intersectionObserver.observe(root);
 
@@ -119,6 +126,10 @@ const InfiniteSpiral = ({
     window.addEventListener('scroll', handleScroll, { passive: true });
 
     const render = (time: number) => {
+      if (!visibleRef.current) {
+        frameId = 0;
+        return;
+      }
       const delta = Math.min((time - previousTime) / 1000, 0.05);
       previousTime = time;
       const autoEnabled = animationMode === 'auto' || animationMode === 'all';
@@ -158,10 +169,8 @@ const InfiniteSpiral = ({
         const depthScale = clamp(perspective / Math.max(perspective - z, 1), 0.72, 1.45);
         const visualScale = scale * depthScale;
         const depth = (z / Math.max(responsiveRadius, 1) + 1) / 2;
-        const blur = edgeBlur * smoothstep(0.35, 1, edge);
         card.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${offset * verticalSpacing * fit}px, 0) rotateZ(${cardTilt}deg) scale(${visualScale})`;
         card.style.opacity = opacity.toFixed(3);
-        card.style.filter = blur > 0.01 ? `blur(${blur.toFixed(2)}px)` : 'none';
         card.style.zIndex = String(Math.round(depth * 100000) + index);
         card.style.pointerEvents = opacity > 0.25 ? 'auto' : 'none';
       });
@@ -170,7 +179,7 @@ const InfiniteSpiral = ({
 
     frameId = requestAnimationFrame(render);
     return () => {
-      cancelAnimationFrame(frameId);
+      if (frameId) cancelAnimationFrame(frameId);
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
       window.removeEventListener('scroll', handleScroll);

@@ -211,11 +211,13 @@ export default function Orb({
 
     const mesh = new Mesh(gl, { geometry, program });
 
+    let cachedRect = null;
     function resize() {
       if (!container) return;
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
       const width = container.clientWidth;
       const height = container.clientHeight;
+      cachedRect = container.getBoundingClientRect();
       renderer.setSize(width * dpr, height * dpr);
       gl.canvas.style.width = width + 'px';
       gl.canvas.style.height = height + 'px';
@@ -228,13 +230,15 @@ export default function Orb({
     let lastTime = 0;
     let currentRot = 0;
     const rotationSpeed = 0.3;
+    let isIntersecting = false;
 
     const handleMouseMove = e => {
-      const rect = container.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const width = rect.width;
-      const height = rect.height;
+      if (!isIntersecting) return;
+      if (!cachedRect) cachedRect = container.getBoundingClientRect();
+      const x = e.clientX - cachedRect.left;
+      const y = e.clientY - cachedRect.top;
+      const width = cachedRect.width;
+      const height = cachedRect.height;
       const size = Math.min(width, height);
       const centerX = width / 2;
       const centerY = height / 2;
@@ -252,11 +256,15 @@ export default function Orb({
       targetHover = 0;
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     container.addEventListener('mouseleave', handleMouseLeave);
 
-    let rafId;
+    let rafId = null;
     const update = t => {
+      if (!isIntersecting) {
+        rafId = null;
+        return;
+      }
       rafId = requestAnimationFrame(update);
       const dt = (t - lastTime) * 0.001;
       lastTime = t;
@@ -275,10 +283,30 @@ export default function Orb({
 
       renderer.render({ scene: mesh });
     };
-    rafId = requestAnimationFrame(update);
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isIntersecting = entry.isIntersecting;
+        if (isIntersecting) {
+          cachedRect = container.getBoundingClientRect();
+          if (!rafId) {
+            lastTime = performance.now();
+            rafId = requestAnimationFrame(update);
+          }
+        } else {
+          if (rafId) {
+            cancelAnimationFrame(rafId);
+            rafId = null;
+          }
+        }
+      },
+      { threshold: 0.02 }
+    );
+    observer.observe(container);
 
     return () => {
-      cancelAnimationFrame(rafId);
+      observer.disconnect();
+      if (rafId) cancelAnimationFrame(rafId);
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', handleMouseMove);
       container.removeEventListener('mouseleave', handleMouseLeave);

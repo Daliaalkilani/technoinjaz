@@ -1,8 +1,8 @@
 import React from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import CardSwap, { Card } from './CardSwap';
-import GridDistortion from '../ui/GridDistortion';
 import heroBgDistortion from '../../assets/hero-bg-distortion.png';
+import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import '../projects/ProjectsSection.css';
 import './VideosSection.css';
 
@@ -15,17 +15,18 @@ const VideosSection: React.FC<VideosSectionProps> = ({
   onNavigateToVideos,
   showNavigateButton = true
 }) => {
+  const { lang, t } = useThemeLanguage();
+
   return (
-    <section id="videos" className="videos-section">
-      {/* Interactive Grid Distortion Background */}
-      <div className="projects-grid-distortion-wrapper">
+    <section id="videos" className="videos-section" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+      {/* Static Background Image with Gradient Blend (No Mouse Interaction) */}
+      <div className="projects-grid-distortion-wrapper" style={{ pointerEvents: 'none' }}>
         <div className="projects-grid-distortion-inner">
-          <GridDistortion
-            imageSrc={heroBgDistortion}
-            grid={49}
-            mouse={0.1}
-            strength={0.05}
-            relaxation={0.53}
+          <img
+            src={heroBgDistortion}
+            alt=""
+            aria-hidden="true"
+            className="projects-bg-static-img"
           />
         </div>
         {/* Ambient vignette and smooth dark gradient blend */}
@@ -35,9 +36,9 @@ const VideosSection: React.FC<VideosSectionProps> = ({
       <div className="videos-container">
         {/* Info Column */}
         <div className="videos-info-col">
-          <h2 className="videos-title">شاهد تجاربنا</h2>
+          <h2 className="videos-title">{t.videos.heading}</h2>
           <p className="videos-subtitle">
-            عروض حية وتجارب تطبيقية توثق مراحل البناء والتكامل البرمجي لأحدث أنظمتنا
+            {t.videos.subtitle}
           </p>
           {showNavigateButton && (
             <button
@@ -45,8 +46,8 @@ const VideosSection: React.FC<VideosSectionProps> = ({
               className="projects-view-all-btn"
               onClick={onNavigateToVideos || (() => { window.location.hash = '#videos'; })}
             >
-              <span>استكشف كافة الفيديوهات في صفحة الفيديوهات</span>
-              <ArrowLeft size={18} />
+              <span>{t.hero.exploreVideos}</span>
+              {lang === 'ar' ? <ArrowLeft size={18} /> : <ArrowRight size={18} />}
             </button>
           )}
         </div>

@@ -5,6 +5,7 @@ import VideosSection from '../components/videos/VideosSection';
 import ArticlesSection from '../components/articles/ArticlesSection';
 import cinematicEngineeringImg from '../assets/cinematic-engineering.jpg';
 import technoEnjazLogo from '../assets/Asset-1@4x.png';
+import { useThemeLanguage } from '../context/ThemeLanguageContext';
 import './ScrollExpandPrototype.css';
 
 interface ResponsiveConfig {
@@ -57,6 +58,7 @@ const ScrollExpandPrototype: React.FC<ScrollExpandPrototypeProps> = ({
   onNavigateToProjects,
   onNavigateToVideos
 }) => {
+  const { lang, t } = useThemeLanguage();
   const [config, setConfig] = useState<ResponsiveConfig>(() =>
     getResponsiveConfig(typeof window !== 'undefined' ? window.innerWidth : 1200)
   );
@@ -87,16 +89,16 @@ const ScrollExpandPrototype: React.FC<ScrollExpandPrototypeProps> = ({
         overlayScrim={0.55}
         useWindowScroll={true}
         title={
-          <div className="initial-content-wrapper">
-            <h1 className="initial-title">نحوّل الفكرة الهندسية إلى واقع</h1>
+          <div className="initial-content-wrapper" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+            <h1 className="initial-title">{t.hero.title}</h1>
           </div>
         }
       >
-        <div className="expanded-overlay-wrapper">
+        <div className="expanded-overlay-wrapper" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
           <div className="expanded-logo-wrapper">
             <img
               src={technoEnjazLogo}
-              alt="شعار تكنو إنجاز"
+              alt={t.nav.brand}
               className="expanded-logo"
             />
           </div>
@@ -111,7 +113,7 @@ const ScrollExpandPrototype: React.FC<ScrollExpandPrototypeProps> = ({
                 }
               }}
             >
-              استكشف أعمالنا
+              {t.hero.exploreProjects}
             </button>
             <button
               type="button"
@@ -127,7 +129,7 @@ const ScrollExpandPrototype: React.FC<ScrollExpandPrototypeProps> = ({
                 }
               }}
             >
-              تقديم طلب مشروع
+              {lang === 'ar' ? 'تقديم طلب مشروع' : 'Request a Project'}
             </button>
           </div>
         </div>
@@ -137,10 +139,14 @@ const ScrollExpandPrototype: React.FC<ScrollExpandPrototypeProps> = ({
       <ProjectsSection onNavigateToProjects={onNavigateToProjects} />
 
       {/* Dedicated Videos section using CardSwap */}
-      <VideosSection onNavigateToVideos={onNavigateToVideos} />
+      <div className="scroll-deferred-section">
+        <VideosSection onNavigateToVideos={onNavigateToVideos} />
+      </div>
 
       {/* Dedicated Articles section using MagicBento */}
-      <ArticlesSection />
+      <div className="scroll-deferred-section">
+        <ArticlesSection />
+      </div>
     </div>
   );
 };
