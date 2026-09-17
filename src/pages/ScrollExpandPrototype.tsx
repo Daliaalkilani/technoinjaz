@@ -102,6 +102,7 @@ const ScrollExpandPrototype: React.FC<ScrollExpandPrototypeProps> = ({
               className="expanded-logo"
             />
           </div>
+          <h2 className="expanded-hero-title">{t.hero.title}</h2>
           <div className="cta-group">
             <button
               type="button"

@@ -7,14 +7,7 @@ import {
   ChevronLeft, 
   LayoutGrid, 
   Sparkles, 
-  Radio, 
-  Layers, 
-  Database, 
-  Activity, 
-  Laptop, 
-  Server, 
-  Globe, 
-  Flame 
+  Radio 
 } from 'lucide-react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import './LiveProjectsShowcase.css';
@@ -205,20 +198,6 @@ const liveProjectsList: LiveProject[] = [
   }
 ];
 
-const renderIcon = (name: string, color: string, size = 22) => {
-  switch (name) {
-    case 'database': return <Database size={size} color={color} />;
-    case 'activity': return <Activity size={size} color={color} />;
-    case 'sparkles': return <Sparkles size={size} color={color} />;
-    case 'laptop': return <Laptop size={size} color={color} />;
-    case 'server': return <Server size={size} color={color} />;
-    case 'flame': return <Flame size={size} color={color} />;
-    case 'layers': return <Layers size={size} color={color} />;
-    case 'globe': return <Globe size={size} color={color} />;
-    default: return <Globe size={size} color={color} />;
-  }
-};
-
 const AUTO_INTERVAL_MS = 4500;
 
 export const LiveProjectsShowcase: React.FC = () => {
@@ -232,7 +211,6 @@ export const LiveProjectsShowcase: React.FC = () => {
   const activeProject = liveProjectsList[currentIndex % liveProjectsList.length] || liveProjectsList[0];
   const activeTrans = t.liveProjects.projects[activeProject.id];
   const activeTitle = activeTrans?.title || activeProject.title;
-  const activeSubtitle = activeTrans?.subtitle || activeProject.subtitle;
   const activeDescription = activeTrans?.description || activeProject.description;
   const activeHighlights = activeTrans?.highlights || activeProject.highlights;
 
@@ -284,12 +262,6 @@ export const LiveProjectsShowcase: React.FC = () => {
     <div className="live-projects-container" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
       {/* Control Toolbar */}
       <div className="live-projects-toolbar">
-        <div className="live-projects-counter-info">
-          <span className="live-projects-count-badge">
-            {t.liveProjects.countBadge.replace('{count}', String(liveProjectsList.length))}
-          </span>
-        </div>
-
         {/* View Mode Toggle */}
         <div className="live-projects-view-toggle">
           <button
@@ -365,7 +337,6 @@ export const LiveProjectsShowcase: React.FC = () => {
             <div className="spotlight-content-grid">
               <div className="spotlight-details">
                 <h2 className="spotlight-title">{activeTitle}</h2>
-                <div className="spotlight-subtitle">{activeSubtitle}</div>
                 <p className="spotlight-desc">{activeDescription}</p>
 
                 <div className="spotlight-tags">
@@ -448,7 +419,6 @@ export const LiveProjectsShowcase: React.FC = () => {
               {track1Projects.map((project, idx) => {
                 const pTrans = t.liveProjects.projects[project.id];
                 const pTitle = pTrans?.title || project.title;
-                const pSub = pTrans?.subtitle || project.subtitle;
                 const pDesc = pTrans?.description || project.description;
                 return (
                   <div
@@ -461,15 +431,8 @@ export const LiveProjectsShowcase: React.FC = () => {
                       <div className="marquee-card-thumb-wrap">
                         <img src={project.image} alt={pTitle} className="marquee-card-thumb-img" loading="lazy" />
                       </div>
-                      <div 
-                        className="marquee-card-icon"
-                        style={{ background: `${project.color}18` }}
-                      >
-                        {renderIcon(project.iconName, project.color, 18)}
-                      </div>
                     </div>
                     <h4 className="marquee-card-title">{pTitle}</h4>
-                    <div className="marquee-card-subtitle">{pSub}</div>
                     <p className="marquee-card-desc">{pDesc}</p>
                     <div className="marquee-card-footer">
                       <a
@@ -493,7 +456,6 @@ export const LiveProjectsShowcase: React.FC = () => {
               {track2Projects.map((project, idx) => {
                 const pTrans = t.liveProjects.projects[project.id];
                 const pTitle = pTrans?.title || project.title;
-                const pSub = pTrans?.subtitle || project.subtitle;
                 const pDesc = pTrans?.description || project.description;
                 return (
                   <div
@@ -506,15 +468,8 @@ export const LiveProjectsShowcase: React.FC = () => {
                       <div className="marquee-card-thumb-wrap">
                         <img src={project.image} alt={pTitle} className="marquee-card-thumb-img" loading="lazy" />
                       </div>
-                      <div 
-                        className="marquee-card-icon"
-                        style={{ background: `${project.color}18` }}
-                      >
-                        {renderIcon(project.iconName, project.color, 18)}
-                      </div>
                     </div>
                     <h4 className="marquee-card-title">{pTitle}</h4>
-                    <div className="marquee-card-subtitle">{pSub}</div>
                     <p className="marquee-card-desc">{pDesc}</p>
                     <div className="marquee-card-footer">
                       <a
@@ -540,7 +495,6 @@ export const LiveProjectsShowcase: React.FC = () => {
           {liveProjectsList.map(project => {
             const pTrans = t.liveProjects.projects[project.id];
             const pTitle = pTrans?.title || project.title;
-            const pSub = pTrans?.subtitle || project.subtitle;
             const pDesc = pTrans?.description || project.description;
             const pHighlights = pTrans?.highlights || project.highlights;
             return (
@@ -548,16 +502,7 @@ export const LiveProjectsShowcase: React.FC = () => {
                 <div className="grid-card-thumb">
                   <img src={project.image} alt={pTitle} className="grid-card-img" loading="lazy" />
                 </div>
-                <div className="grid-card-header">
-                  <div 
-                    className="grid-card-icon"
-                    style={{ background: `${project.color}18`, border: `1px solid ${project.color}35` }}
-                  >
-                    {renderIcon(project.iconName, project.color, 22)}
-                  </div>
-                </div>
                 <h3 className="grid-card-title">{pTitle}</h3>
-                <div className="grid-card-subtitle">{pSub}</div>
                 <p className="grid-card-desc">{pDesc}</p>
                 <div className="spotlight-tags" style={{ margin: 0 }}>
                   {pHighlights.map(tag => (

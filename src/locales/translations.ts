@@ -92,6 +92,23 @@ export interface Translations {
     arabic: string;
     english: string;
   };
+  footer: {
+    marquee: string[];
+    heading: string;
+    subheading: string;
+    giantText: string;
+    stayUpdated: string;
+    inputPlaceholder: string;
+    subscribeBtn: string;
+    projects: string;
+    about: string;
+    contact: string;
+    home: string;
+    articles: string;
+    videos: string;
+    copyright: string;
+    backToTop: string;
+  };
 }
 
 export const translations: Record<'ar' | 'en', Translations> = {
@@ -107,7 +124,7 @@ export const translations: Record<'ar' | 'en', Translations> = {
       brand: 'تكنو إنجاز'
     },
     hero: {
-      title: 'تكنو إنجاز',
+      title: 'نحول الأفكار إلى واقع',
       subtitle: 'منظومة رائدة في الحلول الهندسية والبرمجية',
       tagline: 'أفكار هندسية تتحول إلى حلول واقعية',
       exploreProjects: 'استكشف كافة المشاريع',
@@ -127,7 +144,7 @@ export const translations: Record<'ar' | 'en', Translations> = {
       visitMockup: 'زيارة وتجربة الموقع',
       launch: 'تشغيل',
       openProject: 'فتح وتجربة المشروع',
-      marqueeTitle: 'استعراض متحرك لكافة المشاريع الحية (13 مشروعاً)',
+      marqueeTitle: 'استعراض المشاريع التطبيقية الحية',
       projects: {
         'hisab-erp': {
           id: 'hisab-erp',
@@ -272,6 +289,31 @@ export const translations: Record<'ar' | 'en', Translations> = {
     lang: {
       arabic: 'عربي',
       english: 'EN'
+    },
+    footer: {
+      marquee: [
+        'الابتكار التقني',
+        'تكنو إنجاز',
+        'مسار التميز والريادة',
+        'حلول رقمية مبتكرة',
+        'فريق ملهم',
+        'شغف التطوير المستمر',
+        'رؤية تصنع المستقبل'
+      ],
+      heading: 'جاهز للانطلاق معنا؟',
+      subheading: 'نبتكر حلول الغد اليوم، وندعم مسيرة التطور التقني والريادة برؤية تصنع الفارق وشغف لا يتوقف.',
+      giantText: 'تكنو إنجاز',
+      stayUpdated: 'ابقَ على اطلاع',
+      inputPlaceholder: 'أدخل بريدك الإلكتروني',
+      subscribeBtn: 'اشتراك',
+      projects: 'المشاريع',
+      about: 'من نحن',
+      contact: 'تواصل معنا',
+      home: 'الرئيسية',
+      articles: 'المقالات',
+      videos: 'الفيديوهات',
+      copyright: '© 2026 تكنو إنجاز. جميع الحقوق محفوظة.',
+      backToTop: 'العودة لأعلى الصفحة'
     }
   },
   en: {
@@ -286,7 +328,7 @@ export const translations: Record<'ar' | 'en', Translations> = {
       brand: 'Techno Enjaz'
     },
     hero: {
-      title: 'Techno Enjaz',
+      title: 'Transforming Ideas into Reality',
       subtitle: 'A Leading Ecosystem for Engineering & Software Solutions',
       tagline: 'Engineering Concepts Transformed Into Real Solutions',
       exploreProjects: 'Explore All Projects',
@@ -306,7 +348,7 @@ export const translations: Record<'ar' | 'en', Translations> = {
       visitMockup: 'Visit Website',
       launch: 'Launch',
       openProject: 'Launch Project',
-      marqueeTitle: 'Continuous Showcase of All 13 Live Projects',
+      marqueeTitle: 'Live Interactive Systems Showcase',
       projects: {
         'hisab-erp': {
           id: 'hisab-erp',
@@ -451,6 +493,31 @@ export const translations: Record<'ar' | 'en', Translations> = {
     lang: {
       arabic: 'عربي',
       english: 'EN'
+    },
+    footer: {
+      marquee: [
+        'Technological Innovation',
+        'Techno Enjaz',
+        'Excellence & Leadership',
+        'Innovative Digital Solutions',
+        'Inspiring Team',
+        'Continuous Development',
+        'Shaping the Future'
+      ],
+      heading: 'Ready to Launch with Us?',
+      subheading: 'Innovating tomorrow’s solutions today, advancing technological excellence and leadership with vision and relentless passion.',
+      giantText: 'TECHNO ENJAZ',
+      stayUpdated: 'Stay in the Loop',
+      inputPlaceholder: 'Enter your email address',
+      subscribeBtn: 'Subscribe',
+      projects: 'Projects',
+      about: 'About Us',
+      contact: 'Contact Us',
+      home: 'Home',
+      articles: 'Articles',
+      videos: 'Videos',
+      copyright: '© 2026 Techno Enjaz. All rights reserved.',
+      backToTop: 'Back to Top'
     }
   }
 };

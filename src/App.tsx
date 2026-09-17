@@ -17,6 +17,7 @@ const ProfilePage = lazy(() => import('./ProfilePage'));
 const ContactPage = lazy(() => import('./ContactPage'));
 const AuthPage = lazy(() => import('./AuthPage'));
 const LiveProjectsShowcase = lazy(() => import('./components/projects/LiveProjectsShowcase'));
+const ProjectsCatalogSection = lazy(() => import('./components/projects/ProjectsCatalogSection'));
 
 interface NavItem {
   label: string;
@@ -196,7 +197,7 @@ export default function App() {
   // If a team member is selected, show their full profile page
   if (selectedMember) {
     return (
-      <Suspense fallback={<div style={{ minHeight: '100vh', backgroundColor: '#050508' }} />}>
+      <Suspense fallback={<div style={{ minHeight: '100vh', backgroundColor: theme === 'light' ? '#f8fafc' : '#050508' }} />}>
         <ProfilePage member={selectedMember} onBack={handleBackToMenu} />
       </Suspense>
     );
@@ -317,6 +318,10 @@ export default function App() {
           <Suspense fallback={<div style={{ minHeight: '60vh', backgroundColor: 'var(--bg-main)' }} />}>
             <LiveProjectsShowcase />
           </Suspense>
+
+          <Suspense fallback={<div style={{ minHeight: '40vh', backgroundColor: 'var(--bg-main)' }} />}>
+            <ProjectsCatalogSection />
+          </Suspense>
         </div>
       ) : currentTab === 'videos' ? (
         <div className="tab-page-container">
@@ -391,7 +396,7 @@ export default function App() {
           style={{
             position: 'relative',
             width: '100%',
-            backgroundColor: '#050508'
+            backgroundColor: theme === 'light' ? '#f8fafc' : '#050508'
           }}
         >
           {/* Header for About Us Section */}
@@ -436,7 +441,7 @@ export default function App() {
               height: '100vh',
               minHeight: '700px',
               overflow: 'hidden',
-              backgroundColor: '#050508'
+              backgroundColor: theme === 'light' ? '#f8fafc' : '#050508'
             }}
           >
             <TeamMomentsRing onScrollDown={scrollToTeam} />
@@ -449,7 +454,7 @@ export default function App() {
                 left: 0,
                 right: 0,
                 height: '320px',
-                background: 'linear-gradient(to bottom, transparent 0%, rgba(5, 5, 8, 0.3) 30%, rgba(0, 0, 0, 0.8) 70%, #000000 100%)',
+                background: theme === 'light' ? 'linear-gradient(to bottom, transparent 0%, rgba(248, 250, 252, 0.4) 30%, rgba(241, 245, 249, 0.9) 70%, #f8fafc 100%)' : 'linear-gradient(to bottom, transparent 0%, rgba(5, 5, 8, 0.3) 30%, rgba(0, 0, 0, 0.8) 70%, #000000 100%)',
                 pointerEvents: 'none',
                 zIndex: 10
               }}
@@ -462,7 +467,7 @@ export default function App() {
             style={{
               position: 'relative',
               width: '100%',
-              backgroundColor: '#000000',
+              backgroundColor: theme === 'light' ? '#f8fafc' : '#000000',
               overflow: 'hidden',
               zIndex: 15
             }}
@@ -478,7 +483,7 @@ export default function App() {
               width: '100%',
               height: '100vh',
               minHeight: '700px',
-              backgroundColor: '#000000',
+              backgroundColor: theme === 'light' ? '#f8fafc' : '#000000',
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column'
@@ -492,7 +497,7 @@ export default function App() {
                 left: 0,
                 right: 0,
                 height: '240px',
-                background: 'linear-gradient(to bottom, #000000 0%, rgba(0, 0, 0, 0.8) 45%, rgba(0, 0, 0, 0.25) 75%, transparent 100%)',
+                background: theme === 'light' ? 'linear-gradient(to bottom, #f8fafc 0%, rgba(248, 250, 252, 0.85) 45%, rgba(248, 250, 252, 0.25) 75%, transparent 100%)' : 'linear-gradient(to bottom, #000000 0%, rgba(0, 0, 0, 0.8) 45%, rgba(0, 0, 0, 0.25) 75%, transparent 100%)',
                 pointerEvents: 'none',
                 zIndex: 20
               }}
@@ -516,7 +521,7 @@ export default function App() {
                   rotateOnHover
                   hue={360}
                   forceHoverState={false}
-                  backgroundColor="#000000"
+                  backgroundColor={theme === 'light' ? '#f8fafc' : '#000000'}
                 />
               )}
             </div>
@@ -540,8 +545,7 @@ export default function App() {
               <div
                 style={{
                   padding: '6px 14px',
-                  background: 'rgba(255, 255, 255, 0.06)',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  background: theme === 'light' ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.06)', border: theme === 'light' ? '1px solid rgba(0, 0, 0, 0.1)' : '1px solid rgba(255, 255, 255, 0.12)',
                   borderRadius: '999px',
                   color: '#c4b5fd',
                   fontSize: '12px',
@@ -580,7 +584,7 @@ export default function App() {
             style={{
               position: 'relative',
               width: '100%',
-              backgroundColor: '#050508'
+              backgroundColor: theme === 'light' ? '#f8fafc' : '#050508'
             }}
           >
             {/* Header for About Us Section */}
@@ -625,7 +629,7 @@ export default function App() {
                 height: '100vh',
                 minHeight: '700px',
                 overflow: 'hidden',
-                backgroundColor: '#050508'
+                backgroundColor: theme === 'light' ? '#f8fafc' : '#050508'
               }}
             >
               <TeamMomentsRing onScrollDown={scrollToTeam} />
@@ -638,7 +642,7 @@ export default function App() {
                   left: 0,
                   right: 0,
                   height: '320px',
-                  background: 'linear-gradient(to bottom, transparent 0%, rgba(5, 5, 8, 0.3) 30%, rgba(0, 0, 0, 0.8) 70%, #000000 100%)',
+                  background: theme === 'light' ? 'linear-gradient(to bottom, transparent 0%, rgba(248, 250, 252, 0.4) 30%, rgba(241, 245, 249, 0.9) 70%, #f8fafc 100%)' : 'linear-gradient(to bottom, transparent 0%, rgba(5, 5, 8, 0.3) 30%, rgba(0, 0, 0, 0.8) 70%, #000000 100%)',
                   pointerEvents: 'none',
                   zIndex: 10
                 }}
@@ -651,7 +655,7 @@ export default function App() {
               style={{
                 position: 'relative',
                 width: '100%',
-                backgroundColor: '#000000',
+                backgroundColor: theme === 'light' ? '#f8fafc' : '#000000',
                 overflow: 'hidden',
                 zIndex: 15
               }}
@@ -667,7 +671,7 @@ export default function App() {
                 width: '100%',
                 height: '100vh',
                 minHeight: '700px',
-                backgroundColor: '#000000',
+                backgroundColor: theme === 'light' ? '#f8fafc' : '#000000',
                 overflow: 'hidden',
                 display: 'flex',
                 flexDirection: 'column'
@@ -681,7 +685,7 @@ export default function App() {
                   left: 0,
                   right: 0,
                   height: '240px',
-                  background: 'linear-gradient(to bottom, #000000 0%, rgba(0, 0, 0, 0.8) 45%, rgba(0, 0, 0, 0.25) 75%, transparent 100%)',
+                  background: theme === 'light' ? 'linear-gradient(to bottom, #f8fafc 0%, rgba(248, 250, 252, 0.85) 45%, rgba(248, 250, 252, 0.25) 75%, transparent 100%)' : 'linear-gradient(to bottom, #000000 0%, rgba(0, 0, 0, 0.8) 45%, rgba(0, 0, 0, 0.25) 75%, transparent 100%)',
                   pointerEvents: 'none',
                   zIndex: 20
                 }}
@@ -705,7 +709,7 @@ export default function App() {
                     rotateOnHover
                     hue={360}
                     forceHoverState={false}
-                    backgroundColor="#000000"
+                    backgroundColor={theme === 'light' ? '#f8fafc' : '#000000'}
                   />
                 )}
               </div>
@@ -729,8 +733,7 @@ export default function App() {
                 <div
                   style={{
                     padding: '6px 14px',
-                    background: 'rgba(255, 255, 255, 0.06)',
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    background: theme === 'light' ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.06)', border: theme === 'light' ? '1px solid rgba(0, 0, 0, 0.1)' : '1px solid rgba(255, 255, 255, 0.12)',
                     borderRadius: '999px',
                     color: '#c4b5fd',
                     fontSize: '12px',

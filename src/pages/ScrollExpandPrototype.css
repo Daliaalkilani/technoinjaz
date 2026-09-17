@@ -78,6 +78,20 @@
   transform: scale(1.05);
 }
 
+.expanded-hero-title {
+  margin: -0.75rem 0 0.25rem 0;
+  font-size: clamp(1.6rem, 3.2vw, 2.5rem);
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.9), 0 0 30px rgba(14, 165, 233, 0.5);
+  letter-spacing: -0.01em;
+}
+
+[data-theme="light"] .prototype-root {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
 /* CTA Group */
 .cta-group {
   display: flex;

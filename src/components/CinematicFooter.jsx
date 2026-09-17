@@ -4,6 +4,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { cn } from "@/lib/utils";
 import CurvedInput from "./CurvedInput";
+import { useThemeLanguage } from "../context/ThemeLanguageContext";
 import "./CinematicFooter.css";
 
 // Register ScrollTrigger safely for React
@@ -89,20 +90,19 @@ MagneticButton.displayName = "MagneticButton";
 const MarqueeLogo = () => (
   <img
     src="/techno-logo.png"
-    alt="شعار تكنو إنجاز"
+    alt="Techno Enjaz"
     className="footer-marquee-logo"
   />
 );
 
-const MarqueeItem = () => (
+const MarqueeItem = ({ items }) => (
   <div className="footer-marquee-item">
-    <span>الابتكار التقني</span> <MarqueeLogo />
-    <span>تكنو إنجاز</span> <MarqueeLogo />
-    <span>مسار التميز والريادة</span> <MarqueeLogo />
-    <span>حلول رقمية مبتكرة</span> <MarqueeLogo />
-    <span>فريق ملهم</span> <MarqueeLogo />
-    <span>شغف التطوير المستمر</span> <MarqueeLogo />
-    <span>رؤية تصنع المستقبل</span> <MarqueeLogo />
+    {items.map((text, idx) => (
+      <React.Fragment key={idx}>
+        <span>{text}</span>
+        <MarqueeLogo />
+      </React.Fragment>
+    ))}
   </div>
 );
 
@@ -110,6 +110,7 @@ const MarqueeItem = () => (
 // 3. MAIN CINEMATIC FOOTER COMPONENT
 // -------------------------------------------------------------------------
 export function CinematicFooter() {
+  const { theme, lang, t } = useThemeLanguage();
   const wrapperRef = useRef(null);
   const giantTextRef = useRef(null);
   const headingRef = useRef(null);
@@ -120,10 +121,8 @@ export function CinematicFooter() {
     if (typeof window === "undefined") return;
     if (!wrapperRef.current) return;
 
-    // Refresh ScrollTrigger to measure current page height accurately
     ScrollTrigger.refresh();
 
-    // React strict mode compatible GSAP context cleanup
     const ctx = gsap.context(() => {
       // Background Parallax for Giant Text
       if (giantTextRef.current) {
@@ -174,14 +173,23 @@ export function CinematicFooter() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const marqueeItems = t.footer?.marquee || [
+    'الابتكار التقني',
+    'تكنو إنجاز',
+    'مسار التميز والريادة',
+    'حلول رقمية مبتكرة',
+    'فريق ملهم',
+    'شغف التطوير المستمر',
+    'رؤية تصنع المستقبل'
+  ];
+
   return (
     <div
       ref={wrapperRef}
       className="footer-curtain-wrapper"
+      dir={lang === 'ar' ? 'rtl' : 'ltr'}
     >
-      {/* The actual footer stays fixed underneath during curtain reveal */}
       <footer className="cinematic-footer-wrapper">
-        
         {/* Ambient Light & Grid Background */}
         <div className="footer-aurora animate-footer-breathe" />
         <div className="footer-bg-grid" />
@@ -191,14 +199,14 @@ export function CinematicFooter() {
           ref={giantTextRef}
           className="footer-giant-bg-text"
         >
-          تكنو إنجاز
+          {t.footer?.giantText || (lang === 'ar' ? 'تكنو إنجاز' : 'TECHNO ENJAZ')}
         </div>
 
         {/* 1. Diagonal Sleek Marquee (Top of footer) */}
         <div className="footer-marquee-container">
           <div className="footer-marquee-track animate-footer-scroll-marquee">
-            <MarqueeItem />
-            <MarqueeItem />
+            <MarqueeItem items={marqueeItems} />
+            <MarqueeItem items={marqueeItems} />
           </div>
         </div>
 
@@ -206,37 +214,41 @@ export function CinematicFooter() {
         <div className="footer-main-content">
           <div ref={headingRef}>
             <h2 className="footer-heading footer-text-glow">
-              جاهز للانطلاق معنا؟
+              {t.footer?.heading || 'جاهز للانطلاق معنا؟'}
             </h2>
             <p className="footer-subheading">
-              نبتكر حلول الغد اليوم، وندعم مسيرة التطور التقني والريادة برؤية تصنع الفارق وشغف لا يتوقف.
+              {t.footer?.subheading || 'نبتكر حلول الغد اليوم، وندعم مسيرة التطور التقني والريادة برؤية تصنع الفارق وشغف لا يتوقف.'}
             </p>
           </div>
 
-          {/* حقل الإدخال المنحني التفاعلي - ابق على اطلاع */}
+          {/* Curved Newsletter Input */}
           <div ref={inputRef} className="footer-newsletter-wrap">
-            <span className="footer-stay-updated-text">ابقَ على اطلاع</span>
+            <span className="footer-stay-updated-text">
+              {t.footer?.stayUpdated || 'ابقَ على اطلاع'}
+            </span>
             <div className="footer-curved-input-box" dir="ltr">
               <CurvedInput
-                placeholder="أدخل بريدك الإلكتروني"
-                buttonText="اشتراك"
-                theme="dark"
+                placeholder={t.footer?.inputPlaceholder || 'أدخل بريدك الإلكتروني'}
+                buttonText={t.footer?.subscribeBtn || 'اشتراك'}
+                theme={theme === 'light' ? 'light' : 'dark'}
                 bend={28}
                 height={64}
                 width={450}
                 cornerRadius={18}
                 borderWidth={1.5}
                 fontSize={15}
-                backgroundColor="#1B1722"
-                textColor="#f5f5f5"
-                borderColor="#5013c6"
-                buttonColor="#2b1ed5"
+                backgroundColor={theme === 'light' ? '#ffffff' : '#1B1722'}
+                textColor={theme === 'light' ? '#0f172a' : '#f5f5f5'}
+                borderColor={theme === 'light' ? '#0284c7' : '#5013c6'}
+                buttonColor={theme === 'light' ? '#0284c7' : '#2b1ed5'}
                 buttonTextColor="#ffffff"
                 shadowSize="md"
                 onSubmit={value => {
-                  console.log('Stay updated email:', value);
                   if (value) {
-                    window.open(`https://wa.me/963958794195?text=${encodeURIComponent(`مرحباً تكنو إنجاز، أود البقاء على اطلاع عبر الإيميل: ${value}`)}`, '_blank');
+                    const message = lang === 'ar' 
+                      ? `مرحباً تكنو إنجاز، أود البقاء على اطلاع عبر الإيميل: ${value}`
+                      : `Hello Techno Enjaz, I would like to stay updated via email: ${value}`;
+                    window.open(`https://wa.me/963958794195?text=${encodeURIComponent(message)}`, '_blank');
                   }
                 }}
               />
@@ -257,7 +269,7 @@ export function CinematicFooter() {
                   <path d="M3 9h18" />
                   <path d="M9 21V9" />
                 </svg>
-                <span>المشاريع</span>
+                <span>{t.footer?.projects || t.nav.projects}</span>
               </MagneticButton>
 
               <MagneticButton
@@ -271,7 +283,7 @@ export function CinematicFooter() {
                   <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
                   <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                 </svg>
-                <span>من نحن</span>
+                <span>{t.footer?.about || t.nav.about}</span>
               </MagneticButton>
 
               <MagneticButton
@@ -283,20 +295,20 @@ export function CinematicFooter() {
                   <rect width="20" height="16" x="2" y="4" rx="2" />
                   <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                 </svg>
-                <span>تواصل معنا</span>
+                <span>{t.footer?.contact || t.nav.contact}</span>
               </MagneticButton>
             </div>
 
             {/* Secondary Text Links */}
             <div className="footer-secondary-pills">
               <MagneticButton as="a" href="#top" className="footer-glass-pill footer-pill-secondary">
-                الرئيسية
+                {t.footer?.home || t.nav.home}
               </MagneticButton>
               <MagneticButton as="a" href="#articles" className="footer-glass-pill footer-pill-secondary">
-                المقالات
+                {t.footer?.articles || t.nav.articles}
               </MagneticButton>
               <MagneticButton as="a" href="#videos" className="footer-glass-pill footer-pill-secondary">
-                الفيديوهات
+                {t.footer?.videos || t.nav.videos}
               </MagneticButton>
             </div>
           </div>
@@ -304,9 +316,8 @@ export function CinematicFooter() {
 
         {/* 3. Bottom Bar / Credits */}
         <div className="footer-bottom-bar">
-          {/* Copyright */}
           <div className="footer-copyright">
-            © 2026 تكنو إنجاز. جميع الحقوق محفوظة.
+            {t.footer?.copyright || '© 2026 تكنو إنجاز. جميع الحقوق محفوظة.'}
           </div>
 
           {/* Back to top button */}
@@ -314,8 +325,8 @@ export function CinematicFooter() {
             as="button"
             onClick={scrollToTop}
             className="footer-glass-pill footer-back-to-top"
-            title="العودة لأعلى الصفحة"
-            aria-label="العودة لأعلى الصفحة"
+            title={t.footer?.backToTop || 'العودة لأعلى الصفحة'}
+            aria-label={t.footer?.backToTop || 'العودة لأعلى الصفحة'}
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
