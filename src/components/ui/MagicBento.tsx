@@ -1,6 +1,8 @@
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { gsap } from 'gsap';
+import { Bookmark, BookmarkCheck } from 'lucide-react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
+import { useSavedProjects } from '../../hooks/useSavedProjects';
 import './MagicBento.css';
 
 import ch1 from '../../assets/projects/techno-projects/chapter4-01.webp';
@@ -609,6 +611,7 @@ const MagicBento: React.FC<MagicBentoProps> = ({
   const gridRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useMobileDetection();
   const shouldDisableAnimations = disableAnimations || isMobile;
+  const { isSaved, toggleSave } = useSavedProjects();
 
   return (
     <>
@@ -627,6 +630,8 @@ const MagicBento: React.FC<MagicBentoProps> = ({
           const cardLabel = isEn ? (card.labelEn || card.label) : card.label;
           const cardTitle = isEn ? (card.titleEn || card.title) : card.title;
           const cardDesc = isEn ? (card.descriptionEn || card.description) : card.description;
+          const articleId = `article-${index + 1}`;
+          const isItemSaved = isSaved(articleId);
 
           const baseClassName = `magic-bento-card ${textAutoHide ? 'magic-bento-card--text-autohide' : ''} ${enableBorderGlow ? 'magic-bento-card--border-glow' : ''}`;
           const cardProps = {
@@ -641,6 +646,27 @@ const MagicBento: React.FC<MagicBentoProps> = ({
             <>
               <div className="magic-bento-card__header">
                 <div className="magic-bento-card__label">{cardLabel}</div>
+                <button
+                  type="button"
+                  className={`article-save-btn ${isItemSaved ? 'is-saved' : ''}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleSave({
+                      id: articleId,
+                      title: card.title,
+                      titleEn: card.titleEn,
+                      category: 'مقالات تقنية',
+                      categoryLabel: cardLabel,
+                      description: card.description,
+                      descriptionEn: card.descriptionEn,
+                      type: 'article',
+                      image: card.image
+                    });
+                  }}
+                  title={isItemSaved ? (isEn ? 'Saved to Library' : 'محفوظ في المكتبة') : (isEn ? 'Save Article' : 'حفظ المقال')}
+                >
+                  {isItemSaved ? <BookmarkCheck size={13} /> : <Bookmark size={13} />}
+                </button>
               </div>
 
               {card.image && (

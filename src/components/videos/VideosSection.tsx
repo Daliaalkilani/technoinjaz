@@ -1,9 +1,10 @@
 import React from 'react';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Bookmark, BookmarkCheck } from 'lucide-react';
 import CardSwap, { Card } from './CardSwap';
 import heroBgDistortion from '../../assets/hero-bg-distortion.png';
 import im1Bg from '../../assets/im1.png';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
+import { useSavedProjects } from '../../hooks/useSavedProjects';
 import '../projects/ProjectsSection.css';
 import './VideosSection.css';
 
@@ -12,11 +13,45 @@ export interface VideosSectionProps {
   showNavigateButton?: boolean;
 }
 
+const videosList = [
+  {
+    id: 'video-1',
+    title: 'نظام التحكم والأمان البيومتري',
+    titleEn: 'Biometric Security & Access Control',
+    tag: 'عرض حي',
+    tagEn: 'Live Demo',
+    duration: '03:42',
+    description: 'استعراض تفاعلي لخوارزميات التعرف المتقدمة والتحقق الذكي متعدد المراحل.',
+    descriptionEn: 'Interactive demonstration of facial recognition algorithms and multi-stage verification.'
+  },
+  {
+    id: 'video-2',
+    title: 'معمارية معالجة التدفقات اللحظية',
+    titleEn: 'Real-Time Stream Processing Architecture',
+    tag: 'محاكاة تقنية',
+    tagEn: 'Simulation',
+    duration: '02:18',
+    description: 'رصد ومراقبة استجابة الخوادم اللحظية وإدارة عمليات التحقق الآمن للخزينة.',
+    descriptionEn: 'Real-time telemetry and monitoring of server response rates and secure clearance workflows.'
+  },
+  {
+    id: 'video-3',
+    title: 'منظومة الإنذار والكشف التلقائي',
+    titleEn: 'Intrusion Detection & Alert System',
+    tag: 'توثيق ميداني',
+    tagEn: 'Field Demo',
+    duration: '04:05',
+    description: 'اختبار آليات الرصد الفوري ومطابقة بيانات التصريح ضد محاولات التسلل غير المخولة.',
+    descriptionEn: 'Live benchmark testing anomaly detection routines against unauthorized access attempts.'
+  }
+];
+
 const VideosSection: React.FC<VideosSectionProps> = ({
   onNavigateToVideos,
   showNavigateButton = true
 }) => {
   const { theme, lang, t } = useThemeLanguage();
+  const { isSaved, toggleSave } = useSavedProjects();
 
   return (
     <section id="videos" className="videos-section" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
@@ -62,68 +97,59 @@ const VideosSection: React.FC<VideosSectionProps> = ({
               delay={3000}
               pauseOnHover
             >
-              <Card customClass="video-card">
-                <div className="video-card-inner">
-                  <div className="video-card-topbar">
-                    <span className="video-card-tag">{lang === 'ar' ? 'عرض حي' : 'Live Demo'}</span>
-                    <span className="video-card-duration">03:42</span>
-                  </div>
-                  <div className="video-card-screen">
-                    <div className="video-play-btn" aria-label={lang === 'ar' ? "تشغيل الفيديو" : "Play Video"}>
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                        <polygon points="5 3 19 12 5 21 5 3" />
-                      </svg>
-                    </div>
-                    <div className="video-screen-glow" />
-                  </div>
-                  <div className="video-card-body">
-                    <h3>{lang === 'ar' ? 'نظام التحكم والأمان البيومتري' : 'Biometric Security & Access Control'}</h3>
-                    <p>{lang === 'ar' ? 'استعراض تفاعلي لخوارزميات التعرف المتقدمة والتحقق الذكي متعدد المراحل.' : 'Interactive demonstration of facial recognition algorithms and multi-stage verification.'}</p>
-                  </div>
-                </div>
-              </Card>
+              {videosList.map((vid) => {
+                const isItemSaved = isSaved(vid.id);
+                const title = lang === 'en' ? vid.titleEn : vid.title;
+                const desc = lang === 'en' ? vid.descriptionEn : vid.description;
+                const tag = lang === 'en' ? vid.tagEn : vid.tag;
 
-              <Card customClass="video-card">
-                <div className="video-card-inner">
-                  <div className="video-card-topbar">
-                    <span className="video-card-tag">{lang === 'ar' ? 'محاكاة تقنية' : 'Simulation'}</span>
-                    <span className="video-card-duration">02:18</span>
-                  </div>
-                  <div className="video-card-screen">
-                    <div className="video-play-btn" aria-label={lang === 'ar' ? "تشغيل الفيديو" : "Play Video"}>
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                        <polygon points="5 3 19 12 5 21 5 3" />
-                      </svg>
+                return (
+                  <Card key={vid.id} customClass="video-card">
+                    <div className="video-card-inner">
+                      <div className="video-card-topbar">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span className="video-card-tag">{tag}</span>
+                          <span className="video-card-duration">{vid.duration}</span>
+                        </div>
+                        <button
+                          type="button"
+                          className={`video-save-btn ${isItemSaved ? 'is-saved' : ''}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleSave({
+                              id: vid.id,
+                              title: vid.title,
+                              titleEn: vid.titleEn,
+                              category: 'فيديوهات تقنية',
+                              categoryLabel: tag,
+                              description: vid.description,
+                              descriptionEn: vid.descriptionEn,
+                              type: 'video',
+                              duration: vid.duration
+                            });
+                          }}
+                          title={isItemSaved ? (lang === 'ar' ? 'تم الحفظ في المفضلة' : 'Saved to Library') : (lang === 'ar' ? 'حفظ الفيديو في المفضلة' : 'Save Video to Library')}
+                        >
+                          {isItemSaved ? <BookmarkCheck size={13} /> : <Bookmark size={13} />}
+                          <span>{isItemSaved ? (lang === 'ar' ? 'محفوظ' : 'Saved') : (lang === 'ar' ? 'حفظ' : 'Save')}</span>
+                        </button>
+                      </div>
+                      <div className="video-card-screen">
+                        <div className="video-play-btn" aria-label={lang === 'ar' ? "تشغيل الفيديو" : "Play Video"}>
+                          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="5 3 19 12 5 21 5 3" />
+                          </svg>
+                        </div>
+                        <div className="video-screen-glow" />
+                      </div>
+                      <div className="video-card-body">
+                        <h3>{title}</h3>
+                        <p>{desc}</p>
+                      </div>
                     </div>
-                    <div className="video-screen-glow" />
-                  </div>
-                  <div className="video-card-body">
-                    <h3>{lang === 'ar' ? 'معمارية معالجة التدفقات اللحظية' : 'Real-Time Stream Processing Architecture'}</h3>
-                    <p>{lang === 'ar' ? 'رصد ومراقبة استجابة الخوادم اللحظية وإدارة عمليات التحقق الآمن للخزينة.' : 'Real-time telemetry and monitoring of server response rates and secure clearance workflows.'}</p>
-                  </div>
-                </div>
-              </Card>
-
-              <Card customClass="video-card">
-                <div className="video-card-inner">
-                  <div className="video-card-topbar">
-                    <span className="video-card-tag">{lang === 'ar' ? 'توثيق ميداني' : 'Field Demo'}</span>
-                    <span className="video-card-duration">04:05</span>
-                  </div>
-                  <div className="video-card-screen">
-                    <div className="video-play-btn" aria-label={lang === 'ar' ? "تشغيل الفيديو" : "Play Video"}>
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                        <polygon points="5 3 19 12 5 21 5 3" />
-                      </svg>
-                    </div>
-                    <div className="video-screen-glow" />
-                  </div>
-                  <div className="video-card-body">
-                    <h3>{lang === 'ar' ? 'منظومة الإنذار والكشف التلقائي' : 'Intrusion Detection & Alert System'}</h3>
-                    <p>{lang === 'ar' ? 'اختبار آليات الرصد الفوري ومطابقة بيانات التصريح ضد محاولات التسلل غير المخولة.' : 'Live benchmark testing anomaly detection routines against unauthorized access attempts.'}</p>
-                  </div>
-                </div>
-              </Card>
+                  </Card>
+                );
+              })}
             </CardSwap>
           </div>
         </div>

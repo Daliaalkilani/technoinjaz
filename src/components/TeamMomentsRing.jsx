@@ -268,16 +268,16 @@ export default function TeamMomentsRing({ onScrollDown }) {
       x.direction = lang === 'ar' ? 'rtl' : 'ltr';
 
       if (isLight) {
-        // إضاءة ظل زرقاء ناعمة
-        x.shadowColor = 'rgba(2, 132, 199, 0.28)';
-        x.shadowBlur = 24 * K;
-        x.shadowOffsetY = 6 * K;
+        // إضاءة ظل تقنية ناعمة وعالية التباين
+        x.shadowColor = 'rgba(2, 132, 199, 0.22)';
+        x.shadowBlur = 20 * K;
+        x.shadowOffsetY = 4 * K;
 
-        // نفس الألوان الأصلية للنص
+        // تدرج لوني عالي التباين متناسق مع هوية الموقع (سماوي / كحلي هندسي داكن دون أي لون بنفسجي)
         const textGrad = x.createLinearGradient(0, cy - fontSize / 2, 0, cy + fontSize / 2);
-        textGrad.addColorStop(0, '#0f172a');
-        textGrad.addColorStop(0.6, '#1e1b4b');
-        textGrad.addColorStop(1, '#4338ca');
+        textGrad.addColorStop(0, '#0a0f1d');
+        textGrad.addColorStop(0.52, '#0369a1');
+        textGrad.addColorStop(1, '#0284c7');
         x.fillStyle = textGrad;
       } else {
         // إضاءة متوهجة تركوازية وزرقاء حول الكلمة لتلائم الهوية البصرية
@@ -345,6 +345,25 @@ export default function TeamMomentsRing({ onScrollDown }) {
       ctx.save();
       // تعديل اتجاه المحاور لضبط الصور لتظهر بالاتجاه الصحيح والمعتدل (Upright)
       ctx.setTransform((-ex * 2) / TS, (-ey * 2) / TS, (-fx * 2) / TS, (-fy * 2) / TS, p0[0], p0[1]);
+
+      // رسم ظل مجسم عميق ومحدد للبطاقة يمنع ظهورها باهتة في وضع اللايت مود
+      ctx.save();
+      roundRectPath(ctx, TS, TS, TS * RING.radius);
+      if (isLight) {
+        ctx.shadowColor = facing ? 'rgba(15, 23, 42, 0.28)' : 'rgba(15, 23, 42, 0.1)';
+        ctx.shadowBlur = facing ? 32 : 16;
+        ctx.shadowOffsetY = facing ? 14 : 6;
+        ctx.fillStyle = '#ffffff';
+      } else {
+        ctx.shadowColor = facing ? 'rgba(0, 210, 255, 0.45)' : 'rgba(0, 0, 0, 0.8)';
+        ctx.shadowBlur = facing ? 28 : 12;
+        ctx.shadowOffsetY = facing ? 10 : 4;
+        ctx.fillStyle = '#05070e';
+      }
+      ctx.fill();
+      ctx.restore();
+
+      // قص المحتوى بحدود البطاقة المنحنية
       roundRectPath(ctx, TS, TS, TS * RING.radius);
       ctx.clip();
 
@@ -352,13 +371,22 @@ export default function TeamMomentsRing({ onScrollDown }) {
       ctx.fillStyle = isLight ? '#ffffff' : '#05070e';
       ctx.fillRect(-TS / 2, -TS / 2, TS, TS);
 
-      // رسم الصورة معتمة ومثالية الوضوح
+      // رسم الصورة مع تعزيز التباين والحيوية في اللايت مود لمنع بهتان الوجه الأمامي
+      if (isLight && facing) {
+        ctx.filter = 'contrast(1.08) saturate(1.06)';
+      }
       ctx.drawImage(img, -TS / 2, -TS / 2, TS, TS);
+      if (isLight && facing) {
+        ctx.filter = 'none';
+      }
 
-      // إطار حدودي أنيق وواضح يحيط بالبطاقة دون خطوط داخلية أو أرجوانية
-      ctx.strokeStyle = isLight ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.25)';
-      ctx.lineWidth = 5;
-      roundRectPath(ctx, TS - 5, TS - 5, TS * RING.radius);
+      // إطار حدودي أنيق وواضح ومتباين يحيط بالبطاقة
+      const strokeW = facing ? 6 : 3.5;
+      ctx.strokeStyle = isLight 
+        ? (facing ? 'rgba(2, 132, 199, 0.6)' : 'rgba(15, 23, 42, 0.18)') 
+        : (facing ? 'rgba(0, 210, 255, 0.65)' : 'rgba(255, 255, 255, 0.25)');
+      ctx.lineWidth = strokeW;
+      roundRectPath(ctx, TS - strokeW, TS - strokeW, TS * RING.radius);
       ctx.stroke();
 
       ctx.restore();

@@ -8,13 +8,14 @@ export interface SavedProject {
   categoryLabel?: string;
   description: string;
   descriptionEn?: string;
-  type: 'academic' | 'live';
+  type: 'project' | 'article' | 'video' | 'academic' | 'live';
   url?: string;
   image?: string;
   pdfId?: string;
   pptxId?: string;
   docxId?: string;
   tags?: string[];
+  duration?: string;
   savedAt: number;
 }
 

@@ -10,7 +10,10 @@ import {
   User, 
   Sparkles, 
   CheckCircle2, 
-  LogOut 
+  LogOut,
+  FileText,
+  Video,
+  Play 
 } from 'lucide-react';
 import { useThemeLanguage } from './context/ThemeLanguageContext';
 import { useSavedProjects } from './hooks/useSavedProjects';
@@ -21,7 +24,8 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
   const { savedProjects, removeSaved, clearAll } = useSavedProjects();
-  const [filterType, setFilterType] = useState('all'); // 'all' | 'academic' | 'live'
+  // Filter types: 'all' | 'projects' | 'articles' | 'videos'
+  const [filterType, setFilterType] = useState('all');
 
   // Retrieve user info from localStorage if available
   const [user, setUser] = useState(() => {
@@ -60,9 +64,21 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
     }
   };
 
+  // Group items by projects, articles, videos
+  const projectItems = savedProjects.filter(
+    p => !p.type || p.type === 'project' || p.type === 'academic' || p.type === 'live'
+  );
+  const articleItems = savedProjects.filter(p => p.type === 'article');
+  const videoItems = savedProjects.filter(p => p.type === 'video');
+
   const filteredProjects = savedProjects.filter(p => {
     if (filterType === 'all') return true;
-    return p.type === filterType;
+    if (filterType === 'projects') {
+      return !p.type || p.type === 'project' || p.type === 'academic' || p.type === 'live';
+    }
+    if (filterType === 'articles') return p.type === 'article';
+    if (filterType === 'videos') return p.type === 'video';
+    return true;
   });
 
   return (
@@ -88,17 +104,16 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
               <User size={36} />
             </div>
             <div className="user-info-meta">
-              <h1>{user.name}</h1>
-              <p>{user.email}</p>
-              <div className="user-status-badges">
-                <span className="user-badge-item">
+              <div className="user-name-row">
+                <h2>{user.name}</h2>
+                <span className="user-verified-badge" title={user.status}>
                   <CheckCircle2 size={13} />
                   <span>{user.status}</span>
                 </span>
-                <span className="user-badge-item" style={{ borderColor: 'rgba(0,210,255,0.3)', color: 'var(--accent-cyan)' }}>
-                  <Sparkles size={13} />
-                  <span>{user.joined}</span>
-                </span>
+              </div>
+              <p className="user-email">{user.email}</p>
+              <div className="user-status-badges">
+                <span className="user-badge-item">{user.joined}</span>
               </div>
             </div>
           </div>
@@ -107,7 +122,7 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
             <div className="stat-box">
               <div className="stat-number">{savedProjects.length}</div>
               <div className="stat-label">
-                {isEn ? "Saved Projects" : "المشاريع المحفوظة"}
+                {isEn ? "Saved Items" : "إجمالي المحفوظات"}
               </div>
             </div>
             <button
@@ -127,10 +142,11 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
           <div className="favorites-title-wrap">
             <BookmarkCheck size={26} color="var(--accent-cyan)" />
             <h2>
-              {isEn ? "Saved & Favorite Projects" : "المشاريع المفضلة والمحفوظة"}
+              {isEn ? "Saved Library" : "المكتبة والمحفوظات"}
             </h2>
           </div>
 
+          {/* Separate Filters: Projects, Articles, Videos */}
           <div className="favorites-filter-pills">
             <button
               type="button"
@@ -141,17 +157,27 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
             </button>
             <button
               type="button"
-              className={`filter-pill-btn ${filterType === 'academic' ? 'active' : ''}`}
-              onClick={() => setFilterType('academic')}
+              className={`filter-pill-btn ${filterType === 'projects' ? 'active' : ''}`}
+              onClick={() => setFilterType('projects')}
             >
-              {isEn ? "Academic" : "أكاديمية"} ({savedProjects.filter(p => p.type === 'academic').length})
+              <Sparkles size={13} style={{ display: 'inline', verticalAlign: 'middle', [isEn ? 'marginRight' : 'marginLeft']: '4px' }} />
+              {isEn ? "Projects" : "مشاريع"} ({projectItems.length})
             </button>
             <button
               type="button"
-              className={`filter-pill-btn ${filterType === 'live' ? 'active' : ''}`}
-              onClick={() => setFilterType('live')}
+              className={`filter-pill-btn ${filterType === 'articles' ? 'active' : ''}`}
+              onClick={() => setFilterType('articles')}
             >
-              {isEn ? "Live" : "حية"} ({savedProjects.filter(p => p.type === 'live').length})
+              <FileText size={13} style={{ display: 'inline', verticalAlign: 'middle', [isEn ? 'marginRight' : 'marginLeft']: '4px' }} />
+              {isEn ? "Articles" : "مقالات"} ({articleItems.length})
+            </button>
+            <button
+              type="button"
+              className={`filter-pill-btn ${filterType === 'videos' ? 'active' : ''}`}
+              onClick={() => setFilterType('videos')}
+            >
+              <Video size={13} style={{ display: 'inline', verticalAlign: 'middle', [isEn ? 'marginRight' : 'marginLeft']: '4px' }} />
+              {isEn ? "Videos" : "فيديوهات"} ({videoItems.length})
             </button>
           </div>
         </div>
@@ -161,30 +187,25 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
           <div className="favorites-empty-state">
             <Bookmark size={54} className="favorites-empty-icon" />
             <h3 className="favorites-empty-title">
-              {isEn ? "No Saved Projects Yet" : "قائمة المفضلة فارغة حالياً"}
+              {filterType === 'all' 
+                ? (isEn ? "No Saved Items Yet" : "قائمة المفضلة فارغة حالياً")
+                : filterType === 'projects'
+                ? (isEn ? "No Saved Projects Yet" : "لا توجد مشاريع محفوظة حالياً")
+                : filterType === 'articles'
+                ? (isEn ? "No Saved Articles Yet" : "لا توجد مقالات محفوظة حالياً")
+                : (isEn ? "No Saved Videos Yet" : "لا توجد فيديوهات محفوظة حالياً")}
             </h3>
             <p className="favorites-empty-desc">
               {isEn 
-                ? "Browse projects in the catalog or live showcase and click 'Save Project' to bookmark them here for instant access."
-                : "تصفح المشاريع في الكتالوج أو الاستعراض الحي واضغط على زر 'حفظ المشروع' ليتم حفظها هنا في صفحتك الشخصية للوصول إليها في أي وقت."}
+                ? "Explore live projects, academic studies, articles, and videos across Techno Enjaz, and bookmark your favorites for quick access anytime."
+                : "تصفح المشاريع الحية، الكتالوج الأكاديمي، المقالات العلمية، والفيديوهات عبر تكنو إنجاز واحفظ ما يهمك هنا للرجوع إليه في أي وقت."}
             </p>
+
             <div className="favorites-empty-actions">
-              <Button
-                variant="default"
-                size="default"
-                onClick={() => {
-                  onBack();
-                  setTimeout(() => {
-                    const el = document.getElementById('academic-projects');
-                    if (el) el.scrollIntoView({ behavior: 'smooth' });
-                  }, 150);
-                }}
-              >
-                {isEn ? "Explore Academic Catalog" : "استكشف المشاريع الأكاديمية"}
-              </Button>
-              <Button
-                variant="outline"
-                size="default"
+              {/* Distinctively styled Explore Live Projects button */}
+              <button
+                type="button"
+                className="btn-explore-live-projects"
                 onClick={() => {
                   onBack();
                   setTimeout(() => {
@@ -192,9 +213,59 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
                     if (el) el.scrollIntoView({ behavior: 'smooth' });
                   }, 150);
                 }}
+                title={isEn ? "Explore Live Projects" : "اكتشف المشاريع الحية"}
               >
-                {isEn ? "Explore Live Projects" : "استكشف المشاريع الحية"}
-              </Button>
+                <Sparkles size={16} />
+                <span>{isEn ? "Explore Live Projects" : "اكتشف المشاريع الحية"}</span>
+              </button>
+
+              <button
+                type="button"
+                className="btn-explore-academic"
+                onClick={() => {
+                  onBack();
+                  setTimeout(() => {
+                    const el = document.getElementById('academic-projects');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }, 150);
+                }}
+                title={isEn ? "Explore Academic Catalog" : "استكشف الكتالوج الأكاديمي"}
+              >
+                <BookOpen size={16} />
+                <span>{isEn ? "Explore Academic Catalog" : "استكشف المشاريع الأكاديمية"}</span>
+              </button>
+
+              <button
+                type="button"
+                className="btn-explore-articles"
+                onClick={() => {
+                  onBack();
+                  setTimeout(() => {
+                    const el = document.getElementById('articles');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }, 150);
+                }}
+                title={isEn ? "Explore Articles" : "استكشف المقالات"}
+              >
+                <FileText size={16} />
+                <span>{isEn ? "Explore Articles" : "استكشف المقالات"}</span>
+              </button>
+
+              <button
+                type="button"
+                className="btn-explore-videos"
+                onClick={() => {
+                  onBack();
+                  setTimeout(() => {
+                    const el = document.getElementById('videos');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }, 150);
+                }}
+                title={isEn ? "Explore Videos" : "استكشف الفيديوهات"}
+              >
+                <Video size={16} />
+                <span>{isEn ? "Explore Videos" : "استكشف الفيديوهات"}</span>
+              </button>
             </div>
           </div>
         ) : (
@@ -202,6 +273,9 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
             {filteredProjects.map((project) => {
               const pTitle = isEn && project.titleEn ? project.titleEn : project.title;
               const pDesc = isEn && project.descriptionEn ? project.descriptionEn : project.description;
+              const isProject = !project.type || project.type === 'project' || project.type === 'academic' || project.type === 'live';
+              const isArticle = project.type === 'article';
+              const isVideo = project.type === 'video';
 
               return (
                 <div key={project.id} className="favorite-card">
@@ -211,9 +285,24 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
                         {project.categoryLabel || project.category}
                       </span>
                       <span className="favorite-type-badge">
-                        {project.type === 'academic' 
-                          ? (isEn ? "Academic Project" : "مشروع أكاديمي") 
-                          : (isEn ? "Live Project" : "مشروع حي")}
+                        {isVideo ? (
+                          <>
+                            <Video size={11} style={{ display: 'inline', [isEn ? 'marginRight' : 'marginLeft']: '4px' }} />
+                            {isEn ? "Video" : "فيديو"}
+                          </>
+                        ) : isArticle ? (
+                          <>
+                            <FileText size={11} style={{ display: 'inline', [isEn ? 'marginRight' : 'marginLeft']: '4px' }} />
+                            {isEn ? "Article" : "مقال"}
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles size={11} style={{ display: 'inline', [isEn ? 'marginRight' : 'marginLeft']: '4px' }} />
+                            {project.type === 'live' 
+                              ? (isEn ? "Live Project" : "مشروع حي") 
+                              : (isEn ? "Academic Project" : "مشروع أكاديمي")}
+                          </>
+                        )}
                       </span>
                     </div>
 
@@ -223,6 +312,7 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
 
                   <div className="favorite-card-actions">
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      {/* Academic Project Action */}
                       {project.type === 'academic' && (
                         <Button
                           variant="default"
@@ -231,10 +321,11 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
                           title={isEn ? "Read Document" : "قراءة المستند"}
                         >
                           <BookOpen size={14} style={{ [isEn ? 'marginRight' : 'marginLeft']: '6px' }} />
-                          <span>{isEn ? "Read" : "قراءة"}</span>
+                          <span>{isEn ? "Read" : "قراءة المستند"}</span>
                         </Button>
                       )}
 
+                      {/* Live Project Action */}
                       {project.type === 'live' && project.url && (
                         <a
                           href={project.url}
@@ -247,6 +338,42 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
                             <ExternalLink size={13} style={{ [isEn ? 'marginLeft' : 'marginRight']: '6px' }} />
                           </Button>
                         </a>
+                      )}
+
+                      {/* Article Action */}
+                      {isArticle && (
+                        <Button
+                          variant="default"
+                          size="sm"
+                          onClick={() => {
+                            onBack();
+                            setTimeout(() => {
+                              const el = document.getElementById('articles');
+                              if (el) el.scrollIntoView({ behavior: 'smooth' });
+                            }, 150);
+                          }}
+                        >
+                          <FileText size={14} style={{ [isEn ? 'marginRight' : 'marginLeft']: '6px' }} />
+                          <span>{isEn ? "Read Article" : "قراءة المقال"}</span>
+                        </Button>
+                      )}
+
+                      {/* Video Action */}
+                      {isVideo && (
+                        <Button
+                          variant="default"
+                          size="sm"
+                          onClick={() => {
+                            onBack();
+                            setTimeout(() => {
+                              const el = document.getElementById('videos');
+                              if (el) el.scrollIntoView({ behavior: 'smooth' });
+                            }, 150);
+                          }}
+                        >
+                          <Play size={14} style={{ [isEn ? 'marginRight' : 'marginLeft']: '6px' }} />
+                          <span>{isEn ? "Watch Video" : "مشاهدة الفيديو"}</span>
+                        </Button>
                       )}
                     </div>
 

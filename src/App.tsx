@@ -548,15 +548,15 @@ export default function App() {
           >
             <TeamMomentsRing onScrollDown={scrollToTeam} />
 
-            {/* Bottom gradient fade */}
+            {/* Bottom gradient fade - sleek height so front cards remain crisp and vibrant */}
             <div
               style={{
                 position: 'absolute',
                 bottom: 0,
                 left: 0,
                 right: 0,
-                height: '320px',
-                background: theme === 'light' ? 'linear-gradient(to bottom, transparent 0%, rgba(248, 250, 252, 0.4) 30%, rgba(241, 245, 249, 0.9) 70%, #f8fafc 100%)' : 'linear-gradient(to bottom, transparent 0%, rgba(5, 5, 8, 0.3) 30%, rgba(0, 0, 0, 0.8) 70%, #000000 100%)',
+                height: '110px',
+                background: theme === 'light' ? 'linear-gradient(to bottom, transparent 0%, rgba(248, 250, 252, 0.65) 60%, #f8fafc 100%)' : 'linear-gradient(to bottom, transparent 0%, rgba(5, 5, 8, 0.6) 60%, #000000 100%)',
                 pointerEvents: 'none',
                 zIndex: 10
               }}
@@ -737,15 +737,15 @@ export default function App() {
             >
               <TeamMomentsRing onScrollDown={scrollToTeam} />
 
-              {/* Bottom gradient fade */}
+              {/* Bottom gradient fade - sleek height so front cards remain crisp and vibrant */}
               <div
                 style={{
                   position: 'absolute',
                   bottom: 0,
                   left: 0,
                   right: 0,
-                  height: '320px',
-                  background: theme === 'light' ? 'linear-gradient(to bottom, transparent 0%, rgba(248, 250, 252, 0.4) 30%, rgba(241, 245, 249, 0.9) 70%, #f8fafc 100%)' : 'linear-gradient(to bottom, transparent 0%, rgba(5, 5, 8, 0.3) 30%, rgba(0, 0, 0, 0.8) 70%, #000000 100%)',
+                  height: '110px',
+                  background: theme === 'light' ? 'linear-gradient(to bottom, transparent 0%, rgba(248, 250, 252, 0.65) 60%, #f8fafc 100%)' : 'linear-gradient(to bottom, transparent 0%, rgba(5, 5, 8, 0.6) 60%, #000000 100%)',
                   pointerEvents: 'none',
                   zIndex: 10
                 }}
