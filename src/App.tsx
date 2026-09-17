@@ -34,6 +34,19 @@ export default function App() {
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [activeNavIndex, setActiveNavIndex] = useState(0);
 
+  const localizedTeamMembers = teamMembers.map((m: any) => ({
+    ...m,
+    name: lang === 'en' ? (m.nameEn || m.name) : m.name,
+    title: lang === 'en' ? (m.titleEn || m.title || m.nameEn || m.name) : (m.title || m.name),
+    role: lang === 'en' ? (m.roleEn || m.role) : m.role,
+    description: lang === 'en' ? (m.descriptionEn || m.description) : m.description,
+    department: lang === 'en' ? (m.departmentEn || m.department) : m.department,
+    bio: lang === 'en' ? (m.bioEn || m.bio) : m.bio,
+    skills: lang === 'en' ? (m.skillsEn || m.skills) : m.skills,
+    location: lang === 'en' ? (m.locationEn || m.location) : m.location,
+    projects: lang === 'en' ? (m.projectsEn || m.projects) : m.projects,
+  }));
+
   // Defer heavy 3D canvases until rocket loader finishes
   useEffect(() => {
     const onLoaderComplete = () => setIsLoaderDone(true);
@@ -252,7 +265,7 @@ export default function App() {
               type="button"
               className={`lang-pill-btn ${lang === 'ar' ? 'active' : ''}`}
               onClick={() => setLang('ar')}
-              aria-label="اللغة العربية"
+              aria-label={lang === 'ar' ? "اللغة العربية" : "Arabic"}
             >
               عربي
             </button>
@@ -560,7 +573,7 @@ export default function App() {
             {/* 3D Circular Team Carousel */}
             <div style={{ position: 'relative', width: '100%', height: '100%', flex: 1, zIndex: 1 }}>
               <InfiniteMenu
-                items={teamMembers as any}
+                items={localizedTeamMembers as any}
                 scale={1.4}
                 backgroundColor="transparent"
                 onSelectMember={handleSelectMember}
@@ -748,7 +761,7 @@ export default function App() {
               {/* 3D Circular Team Carousel */}
               <div style={{ position: 'relative', width: '100%', height: '100%', flex: 1, zIndex: 1 }}>
                 <InfiniteMenu
-                  items={teamMembers as any}
+                  items={localizedTeamMembers as any}
                   scale={1.4}
                   backgroundColor="transparent"
                   onSelectMember={handleSelectMember}

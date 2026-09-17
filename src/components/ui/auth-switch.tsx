@@ -13,9 +13,10 @@ import {
   CheckCircle2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useThemeLanguage } from "../../context/ThemeLanguageContext";
 import "./auth-switch.css";
 
-// أيقونة Google
+// Google Icon
 const GoogleIcon = ({ size = 17 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24">
     <path
@@ -37,7 +38,7 @@ const GoogleIcon = ({ size = 17 }: { size?: number }) => (
   </svg>
 );
 
-// أيقونة GitHub
+// GitHub Icon
 const GitHubIcon = ({ size = 17 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
     <path
@@ -59,18 +60,22 @@ export function AuthSwitch({
   initialState = "signIn",
   onSignIn,
   onSignUp,
-  className = ""
+  className
 }: AuthSwitchProps) {
+  const { lang } = useThemeLanguage();
+  const isEn = lang === 'en';
+
   const [isSignUp, setIsSignUp] = useState(initialState === "signUp");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [submitted, setSubmitted] = useState<string | null>(null);
   const [welcomeToast, setWelcomeToast] = useState<string | null>(null);
 
+  // Form states
   const [signInData, setSignInData] = useState({
     email: "",
     password: "",
-    remember: true
+    remember: false
   });
 
   const [signUpData, setSignUpData] = useState({
@@ -83,8 +88,12 @@ export function AuthSwitch({
   const handleSignInSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted("signIn");
-    const displayName = signInData.email ? signInData.email.split('@')[0] : "زائرنا الكريم";
-    setWelcomeToast(`مرحباً بك يا ${displayName}! سعداء بتواجدك معنا مجدداً.`);
+    const displayName = signInData.email ? signInData.email.split('@')[0] : (isEn ? "Valued Guest" : "زائرنا الكريم");
+    setWelcomeToast(
+      isEn
+        ? `Welcome back, ${displayName}! Delighted to have you with us again.`
+        : `مرحباً بك يا ${displayName}! سعداء بتواجدك معنا مجدداً.`
+    );
     if (onSignIn) onSignIn(signInData);
     setTimeout(() => setSubmitted(null), 3500);
     setTimeout(() => setWelcomeToast(null), 4500);
@@ -98,9 +107,9 @@ export function AuthSwitch({
   };
 
   return (
-    <div className={cn("auth-switch-root", className)} dir="rtl">
+    <div className={cn("auth-switch-root", className)} dir={isEn ? "ltr" : "rtl"}>
       <div className={cn("auth-switch-container", isSignUp ? "is-sign-up" : "is-sign-in")}>
-        {/* شريط التبديل للأجهزة المحمولة */}
+        {/* Mobile tabs switch */}
         <div className="auth-switch-mobile-tabs">
           <button
             type="button"
@@ -111,7 +120,7 @@ export function AuthSwitch({
             }}
           >
             <LogIn size={15} />
-            <span>تسجيل الدخول</span>
+            <span>{isEn ? "Sign In" : "تسجيل الدخول"}</span>
           </button>
           <button
             type="button"
@@ -122,23 +131,23 @@ export function AuthSwitch({
             }}
           >
             <UserPlus size={15} />
-            <span>إنشاء حساب</span>
+            <span>{isEn ? "Sign Up" : "إنشاء حساب"}</span>
           </button>
         </div>
 
-        {/* طبقة النموذجين (Sign In و Sign Up) */}
+        {/* Both Form Panels (Sign In & Sign Up) */}
         <div className="auth-switch-forms-wrapper">
-          {/* 1. نصف نموذج تسجيل الدخول */}
+          {/* 1. Sign In Half */}
           <div className="auth-switch-form-half sign-in-half">
-            <h2 className="auth-switch-form-title">تسجيل الدخول</h2>
+            <h2 className="auth-switch-form-title">{isEn ? "Sign In" : "تسجيل الدخول"}</h2>
             <p className="auth-switch-form-subtitle">
-              أدخل بريدك الإلكتروني وكلمة المرور لمتابعة أعمالك في تكنو إنجاز
+              {isEn ? "Enter your email and password to access your Techno Enjaz account" : "أدخل بريدك الإلكتروني وكلمة المرور لمتابعة أعمالك في تكنو إنجاز"}
             </p>
 
             {submitted === "signIn" && (
               <div className="auth-switch-success">
                 <CheckCircle2 size={18} />
-                <span>تم تسجيل الدخول بنجاح! مرحباً بعودتك.</span>
+                <span>{isEn ? "Signed in successfully! Welcome back." : "تم تسجيل الدخول بنجاح! مرحباً بعودتك."}</span>
               </div>
             )}
 
@@ -146,30 +155,30 @@ export function AuthSwitch({
               <button
                 type="button"
                 className="auth-switch-social-btn"
-                onClick={() => alert("تسجيل الدخول عبر جوجل متاح للمستخدمين")}
+                onClick={() => alert(isEn ? "Google Sign-In is ready for users" : "تسجيل الدخول عبر جوجل متاح للمستخدمين")}
               >
                 <GoogleIcon />
-                <span>جوجل</span>
+                <span>Google</span>
               </button>
               <button
                 type="button"
                 className="auth-switch-social-btn"
-                onClick={() => alert("تسجيل الدخول عبر غيت هاب متاح للمطورين")}
+                onClick={() => alert(isEn ? "GitHub Sign-In is ready for developers" : "تسجيل الدخول عبر غيت هاب متاح للمطورين")}
               >
                 <GitHubIcon />
-                <span>غيت هاب</span>
+                <span>GitHub</span>
               </button>
             </div>
 
             <div className="auth-switch-divider">
               <div className="auth-switch-divider-line" />
-              <span className="auth-switch-divider-text">أو عبر البريد</span>
+              <span className="auth-switch-divider-text">{isEn ? "or with email" : "أو عبر البريد"}</span>
               <div className="auth-switch-divider-line" />
             </div>
 
             <form onSubmit={handleSignInSubmit}>
               <div className="auth-switch-input-group">
-                <label className="auth-switch-label">البريد الإلكتروني</label>
+                <label className="auth-switch-label">{isEn ? "Email Address" : "البريد الإلكتروني"}</label>
                 <div className="auth-switch-input-wrapper">
                   <span className="auth-switch-input-icon">
                     <Mail size={16} />
@@ -188,7 +197,7 @@ export function AuthSwitch({
               </div>
 
               <div className="auth-switch-input-group">
-                <label className="auth-switch-label">كلمة المرور</label>
+                <label className="auth-switch-label">{isEn ? "Password" : "كلمة المرور"}</label>
                 <div className="auth-switch-input-wrapper">
                   <span className="auth-switch-input-icon">
                     <Lock size={16} />
@@ -207,7 +216,7 @@ export function AuthSwitch({
                     type="button"
                     className="auth-switch-eye-btn"
                     onClick={() => setShowPassword(!showPassword)}
-                    title={showPassword ? "إخفاء" : "إظهار"}
+                    title={showPassword ? (isEn ? "Hide" : "إخفاء") : (isEn ? "Show" : "إظهار")}
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -226,38 +235,38 @@ export function AuthSwitch({
                       })
                     }
                   />
-                  <span>تذكرني</span>
+                  <span>{isEn ? "Remember me" : "تذكرني"}</span>
                 </label>
                 <a
                   href="#forgot"
                   onClick={(e) => {
                     e.preventDefault();
-                    alert("يمكنك استعادة كلمة المرور عبر التواصل معنا.");
+                    alert(isEn ? "You can reset your password by contacting our support team." : "يمكنك استعادة كلمة المرور عبر التواصل معنا.");
                   }}
                   className="auth-switch-forgot"
                 >
-                  نسيت كلمة المرور؟
+                  {isEn ? "Forgot password?" : "نسيت كلمة المرور؟"}
                 </a>
               </div>
 
               <button type="submit" className="auth-switch-submit-btn">
                 <LogIn size={16} />
-                <span>تسجيل الدخول</span>
+                <span>{isEn ? "Sign In" : "تسجيل الدخول"}</span>
               </button>
             </form>
           </div>
 
-          {/* 2. نصف نموذج إنشاء الحساب */}
+          {/* 2. Sign Up Half */}
           <div className="auth-switch-form-half sign-up-half">
-            <h2 className="auth-switch-form-title">إنشاء حساب جديد</h2>
+            <h2 className="auth-switch-form-title">{isEn ? "Create New Account" : "إنشاء حساب جديد"}</h2>
             <p className="auth-switch-form-subtitle">
-              انضم إلى منصة تكنو إنجاز واستفد من حلولنا الرقمية المتكاملة
+              {isEn ? "Join Techno Enjaz and access our integrated suite of digital solutions" : "انضم إلى منصة تكنو إنجاز واستفد من حلولنا الرقمية المتكاملة"}
             </p>
 
             {submitted === "signUp" && (
               <div className="auth-switch-success">
                 <CheckCircle2 size={18} />
-                <span>تم إنشاء الحساب بنجاح! أهلاً بك في تكنو إنجاز.</span>
+                <span>{isEn ? "Account created successfully! Welcome to Techno Enjaz." : "تم إنشاء الحساب بنجاح! أهلاً بك في تكنو إنجاز."}</span>
               </div>
             )}
 
@@ -265,30 +274,30 @@ export function AuthSwitch({
               <button
                 type="button"
                 className="auth-switch-social-btn"
-                onClick={() => alert("التسجيل عبر جوجل")}
+                onClick={() => alert(isEn ? "Sign up with Google" : "التسجيل عبر جوجل")}
               >
                 <GoogleIcon />
-                <span>جوجل</span>
+                <span>Google</span>
               </button>
               <button
                 type="button"
                 className="auth-switch-social-btn"
-                onClick={() => alert("التسجيل عبر غيت هاب")}
+                onClick={() => alert(isEn ? "Sign up with GitHub" : "التسجيل عبر غيت هاب")}
               >
                 <GitHubIcon />
-                <span>غيت هاب</span>
+                <span>GitHub</span>
               </button>
             </div>
 
             <div className="auth-switch-divider">
               <div className="auth-switch-divider-line" />
-              <span className="auth-switch-divider-text">أو التسجيل المباشر</span>
+              <span className="auth-switch-divider-text">{isEn ? "or direct registration" : "أو التسجيل المباشر"}</span>
               <div className="auth-switch-divider-line" />
             </div>
 
             <form onSubmit={handleSignUpSubmit}>
               <div className="auth-switch-input-group">
-                <label className="auth-switch-label">الاسم الكامل</label>
+                <label className="auth-switch-label">{isEn ? "Full Name" : "الاسم الكامل"}</label>
                 <div className="auth-switch-input-wrapper">
                   <span className="auth-switch-input-icon">
                     <User size={16} />
@@ -296,7 +305,7 @@ export function AuthSwitch({
                   <input
                     type="text"
                     required
-                    placeholder="محمد أحمد"
+                    placeholder={isEn ? "John Smith" : "محمد أحمد"}
                     value={signUpData.name}
                     onChange={(e) =>
                       setSignUpData({ ...signUpData, name: e.target.value })
@@ -307,7 +316,7 @@ export function AuthSwitch({
               </div>
 
               <div className="auth-switch-input-group">
-                <label className="auth-switch-label">البريد الإلكتروني</label>
+                <label className="auth-switch-label">{isEn ? "Email Address" : "البريد الإلكتروني"}</label>
                 <div className="auth-switch-input-wrapper">
                   <span className="auth-switch-input-icon">
                     <Mail size={16} />
@@ -326,7 +335,7 @@ export function AuthSwitch({
               </div>
 
               <div className="auth-switch-input-group">
-                <label className="auth-switch-label">كلمة المرور</label>
+                <label className="auth-switch-label">{isEn ? "Password" : "كلمة المرور"}</label>
                 <div className="auth-switch-input-wrapper">
                   <span className="auth-switch-input-icon">
                     <Lock size={16} />
@@ -345,7 +354,7 @@ export function AuthSwitch({
                     type="button"
                     className="auth-switch-eye-btn"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    title={showConfirmPassword ? "إخفاء" : "إظهار"}
+                    title={showConfirmPassword ? (isEn ? "Hide" : "إخفاء") : (isEn ? "Show" : "إظهار")}
                   >
                     {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -354,13 +363,13 @@ export function AuthSwitch({
 
               <button type="submit" className="auth-switch-submit-btn">
                 <UserPlus size={16} />
-                <span>إنشاء حساب مجاني</span>
+                <span>{isEn ? "Create Free Account" : "إنشاء حساب مجاني"}</span>
               </button>
             </form>
           </div>
         </div>
 
-        {/* لوحة التبديل المنزلقة (Sliding Overlay Switch) على الشاشات الكبيرة */}
+        {/* Sliding Overlay Switch */}
         <motion.div
           className="auth-switch-overlay-panel"
           initial={false}
@@ -385,9 +394,11 @@ export function AuthSwitch({
                 exit={{ opacity: 0, y: -15 }}
                 transition={{ duration: 0.25 }}
               >
-                <h3 className="auth-switch-overlay-title">جديد في تكنو إنجاز؟</h3>
+                <h3 className="auth-switch-overlay-title">{isEn ? "New to Techno Enjaz?" : "جديد في تكنو إنجاز؟"}</h3>
                 <p className="auth-switch-overlay-desc">
-                  أنشئ حسابك الشخصي الآن وانضم إلى مجتمعنا التقني المتطور للوصول إلى كافة الميزات والمشاريع.
+                  {isEn
+                    ? "Create your personal account now and join our cutting-edge engineering community to access all projects and platforms."
+                    : "أنشئ حسابك الشخصي الآن وانضم إلى مجتمعنا التقني المتطور للوصول إلى كافة الميزات والمشاريع."}
                 </p>
                 <button
                   type="button"
@@ -397,8 +408,8 @@ export function AuthSwitch({
                   }}
                   className="auth-switch-overlay-btn"
                 >
-                  <span>إنشاء حساب جديد</span>
-                  <ArrowLeft size={16} />
+                  <span>{isEn ? "Create Account" : "إنشاء حساب جديد"}</span>
+                  {isEn ? <ArrowRight size={16} /> : <ArrowLeft size={16} />}
                 </button>
               </motion.div>
             ) : (
@@ -410,9 +421,11 @@ export function AuthSwitch({
                 exit={{ opacity: 0, y: -15 }}
                 transition={{ duration: 0.25 }}
               >
-                <h3 className="auth-switch-overlay-title">لديك حساب بالفعل؟</h3>
+                <h3 className="auth-switch-overlay-title">{isEn ? "Already have an account?" : "لديك حساب بالفعل؟"}</h3>
                 <p className="auth-switch-overlay-desc">
-                  سجّل دخولك الآن لمتابعة مشاريعك، الوصول إلى لوحة التحكم، والتواصل المباشر مع فريقنا.
+                  {isEn
+                    ? "Sign in now to access your projects, explore the control dashboard, and connect with our engineering team."
+                    : "سجّل دخولك الآن لمتابعة مشاريعك، الوصول إلى لوحة التحكم، والتواصل المباشر مع فريقنا."}
                 </p>
                 <button
                   type="button"
@@ -422,8 +435,8 @@ export function AuthSwitch({
                   }}
                   className="auth-switch-overlay-btn"
                 >
-                  <span>تسجيل الدخول</span>
-                  <ArrowRight size={16} />
+                  <span>{isEn ? "Sign In" : "تسجيل الدخول"}</span>
+                  {isEn ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
                 </button>
               </motion.div>
             )}
@@ -431,7 +444,7 @@ export function AuthSwitch({
         </motion.div>
       </div>
 
-      {/* رسالة ترحيبية مؤقتة بالاسم في الأسفل عند تسجيل الدخول */}
+      {/* Temporary Welcome Toast */}
       <AnimatePresence>
         {welcomeToast && (
           <motion.div
@@ -452,7 +465,5 @@ export function AuthSwitch({
   );
 }
 
-// تصدير متطابق مع متطلبات 21st.dev و shadcn
 export const Component = AuthSwitch;
 export default AuthSwitch;
-

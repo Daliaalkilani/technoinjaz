@@ -10,7 +10,7 @@ export interface InteractiveHoverButtonProps extends React.ButtonHTMLAttributes<
 }
 
 export function InteractiveHoverButton({
-  children = "عرض الملف",
+  children = "View",
   className = "",
   arrowIcon: CustomArrow,
   ...props

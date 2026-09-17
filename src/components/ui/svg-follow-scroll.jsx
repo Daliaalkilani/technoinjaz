@@ -1,3 +1,4 @@
+import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 
@@ -65,6 +66,10 @@ export const LinePath = ({ className = '', scrollYProgress, strokeColor = '#00d2
 
 export function Skiper19({ strokeColor = '#00d2ff', className = '' }) {
   const containerRef = useRef(null);
+  const { lang, theme } = useThemeLanguage();
+  const isEn = lang === 'en';
+  const textColor = theme === 'light' ? '#0f172a' : '#ffffff';
+  const sectionBg = theme === 'light' ? '#f8fafc' : '#000000';
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start end', 'end start']
@@ -80,7 +85,7 @@ export function Skiper19({ strokeColor = '#00d2ff', className = '' }) {
       style={{
         position: 'relative',
         width: '100%',
-        backgroundColor: '#000000',
+        backgroundColor: sectionBg,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -115,14 +120,12 @@ export function Skiper19({ strokeColor = '#00d2ff', className = '' }) {
               fontFamily: "'Readex Pro', sans-serif",
               fontSize: 'clamp(38px, 6vw, 72px)',
               fontWeight: 800,
-              color: '#ffffff',
+              color: textColor,
               letterSpacing: '-1px',
               lineHeight: 1.1,
               textShadow: '0 0 35px rgba(0, 210, 255, 0.45)'
             }}
-          >
-            أعضاء
-          </span>
+          >{isEn ? 'TEAM' : 'أعضاء'}</span>
           <div
             style={{
               width: '42px',
@@ -177,14 +180,12 @@ export function Skiper19({ strokeColor = '#00d2ff', className = '' }) {
               fontFamily: "'Readex Pro', sans-serif",
               fontSize: 'clamp(38px, 6vw, 72px)',
               fontWeight: 800,
-              color: '#ffffff',
+              color: textColor,
               letterSpacing: '-1px',
               lineHeight: 1.1,
               textShadow: '0 0 35px rgba(0, 210, 255, 0.45)'
             }}
-          >
-            فريقنا
-          </span>
+          >{isEn ? 'OUR' : 'فريقنا'}</span>
           <div
             style={{
               width: '42px',

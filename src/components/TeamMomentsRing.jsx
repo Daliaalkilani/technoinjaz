@@ -1,7 +1,9 @@
 import React, { useEffect, useRef } from 'react';
+import { useThemeLanguage } from '../context/ThemeLanguageContext';
 import './TeamMomentsRing.css';
 
 export default function TeamMomentsRing({ onScrollDown }) {
+  const { lang } = useThemeLanguage();
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -264,7 +266,7 @@ export default function TeamMomentsRing({ onScrollDown }) {
       textGrad.addColorStop(1, '#c4b5fd');
 
       x.fillStyle = textGrad;
-      x.fillText('لحظات الفريق', cx, cy);
+      x.fillText(lang === 'ar' ? 'لحظات الفريق' : 'Team Moments', cx, cy);
 
       // سطر تعريفي أنيق تحته بخط Readex Pro
       x.restore();

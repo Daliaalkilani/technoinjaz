@@ -77,7 +77,7 @@ const ScrollExpandPrototype: React.FC<ScrollExpandPrototypeProps> = ({
         key={`scroll-expand-${config.startWidth}`}
         src={cinematicEngineeringImg}
         mediaType="image"
-        alt="محطة العمل الهندسية"
+        alt={lang === 'ar' ? "محطة العمل الهندسية" : "Engineering Workstation"}
         startWidth={config.startWidth}
         startHeight={config.startHeight}
         startRadius={24}

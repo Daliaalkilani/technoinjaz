@@ -12,30 +12,30 @@ import ch4_04 from '../../assets/projects/techno-projects/chapter4-04.webp';
 import ch4_05 from '../../assets/projects/techno-projects/chapter4-05.webp';
 import ch4_06 from '../../assets/projects/techno-projects/chapter4-06.webp';
 
-const projectImages: InfiniteSpiralItem[] = [
+const getProjectImages = (lang: string): InfiniteSpiralItem[] => [
   {
     src: ch4_01,
-    alt: 'مخطط خوارزمية النظام الأمني والتحقق'
+    alt: lang === 'ar' ? 'مخطط خوارزمية النظام الأمني والتحقق' : 'Security Verification Algorithm Diagram'
   },
   {
     src: ch4_02,
-    alt: 'مخطط بنية قاعدة البيانات وسجلات الدخول'
+    alt: lang === 'ar' ? 'مخطط بنية قاعدة البيانات وسجلات الدخول' : 'Database Architecture & Access Logs Diagram'
   },
   {
     src: ch4_03,
-    alt: 'سجل الصور المرجعية للأشخاص المصرح لهم'
+    alt: lang === 'ar' ? 'سجل الصور المرجعية للأشخاص المصرح لهم' : 'Authorized Personnel Reference Images'
   },
   {
     src: ch4_04,
-    alt: 'التحقق الناجح من وجه مصرح له بالدخول'
+    alt: lang === 'ar' ? 'التحقق الناجح من وجه مصرح له بالدخول' : 'Successful Biometric Face Clearance'
   },
   {
     src: ch4_05,
-    alt: 'أرشيف توثيق صور محاولات الدخول غير المصرح بها'
+    alt: lang === 'ar' ? 'أرشيف توثيق صور محاولات الدخول غير المصرح بها' : 'Unauthorized Access Attempt Archive'
   },
   {
     src: ch4_06,
-    alt: 'كشف محاولة اختراق غير مصرح بها وإطلاق الإنذار'
+    alt: lang === 'ar' ? 'كشف محاولة اختراق غير مصرح بها وإطلاق الإنذار' : 'Intrusion Detection & Alarm Alert'
   }
 ];
 
@@ -60,7 +60,7 @@ const ProjectsSection = ({
   }, []);
 
   return (
-    <section className="projects-section" id="projects" aria-label="قسم المشاريع" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+    <section className="projects-section" id="projects" aria-label={lang === 'ar' ? "قسم المشاريع" : "Projects Section"} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
       {/* Static Background Image with Gradient Blend (No Mouse Interaction) */}
       <div className="projects-grid-distortion-wrapper" style={{ pointerEvents: 'none' }}>
         <div className="projects-grid-distortion-inner">
@@ -95,7 +95,7 @@ const ProjectsSection = ({
 
         <div className="projects-spiral-wrapper">
           <InfiniteSpiral
-            items={projectImages}
+            items={getProjectImages(lang)}
             animationMode="all"
             speed={1.1}
             radius={isMobile ? 190 : 255}

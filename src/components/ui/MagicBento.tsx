@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { gsap } from 'gsap';
+import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import './MagicBento.css';
 
 import ch1 from '../../assets/projects/techno-projects/chapter4-01.webp';
@@ -12,8 +13,11 @@ import ch6 from '../../assets/projects/techno-projects/chapter4-06.webp';
 export interface BentoCardItem {
   color?: string;
   title: string;
+  titleEn?: string;
   description: string;
+  descriptionEn?: string;
   label: string;
+  labelEn?: string;
   image?: string;
 }
 
@@ -26,43 +30,61 @@ const defaultCardData: BentoCardItem[] = [
   {
     color: '#0d1629',
     title: 'خوارزميات التدفق والتحكم الأمني',
+    titleEn: 'Security Flow & Control Algorithms',
     description: 'تحليل شجرة القرار ومنطق التحقق المتسلسل لأبواب الخزائن الذكية.',
+    descriptionEn: 'Decision-tree analysis and sequential validation logic for smart vault access.',
     label: 'هندسة النظم',
+    labelEn: 'Systems Engineering',
     image: ch1
   },
   {
     color: '#0d1629',
     title: 'معمارية قواعد البيانات المشفرة',
+    titleEn: 'Encrypted Database Architecture',
     description: 'هيكلية تسجيل بيانات الدخول والامتثال لمعايير الحماية المصرفية.',
+    descriptionEn: 'Access audit logging structure compliant with banking security standards.',
     label: 'أمن البيانات',
+    labelEn: 'Data Security',
     image: ch2
   },
   {
     color: '#0d1629',
     title: 'أنظمة التحقق البيومتري الميداني',
+    titleEn: 'Field Biometric Verification Systems',
     description: 'مطابقة المعالم الحيوية للوجوه بدقة حاسوبية فائقة في أجزاء من الثانية.',
+    descriptionEn: 'Sub-second real-time biometric face landmark matching with high precision.',
     label: 'الرؤية الحاسوبية',
+    labelEn: 'Computer Vision',
     image: ch4
   },
   {
     color: '#0d1629',
     title: 'هندسة العينات والمجموعات المرجعية',
+    titleEn: 'Dataset Engineering & Reference Corpora',
     description: 'تنقية ومعالجة بيانات التدريب لرفع دقة الاعتماد وتقليل نسب الخطأ.',
+    descriptionEn: 'Training data refinement and curation to minimize false rejection rates.',
     label: 'الذكاء الاصطناعي',
+    labelEn: 'Artificial Intelligence',
     image: ch3
   },
   {
     color: '#0d1629',
     title: 'سجلات التدقيق والمراقبة اللحظية',
+    titleEn: 'Audit Logs & Real-Time Telemetry',
     description: 'أرشفة فورية للمحاولات وتتبع مسارات الوصول للرقابة الجنائية.',
+    descriptionEn: 'Instant event streaming and audit trail tracing for forensic inspection.',
     label: 'التدقيق الأمني',
+    labelEn: 'Security Audit',
     image: ch5
   },
   {
     color: '#0d1629',
     title: 'منظومة رصد محاولات الاختراق',
+    titleEn: 'Intrusion Detection & Defense',
     description: 'تنبيهات فورية وإجراءات حماية تلقائية عند كشف وجوه غير مصرح بها.',
+    descriptionEn: 'Instant alert triggers and automated defensive routines upon unauthorized access.',
     label: 'الاستجابة الفورية',
+    labelEn: 'Incident Response',
     image: ch6
   }
 ];
@@ -581,6 +603,8 @@ const MagicBento: React.FC<MagicBentoProps> = ({
   enableMagnetism = true,
   cards = defaultCardData
 }) => {
+  const { lang } = useThemeLanguage();
+  const isEn = lang === 'en';
   const gridRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useMobileDetection();
   const shouldDisableAnimations = disableAnimations || isMobile;
@@ -599,6 +623,10 @@ const MagicBento: React.FC<MagicBentoProps> = ({
 
       <BentoCardGrid gridRef={gridRef}>
         {cards.map((card, index) => {
+          const cardLabel = isEn ? (card.labelEn || card.label) : card.label;
+          const cardTitle = isEn ? (card.titleEn || card.title) : card.title;
+          const cardDesc = isEn ? (card.descriptionEn || card.description) : card.description;
+
           const baseClassName = `magic-bento-card ${textAutoHide ? 'magic-bento-card--text-autohide' : ''} ${enableBorderGlow ? 'magic-bento-card--border-glow' : ''}`;
           const cardProps = {
             className: baseClassName,
@@ -611,14 +639,14 @@ const MagicBento: React.FC<MagicBentoProps> = ({
           const cardContent = (
             <>
               <div className="magic-bento-card__header">
-                <div className="magic-bento-card__label">{card.label}</div>
+                <div className="magic-bento-card__label">{cardLabel}</div>
               </div>
 
               {card.image && (
                 <div className="magic-bento-card__media">
                   <img
                     src={card.image}
-                    alt={card.title}
+                    alt={cardTitle}
                     className="magic-bento-card__img"
                     loading="lazy"
                   />
@@ -626,8 +654,8 @@ const MagicBento: React.FC<MagicBentoProps> = ({
               )}
 
               <div className="magic-bento-card__content">
-                <h3 className="magic-bento-card__title">{card.title}</h3>
-                <p className="magic-bento-card__description">{card.description}</p>
+                <h3 className="magic-bento-card__title">{cardTitle}</h3>
+                <p className="magic-bento-card__description">{cardDesc}</p>
               </div>
             </>
           );

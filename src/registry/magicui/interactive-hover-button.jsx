@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import "./interactive-hover-button.css";
 
 export function InteractiveHoverButton({
-  children = "عرض الملف",
+  children = "View",
   className = "",
   arrowIcon: CustomArrow,
   ...props

@@ -20,6 +20,71 @@ import OptionWheel, { type OptionWheelItem } from '../ui/OptionWheel';
 import DocumentReaderModal from './DocumentReaderModal';
 import './ProjectsCatalogSection.css';
 
+const TAG_TRANSLATIONS: Record<string, string> = {
+  "تعلم عميق": "Deep Learning",
+  "رؤية حاسوبية": "Computer Vision",
+  "أمن المراقبة": "Surveillance Security",
+  "شبكات عصبية": "Neural Networks",
+  "ذكاء اصطناعي طبي": "Medical AI",
+  "تعلم آلة": "Machine Learning",
+  "تشخيص أورام": "Tumor Diagnosis",
+  "معالجة صور": "Image Processing",
+  "تسجيل حضور": "Attendance Tracking",
+  "كشف التلاعب": "Anti-Spoofing",
+  "بيومترية": "Biometrics",
+  "روبوتات": "Robotics",
+  "أتمتة صناعية": "Industrial Automation",
+  "تحكم ميكاترونيكس": "Mechatronics Control",
+  "أمن سيبراني": "Cybersecurity",
+  "أنظمة تحكم": "Control Systems",
+  "أمن بنكي": "Banking Security",
+  "بصمة وجه": "Facial Biometrics",
+  "ذكاء اصطناعي": "Artificial Intelligence",
+  "معالجة لغات طبيعية": "NLP",
+  "روبوت محادثة": "Chatbot",
+  "مساعد صوتي": "Voice Assistant",
+  "SCADA": "SCADA",
+  "مستشعرات": "Sensors",
+  "هوية بيومترية": "Biometric Identity",
+  "قواعد بيانات": "Databases",
+  "أنظمة ذكية": "Smart Systems",
+  "كشف كائنات": "Object Detection",
+  "أمن وسلامة": "Safety & Security",
+  "تنبيه فوري": "Instant Alerts",
+  "حماية بيانات": "Data Protection",
+  "كشف تهديدات": "Threat Detection",
+  "تطبيقات ويب": "Web Applications",
+  "إدارة مشاريع": "Project Management",
+  "منصات سحابية": "Cloud Platforms",
+  "فرق عمل": "Collaboration",
+  "واجهة دماغ وحاسوب": "BCI Interface",
+  "إشارات عصبية": "Neural Signals",
+  "اتصالات ونظم": "Telecom & Systems",
+  "ميكاترونيكس": "Mechatronics",
+  "تتبع حركة": "Motion Tracking",
+  "طب أسنان": "Dentistry",
+  "تصوير إشعاعي": "Radiology",
+  "تشخيص آلي": "Automated Diagnostics",
+  "تطبيقات موبايل": "Mobile Apps",
+  "سياحة ذكية": "Smart Tourism",
+  "خرائط تفاعلية": "Interactive Maps",
+  "فلاتر": "Filters",
+  "إنتاجية": "Productivity",
+  "تنظيم وقت": "Time Management",
+  "تغذية ذكية": "Smart Nutrition",
+  "تعرف على أطعمة": "Food Recognition",
+  "أمن ومراقبة": "Security & Surveillance",
+  "حماية محيطية": "Perimeter Defense",
+  "تنبيهات": "Alerts",
+  "مساعد كود": "Code Assistant",
+  "فحص أمان": "Security Audit",
+  "استكشاف ميداني": "Field Exploration",
+  "اتصالات لاسلكية": "Wireless Comms",
+  "روبوتات تعليمية": "Educational Robots",
+  "تفاعل إنساني آلي": "Human-Robot Interaction",
+  "تعليم ذكي": "Smart Education"
+};
+
 export const ProjectsCatalogSection: React.FC = () => {
   const { lang } = useThemeLanguage();
   const [searchTerm, setSearchTerm] = useState('');
@@ -201,7 +266,9 @@ export const ProjectsCatalogSection: React.FC = () => {
                   {/* Tags */}
                   <div className="catalog-card-tags">
                     {project.tags.map((tag) => (
-                      <span key={tag} className="catalog-tag">#{tag}</span>
+                      <span key={tag} className="catalog-tag">
+                        #{lang === 'ar' ? tag : (TAG_TRANSLATIONS[tag] || tag)}
+                      </span>
                     ))}
                   </div>
 
@@ -212,7 +279,7 @@ export const ProjectsCatalogSection: React.FC = () => {
                       type="button"
                       className="catalog-btn-read-flipbook"
                       onClick={() => setActiveReadingProject(project)}
-                      title={lang === 'ar' ? 'تصفح وقراءة المستند ورplotقياً' : 'Read Document as Flipbook'}
+                      title={lang === 'ar' ? 'تصفح وقراءة المستند ورقياً' : 'Read Document as Flipbook'}
                     >
                       <BookOpen size={16} />
                       <span>{lang === 'ar' ? 'قراءة المستند (تصفح ورقي)' : 'Read Document (Flipbook)'}</span>

@@ -10,8 +10,11 @@ import {
   Send,
   ExternalLink,
   CheckCircle2,
-  HelpCircle
+  HelpCircle,
+  ArrowLeft,
+  ArrowRight
 } from 'lucide-react';
+import { useThemeLanguage } from './context/ThemeLanguageContext';
 import './ContactPage.css';
 
 const InstagramIcon = ({ size = 22, ...props }) => (
@@ -21,6 +24,9 @@ const InstagramIcon = ({ size = 22, ...props }) => (
 );
 
 export default function ContactPage({ onBack }) {
+  const { lang, t } = useThemeLanguage();
+  const isEn = lang === 'en';
+
   const [formData, setFormData] = useState({
     name: '',
     specialization: '',
@@ -41,68 +47,104 @@ export default function ContactPage({ onBack }) {
     e.preventDefault();
     if (!formData.name.trim() || !formData.inquiry.trim()) return;
 
-    // تجهيز نص الاستفسار لإرساله إلى بريد تكنو إنجاز الرسمي info@technoenjaz.com
-    const emailSubject = encodeURIComponent(`استفسار جديد عبر الموقع من: ${formData.name}`);
+    const emailSubject = encodeURIComponent(
+      isEn ? `New Website Inquiry from: ${formData.name}` : `استفسار جديد عبر الموقع من: ${formData.name}`
+    );
     const emailBody = encodeURIComponent(
-      `استفسار جديد عبر موقع تكنو إنجاز:\n\n` +
-      `👤 الاسم: ${formData.name}\n` +
-      `🎓 الاختصاص: ${formData.specialization || 'غير محدد'}\n` +
-      `🏛 الجامعة: ${formData.university || 'غير محدد'}\n` +
-      `📧 البريد الإلكتروني: ${formData.email || 'غير محدد'}\n` +
-      `📱 رقم الهاتف: ${formData.phone || 'غير محدد'}\n\n` +
-      `💬 نص الاستفسار:\n${formData.inquiry}\n`
+      isEn
+        ? `New inquiry via Techno Enjaz website:\n\n` +
+          `👤 Name: ${formData.name}\n` +
+          `🎓 Major: ${formData.specialization || 'Not specified'}\n` +
+          `🏛 University: ${formData.university || 'Not specified'}\n` +
+          `📧 Email: ${formData.email || 'Not specified'}\n` +
+          `📱 Phone: ${formData.phone || 'Not specified'}\n\n` +
+          `💬 Inquiry:\n${formData.inquiry}\n`
+        : `استفسار جديد عبر موقع تكنو إنجاز:\n\n` +
+          `👤 الاسم: ${formData.name}\n` +
+          `🎓 الاختصاص: ${formData.specialization || 'غير محدد'}\n` +
+          `🏛 الجامعة: ${formData.university || 'غير محدد'}\n` +
+          `📧 البريد الإلكتروني: ${formData.email || 'غير محدد'}\n` +
+          `📱 رقم الهاتف: ${formData.phone || 'غير محدد'}\n\n` +
+          `💬 نص الاستفسار:\n${formData.inquiry}\n`
     );
 
     const mailtoUrl = `mailto:info@technoenjaz.com?subject=${emailSubject}&body=${emailBody}`;
-
-    // فتح عميل البريد الإلكتروني لإرسال الاستفسار إلى info@technoenjaz.com
     window.location.href = mailtoUrl;
-
     setSubmitted(true);
   };
 
-  const MAP_LINK = "https://www.google.com/maps/place/35%C2%B007'44.4%22N+36%C2%B045'14.4%22E/@35.1289918,36.7561901,17z/data=!3m1!4b1!4m4!3m3!8m2!3d35.1289918!4d36.7540014?hl=ar";
-  const MAP_IFRAME_SRC = "https://maps.google.com/maps?q=35.1289918,36.7540014&hl=ar&z=17&output=embed";
+  const MAP_LINK = `https://www.google.com/maps/place/35%C2%B007'44.4%22N+36%C2%B045'14.4%22E/@35.1289918,36.7561901,17z/data=!3m1!4b1!4m4!3m3!8m2!3d35.1289918!4d36.7540014?hl=${lang}`;
+  const MAP_IFRAME_SRC = `https://maps.google.com/maps?q=35.1289918,36.7540014&hl=${lang}&z=17&output=embed`;
+
+  const waText = isEn
+    ? `Hello Techno Enjaz, I sent an inquiry from ${formData.name || ''}:\n${formData.inquiry || ''}`
+    : `مرحباً تكنو إنجاز، أرسلت استفساراً من ${formData.name || ''}:\n${formData.inquiry || ''}`;
 
   return (
-    <div className="contact-page-wrapper">
-      {/* خلفية جمالية بشفق نيون خافت */}
+    <div className="contact-page-wrapper" dir={isEn ? 'ltr' : 'rtl'}>
+      {/* Ambient background glow */}
       <div className="contact-ambient-glow" />
       <div className="contact-grid-pattern" />
 
       <div className="contact-container">
-        {/* قسم الترويسة الرئيسية */}
+        {/* Back navigation button if onBack provided */}
+        {onBack && (
+          <div style={{ width: '100%', marginBottom: '24px', display: 'flex', justifyContent: 'flex-start' }}>
+            <button
+              onClick={onBack}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 18px',
+                background: 'rgba(255, 255, 255, 0.06)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: '8px',
+                color: 'var(--text-main, #ffffff)',
+                cursor: 'pointer',
+                fontFamily: "'Readex Pro', sans-serif",
+                fontSize: '13px',
+                transition: 'all 0.25s ease'
+              }}
+            >
+              {isEn ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
+              <span>{t.contact.backHome}</span>
+            </button>
+          </div>
+        )}
+
+        {/* Hero header */}
         <section className="contact-hero">
-          <h1 className="contact-hero-title">تواصل معنا</h1>
+          <h1 className="contact-hero-title">{t.contact.title}</h1>
           <p className="contact-hero-desc">
-            يسعدنا تواصلكم المستمر، والإجابة على كافة تساؤلاتكم وأفكاركم، ومشاركتكم في بناء حلول المستقبل.
+            {t.contact.subtitle}
           </p>
         </section>
 
-        {/* شبكة المحتوى الرئيسية: نموذج الاستفسارات + معلومات المكتب والخريطة */}
+        {/* Main Content Grid: Form + Info & Map */}
         <div className="contact-main-grid">
           
-          {/* العمود الأول: لوحة الاستفسارات */}
+          {/* Column 1: Inquiry Form Panel */}
           <section className="contact-form-panel">
             <h2 className="contact-panel-title">
-              هل لديك أي استشكال أو استفهام أو استفسار؟
+              {t.contact.panelTitle}
             </h2>
             <p className="contact-panel-subtitle">
-              املأ البيانات التالية ليتم إرسال استفسارك مباشرة إلى البريد الرسمي <span style={{ color: '#00d2ff', fontWeight: 700, direction: 'ltr', display: 'inline-block' }}>info@technoenjaz.com</span> وسيقوم فريق تكنو إنجاز بالرد وتقديم كامل الدعم لك.
+              {t.contact.panelSubtitle}
             </p>
 
             {submitted ? (
               <div className="form-success-alert">
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '8px' }}>
                   <CheckCircle2 size={22} color="#10b981" />
-                  <span style={{ fontSize: '16px', fontWeight: 800 }}>تم توجيه استفسارك إلى info@technoenjaz.com بنجاح!</span>
+                  <span style={{ fontSize: '16px', fontWeight: 800 }}>{t.contact.successTitle}</span>
                 </div>
                 <p style={{ margin: 0, fontSize: '13px', opacity: 0.9 }}>
-                  شكراً لتواصلك معنا، كما يمكنك أيضاً إرسال نفس الاستفسار مباشرة عبر واتساب للمتابعة اللحظية.
+                  {t.contact.successDesc}
                 </p>
                 <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap', marginTop: '16px' }}>
                   <a
-                    href={`https://wa.me/963958794195?text=${encodeURIComponent(`مرحباً تكنو إنجاز، أرسلت استفساراً من ${formData.name || ''}:\n${formData.inquiry || ''}`)}`}
+                    href={`https://wa.me/963958794195?text=${encodeURIComponent(waText)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
@@ -121,7 +163,7 @@ export default function ContactPage({ onBack }) {
                     }}
                   >
                     <MessageCircle size={15} />
-                    <span>متابعة عبر واتساب</span>
+                    <span>{t.contact.followWhatsapp}</span>
                   </a>
                   <button
                     onClick={() => { setSubmitted(false); setFormData({ name: '', specialization: '', university: '', email: '', phone: '', inquiry: '' }); }}
@@ -130,23 +172,23 @@ export default function ContactPage({ onBack }) {
                       background: 'rgba(255, 255, 255, 0.08)',
                       border: '1px solid rgba(255, 255, 255, 0.2)',
                       borderRadius: '8px',
-                      color: '#ffffff',
+                      color: 'var(--text-main, #ffffff)',
                       cursor: 'pointer',
                       fontFamily: "'Readex Pro', sans-serif",
                       fontSize: '12.5px'
                     }}
                   >
-                    إرسال استفسار آخر
+                    {t.contact.sendAnother}
                   </button>
                 </div>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="contact-form">
-                {/* الاسم الكامل */}
+                {/* Full Name */}
                 <div className="form-group">
                   <label className="form-label">
                     <User size={15} />
-                    <span>الاسم الكامل <span style={{ color: '#ef4444' }}>*</span></span>
+                    <span>{t.contact.fullName} <span style={{ color: '#ef4444' }}>*</span></span>
                   </label>
                   <input
                     type="text"
@@ -154,24 +196,24 @@ export default function ContactPage({ onBack }) {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    placeholder="مثال: أحمد العلي"
+                    placeholder={t.contact.namePlaceholder}
                     className="form-input"
                   />
                 </div>
 
-                {/* الاختصاص والجامعة في صف واحد */}
+                {/* Major and University */}
                 <div className="form-row">
                   <div className="form-group">
                     <label className="form-label">
                       <GraduationCap size={15} />
-                      <span>الاختصاص</span>
+                      <span>{t.contact.major}</span>
                     </label>
                     <input
                       type="text"
                       name="specialization"
                       value={formData.specialization}
                       onChange={handleChange}
-                      placeholder="مثال: هندسة المعلوماتية / ذكاء اصطناعي"
+                      placeholder={t.contact.specializationPlaceholder}
                       className="form-input"
                     />
                   </div>
@@ -179,32 +221,32 @@ export default function ContactPage({ onBack }) {
                   <div className="form-group">
                     <label className="form-label">
                       <Building size={15} />
-                      <span>الجامعة</span>
+                      <span>{t.contact.university}</span>
                     </label>
                     <input
                       type="text"
                       name="university"
                       value={formData.university}
                       onChange={handleChange}
-                      placeholder="مثال: جامعة حماة"
+                      placeholder={t.contact.universityPlaceholder}
                       className="form-input"
                     />
                   </div>
                 </div>
 
-                {/* الإيميل ورقم الهاتف في صف واحد */}
+                {/* Email and Phone */}
                 <div className="form-row">
                   <div className="form-group">
                     <label className="form-label">
                       <Mail size={15} />
-                      <span>البريد الإلكتروني</span>
+                      <span>{t.contact.email}</span>
                     </label>
                     <input
                       type="email"
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      placeholder="أدخل بريدك الإلكتروني"
+                      placeholder={t.contact.emailPlaceholder}
                       className="form-input"
                     />
                   </div>
@@ -212,24 +254,24 @@ export default function ContactPage({ onBack }) {
                   <div className="form-group">
                     <label className="form-label">
                       <Phone size={15} />
-                      <span>رقم الهاتف / الواتساب</span>
+                      <span>{t.contact.phone}</span>
                     </label>
                     <input
                       type="tel"
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      placeholder="+963 ..."
+                      placeholder={t.contact.phonePlaceholder}
                       className="form-input"
                     />
                   </div>
                 </div>
 
-                {/* مكان ليكتب استفساره */}
+                {/* Inquiry text */}
                 <div className="form-group">
                   <label className="form-label">
                     <HelpCircle size={15} />
-                    <span>نص الاستفسار أو السؤال <span style={{ color: '#ef4444' }}>*</span></span>
+                    <span>{t.contact.inquiry} <span style={{ color: '#ef4444' }}>*</span></span>
                   </label>
                   <textarea
                     name="inquiry"
@@ -237,40 +279,40 @@ export default function ContactPage({ onBack }) {
                     onChange={handleChange}
                     required
                     rows={4}
-                    placeholder="اكتب استفسارك أو استشكالك هنا بالتفصيل..."
+                    placeholder={t.contact.inquiryPlaceholder}
                     className="form-textarea"
                   />
                 </div>
 
-                {/* زر الإرسال */}
+                {/* Submit button */}
                 <button type="submit" className="form-submit-btn">
                   <Send size={18} />
-                  <span>إرسال الاستفسار وتأكيد التواصل</span>
+                  <span>{t.contact.submit}</span>
                 </button>
               </form>
             )}
           </section>
 
-          {/* العمود الثاني: معلومات المكتب والاتصال + الخريطة */}
+          {/* Column 2: Office & Contact Info + Map */}
           <section className="contact-info-panel">
             
-            {/* بطاقات معلومات الاتصال */}
+            {/* Info Cards Stack */}
             <div className="info-cards-stack">
               
-              {/* عنوان المقر الرئيسي */}
+              {/* Headquarters Location */}
               <div className="info-card">
                 <div className="info-icon-box cyan">
                   <MapPin size={22} />
                 </div>
                 <div className="info-text-box">
-                  <span className="info-title">موقع المكتب والمقر</span>
+                  <span className="info-title">{t.contact.locationTitle}</span>
                   <span className="info-value">
-                    حماة - ساحة العاصي - بناء الخاني - بجوار أفران السلام - الطابق الرابع
+                    {t.contact.locationDesc}
                   </span>
                 </div>
               </div>
 
-              {/* البريد الإلكتروني الرسمي */}
+              {/* Official Email */}
               <a
                 href="mailto:info@technoenjaz.com"
                 className="info-card clickable"
@@ -279,17 +321,17 @@ export default function ContactPage({ onBack }) {
                   <Mail size={22} />
                 </div>
                 <div className="info-text-box">
-                  <span className="info-title">البريد الإلكتروني الرسمي</span>
-                  <span className="info-value" dir="ltr" style={{ textAlign: 'right' }}>
+                  <span className="info-title">{t.contact.emailTitle}</span>
+                  <span className="info-value" dir="ltr" style={{ textAlign: isEn ? 'left' : 'right' }}>
                     info@technoenjaz.com
                   </span>
                 </div>
                 <span className="info-badge-action email">
-                  مراسلة ↗
+                  {t.contact.messageNow}
                 </span>
               </a>
 
-              {/* التواصل المباشر عبر واتساب */}
+              {/* Direct WhatsApp */}
               <a
                 href="https://wa.me/963958794195"
                 target="_blank"
@@ -300,17 +342,17 @@ export default function ContactPage({ onBack }) {
                   <MessageCircle size={22} />
                 </div>
                 <div className="info-text-box">
-                  <span className="info-title">التواصل المباشر على واتساب</span>
-                  <span className="info-value" dir="ltr" style={{ textAlign: 'right' }}>
+                  <span className="info-title">{t.contact.whatsappTitle}</span>
+                  <span className="info-value" dir="ltr" style={{ textAlign: isEn ? 'left' : 'right' }}>
                     +963 958 794 195
                   </span>
                 </div>
                 <span className="info-badge-action whatsapp">
-                  محادثة فورية ↗
+                  {t.contact.chatNow}
                 </span>
               </a>
 
-              {/* حساب انستغرام */}
+              {/* Instagram */}
               <a
                 href="https://instagram.com/TECHNO_ENJAZ"
                 target="_blank"
@@ -321,23 +363,23 @@ export default function ContactPage({ onBack }) {
                   <InstagramIcon size={22} />
                 </div>
                 <div className="info-text-box">
-                  <span className="info-title">انستغرام تكنو إنجاز</span>
-                  <span className="info-value" dir="ltr" style={{ textAlign: 'right' }}>
+                  <span className="info-title">{t.contact.instaTitle}</span>
+                  <span className="info-value" dir="ltr" style={{ textAlign: isEn ? 'left' : 'right' }}>
                     @TECHNO_ENJAZ
                   </span>
                 </div>
                 <span className="info-badge-action insta">
-                  متابعة ↗
+                  {t.contact.followNow}
                 </span>
               </a>
             </div>
 
-            {/* بطاقة الخريطة التفاعلية */}
+            {/* Interactive Map Card */}
             <div className="contact-map-card">
               <div className="map-card-header">
                 <div className="map-title">
                   <MapPin size={17} style={{ color: '#00d2ff' }} />
-                  <span>موقعنا الجغرافي على الخريطة</span>
+                  <span>{t.contact.mapTitle}</span>
                 </div>
                 <a
                   href={MAP_LINK}
@@ -345,13 +387,13 @@ export default function ContactPage({ onBack }) {
                   rel="noopener noreferrer"
                   className="map-external-link"
                 >
-                  <span>فتح في خرائط جوجل</span>
+                  <span>{t.contact.openGoogleMaps}</span>
                   <ExternalLink size={14} />
                 </a>
               </div>
               <div className="map-iframe-wrapper">
                 <iframe
-                  title="موقع تكنو إنجاز - حماة"
+                  title={t.contact.mapIframeTitle}
                   src={MAP_IFRAME_SRC}
                   className="map-iframe"
                   loading="lazy"

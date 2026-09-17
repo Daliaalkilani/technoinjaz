@@ -74,6 +74,18 @@ export interface Translations {
     inquiry: string;
     submit: string;
     backHome: string;
+    panelTitle: string;
+    panelSubtitle: string;
+    namePlaceholder: string;
+    specializationPlaceholder: string;
+    universityPlaceholder: string;
+    emailPlaceholder: string;
+    phonePlaceholder: string;
+    inquiryPlaceholder: string;
+    successTitle: string;
+    successDesc: string;
+    followWhatsapp: string;
+    sendAnother: string;
     locationTitle: string;
     locationDesc: string;
     emailTitle: string;
@@ -82,6 +94,9 @@ export interface Translations {
     chatNow: string;
     instaTitle: string;
     followNow: string;
+    mapTitle: string;
+    openGoogleMaps: string;
+    mapIframeTitle: string;
     successMsg: string;
   };
   theme: {
@@ -265,13 +280,25 @@ export const translations: Record<'ar' | 'en', Translations> = {
       title: 'تواصل معنا',
       subtitle: 'نسعد دائماً باستقبال استفساراتكم الهندسية والتقنية',
       fullName: 'الاسم الكامل',
-      major: 'التخصص الأكاديمي أو المهني',
+      major: 'الاختصاص الأكاديمي أو المهني',
       university: 'الجامعة أو جهة العمل',
       email: 'البريد الإلكتروني',
       phone: 'رقم الهاتف / واتساب',
-      inquiry: 'تفاصيل الاستفسار أو متطلبات المشروع',
-      submit: 'إرسال الاستفسار',
+      inquiry: 'نص الاستفسار أو تفاصيل المشروع',
+      submit: 'إرسال الاستفسار وتأكيد التواصل',
       backHome: 'العودة للرئيسية',
+      panelTitle: 'هل لديك أي استشكال أو استفهام أو استفسار؟',
+      panelSubtitle: 'املأ البيانات التالية ليتم إرسال استفسارك مباشرة إلى البريد الرسمي info@technoenjaz.com وسيقوم فريق تكنو إنجاز بالرد وتقديم كامل الدعم لك.',
+      namePlaceholder: 'مثال: أحمد العلي',
+      specializationPlaceholder: 'مثال: هندسة المعلوماتية / ذكاء اصطناعي',
+      universityPlaceholder: 'مثال: جامعة حماة',
+      emailPlaceholder: 'أدخل بريدك الإلكتروني',
+      phonePlaceholder: '+963 ...',
+      inquiryPlaceholder: 'اكتب استفسارك أو استشكالك هنا بالتفصيل...',
+      successTitle: 'تم توجيه استفسارك إلى info@technoenjaz.com بنجاح!',
+      successDesc: 'شكراً لتواصلك معنا، كما يمكنك أيضاً إرسال نفس الاستفسار مباشرة عبر واتساب للمتابعة اللحظية.',
+      followWhatsapp: 'متابعة عبر واتساب',
+      sendAnother: 'إرسال استفسار آخر',
       locationTitle: 'موقع المكتب والمقر',
       locationDesc: 'حماة - ساحة العاصي - بناء الخاني - بجوار أفران السلام - الطابق الرابع',
       emailTitle: 'البريد الإلكتروني الرسمي',
@@ -280,6 +307,9 @@ export const translations: Record<'ar' | 'en', Translations> = {
       chatNow: 'محادثة فورية ↗',
       instaTitle: 'انستغرام تكنو إنجاز',
       followNow: 'متابعة ↗',
+      mapTitle: 'موقعنا الجغرافي على الخريطة',
+      openGoogleMaps: 'فتح في خرائط جوجل',
+      mapIframeTitle: 'موقع تكنو إنجاز - حماة',
       successMsg: 'تم تجهيز رسالتك إلى info@technoenjaz.com بنجاح!'
     },
     theme: {
@@ -474,8 +504,20 @@ export const translations: Record<'ar' | 'en', Translations> = {
       email: 'Email Address',
       phone: 'Phone Number / WhatsApp',
       inquiry: 'Inquiry Details or Project Requirements',
-      submit: 'Submit Inquiry',
+      submit: 'Send Inquiry & Confirm Contact',
       backHome: 'Back to Home',
+      panelTitle: 'Have an inquiry, project concept, or technical question?',
+      panelSubtitle: 'Fill out the form below to send your inquiry directly to our official email info@technoenjaz.com, and the Techno Enjaz engineering team will assist you.',
+      namePlaceholder: 'e.g. John Smith',
+      specializationPlaceholder: 'e.g. Computer Science / AI Engineering',
+      universityPlaceholder: 'e.g. University / Company Name',
+      emailPlaceholder: 'Enter your email address',
+      phonePlaceholder: '+963 ...',
+      inquiryPlaceholder: 'Describe your question or project requirements in detail...',
+      successTitle: 'Your inquiry has been successfully prepared for info@technoenjaz.com!',
+      successDesc: 'Thank you for reaching out! You can also follow up instantly with our team via WhatsApp.',
+      followWhatsapp: 'Follow up on WhatsApp',
+      sendAnother: 'Send Another Inquiry',
       locationTitle: 'Office & Headquarters',
       locationDesc: 'Hama - Al-Assi Square - Al-Khani Bldg - Next to Al-Salam Bakeries - 4th Floor',
       emailTitle: 'Official Email',
@@ -484,6 +526,9 @@ export const translations: Record<'ar' | 'en', Translations> = {
       chatNow: 'Chat ↗',
       instaTitle: 'Instagram',
       followNow: 'Follow ↗',
+      mapTitle: 'Our Office Location on the Map',
+      openGoogleMaps: 'Open in Google Maps',
+      mapIframeTitle: 'Techno Enjaz Headquarters - Hama',
       successMsg: 'Your inquiry email to info@technoenjaz.com is ready!'
     },
     theme: {

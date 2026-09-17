@@ -64,11 +64,11 @@ const VideosSection: React.FC<VideosSectionProps> = ({
               <Card customClass="video-card">
                 <div className="video-card-inner">
                   <div className="video-card-topbar">
-                    <span className="video-card-tag">عرض حي</span>
+                    <span className="video-card-tag">{lang === 'ar' ? 'عرض حي' : 'Live Demo'}</span>
                     <span className="video-card-duration">03:42</span>
                   </div>
                   <div className="video-card-screen">
-                    <div className="video-play-btn" aria-label="تشغيل الفيديو">
+                    <div className="video-play-btn" aria-label={lang === 'ar' ? "تشغيل الفيديو" : "Play Video"}>
                       <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
                         <polygon points="5 3 19 12 5 21 5 3" />
                       </svg>
@@ -76,8 +76,8 @@ const VideosSection: React.FC<VideosSectionProps> = ({
                     <div className="video-screen-glow" />
                   </div>
                   <div className="video-card-body">
-                    <h3>نظام التحكم والأمان البيومتري</h3>
-                    <p>استعراض تفاعلي لخوارزميات التعرف المتقدمة والتحقق الذكي متعدد المراحل.</p>
+                    <h3>{lang === 'ar' ? 'نظام التحكم والأمان البيومتري' : 'Biometric Security & Access Control'}</h3>
+                    <p>{lang === 'ar' ? 'استعراض تفاعلي لخوارزميات التعرف المتقدمة والتحقق الذكي متعدد المراحل.' : 'Interactive demonstration of facial recognition algorithms and multi-stage verification.'}</p>
                   </div>
                 </div>
               </Card>
@@ -85,11 +85,11 @@ const VideosSection: React.FC<VideosSectionProps> = ({
               <Card customClass="video-card">
                 <div className="video-card-inner">
                   <div className="video-card-topbar">
-                    <span className="video-card-tag">محاكاة تقنية</span>
+                    <span className="video-card-tag">{lang === 'ar' ? 'محاكاة تقنية' : 'Simulation'}</span>
                     <span className="video-card-duration">02:18</span>
                   </div>
                   <div className="video-card-screen">
-                    <div className="video-play-btn" aria-label="تشغيل الفيديو">
+                    <div className="video-play-btn" aria-label={lang === 'ar' ? "تشغيل الفيديو" : "Play Video"}>
                       <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
                         <polygon points="5 3 19 12 5 21 5 3" />
                       </svg>
@@ -97,8 +97,8 @@ const VideosSection: React.FC<VideosSectionProps> = ({
                     <div className="video-screen-glow" />
                   </div>
                   <div className="video-card-body">
-                    <h3>معمارية معالجة التدفقات اللحظية</h3>
-                    <p>رصد ومراقبة استجابة الخوادم اللحظية وإدارة عمليات التحقق الآمن للخزينة.</p>
+                    <h3>{lang === 'ar' ? 'معمارية معالجة التدفقات اللحظية' : 'Real-Time Stream Processing Architecture'}</h3>
+                    <p>{lang === 'ar' ? 'رصد ومراقبة استجابة الخوادم اللحظية وإدارة عمليات التحقق الآمن للخزينة.' : 'Real-time telemetry and monitoring of server response rates and secure clearance workflows.'}</p>
                   </div>
                 </div>
               </Card>
@@ -106,11 +106,11 @@ const VideosSection: React.FC<VideosSectionProps> = ({
               <Card customClass="video-card">
                 <div className="video-card-inner">
                   <div className="video-card-topbar">
-                    <span className="video-card-tag">توثيق ميداني</span>
+                    <span className="video-card-tag">{lang === 'ar' ? 'توثيق ميداني' : 'Field Demo'}</span>
                     <span className="video-card-duration">04:05</span>
                   </div>
                   <div className="video-card-screen">
-                    <div className="video-play-btn" aria-label="تشغيل الفيديو">
+                    <div className="video-play-btn" aria-label={lang === 'ar' ? "تشغيل الفيديو" : "Play Video"}>
                       <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
                         <polygon points="5 3 19 12 5 21 5 3" />
                       </svg>
@@ -118,8 +118,8 @@ const VideosSection: React.FC<VideosSectionProps> = ({
                     <div className="video-screen-glow" />
                   </div>
                   <div className="video-card-body">
-                    <h3>منظومة الإنذار والكشف التلقائي</h3>
-                    <p>اختبار آليات الرصد الفوري ومطابقة بيانات التصريح ضد محاولات التسلل غير المخولة.</p>
+                    <h3>{lang === 'ar' ? 'منظومة الإنذار والكشف التلقائي' : 'Intrusion Detection & Alert System'}</h3>
+                    <p>{lang === 'ar' ? 'اختبار آليات الرصد الفوري ومطابقة بيانات التصريح ضد محاولات التسلل غير المخولة.' : 'Live benchmark testing anomaly detection routines against unauthorized access attempts.'}</p>
                   </div>
                 </div>
               </Card>

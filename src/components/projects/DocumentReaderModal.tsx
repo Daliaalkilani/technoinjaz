@@ -181,7 +181,7 @@ export const DocumentReaderModal: React.FC<DocumentReaderModalProps> = ({
             
             {/* Paper texture and subtle grid watermark */}
             <div className="flipbook-watermark-ribbon">
-              <span>تكنو إنجاز • TECHNO ENJAZ • حقوق الملكية محفوظة</span>
+              <span>{lang === 'ar' ? 'تكنو إنجاز • حقوق الملكية محفوظة' : 'TECHNO ENJAZ • All Rights Reserved'}</span>
             </div>
 
             {/* Embedded Google Drive PDF document */}

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { mat4, quat, vec2, vec3 } from 'gl-matrix';
 import SocialButtons from './components/SocialButtons';
 import { InteractiveHoverButton } from "@/registry/magicui/interactive-hover-button";
+import { useThemeLanguage } from './context/ThemeLanguageContext';
 import './InfiniteMenu.css';
 
 
@@ -961,6 +962,8 @@ export default function InfiniteMenu({
   backgroundColor = '#000000',
   onSelectMember
 }) {
+  const { lang } = useThemeLanguage();
+  const isEn = lang === 'en';
   const canvasRef = useRef(null);
   const [activeItem, setActiveItem] = useState(null);
   const [isMoving, setIsMoving] = useState(false);
@@ -1042,11 +1045,15 @@ export default function InfiniteMenu({
       <canvas id="infinite-grid-menu-canvas" ref={canvasRef} />
 
       {activeItem && (
-        <div className={`active-member-card ${isMoving ? 'inactive' : 'active'}`}>
+        <div className={`active-member-card ${isMoving ? 'inactive' : 'active'}`} dir={isEn ? 'ltr' : 'rtl'}>
           <div className="active-member-content">
-            <span className="member-label">{activeItem.id === 'abdulghani' ? 'قائد ومؤسس الفريق' : 'عضو الفريق'}</span>
-            <h2 className="member-name">{activeItem.title || activeItem.name}</h2>
-            <p className="member-role">{activeItem.description || activeItem.role}</p>
+            <span className="member-label">
+              {activeItem.id === 'abdulghani'
+                ? (isEn ? 'Team Founder & Leader' : 'قائد ومؤسس الفريق')
+                : (isEn ? 'Team Member' : 'عضو الفريق')}
+            </span>
+            <h2 className="member-name">{isEn ? (activeItem.nameEn || activeItem.titleEn || activeItem.title || activeItem.name) : (activeItem.title || activeItem.name)}</h2>
+            <p className="member-role">{isEn ? (activeItem.roleEn || activeItem.descriptionEn || activeItem.description || activeItem.role) : (activeItem.description || activeItem.role)}</p>
 
             {/* أيقونات السوشل ميديا: لينكد إن، إيميل، وغيت هاب تحت المسمى الوظيفي */}
             {activeItem.socials && (
@@ -1058,10 +1065,10 @@ export default function InfiniteMenu({
             type="button"
             onClick={handleButtonClick}
             className="member-profile-btn"
-            title={`عرض الملف التعريفي لـ ${activeItem.title || activeItem.name}`}
-            aria-label="عرض الملف التعريفي"
+            title={isEn ? `View profile for ${activeItem.nameEn || activeItem.title || activeItem.name}` : `عرض الملف التعريفي لـ ${activeItem.title || activeItem.name}`}
+            aria-label={isEn ? "View Profile" : "عرض الملف التعريفي"}
           >
-            عرض الملف
+            {isEn ? 'View Profile' : 'عرض الملف'}
           </InteractiveHoverButton>
         </div>
       )}

@@ -21,8 +21,8 @@ export default function SocialButtons({ socials = {}, size = 'medium' }) {
           target="_blank"
           rel="noopener noreferrer"
           className="social-btn linkedin"
-          title="لينكد إن"
-          aria-label="لينكد إن"
+          title="LinkedIn"
+          aria-label="LinkedIn"
           onClick={handleClick}
         >
           <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -38,8 +38,8 @@ export default function SocialButtons({ socials = {}, size = 'medium' }) {
           target="_blank"
           rel="noopener noreferrer"
           className="social-btn github"
-          title="غيت هاب"
-          aria-label="غيت هاب"
+          title="GitHub"
+          aria-label="GitHub"
           onClick={handleClick}
         >
           <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -57,8 +57,8 @@ export default function SocialButtons({ socials = {}, size = 'medium' }) {
         <a
           href={email.startsWith('mailto:') ? email : `mailto:${email}`}
           className="social-btn email"
-          title={`البريد الإلكتروني: ${email}`}
-          aria-label="البريد الإلكتروني"
+          title={`Email: ${email}`}
+          aria-label="Email"
           onClick={handleClick}
         >
           <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">

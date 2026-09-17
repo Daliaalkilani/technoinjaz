@@ -128,7 +128,7 @@ export const OptionWheel: React.FC<OptionWheelProps> = ({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       role="listbox"
-      aria-label="اختيار تصنيف المشاريع"
+      aria-label={dir === 'rtl' ? "اختيار تصنيف المشاريع" : "Select Project Category"}
       tabIndex={0}
       onKeyDown={(e) => {
         if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
