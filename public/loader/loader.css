@@ -4,7 +4,7 @@
  */
 
 #te-loader {
-  --bg: #080e15;
+  --bg: #030508;
   --text: #edf6f7;
   --muted: #9bafb9;
   --teal: #30dfc4;
@@ -29,7 +29,7 @@
   min-height: 100svh;
   overflow: hidden;
   color-scheme: dark;
-  background: var(--bg);
+  background: var(--bg) !important;
   color: var(--text);
   font-family: var(--sans);
   direction: rtl;
@@ -90,25 +90,13 @@
   border: 0;
 }
 
-/* Background canvas & ambient nebula glow */
+/* Background canvas & ambient nebula glow - Hidden for a plain clean background */
 #te-loader #space {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  pointer-events: none;
-  z-index: 0;
+  display: none !important;
 }
 
 #te-loader .ambient {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse 550px 440px at 50% 50%, #164a422b, transparent 80%),
-    radial-gradient(ellipse 500px 300px at 50% 70%, #4c38751c, transparent 80%);
+  display: none !important;
 }
 
 /* Main loader container */
@@ -136,85 +124,24 @@
   margin: auto;
 }
 
-/* Orbit system rings */
+/* Orbit system rings - Hidden for a plain clean background */
 #te-loader .orbit-system {
-  position: absolute;
-  z-index: 0;
-  left: 50%;
-  top: calc(50% - 11px);
-  width: var(--orbit-size);
-  height: var(--orbit-size);
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  opacity: .95;
-  transition: opacity 500ms ease;
+  display: none !important;
 }
 
 #te-loader .orbit-static,
 #te-loader .orbit-rotating {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  display: none !important;
 }
 
-#te-loader .orbit-rotating {
-  animation: te-orbit 42s linear infinite;
-}
-
-/* Launch floor & base glow */
+/* Launch floor & base glow - Hidden for a plain clean background */
 #te-loader .launch-floor {
-  position: absolute;
-  z-index: 0;
-  left: 50%;
-  top: calc(50% + var(--rocket-height) * .5 - 16px);
-  width: calc(var(--rocket-width) + 34px);
-  height: 28px;
-  border: 1px solid #38695e66;
-  border-radius: 50%;
-  transform: translateX(-50%);
-  background: radial-gradient(ellipse, #26d4b519, transparent 67%);
-  pointer-events: none;
-  transition: opacity 400ms ease;
+  display: none !important;
 }
 
-#te-loader .launch-floor::before {
-  content: "";
-  position: absolute;
-  inset: -7px -20px;
-  border: 1px solid #39635733;
-  border-radius: 50%;
-}
-
-#te-loader .launch-floor div {
-  position: absolute;
-  inset: 5px 45px;
-  border: 1px solid #30b69833;
-  border-radius: 50%;
-}
-
-#te-loader .launch-floor span {
-  position: absolute;
-  inset: -10px;
-  background: radial-gradient(ellipse, #4affa66b, transparent 65%);
-  border-radius: 50%;
-  opacity: var(--engine);
-}
-
-/* Cruise Halo */
+/* Cruise Halo - Hidden for a plain clean background */
 #te-loader .cruise-halo {
-  position: absolute;
-  z-index: 0;
-  left: 50%;
-  top: 48%;
-  width: var(--orbit-size);
-  height: var(--orbit-size);
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: radial-gradient(circle, transparent 35%, #38dfb919 48%, transparent 65%);
-  opacity: 0;
-  transition: opacity 600ms ease;
-  pointer-events: none;
+  display: none !important;
 }
 
 /* Rocket Anchor and Body */
@@ -253,11 +180,7 @@
 }
 
 #te-loader .rocket-backlight {
-  position: absolute;
-  inset: 0 -10%;
-  background: radial-gradient(ellipse, rgba(44, 220, 198, 0.3) 0%, rgba(44, 220, 198, 0.08) 45%, transparent 70%);
-  opacity: calc(.2 + var(--charge) * .5);
-  pointer-events: none;
+  display: none !important;
 }
 
 /* Logo Core (Central Circle of Brand) */
@@ -399,3 +322,155 @@
 @media (max-width: 380px) {
   #te-loader { --rocket-width: 175px; }
 }
+
+/* ==========================================================================
+   LIGHT MODE STYLES FOR LOADING SCREEN
+   ========================================================================== */
+
+[data-theme="light"] #te-loader,
+html.light #te-loader {
+  --bg: #f8fafc;
+  --text: #0f172a;
+  --muted: #64748b;
+  --teal: #0284c7;
+  --violet: #6366f1;
+  --line: #e2e8f0;
+  color-scheme: light;
+  background: #f8fafc !important;
+  color: var(--text);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) #te-loader {
+    --bg: #f8fafc;
+    --text: #0f172a;
+    --muted: #64748b;
+    --teal: #0284c7;
+    --violet: #6366f1;
+    --line: #e2e8f0;
+    color-scheme: light;
+    background: #f8fafc !important;
+    color: var(--text);
+  }
+}
+
+[data-theme="light"] #te-loader .ambient,
+html.light #te-loader .ambient {
+  display: none !important;
+  background: transparent !important;
+  opacity: 0 !important;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) #te-loader .ambient {
+    display: none !important;
+    background: transparent !important;
+    opacity: 0 !important;
+  }
+}
+
+/* Orbit system completely transparent in light mode */
+[data-theme="light"] #te-loader .orbit-system,
+html.light #te-loader .orbit-system {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  display: none !important;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) #te-loader .orbit-system {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    display: none !important;
+  }
+}
+
+/* Launch floor completely transparent in light mode */
+[data-theme="light"] #te-loader .launch-floor,
+html.light #te-loader .launch-floor {
+  opacity: 0 !important;
+  display: none !important;
+  visibility: hidden !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) #te-loader .launch-floor {
+    opacity: 0 !important;
+    display: none !important;
+    visibility: hidden !important;
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Cruise halo completely transparent in light mode */
+[data-theme="light"] #te-loader .cruise-halo,
+html.light #te-loader .cruise-halo {
+  opacity: 0 !important;
+  display: none !important;
+  background: transparent !important;
+}
+
+/* Rocket backlight halo completely transparent in light mode */
+[data-theme="light"] #te-loader .rocket-backlight,
+html.light #te-loader .rocket-backlight {
+  display: none !important;
+  background: transparent !important;
+  opacity: 0 !important;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) #te-loader .rocket-backlight {
+    display: none !important;
+    background: transparent !important;
+    opacity: 0 !important;
+  }
+}
+
+/* Rocket body & core button shadow in light mode */
+[data-theme="light"] #te-loader .rocket-body,
+html.light #te-loader .rocket-body {
+  filter: drop-shadow(0 14px 30px rgba(2, 132, 199, 0.22)) drop-shadow(0 4px 10px rgba(15, 23, 42, 0.08));
+}
+
+[data-theme="light"] #te-loader .button-art,
+html.light #te-loader .button-art {
+  filter: drop-shadow(0 4px 12px rgba(2, 132, 199, 0.3));
+}
+
+/* Charge gauge in light mode */
+[data-theme="light"] #te-loader .gauge-track,
+html.light #te-loader .gauge-track {
+  stroke: rgba(2, 132, 199, 0.25);
+}
+
+[data-theme="light"] #te-loader .gauge-fill,
+html.light #te-loader .gauge-fill {
+  stroke: #0284c7;
+  stroke-width: 2.2;
+  filter: drop-shadow(0 0 4px rgba(2, 132, 199, 0.6));
+}
+
+/* Engine exhausts & thrusters in light mode */
+[data-theme="light"] #te-loader .engine-plume,
+html.light #te-loader .engine-plume {
+  background: linear-gradient(#38bdf8, #0ea5e9 12%, #0284c7 35%, rgba(99, 102, 241, 0.8) 68%, transparent);
+  filter: drop-shadow(0 4px 14px rgba(2, 132, 199, 0.45));
+}
+
+[data-theme="light"] #te-loader .engine-core,
+html.light #te-loader .engine-core {
+  background: linear-gradient(#ffffff, #bae6fd 25%, rgba(14, 165, 233, 0.9) 60%, transparent);
+}
+
+[data-theme="light"] #te-loader .engine-aura,
+html.light #te-loader .engine-aura {
+  background: radial-gradient(ellipse at 50% 20%, rgba(14, 165, 233, 0.35), rgba(99, 102, 241, 0.16) 35%, transparent 67%);
+}
+

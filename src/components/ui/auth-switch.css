@@ -46,8 +46,15 @@
   flex-direction: column;
   justify-content: center;
   box-sizing: border-box;
-  text-align: right;
   transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+[dir="rtl"] .auth-switch-form-half {
+  text-align: right;
+}
+
+[dir="ltr"] .auth-switch-form-half {
+  text-align: left;
 }
 
 .auth-switch-form-half.sign-in-half {
@@ -610,4 +617,21 @@
   border-color: rgba(2, 132, 199, 0.3);
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
   color: #0f172a;
+}
+
+/* ==========================================================================
+   LTR OVERRIDES FOR AUTH SWITCH
+   ========================================================================== */
+[dir="ltr"] .auth-switch-input-icon {
+  left: 14px;
+  right: auto;
+}
+
+[dir="ltr"] .auth-switch-input {
+  padding: 11px 14px 11px 42px;
+}
+
+[dir="ltr"] .auth-switch-eye-btn {
+  right: 12px;
+  left: auto;
 }

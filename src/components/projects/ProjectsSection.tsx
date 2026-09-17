@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import InfiniteSpiral, { type InfiniteSpiralItem } from '../ui/InfiniteSpiral';
 import heroBgDistortion from '../../assets/hero-bg-distortion.png';
+import im1Bg from '../../assets/im1.png';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import './ProjectsSection.css';
 
@@ -48,7 +49,7 @@ const ProjectsSection = ({
   onNavigateToProjects,
   showNavigateButton = true
 }: ProjectsSectionProps) => {
-  const { lang, t } = useThemeLanguage();
+  const { theme, lang, t } = useThemeLanguage();
   const [isMobile, setIsMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 640 : false));
 
   useEffect(() => {
@@ -65,7 +66,7 @@ const ProjectsSection = ({
       <div className="projects-grid-distortion-wrapper" style={{ pointerEvents: 'none' }}>
         <div className="projects-grid-distortion-inner">
           <img
-            src={heroBgDistortion}
+            src={theme === 'light' ? im1Bg : heroBgDistortion}
             alt=""
             aria-hidden="true"
             className="projects-bg-static-img"

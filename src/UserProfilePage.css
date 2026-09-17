@@ -140,6 +140,32 @@
   color: var(--text-muted);
 }
 
+/* User Logout Button - Distinct, high-contrast, NOT black */
+.user-logout-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: rgba(239, 68, 68, 0.14);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.user-logout-btn:hover {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #ffffff;
+  box-shadow: 0 4px 18px rgba(239, 68, 68, 0.4);
+  transform: translateY(-1px);
+}
+
 /* Favorites Header & Filter Tabs */
 .favorites-section-header {
   display: flex;
@@ -338,4 +364,40 @@
   .favorites-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* =========================================================
+   LIGHT MODE OVERRIDES FOR USER PROFILE PAGE
+   ========================================================= */
+[data-theme="light"] .user-profile-back-btn {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #0f172a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .user-profile-back-btn:hover {
+  background: #0284c7;
+  border-color: #0284c7;
+  color: #ffffff;
+}
+
+[data-theme="light"] .filter-pill-btn.active {
+  background: #0284c7;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+}
+
+[data-theme="light"] .user-logout-btn {
+  background: #fef2f2;
+  border: 1px solid rgba(239, 68, 68, 0.32);
+  color: #dc2626;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.08);
+}
+
+[data-theme="light"] .user-logout-btn:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.35);
 }

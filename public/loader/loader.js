@@ -134,6 +134,9 @@
 
   function addWave(at, floor = false) {
     if (state.calm) return;
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light' ||
+                    document.documentElement.classList.contains('light');
+    if (isLight) return;
     waves.push({ x: at.x, y: at.y, life: 0, duration: floor ? 1.2 : 1.0, floor, max: floor ? 380 : 190 });
   }
 
@@ -332,8 +335,11 @@
     ctx.clearRect(0, 0, width, height);
     if (fadeOutDone) return;
 
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light' ||
+                    document.documentElement.classList.contains('light');
+
     // Batched Starfield
-    ctx.fillStyle = 'rgba(215, 248, 245, 0.45)';
+    ctx.fillStyle = isLight ? 'rgba(2, 132, 199, 0.32)' : 'rgba(215, 248, 245, 0.45)';
     ctx.beginPath();
     for (let i = 0; i < stars.length; i++) {
       const s = stars[i];
@@ -346,10 +352,35 @@
     }
     ctx.fill();
 
+    // Shockwaves (dark mode only, keep light mode completely transparent)
+    if (waves.length > 0 && !isLight) {
+      for (let i = waves.length - 1; i >= 0; i--) {
+        const w = waves[i];
+        w.life += dt;
+        if (w.life >= w.duration) { waves.splice(i, 1); continue; }
+        const progress = w.life / w.duration;
+        const r = progress * w.max;
+        const alpha = (1 - progress) * 0.45;
+        ctx.strokeStyle = `rgba(48, 223, 196, ${alpha})`;
+        ctx.lineWidth = Math.max(0.6, (1 - progress) * 2);
+        ctx.beginPath();
+        if (w.floor) {
+          ctx.ellipse(w.x, w.y, r, r * 0.28, 0, 0, 6.283);
+        } else {
+          ctx.arc(w.x, w.y, r, 0, 6.283);
+        }
+        ctx.stroke();
+      }
+    }
+
     // Batched Particles
     if (particles.length > 0) {
-      ctx.fillStyle = 'rgba(111, 247, 218, 0.65)';
-      ctx.beginPath();
+      const regularColor = isLight ? 'rgba(2, 132, 199, 0.8)' : 'rgba(111, 247, 218, 0.65)';
+      const purpleColor = isLight ? 'rgba(99, 102, 241, 0.85)' : 'rgba(133, 114, 237, 0.75)';
+
+      const regularParticles = [];
+      const purpleParticles = [];
+
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i]; p.life -= dt;
         if (p.life <= 0) { particles.splice(i, 1); continue; }
@@ -359,10 +390,34 @@
         } else {
           p.x += p.vx * dt; p.y += p.vy * dt; if (p.type === 'burst') p.vy += 18 * dt;
         }
-        ctx.moveTo(p.x + p.size, p.y);
-        ctx.arc(p.x, p.y, Math.max(.35, p.size), 0, 6.283);
+        if (p.purple) {
+          purpleParticles.push(p);
+        } else {
+          regularParticles.push(p);
+        }
       }
-      ctx.fill();
+
+      if (regularParticles.length > 0) {
+        ctx.fillStyle = regularColor;
+        ctx.beginPath();
+        for (let i = 0; i < regularParticles.length; i++) {
+          const p = regularParticles[i];
+          ctx.moveTo(p.x + p.size, p.y);
+          ctx.arc(p.x, p.y, Math.max(.35, p.size), 0, 6.283);
+        }
+        ctx.fill();
+      }
+
+      if (purpleParticles.length > 0) {
+        ctx.fillStyle = purpleColor;
+        ctx.beginPath();
+        for (let i = 0; i < purpleParticles.length; i++) {
+          const p = purpleParticles[i];
+          ctx.moveTo(p.x + p.size, p.y);
+          ctx.arc(p.x, p.y, Math.max(.35, p.size), 0, 6.283);
+        }
+        ctx.fill();
+      }
     }
   }
 

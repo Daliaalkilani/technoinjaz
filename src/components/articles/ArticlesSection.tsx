@@ -1,12 +1,22 @@
 import React from 'react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import MagicBento from './MagicBento';
 import heroBgDistortion from '../../assets/hero-bg-distortion.png';
+import im1Bg from '../../assets/im1.png';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import '../projects/ProjectsSection.css';
 import './ArticlesSection.css';
 
-const ArticlesSection: React.FC = () => {
-  const { lang, t } = useThemeLanguage();
+export interface ArticlesSectionProps {
+  showNavigateButton?: boolean;
+  onNavigateToArticles?: () => void;
+}
+
+const ArticlesSection: React.FC<ArticlesSectionProps> = ({
+  showNavigateButton = true,
+  onNavigateToArticles
+}) => {
+  const { theme, lang, t } = useThemeLanguage();
 
   return (
     <section id="articles" className="articles-section" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
@@ -14,7 +24,7 @@ const ArticlesSection: React.FC = () => {
       <div className="projects-grid-distortion-wrapper" style={{ pointerEvents: 'none' }}>
         <div className="projects-grid-distortion-inner">
           <img
-            src={heroBgDistortion}
+            src={theme === 'light' ? im1Bg : heroBgDistortion}
             alt=""
             aria-hidden="true"
             className="projects-bg-static-img"
@@ -31,6 +41,16 @@ const ArticlesSection: React.FC = () => {
           <p className="articles-subtitle">
             {t.articles.subtitle}
           </p>
+          {showNavigateButton && (
+            <button
+              type="button"
+              className="projects-view-all-btn"
+              onClick={onNavigateToArticles || (() => { window.location.hash = '#articles'; })}
+            >
+              <span>{t.articles.readArticles}</span>
+              {lang === 'ar' ? <ArrowLeft size={18} /> : <ArrowRight size={18} />}
+            </button>
+          )}
         </div>
 
         {/* MagicBento Interactive Grid */}

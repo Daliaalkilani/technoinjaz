@@ -128,15 +128,26 @@
   z-index: 0;
   pointer-events: none;
   user-select: none;
-  font-size: clamp(80px, 22vw, 320px);
-  line-height: 0.8;
+  font-size: clamp(60px, 18vw, 260px);
+  line-height: 0.85;
   font-weight: 900;
   letter-spacing: -0.04em;
+  text-align: center;
   color: transparent;
   -webkit-text-stroke: 1px rgba(255, 255, 255, 0.07);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(0, 210, 255, 0.03) 40%, transparent 80%);
   -webkit-background-clip: text;
   background-clip: text;
+}
+
+/* English / LTR Giant Background Text: scaled and centered so TECHNO ENJAZ is 100% visible */
+[dir="ltr"] .footer-giant-bg-text,
+.footer-curtain-wrapper[dir="ltr"] .footer-giant-bg-text,
+[lang="en"] .footer-giant-bg-text {
+  font-size: clamp(20px, 9.5vw, 140px);
+  letter-spacing: -0.01em;
+  max-width: 96vw;
+  text-align: center;
 }
 
 /* Metallic Text Glow */
@@ -270,20 +281,46 @@
   text-align: center;
 }
 
+.footer-heading-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+}
+
 .footer-heading {
   font-size: clamp(34px, 6vw, 68px);
   font-weight: 900;
   letter-spacing: -1px;
   margin: 0 0 16px 0;
   line-height: 1.15;
+  text-align: center;
 }
 
 .footer-subheading {
-  margin: 0 0 32px 0;
+  margin: 0 auto 32px auto;
   font-size: clamp(14px, 2vw, 17px);
   color: rgba(255, 255, 255, 0.65);
-  max-width: 580px;
-  line-height: 1.6;
+  max-width: 660px;
+  line-height: 1.65;
+  text-align: center;
+  display: block;
+}
+
+[dir="ltr"] .footer-heading-wrap,
+.footer-curtain-wrapper[dir="ltr"] .footer-heading-wrap {
+  align-items: center;
+  text-align: center;
+}
+
+[dir="ltr"] .footer-subheading,
+.footer-curtain-wrapper[dir="ltr"] .footer-subheading {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 660px;
 }
 
 .footer-pills-container {

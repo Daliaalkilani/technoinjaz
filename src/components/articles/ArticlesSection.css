@@ -1,4 +1,4 @@
-﻿/* Articles Section Styling */
+/* Articles Section Styling */
 .articles-section {
   position: relative;
   width: 100%;
@@ -6,9 +6,16 @@
   background-color: var(--bg-dark);
   color: var(--text-pure);
   font-family: var(--font-arabic);
-  direction: rtl;
   overflow: hidden;
   box-sizing: border-box;
+}
+
+[dir="rtl"] .articles-section {
+  direction: rtl;
+}
+
+[dir="ltr"] .articles-section {
+  direction: ltr;
 }
 
 .articles-container {
@@ -30,6 +37,12 @@
   text-align: center;
   gap: 1.25rem;
   max-width: 720px;
+}
+
+.articles-header .projects-view-all-btn {
+  align-self: center;
+  margin-top: 0.5rem;
+  white-space: nowrap;
 }
 
 .articles-badge {
@@ -101,4 +114,31 @@
   .articles-container {
     gap: 2.5rem;
   }
+}
+
+/* =========================================================
+   LIGHT MODE OVERRIDES FOR ARTICLES SECTION
+   ========================================================= */
+[data-theme="light"] .articles-section {
+  background-color: var(--bg-main, #f8fafc);
+  color: #0f172a;
+}
+
+[data-theme="light"] .articles-title {
+  color: #0f172a;
+}
+
+[data-theme="light"] .articles-subtitle {
+  color: #475569;
+}
+
+[data-theme="light"] .articles-badge {
+  background: rgba(124, 58, 237, 0.08);
+  border-color: rgba(124, 58, 237, 0.25);
+  color: #7c3aed;
+}
+
+[data-theme="light"] .articles-badge-dot {
+  background-color: #7c3aed;
+  box-shadow: 0 0 10px #7c3aed;
 }

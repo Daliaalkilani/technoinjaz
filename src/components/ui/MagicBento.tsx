@@ -603,7 +603,8 @@ const MagicBento: React.FC<MagicBentoProps> = ({
   enableMagnetism = true,
   cards = defaultCardData
 }) => {
-  const { lang } = useThemeLanguage();
+  const { lang, theme } = useThemeLanguage();
+  const isLight = theme === 'light';
   const isEn = lang === 'en';
   const gridRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useMobileDetection();
@@ -617,7 +618,7 @@ const MagicBento: React.FC<MagicBentoProps> = ({
           disableAnimations={shouldDisableAnimations}
           enabled={enableSpotlight}
           spotlightRadius={spotlightRadius}
-          glowColor={glowColor}
+          glowColor={isLight ? '2, 132, 199' : glowColor}
         />
       )}
 
@@ -631,8 +632,8 @@ const MagicBento: React.FC<MagicBentoProps> = ({
           const cardProps = {
             className: baseClassName,
             style: {
-              backgroundColor: card.color || '#0d1629',
-              '--glow-color': glowColor
+              backgroundColor: isLight ? '#ffffff' : (card.color || '#0d1629'),
+              '--glow-color': isLight ? '2, 132, 199' : glowColor
             } as React.CSSProperties
           };
 

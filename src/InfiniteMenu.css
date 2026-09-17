@@ -4,8 +4,15 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
-  direction: rtl;
   user-select: none;
+}
+
+[dir="rtl"] .infinite-menu-wrapper {
+  direction: rtl;
+}
+
+[dir="ltr"] .infinite-menu-wrapper {
+  direction: ltr;
 }
 
 #infinite-grid-menu-canvas {
@@ -25,7 +32,6 @@
 .active-member-card {
   position: absolute;
   top: 50%;
-  right: 6%;
   transform: translateY(-50%);
   z-index: 20;
 
@@ -49,6 +55,16 @@
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+[dir="rtl"] .active-member-card {
+  right: 6%;
+  left: auto;
+}
+
+[dir="ltr"] .active-member-card {
+  left: 6%;
+  right: auto;
+}
+
 .active-member-card.active {
   opacity: 1;
   transform: translateY(-50%) scale(1);
@@ -66,7 +82,14 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+[dir="rtl"] .active-member-content {
   text-align: right;
+}
+
+[dir="ltr"] .active-member-content {
+  text-align: left;
 }
 
 .member-label {
@@ -185,4 +208,32 @@
   .action-button-icon {
     font-size: 19px;
   }
+}
+
+/* =========================================================
+   LIGHT MODE OVERRIDES FOR INFINITE MENU
+   ========================================================= */
+[data-theme="light"] .active-member-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(124, 58, 237, 0.3);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.08), 0 0 25px rgba(124, 58, 237, 0.12);
+}
+
+[data-theme="light"] .member-label {
+  color: #7c3aed;
+}
+
+[data-theme="light"] .member-name {
+  color: #0f172a;
+}
+
+[data-theme="light"] .member-role {
+  color: #6d28d9;
+}
+
+[data-theme="light"] .menu-hint {
+  background: rgba(255, 255, 255, 0.85);
+  color: #475569;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }

@@ -17,7 +17,7 @@ import { useSavedProjects } from './hooks/useSavedProjects';
 import { Button } from './components/ui/button';
 import './UserProfilePage.css';
 
-export default function UserProfilePage({ onBack, onOpenReader, onExploreProjects }) {
+export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExploreProjects }) {
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
   const { savedProjects, removeSaved, clearAll } = useSavedProjects();
@@ -44,13 +44,20 @@ export default function UserProfilePage({ onBack, onOpenReader, onExploreProject
   const handleLogout = () => {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('techno_user');
+      localStorage.removeItem('techno_pending_save');
+      window.dispatchEvent(new CustomEvent('techno_auth_updated', { detail: null }));
+      window.dispatchEvent(new CustomEvent('storage'));
     }
-    setUser({
-      name: isEn ? 'Guest User' : 'مستخدم زائر',
-      email: 'guest@technoenjaz.com',
-      joined: isEn ? 'Active Session' : 'جلسة نشطة',
-      status: isEn ? 'Guest' : 'زائر'
-    });
+    setUser(null);
+    if (onLogout) {
+      onLogout();
+    } else if (onBack) {
+      onBack();
+    }
+    if (typeof window !== 'undefined') {
+      window.location.hash = '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const filteredProjects = savedProjects.filter(p => {
@@ -103,16 +110,15 @@ export default function UserProfilePage({ onBack, onOpenReader, onExploreProject
                 {isEn ? "Saved Projects" : "المشاريع المحفوظة"}
               </div>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
+            <button
+              type="button"
               onClick={handleLogout}
               className="user-logout-btn"
               title={isEn ? "Sign Out" : "تسجيل الخروج"}
             >
-              <LogOut size={14} style={{ [isEn ? 'marginRight' : 'marginLeft']: '6px' }} />
+              <LogOut size={15} style={{ [isEn ? 'marginRight' : 'marginLeft']: '6px' }} />
               <span>{isEn ? "Sign Out" : "تسجيل الخروج"}</span>
-            </Button>
+            </button>
           </div>
         </div>
 

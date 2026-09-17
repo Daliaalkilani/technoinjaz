@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import CardSwap, { Card } from './CardSwap';
 import heroBgDistortion from '../../assets/hero-bg-distortion.png';
+import im1Bg from '../../assets/im1.png';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import '../projects/ProjectsSection.css';
 import './VideosSection.css';
@@ -15,7 +16,7 @@ const VideosSection: React.FC<VideosSectionProps> = ({
   onNavigateToVideos,
   showNavigateButton = true
 }) => {
-  const { lang, t } = useThemeLanguage();
+  const { theme, lang, t } = useThemeLanguage();
 
   return (
     <section id="videos" className="videos-section" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
@@ -23,7 +24,7 @@ const VideosSection: React.FC<VideosSectionProps> = ({
       <div className="projects-grid-distortion-wrapper" style={{ pointerEvents: 'none' }}>
         <div className="projects-grid-distortion-inner">
           <img
-            src={heroBgDistortion}
+            src={theme === 'light' ? im1Bg : heroBgDistortion}
             alt=""
             aria-hidden="true"
             className="projects-bg-static-img"

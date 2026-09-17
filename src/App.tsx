@@ -13,7 +13,7 @@ import { Cpu, Video, Sparkles, BookOpen, User, BookmarkCheck } from 'lucide-reac
 import { teamMembers } from './data/teamData';
 import { useThemeLanguage } from './context/ThemeLanguageContext';
 import ThemeSwitch from './components/ui/ThemeSwitch';
-import { Button } from './components/ui/button';
+import LanguageDropdown from './components/ui/LanguageDropdown';
 import { useSavedProjects } from './hooks/useSavedProjects';
 
 const ProfilePage = lazy(() => import('./ProfilePage'));
@@ -29,7 +29,7 @@ interface NavItem {
 }
 
 export default function App() {
-  const { theme, lang, setLang, t } = useThemeLanguage();
+  const { theme, lang, t } = useThemeLanguage();
   const [isLoaderDone, setIsLoaderDone] = useState(false);
   const [currentTab, setCurrentTab] = useState<'home' | 'projects' | 'videos' | 'articles' | 'about'>('home');
   const [selectedMember, setSelectedMember] = useState<any>(null);
@@ -39,6 +39,34 @@ export default function App() {
   const [isUserProfileOpen, setIsUserProfileOpen] = useState(false);
   const [activeNavIndex, setActiveNavIndex] = useState(0);
   const { count: savedCount } = useSavedProjects();
+  const [currentUser, setCurrentUser] = useState<any>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('techno_user');
+        return stored ? JSON.parse(stored) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  });
+
+  useEffect(() => {
+    const handleAuthSync = () => {
+      try {
+        const stored = localStorage.getItem('techno_user');
+        setCurrentUser(stored ? JSON.parse(stored) : null);
+      } catch (e) {
+        setCurrentUser(null);
+      }
+    };
+    window.addEventListener('techno_auth_updated', handleAuthSync);
+    window.addEventListener('storage', handleAuthSync);
+    return () => {
+      window.removeEventListener('techno_auth_updated', handleAuthSync);
+      window.removeEventListener('storage', handleAuthSync);
+    };
+  }, []);
 
   const localizedTeamMembers = teamMembers.map((m: any) => ({
     ...m,
@@ -242,6 +270,12 @@ export default function App() {
             window.location.hash = '';
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
+          onLogout={() => {
+            setIsUserProfileOpen(false);
+            setCurrentUser(null);
+            window.location.hash = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
           onOpenReader={() => {
             setIsUserProfileOpen(false);
             window.location.hash = '#academic-projects';
@@ -298,43 +332,8 @@ export default function App() {
 
         {/* End Actions: Language Switcher, Theme Toggle, Login / User Profile */}
         <div className="navbar-end-actions">
-          {/* Language Switcher using shadcn Button */}
-          <div className="lang-capsule-toggle" title="Switch Language / تبديل اللغة" style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', background: 'rgba(255,255,255,0.06)', padding: '2px 4px', borderRadius: '9999px', border: '1px solid var(--border-subtle)' }}>
-            <Button
-              variant={lang === 'ar' ? 'default' : 'ghost'}
-              size="sm"
-              className={`lang-pill-btn ${lang === 'ar' ? 'active' : ''}`}
-              onClick={() => setLang('ar')}
-              aria-label={lang === 'ar' ? "اللغة العربية" : "Arabic"}
-              style={{
-                height: '26px',
-                padding: '0 10px',
-                borderRadius: '9999px',
-                fontSize: '0.75rem',
-                fontWeight: lang === 'ar' ? 700 : 500,
-                cursor: 'pointer'
-              }}
-            >
-              عربي
-            </Button>
-            <Button
-              variant={lang === 'en' ? 'default' : 'ghost'}
-              size="sm"
-              className={`lang-pill-btn ${lang === 'en' ? 'active' : ''}`}
-              onClick={() => setLang('en')}
-              aria-label="English Language"
-              style={{
-                height: '26px',
-                padding: '0 10px',
-                borderRadius: '9999px',
-                fontSize: '0.75rem',
-                fontWeight: lang === 'en' ? 700 : 500,
-                cursor: 'pointer'
-              }}
-            >
-              EN
-            </Button>
-          </div>
+          {/* Language Dropdown Selector */}
+          <LanguageDropdown />
 
           {/* Animated Sun / Moon Theme Switch Component */}
           <ThemeSwitch />
@@ -344,7 +343,7 @@ export default function App() {
             type="button"
             className={`navbar-auth-btn ${isUserProfileOpen || isAuthOpen ? 'active' : ''}`}
             onClick={() => {
-              if (savedCount > 0 || (typeof window !== 'undefined' && localStorage.getItem('techno_user'))) {
+              if (currentUser || savedCount > 0) {
                 setIsContactOpen(false);
                 setSelectedMember(null);
                 setIsAuthOpen(false);
@@ -355,17 +354,17 @@ export default function App() {
                 handleOpenAuth('login');
               }
             }}
-            title={savedCount > 0 
+            title={currentUser 
               ? (lang === 'en' ? `My Profile & Saved Projects (${savedCount})` : `حسابي والمشاريع المحفوظة (${savedCount})`) 
               : t.nav.login}
             style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
           >
             <span className="navbar-auth-btn-icon">
-              {savedCount > 0 ? <BookmarkCheck size={15} /> : <User size={15} />}
+              {currentUser ? <BookmarkCheck size={15} /> : <User size={15} />}
             </span>
             <span>
-              {savedCount > 0 
-                ? (lang === 'en' ? 'My Profile' : 'حسابي') 
+              {currentUser 
+                ? (currentUser.name ? currentUser.name.split(' ')[0] : (lang === 'en' ? 'My Profile' : 'حسابي')) 
                 : t.nav.login}
             </span>
             {savedCount > 0 && (
@@ -398,7 +397,8 @@ export default function App() {
           <AuthPage
             initialMode={authMode}
             onBack={handleBackFromAuth}
-            onSuccess={() => {
+            onSuccess={(loggedInUser: any) => {
+              if (loggedInUser) setCurrentUser(loggedInUser);
               setIsAuthOpen(false);
               setIsUserProfileOpen(true);
               window.location.hash = '#my-profile';
@@ -459,7 +459,7 @@ export default function App() {
             <p className="tab-page-subtitle">{t.articles.pageSubtitle}</p>
           </div>
 
-          <ArticlesSection />
+          <ArticlesSection showNavigateButton={false} />
 
           <div className="tab-page-cards-grid">
             <div className="tab-page-card">
@@ -677,6 +677,7 @@ export default function App() {
             onOpenContact={() => handleNavItemSelect(navItems[5], 5)}
             onNavigateToProjects={() => handleNavItemSelect(navItems[1], 1)} 
             onNavigateToVideos={() => handleNavItemSelect(navItems[2], 2)}
+            onNavigateToArticles={() => handleNavItemSelect(navItems[3], 3)}
           />
 
           {/* 2. "من نحن" (About Us / Team Showcase) */}

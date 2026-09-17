@@ -4,6 +4,7 @@ import ProjectsSection from '../components/projects/ProjectsSection';
 import VideosSection from '../components/videos/VideosSection';
 import ArticlesSection from '../components/articles/ArticlesSection';
 import cinematicEngineeringImg from '../assets/cinematic-engineering.jpg';
+import im2Img from '../assets/im2.png';
 import technoEnjazLogo from '../assets/Asset-1@4x.png';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
 import './ScrollExpandPrototype.css';
@@ -51,14 +52,16 @@ interface ScrollExpandPrototypeProps {
   onOpenContact?: () => void;
   onNavigateToProjects?: () => void;
   onNavigateToVideos?: () => void;
+  onNavigateToArticles?: () => void;
 }
 
 const ScrollExpandPrototype: React.FC<ScrollExpandPrototypeProps> = ({
   onOpenContact,
   onNavigateToProjects,
-  onNavigateToVideos
+  onNavigateToVideos,
+  onNavigateToArticles
 }) => {
-  const { lang, t } = useThemeLanguage();
+  const { theme, lang, t } = useThemeLanguage();
   const [config, setConfig] = useState<ResponsiveConfig>(() =>
     getResponsiveConfig(typeof window !== 'undefined' ? window.innerWidth : 1200)
   );
@@ -75,7 +78,7 @@ const ScrollExpandPrototype: React.FC<ScrollExpandPrototypeProps> = ({
     <div id="top" className="prototype-root">
       <ScrollExpand
         key={`scroll-expand-${config.startWidth}`}
-        src={cinematicEngineeringImg}
+        src={theme === 'light' ? im2Img : cinematicEngineeringImg}
         mediaType="image"
         alt={lang === 'ar' ? "محطة العمل الهندسية" : "Engineering Workstation"}
         startWidth={config.startWidth}
@@ -108,9 +111,10 @@ const ScrollExpandPrototype: React.FC<ScrollExpandPrototypeProps> = ({
               type="button"
               className="cta-button cta-primary"
               onClick={() => {
-                const projEl = document.getElementById('projects');
-                if (projEl) {
-                  projEl.scrollIntoView({ behavior: 'smooth' });
+                if (onNavigateToProjects) {
+                  onNavigateToProjects();
+                } else {
+                  window.location.hash = '#projects';
                 }
               }}
             >
@@ -146,7 +150,7 @@ const ScrollExpandPrototype: React.FC<ScrollExpandPrototypeProps> = ({
 
       {/* Dedicated Articles section using MagicBento */}
       <div className="scroll-deferred-section">
-        <ArticlesSection />
+        <ArticlesSection onNavigateToArticles={onNavigateToArticles} />
       </div>
     </div>
   );

@@ -844,6 +844,26 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
 }
 
+[data-theme="light"] .category-chip {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #475569;
+}
+
+[data-theme="light"] .category-chip:hover {
+  background: rgba(2, 132, 199, 0.08);
+  border-color: rgba(2, 132, 199, 0.4);
+  color: #0284c7;
+}
+
+[data-theme="light"] .category-chip.active {
+  background: linear-gradient(135deg, #0284c7 0%, #0d9488 100%);
+  border-color: #0284c7;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+  font-weight: 600;
+}
+
 [data-theme="light"] .live-projects-view-toggle {
   background: rgba(241, 245, 249, 0.8);
   border-color: rgba(0, 0, 0, 0.08);

@@ -97,7 +97,7 @@ body {
 .top-navbar-container {
   width: 100%;
   position: relative;
-  background-color: #000000;
+  background-color: var(--bg-navbar, #000000);
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   z-index: 50;
   display: grid;
@@ -105,6 +105,7 @@ body {
   align-items: center;
   padding: 18px clamp(16px, 4vw, 48px);
   box-sizing: border-box;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .navbar-brand-link {
@@ -305,7 +306,14 @@ body {
   padding-bottom: 5rem;
   box-sizing: border-box;
   position: relative;
+}
+
+[dir="rtl"] .tab-page-container {
   direction: rtl;
+}
+
+[dir="ltr"] .tab-page-container {
+  direction: ltr;
 }
 
 .tab-page-header {
@@ -342,7 +350,14 @@ body {
   max-width: 1200px;
   margin: 3rem auto 0 auto;
   padding: 0 1.5rem;
+}
+
+[dir="rtl"] .tab-page-cards-grid {
   direction: rtl;
+}
+
+[dir="ltr"] .tab-page-cards-grid {
+  direction: ltr;
 }
 
 .tab-page-card {
@@ -356,7 +371,14 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+[dir="rtl"] .tab-page-card {
   text-align: right;
+}
+
+[dir="ltr"] .tab-page-card {
+  text-align: left;
 }
 
 .tab-page-card:hover {
@@ -412,7 +434,7 @@ body {
    LIGHT MODE OVERRIDES FOR GLOBAL STYLES & NAVBAR
    ========================================================================== */
 [data-theme="light"] .top-navbar-container {
-  background-color: rgba(255, 255, 255, 0.88);
+  background-color: rgba(255, 255, 255, 0.96);
   border-bottom-color: rgba(0, 0, 0, 0.08);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -444,28 +466,35 @@ body {
 }
 
 [data-theme="light"] .theme-toggle-btn {
-  background: rgba(0, 0, 0, 0.05);
-  border-color: rgba(0, 0, 0, 0.1);
+  background: rgba(2, 132, 199, 0.08);
+  border-color: rgba(2, 132, 199, 0.25);
   color: #0284c7;
 }
 
 [data-theme="light"] .theme-toggle-btn:hover {
-  background: rgba(2, 132, 199, 0.1);
-  border-color: rgba(2, 132, 199, 0.4);
+  background: rgba(2, 132, 199, 0.16);
+  border-color: rgba(2, 132, 199, 0.45);
   box-shadow: 0 0 12px rgba(2, 132, 199, 0.25);
 }
 
 [data-theme="light"] .navbar-auth-btn {
-  background: rgba(0, 0, 0, 0.05);
-  border-color: rgba(0, 0, 0, 0.1);
-  color: #0f172a;
+  background: rgba(2, 132, 199, 0.08);
+  border-color: rgba(2, 132, 199, 0.25);
+  color: #0284c7;
 }
 
 [data-theme="light"] .navbar-auth-btn:hover {
-  background: rgba(2, 132, 199, 0.1);
-  border-color: rgba(2, 132, 199, 0.4);
+  background: rgba(2, 132, 199, 0.16);
+  border-color: rgba(2, 132, 199, 0.5);
   color: #0284c7;
-  box-shadow: 0 0 14px rgba(2, 132, 199, 0.2);
+  box-shadow: 0 2px 14px rgba(2, 132, 199, 0.25);
+}
+
+[data-theme="light"] .navbar-auth-btn.active {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
 }
 
 [data-theme="light"] .tab-page-title {
@@ -495,5 +524,119 @@ body {
 [data-theme="light"] .tab-page-card-desc {
   color: #475569;
 }
+
+/* ==========================================================================
+   Project Save to Favorites Button (Dark & Light Mode)
+   ========================================================================== */
+.project-save-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  border-style: solid;
+  border-width: 1px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  background: rgba(14, 238, 195, 0.12) !important;
+  border-color: rgba(14, 238, 195, 0.45) !important;
+  color: #0aeec3 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  outline: none;
+}
+
+.project-save-btn span {
+  color: inherit !important;
+}
+
+.project-save-btn svg {
+  color: inherit !important;
+  stroke: currentColor;
+  flex-shrink: 0;
+}
+
+.project-save-btn:hover {
+  background: rgba(14, 238, 195, 0.24) !important;
+  border-color: rgba(14, 238, 195, 0.8) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 14px rgba(10, 238, 195, 0.45);
+  transform: translateY(-1px);
+}
+
+/* Saved state in Dark Mode */
+.project-save-btn.is-saved {
+  background: linear-gradient(135deg, #0aeec3 0%, #00b4d8 100%) !important;
+  border-color: #0aeec3 !important;
+  color: #030712 !important;
+  font-weight: 700;
+  box-shadow: 0 0 16px rgba(10, 238, 195, 0.5);
+}
+
+.project-save-btn.is-saved span {
+  color: #030712 !important;
+}
+
+.project-save-btn.is-saved:hover {
+  background: linear-gradient(135deg, #18f7ce 0%, #0ac9ee 100%) !important;
+  box-shadow: 0 0 22px rgba(10, 238, 195, 0.7);
+}
+
+/* Specific size for catalog cards */
+.project-save-btn.catalog-save-btn {
+  height: 28px !important;
+  padding: 0 10px !important;
+  gap: 5px !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  font-weight: 600;
+}
+
+/* Specific size for live showcase spotlight */
+.project-save-btn.spotlight-save-btn {
+  height: 44px !important;
+  padding: 0 22px !important;
+  gap: 8px !important;
+  border-radius: 999px !important;
+  font-size: 14px !important;
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   Light Mode Styles for Project Save Button
+   -------------------------------------------------------------------------- */
+[data-theme="light"] .project-save-btn {
+  background: rgba(2, 132, 199, 0.08) !important;
+  border-color: rgba(2, 132, 199, 0.35) !important;
+  color: #0284c7 !important;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.08);
+}
+
+[data-theme="light"] .project-save-btn:hover {
+  background: rgba(2, 132, 199, 0.16) !important;
+  border-color: #0284c7 !important;
+  color: #0369a1 !important;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.22);
+}
+
+[data-theme="light"] .project-save-btn.is-saved {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+  border-color: #0284c7 !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+}
+
+[data-theme="light"] .project-save-btn.is-saved span {
+  color: #ffffff !important;
+}
+
+[data-theme="light"] .project-save-btn.is-saved:hover {
+  background: linear-gradient(135deg, #0369a1 0%, #075985 100%) !important;
+  border-color: #0369a1 !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.5);
+}
+
 
 

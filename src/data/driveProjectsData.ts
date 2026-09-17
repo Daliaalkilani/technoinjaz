@@ -12,6 +12,7 @@ export interface DriveProject {
   pptxId?: string;
   folderId?: string;
   tags: string[];
+  image?: string;
 }
 
 export const DRIVE_PROJECTS: DriveProject[] = [

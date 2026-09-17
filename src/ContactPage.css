@@ -8,9 +8,16 @@
   min-height: 100vh;
   background-color: #050508;
   color: #ffffff;
-  direction: rtl;
   font-family: 'Readex Pro', sans-serif;
   overflow-x: hidden;
+}
+
+[dir="rtl"] .contact-page-wrapper {
+  direction: rtl;
+}
+
+[dir="ltr"] .contact-page-wrapper {
+  direction: ltr;
 }
 
 /* خلفية جمالية بشفق نيون خافت */
@@ -634,4 +641,22 @@
 
 [data-theme="light"] .map-iframe {
   filter: none;
+}
+
+/* =========================================================================
+   LTR OVERRIDES FOR CONTACT PAGE
+   ========================================================================= */
+[dir="ltr"] .contact-panel-title,
+[dir="ltr"] .contact-panel-subtitle,
+[dir="ltr"] .form-label,
+[dir="ltr"] .form-input,
+[dir="ltr"] .form-textarea,
+[dir="ltr"] .info-card,
+[dir="ltr"] .info-text-box,
+[dir="ltr"] .map-card-header {
+  text-align: left;
+}
+
+[dir="ltr"] .contact-back-btn:hover {
+  transform: translateX(-4px);
 }

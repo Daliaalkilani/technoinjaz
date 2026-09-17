@@ -8,6 +8,34 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <title>تكنو إنجاز</title>
+    <script>
+      (function() {
+        try {
+          var isManual = localStorage.getItem('techno_theme_manual');
+          var saved = localStorage.getItem('theme') || localStorage.getItem('techno_theme');
+          var theme = 'dark';
+          if (isManual && (saved === 'light' || saved === 'dark')) {
+            theme = saved;
+          } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+            theme = 'light';
+          } else if (saved === 'light' || saved === 'dark') {
+            theme = saved;
+          }
+          document.documentElement.setAttribute('data-theme', theme);
+          document.documentElement.classList.toggle('dark', theme === 'dark');
+          document.documentElement.classList.toggle('light', theme === 'light');
+
+          var savedLang = localStorage.getItem('techno_lang');
+          if (savedLang === 'en') {
+            document.documentElement.setAttribute('dir', 'ltr');
+            document.documentElement.setAttribute('lang', 'en');
+          } else {
+            document.documentElement.setAttribute('dir', 'rtl');
+            document.documentElement.setAttribute('lang', 'ar');
+          }
+        } catch (e) {}
+      })();
+    </script>
     <link rel="stylesheet" href="/loader/loader.css" />
   </head>
   <body>

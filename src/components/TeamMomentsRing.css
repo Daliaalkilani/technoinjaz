@@ -29,8 +29,8 @@
   gap: 10px;
   padding: 10px 22px;
 
-  background: rgba(18, 16, 30, 0.75);
-  border: 1px solid rgba(139, 92, 246, 0.3);
+  background: rgba(10, 14, 26, 0.8);
+  border: 1px solid rgba(0, 210, 255, 0.35);
   border-radius: 999px;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -40,17 +40,16 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(82, 39, 255, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 24px rgba(0, 210, 255, 0.25);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  direction: rtl;
 }
 
 .moments-scroll-indicator:hover {
-  background: rgba(82, 39, 255, 0.25);
-  border-color: #7c3aed;
+  background: rgba(0, 210, 255, 0.15);
+  border-color: var(--accent-cyan);
   color: #ffffff;
   transform: translateX(-50%) translateY(-4px);
-  box-shadow: 0 15px 35px rgba(82, 39, 255, 0.4);
+  box-shadow: 0 15px 35px rgba(0, 210, 255, 0.4);
 }
 
 .scroll-text {
@@ -60,7 +59,7 @@
 .scroll-arrow {
   font-size: 16px;
   animation: bounceDown 1.8s infinite ease-in-out;
-  color: #a78bfa;
+  color: var(--accent-cyan);
 }
 
 @keyframes bounceDown {
@@ -82,4 +81,29 @@
     font-size: 13px;
     padding: 8px 18px;
   }
+}
+
+/* =========================================================
+   LIGHT MODE OVERRIDES FOR TEAM MOMENTS
+   ========================================================= */
+[data-theme="light"] .team-moments-wrapper {
+  background-color: #f8fafc;
+}
+
+[data-theme="light"] .moments-scroll-indicator {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(2, 132, 199, 0.35);
+  color: #0369a1;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06), 0 0 20px rgba(2, 132, 199, 0.15);
+}
+
+[data-theme="light"] .moments-scroll-indicator:hover {
+  background: #ffffff;
+  border-color: #0284c7;
+  color: #0284c7;
+  box-shadow: 0 15px 35px rgba(2, 132, 199, 0.25);
+}
+
+[data-theme="light"] .scroll-arrow {
+  color: #0284c7;
 }

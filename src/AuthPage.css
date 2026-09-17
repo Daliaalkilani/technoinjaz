@@ -210,7 +210,14 @@
   display: flex;
   flex-direction: column;
   gap: 7px;
+}
+
+[dir="rtl"] .form-group {
   text-align: right;
+}
+
+[dir="ltr"] .form-group {
+  text-align: left;
 }
 
 .form-row-2 {
@@ -570,4 +577,25 @@
   background: #ffffff;
   border-color: #cbd5e1;
   color: #0f172a;
+}
+
+/* ==========================================================================
+   LTR OVERRIDES FOR AUTH PAGE
+   ========================================================================== */
+[dir="ltr"] .input-icon-start {
+  left: 14px;
+  right: auto;
+}
+
+[dir="ltr"] .auth-input {
+  padding: 13px 14px 13px 44px;
+}
+
+[dir="ltr"] .password-toggle-btn {
+  right: 12px;
+  left: auto;
+}
+
+[dir="ltr"] .auth-back-btn:hover {
+  transform: translateX(-4px);
 }

@@ -12,15 +12,13 @@ import {
   Radio, 
   Globe, 
   Smartphone,
-  Filter,
+  SlidersHorizontal,
   Bookmark,
   BookmarkCheck
 } from 'lucide-react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import { useSavedProjects } from '../../hooks/useSavedProjects';
-import { Button } from '../ui/button';
 import { DRIVE_PROJECTS, type DriveProject, type ProjectCategory } from '../../data/driveProjectsData';
-import OptionWheel, { type OptionWheelItem } from '../ui/OptionWheel';
 import DocumentReaderModal from './DocumentReaderModal';
 import './ProjectsCatalogSection.css';
 
@@ -105,15 +103,6 @@ export const ProjectsCatalogSection: React.FC = () => {
     { key: 'mobile', labelAr: 'تطبيقات موبايل', labelEn: 'Mobile Applications', icon: <Smartphone size={16} /> },
   ], []);
 
-  const wheelOptions: OptionWheelItem[] = useMemo(() => {
-    return categories.map(cat => ({
-      id: cat.key,
-      label: lang === 'ar' ? cat.labelAr : cat.labelEn,
-      value: cat.key,
-      icon: cat.icon
-    }));
-  }, [categories, lang]);
-
   const activeCategoryKey = categories[selectedCategoryIdx]?.key || 'all';
 
   const filteredProjects = useMemo(() => {
@@ -142,10 +131,6 @@ export const ProjectsCatalogSection: React.FC = () => {
       <div className="catalog-container">
         {/* Section Header */}
         <div className="catalog-header-wrap">
-          <div className="catalog-section-badge">
-            <BookOpen size={16} />
-            <span>{lang === 'ar' ? 'المكتبة الأكاديمية والبحثية' : 'Engineering & Academic Library'}</span>
-          </div>
           <h2 className="catalog-title">
             {lang === 'ar' ? 'مكتبة مشاريع التخرج والبحوث الهندسية' : 'Graduation Projects & Research Library'}
           </h2>
@@ -156,45 +141,72 @@ export const ProjectsCatalogSection: React.FC = () => {
           </p>
         </div>
 
-        {/* Filter and Search Bar Controls */}
-        <div className="catalog-controls-panel">
-          {/* Live Search Input */}
-          <div className="catalog-search-box">
-            <Search size={19} className="catalog-search-icon" />
-            <input
-              type="text"
-              className="catalog-search-input"
-              placeholder={lang === 'ar' ? 'ابحث بالاسم أو التقنية (مثل: شبكات، تعرّف، أمن)...' : 'Search by title or keyword (e.g. AI, vision, security)...'}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            {searchTerm && (
-              <button 
-                type="button" 
-                className="catalog-search-clear"
-                onClick={() => setSearchTerm('')}
-              >
-                ✕
-              </button>
-            )}
+        {/* Modern Filter Card & Interactive Category Chips */}
+        <div className="catalog-filter-card">
+          {/* Header Row: Label & Search Input */}
+          <div className="catalog-filter-header-row">
+            <div className="catalog-filter-label-wrap">
+              <div className="catalog-filter-icon-badge">
+                <SlidersHorizontal size={17} />
+              </div>
+              <div className="catalog-filter-text-group">
+                <span className="catalog-filter-main-label">
+                  {lang === 'ar' ? 'فلترة حسب نوع المشروع:' : 'Filter by Category:'}
+                </span>
+                <span className="catalog-filter-sub-label">
+                  {lang === 'ar' ? 'اختر تصنيفاً لعرض المشاريع المتخصصة' : 'Select a category to view specialized projects'}
+                </span>
+              </div>
+            </div>
+
+            {/* Live Search Input */}
+            <div className="catalog-search-box">
+              <Search size={18} className="catalog-search-icon" />
+              <input
+                type="text"
+                className="catalog-search-input"
+                placeholder={lang === 'ar' ? 'ابحث بالاسم أو التقنية (مثل: شبكات، تعرّف، أمن)...' : 'Search by title or keyword (e.g. AI, vision, security)...'}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              {searchTerm && (
+                <button 
+                  type="button" 
+                  className="catalog-search-clear"
+                  onClick={() => setSearchTerm('')}
+                  title={lang === 'ar' ? 'مسح البحث' : 'Clear search'}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
           </div>
 
-          {/* OptionWheel Category Selector */}
-          <div className="catalog-wheel-filter-box">
-            <div className="catalog-wheel-label">
-              <Filter size={15} />
-              <span>{lang === 'ar' ? 'فلترة حسب نوع المشروع:' : 'Filter by Category:'}</span>
-            </div>
-            <OptionWheel
-              options={wheelOptions}
-              selectedIndex={selectedCategoryIdx}
-              onChange={(index) => setSelectedCategoryIdx(index)}
-              visibleCount={5}
-              itemHeight={44}
-              perspective={900}
-              radius={100}
-              dir={lang === 'ar' ? 'rtl' : 'ltr'}
-            />
+          {/* Interactive Category Chips */}
+          <div className="catalog-category-chips" role="tablist">
+            {categories.map((cat, idx) => {
+              const isActive = activeCategoryKey === cat.key;
+              const count = cat.key === 'all' 
+                ? DRIVE_PROJECTS.length 
+                : DRIVE_PROJECTS.filter(p => p.category === cat.key).length;
+
+              return (
+                <button
+                  key={cat.key}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  className={`catalog-category-chip ${isActive ? 'active' : ''}`}
+                  onClick={() => setSelectedCategoryIdx(idx)}
+                >
+                  <span className="chip-icon-wrap">{cat.icon}</span>
+                  <span className="chip-label-text">
+                    {lang === 'ar' ? cat.labelAr : cat.labelEn}
+                  </span>
+                  <span className="chip-count-pill">{count}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -265,9 +277,9 @@ export const ProjectsCatalogSection: React.FC = () => {
                       </div>
 
                       {/* Save Project to Favorites Button */}
-                      <Button
-                        variant={isSaved(project.id) ? "default" : "outline"}
-                        size="sm"
+                      <button
+                        type="button"
+                        className={`project-save-btn catalog-save-btn ${isSaved(project.id) ? 'is-saved' : ''}`}
                         onClick={(e) => {
                           e.stopPropagation();
                           toggleSave({
@@ -279,6 +291,7 @@ export const ProjectsCatalogSection: React.FC = () => {
                             description: project.description,
                             descriptionEn: project.descriptionEn,
                             type: 'academic',
+                            image: project.image,
                             pdfId: project.pdfId,
                             pptxId: project.pptxId,
                             docxId: project.docxId,
@@ -288,7 +301,6 @@ export const ProjectsCatalogSection: React.FC = () => {
                         title={isSaved(project.id) 
                           ? (lang === 'ar' ? 'تم الحفظ في المفضلة' : 'Saved to Favorites') 
                           : (lang === 'ar' ? 'حفظ المشروع في المفضلة' : 'Save Project to Favorites')}
-                        style={{ height: '28px', padding: '0 10px', gap: '5px' }}
                       >
                         {isSaved(project.id) ? (
                           <>
@@ -301,8 +313,18 @@ export const ProjectsCatalogSection: React.FC = () => {
                             <span style={{ fontSize: '0.75rem', fontWeight: 500 }}>{lang === 'ar' ? 'حفظ' : 'Save'}</span>
                           </>
                         )}
-                      </Button>
+                      </button>
                     </div>
+                  </div>
+
+                  {/* Project Image Slot (White placeholder canvas ready for project images) */}
+                  <div className="catalog-card-image-wrap">
+                    <img 
+                      src={project.image || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340' viewBox='0 0 600 340'%3E%3Crect width='600' height='340' fill='%23ffffff'/%3E%3C/svg%3E"} 
+                      alt={projectTitle}
+                      className="catalog-card-img"
+                      loading="lazy"
+                    />
                   </div>
 
                   {/* Card Title & Description */}

@@ -374,7 +374,7 @@ export function AuthSwitch({
           className="auth-switch-overlay-panel"
           initial={false}
           animate={{
-            left: isSignUp ? "50%" : "0%"
+            left: isEn ? (isSignUp ? "0%" : "50%") : (isSignUp ? "50%" : "0%")
           }}
           transition={{
             type: "spring",

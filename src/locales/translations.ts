@@ -56,6 +56,7 @@ export interface Translations {
     pageSubtitle: string;
     heading: string;
     subtitle: string;
+    readArticles: string;
   };
   about: {
     pageTitle: string;
@@ -149,8 +150,8 @@ export const translations: Record<'ar' | 'en', Translations> = {
     },
     liveProjects: {
       pageTitle: 'مشاريع ومنظومات تكنو إنجاز',
-      pageSubtitle: 'استكشف 13 مشروعاً برمجياً ومنظومة هندسية تعمل الآن ومتاحة للتجربة الحية والمباشرة',
-      countBadge: 'كافة المشاريع التطبيقية الحية (13 مشروعاً)',
+      pageSubtitle: 'استكشف مشاريع برمجية ومنظومات هندسية تعمل الآن ومتاحة للتجربة الحية والمباشرة',
+      countBadge: 'كافة المشاريع التطبيقية الحية',
       autoMode: 'عرض تلقائي متحرك',
       gridMode: 'شبكة المشاريع',
       projectWord: 'المشروع',
@@ -268,7 +269,8 @@ export const translations: Record<'ar' | 'en', Translations> = {
       pageTitle: 'مقالات وأبحاث تكنو إنجاز',
       pageSubtitle: 'دراسات وأبحاث هندسية توثق التجارب المعمارية والخوارزميات المبتكرة في مشاريعنا',
       heading: 'مقالاتنا الهندسية',
-      subtitle: 'دراسات وأبحاث تقنية توثق التجارب المعمارية والخوارزميات المبتكرة في مشاريع تكنو إنجاز'
+      subtitle: 'دراسات وأبحاث تقنية توثق التجارب المعمارية والخوارزميات المبتكرة في مشاريع تكنو إنجاز',
+      readArticles: 'اقرأ المقالات'
     },
     about: {
       pageTitle: 'من نحن - فريق تكنو إنجاز',
@@ -368,8 +370,8 @@ export const translations: Record<'ar' | 'en', Translations> = {
     },
     liveProjects: {
       pageTitle: 'Techno Enjaz Live Ecosystem',
-      pageSubtitle: 'Explore 13 live deployed software and engineering systems ready for hands-on experience',
-      countBadge: 'All Live Applied Projects (13 Projects)',
+      pageSubtitle: 'Explore live deployed software and engineering systems ready for hands-on experience',
+      countBadge: 'All Live Applied Projects',
       autoMode: 'Auto Showcase',
       gridMode: 'Grid View',
       projectWord: 'Project',
@@ -487,7 +489,8 @@ export const translations: Record<'ar' | 'en', Translations> = {
       pageTitle: 'Techno Enjaz Articles & Research',
       pageSubtitle: 'Technical studies and research documenting innovative architectures and algorithms in our projects',
       heading: 'Engineering Articles',
-      subtitle: 'Technical studies and research documenting innovative architectures and algorithms at Techno Enjaz'
+      subtitle: 'Technical studies and research documenting innovative architectures and algorithms at Techno Enjaz',
+      readArticles: 'Read Articles'
     },
     about: {
       pageTitle: 'About Us - Techno Enjaz Team',
