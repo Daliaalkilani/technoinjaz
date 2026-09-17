@@ -9,13 +9,17 @@ import Orb from './Orb';
 import CinematicFooter from './components/CinematicFooter';
 import VideosSection from './components/videos/VideosSection';
 import ArticlesSection from './components/articles/ArticlesSection';
-import { LogIn, Cpu, Video, Sparkles, BookOpen, Sun, Moon } from 'lucide-react';
+import { Cpu, Video, Sparkles, BookOpen, User, BookmarkCheck } from 'lucide-react';
 import { teamMembers } from './data/teamData';
 import { useThemeLanguage } from './context/ThemeLanguageContext';
+import ThemeSwitch from './components/ui/ThemeSwitch';
+import { Button } from './components/ui/button';
+import { useSavedProjects } from './hooks/useSavedProjects';
 
 const ProfilePage = lazy(() => import('./ProfilePage'));
 const ContactPage = lazy(() => import('./ContactPage'));
 const AuthPage = lazy(() => import('./AuthPage'));
+const UserProfilePage = lazy(() => import('./UserProfilePage'));
 const LiveProjectsShowcase = lazy(() => import('./components/projects/LiveProjectsShowcase'));
 const ProjectsCatalogSection = lazy(() => import('./components/projects/ProjectsCatalogSection'));
 
@@ -25,14 +29,16 @@ interface NavItem {
 }
 
 export default function App() {
-  const { theme, lang, toggleTheme, setLang, t } = useThemeLanguage();
+  const { theme, lang, setLang, t } = useThemeLanguage();
   const [isLoaderDone, setIsLoaderDone] = useState(false);
   const [currentTab, setCurrentTab] = useState<'home' | 'projects' | 'videos' | 'articles' | 'about'>('home');
   const [selectedMember, setSelectedMember] = useState<any>(null);
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+  const [isUserProfileOpen, setIsUserProfileOpen] = useState(false);
   const [activeNavIndex, setActiveNavIndex] = useState(0);
+  const { count: savedCount } = useSavedProjects();
 
   const localizedTeamMembers = teamMembers.map((m: any) => ({
     ...m,
@@ -92,8 +98,17 @@ export default function App() {
       if (hash === '#auth' || hash === '#login' || hash === '#register') {
         setSelectedMember(null);
         setIsContactOpen(false);
+        setIsUserProfileOpen(false);
         setIsAuthOpen(true);
         setAuthMode(hash === '#register' ? 'register' : 'login');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+      if (hash === '#my-profile' || hash === '#favorites' || hash === '#profile') {
+        setSelectedMember(null);
+        setIsContactOpen(false);
+        setIsAuthOpen(false);
+        setIsUserProfileOpen(true);
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
       }
@@ -101,6 +116,7 @@ export default function App() {
       setSelectedMember(null);
       setIsContactOpen(false);
       setIsAuthOpen(false);
+      setIsUserProfileOpen(false);
 
       if (hash === '#projects') {
         setCurrentTab('projects');
@@ -216,6 +232,29 @@ export default function App() {
     );
   }
 
+  // If the user's personal profile & favorites page is opened
+  if (isUserProfileOpen) {
+    return (
+      <Suspense fallback={<div style={{ minHeight: '100vh', backgroundColor: theme === 'light' ? '#f8fafc' : '#050508' }} />}>
+        <UserProfilePage
+          onBack={() => {
+            setIsUserProfileOpen(false);
+            window.location.hash = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onOpenReader={() => {
+            setIsUserProfileOpen(false);
+            window.location.hash = '#academic-projects';
+          }}
+          onExploreProjects={() => {
+            setIsUserProfileOpen(false);
+            window.location.hash = '#projects';
+          }}
+        />
+      </Suspense>
+    );
+  }
+
   return (
     <main style={{ width: '100%', minHeight: '100vh', backgroundColor: 'var(--bg-main)' }} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
       {/* Scroll indicator */}
@@ -257,54 +296,98 @@ export default function App() {
           />
         </div>
 
-        {/* End Actions: Language Switcher, Theme Toggle, Login */}
+        {/* End Actions: Language Switcher, Theme Toggle, Login / User Profile */}
         <div className="navbar-end-actions">
-          {/* Language Capsule Toggle [ عربي | EN ] */}
-          <div className="lang-capsule-toggle" title="Switch Language / تبديل اللغة">
-            <button
-              type="button"
+          {/* Language Switcher using shadcn Button */}
+          <div className="lang-capsule-toggle" title="Switch Language / تبديل اللغة" style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', background: 'rgba(255,255,255,0.06)', padding: '2px 4px', borderRadius: '9999px', border: '1px solid var(--border-subtle)' }}>
+            <Button
+              variant={lang === 'ar' ? 'default' : 'ghost'}
+              size="sm"
               className={`lang-pill-btn ${lang === 'ar' ? 'active' : ''}`}
               onClick={() => setLang('ar')}
               aria-label={lang === 'ar' ? "اللغة العربية" : "Arabic"}
+              style={{
+                height: '26px',
+                padding: '0 10px',
+                borderRadius: '9999px',
+                fontSize: '0.75rem',
+                fontWeight: lang === 'ar' ? 700 : 500,
+                cursor: 'pointer'
+              }}
             >
               عربي
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              variant={lang === 'en' ? 'default' : 'ghost'}
+              size="sm"
               className={`lang-pill-btn ${lang === 'en' ? 'active' : ''}`}
               onClick={() => setLang('en')}
               aria-label="English Language"
+              style={{
+                height: '26px',
+                padding: '0 10px',
+                borderRadius: '9999px',
+                fontSize: '0.75rem',
+                fontWeight: lang === 'en' ? 700 : 500,
+                cursor: 'pointer'
+              }}
             >
               EN
-            </button>
+            </Button>
           </div>
 
-          {/* Theme Toggle Button (Sun / Moon) */}
-          <button
-            type="button"
-            className="theme-toggle-btn"
-            onClick={toggleTheme}
-            title={theme === 'dark' ? t.theme.light : t.theme.dark}
-            aria-label="Toggle Theme"
-          >
-            {theme === 'dark' ? (
-              <Sun size={18} />
-            ) : (
-              <Moon size={18} />
-            )}
-          </button>
+          {/* Animated Sun / Moon Theme Switch Component */}
+          <ThemeSwitch />
 
-          {/* Login Button */}
+          {/* User Profile / Saved Projects / Auth Button */}
           <button
             type="button"
-            className={`navbar-auth-btn ${isAuthOpen ? 'active' : ''}`}
-            onClick={() => handleOpenAuth('login')}
-            title={t.nav.login}
+            className={`navbar-auth-btn ${isUserProfileOpen || isAuthOpen ? 'active' : ''}`}
+            onClick={() => {
+              if (savedCount > 0 || (typeof window !== 'undefined' && localStorage.getItem('techno_user'))) {
+                setIsContactOpen(false);
+                setSelectedMember(null);
+                setIsAuthOpen(false);
+                setIsUserProfileOpen(true);
+                window.location.hash = '#my-profile';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              } else {
+                handleOpenAuth('login');
+              }
+            }}
+            title={savedCount > 0 
+              ? (lang === 'en' ? `My Profile & Saved Projects (${savedCount})` : `حسابي والمشاريع المحفوظة (${savedCount})`) 
+              : t.nav.login}
+            style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
           >
             <span className="navbar-auth-btn-icon">
-              <LogIn size={15} />
+              {savedCount > 0 ? <BookmarkCheck size={15} /> : <User size={15} />}
             </span>
-            <span>{t.nav.login}</span>
+            <span>
+              {savedCount > 0 
+                ? (lang === 'en' ? 'My Profile' : 'حسابي') 
+                : t.nav.login}
+            </span>
+            {savedCount > 0 && (
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  minWidth: '18px',
+                  height: '18px',
+                  padding: '0 5px',
+                  borderRadius: '9999px',
+                  fontSize: '0.7rem',
+                  fontWeight: 700,
+                  backgroundColor: 'var(--accent-cyan)',
+                  color: '#030508',
+                  lineHeight: 1
+                }}
+              >
+                {savedCount}
+              </span>
+            )}
           </button>
         </div>
       </nav>
@@ -315,6 +398,12 @@ export default function App() {
           <AuthPage
             initialMode={authMode}
             onBack={handleBackFromAuth}
+            onSuccess={() => {
+              setIsAuthOpen(false);
+              setIsUserProfileOpen(true);
+              window.location.hash = '#my-profile';
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
           />
         </Suspense>
       ) : isContactOpen ? (

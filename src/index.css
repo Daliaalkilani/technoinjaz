@@ -11,6 +11,23 @@
   --text-faint: rgba(255, 255, 255, 0.45);
   --accent-cyan: #00d2ff;
   --accent-teal: #0aeec3;
+  --text-color-primary: #ffffff;
+
+  /* Shadcn UI tokens for Dark Mode */
+  --background: #030508;
+  --foreground: #ffffff;
+  --primary: #00d2ff;
+  --primary-foreground: #020617;
+  --secondary: rgba(255, 255, 255, 0.1);
+  --secondary-foreground: #ffffff;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --muted: rgba(255, 255, 255, 0.08);
+  --muted-foreground: rgba(255, 255, 255, 0.6);
+  --accent: rgba(255, 255, 255, 0.12);
+  --accent-foreground: #ffffff;
+  --input: rgba(255, 255, 255, 0.16);
+  --ring: #00d2ff;
 }
 
 [data-theme="light"] {
@@ -24,6 +41,23 @@
   --text-faint: #64748b;
   --accent-cyan: #0284c7;
   --accent-teal: #0d9488;
+  --text-color-primary: #0f172a;
+
+  /* Shadcn UI tokens for Light Mode */
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --primary: #0284c7;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
+  --input: #e2e8f0;
+  --ring: #0284c7;
 }
 
 *,

@@ -17,7 +17,7 @@ const ThemeLanguageContext = createContext<ThemeLanguageContextType | undefined>
 export const ThemeLanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('techno_theme') as Theme;
+      const saved = (localStorage.getItem('theme') || localStorage.getItem('techno_theme')) as Theme;
       if (saved === 'light' || saved === 'dark') return saved;
     }
     return 'dark';
@@ -34,7 +34,9 @@ export const ThemeLanguageProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     if (typeof document !== 'undefined') {
       document.documentElement.setAttribute('data-theme', theme);
+      document.documentElement.classList.toggle('dark', theme === 'dark');
       localStorage.setItem('techno_theme', theme);
+      localStorage.setItem('theme', theme);
     }
   }, [theme]);
 

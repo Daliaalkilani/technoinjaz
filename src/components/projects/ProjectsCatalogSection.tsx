@@ -12,9 +12,13 @@ import {
   Radio, 
   Globe, 
   Smartphone,
-  Filter
+  Filter,
+  Bookmark,
+  BookmarkCheck
 } from 'lucide-react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
+import { useSavedProjects } from '../../hooks/useSavedProjects';
+import { Button } from '../ui/button';
 import { DRIVE_PROJECTS, type DriveProject, type ProjectCategory } from '../../data/driveProjectsData';
 import OptionWheel, { type OptionWheelItem } from '../ui/OptionWheel';
 import DocumentReaderModal from './DocumentReaderModal';
@@ -90,6 +94,7 @@ export const ProjectsCatalogSection: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategoryIdx, setSelectedCategoryIdx] = useState(0);
   const [activeReadingProject, setActiveReadingProject] = useState<DriveProject | null>(null);
+  const { isSaved, toggleSave } = useSavedProjects();
 
   const categories: { key: ProjectCategory; labelAr: string; labelEn: string; icon: React.ReactNode }[] = useMemo(() => [
     { key: 'all', labelAr: 'الكل', labelEn: 'All Projects', icon: <Layers size={16} /> },
@@ -234,28 +239,69 @@ export const ProjectsCatalogSection: React.FC = () => {
 
               return (
                 <article key={project.id} className="catalog-card">
-                  {/* Card Top: Category & File Availability Badges */}
+                  {/* Card Top: Category & File Availability Badges + Save Project Button */}
                   <div className="catalog-card-header">
                     <span className={`catalog-cat-badge cat-${project.category}`}>
                       {getCategoryBadgeLabel(project.category)}
                     </span>
-                    <div className="catalog-file-badges">
-                      {project.docxId && (
-                        <span className="file-badge docx" title="Word Document (DOCX)">
-                          <FileCode size={12} />
-                          <span>DOCX</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div className="catalog-file-badges">
+                        {project.docxId && (
+                          <span className="file-badge docx" title="Word Document (DOCX)">
+                            <FileCode size={12} />
+                            <span>DOCX</span>
+                          </span>
+                        )}
+                        {project.pptxId && (
+                          <span className="file-badge pptx" title="PowerPoint Presentation (PPTX)">
+                            <Presentation size={12} />
+                            <span>PPTX</span>
+                          </span>
+                        )}
+                        <span className="file-badge pdf" title="PDF Document">
+                          <FileText size={12} />
+                          <span>PDF</span>
                         </span>
-                      )}
-                      {project.pptxId && (
-                        <span className="file-badge pptx" title="PowerPoint Presentation (PPTX)">
-                          <Presentation size={12} />
-                          <span>PPTX</span>
-                        </span>
-                      )}
-                      <span className="file-badge pdf" title="PDF Document">
-                        <FileText size={12} />
-                        <span>PDF</span>
-                      </span>
+                      </div>
+
+                      {/* Save Project to Favorites Button */}
+                      <Button
+                        variant={isSaved(project.id) ? "default" : "outline"}
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleSave({
+                            id: project.id,
+                            title: project.title,
+                            titleEn: project.titleEn,
+                            category: project.category,
+                            categoryLabel: getCategoryBadgeLabel(project.category),
+                            description: project.description,
+                            descriptionEn: project.descriptionEn,
+                            type: 'academic',
+                            pdfId: project.pdfId,
+                            pptxId: project.pptxId,
+                            docxId: project.docxId,
+                            tags: project.tags
+                          });
+                        }}
+                        title={isSaved(project.id) 
+                          ? (lang === 'ar' ? 'تم الحفظ في المفضلة' : 'Saved to Favorites') 
+                          : (lang === 'ar' ? 'حفظ المشروع في المفضلة' : 'Save Project to Favorites')}
+                        style={{ height: '28px', padding: '0 10px', gap: '5px' }}
+                      >
+                        {isSaved(project.id) ? (
+                          <>
+                            <BookmarkCheck size={13} />
+                            <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>{lang === 'ar' ? 'محفوظ' : 'Saved'}</span>
+                          </>
+                        ) : (
+                          <>
+                            <Bookmark size={13} />
+                            <span style={{ fontSize: '0.75rem', fontWeight: 500 }}>{lang === 'ar' ? 'حفظ' : 'Save'}</span>
+                          </>
+                        )}
+                      </Button>
                     </div>
                   </div>
 

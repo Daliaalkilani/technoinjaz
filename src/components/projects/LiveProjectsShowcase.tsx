@@ -7,9 +7,13 @@ import {
   ChevronLeft, 
   LayoutGrid, 
   Sparkles, 
-  Radio 
+  Radio,
+  Bookmark,
+  BookmarkCheck
 } from 'lucide-react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
+import { useSavedProjects } from '../../hooks/useSavedProjects';
+import { Button } from '../ui/button';
 import './LiveProjectsShowcase.css';
 
 export interface LiveProject {
@@ -207,6 +211,7 @@ export const LiveProjectsShowcase: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
+  const { isSaved, toggleSave } = useSavedProjects();
 
   const activeProject = liveProjectsList[currentIndex % liveProjectsList.length] || liveProjectsList[0];
   const activeTrans = t.liveProjects.projects[activeProject.id];
@@ -347,7 +352,7 @@ export const LiveProjectsShowcase: React.FC = () => {
                   ))}
                 </div>
 
-                <div className="spotlight-cta-row">
+                <div className="spotlight-cta-row" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
                   <a
                     href={activeProject.url}
                     target="_blank"
@@ -357,6 +362,41 @@ export const LiveProjectsShowcase: React.FC = () => {
                     <span>{t.liveProjects.visitLive}</span>
                     <ExternalLink size={17} />
                   </a>
+
+                  <Button
+                    variant={isSaved(activeProject.id) ? "default" : "outline"}
+                    size="default"
+                    onClick={() => {
+                      toggleSave({
+                        id: activeProject.id,
+                        title: activeTitle,
+                        titleEn: activeProject.title,
+                        category: activeProject.category,
+                        description: activeDescription,
+                        descriptionEn: activeProject.description,
+                        type: 'live',
+                        url: activeProject.url,
+                        image: activeProject.image,
+                        tags: activeHighlights
+                      });
+                    }}
+                    title={isSaved(activeProject.id) 
+                      ? (lang === 'ar' ? 'تم الحفظ في المفضلة' : 'Saved to Favorites') 
+                      : (lang === 'ar' ? 'حفظ المشروع في المفضلة' : 'Save Project to Favorites')}
+                    style={{ height: '42px', padding: '0 18px', gap: '8px' }}
+                  >
+                    {isSaved(activeProject.id) ? (
+                      <>
+                        <BookmarkCheck size={16} />
+                        <span>{lang === 'ar' ? 'تم الحفظ' : 'Saved'}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Bookmark size={16} />
+                        <span>{lang === 'ar' ? 'حفظ المشروع' : 'Save Project'}</span>
+                      </>
+                    )}
+                  </Button>
                 </div>
               </div>
 
@@ -509,16 +549,53 @@ export const LiveProjectsShowcase: React.FC = () => {
                     <span key={tag} className="spotlight-tag-item">#{tag}</span>
                   ))}
                 </div>
-                <div className="grid-card-footer">
+                <div className="grid-card-footer" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                   <a
                     href={project.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="grid-card-btn"
+                    style={{ flex: 1 }}
                   >
                     <span>{t.liveProjects.openProject}</span>
                     <ExternalLink size={15} />
                   </a>
+
+                  <Button
+                    variant={isSaved(project.id) ? "default" : "outline"}
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleSave({
+                        id: project.id,
+                        title: pTitle,
+                        titleEn: project.title,
+                        category: project.category,
+                        description: pDesc,
+                        descriptionEn: project.description,
+                        type: 'live',
+                        url: project.url,
+                        image: project.image,
+                        tags: pHighlights
+                      });
+                    }}
+                    title={isSaved(project.id) 
+                      ? (lang === 'ar' ? 'تم الحفظ في المفضلة' : 'Saved to Favorites') 
+                      : (lang === 'ar' ? 'حفظ المشروع في المفضلة' : 'Save Project to Favorites')}
+                    style={{ height: '36px', padding: '0 10px', gap: '5px' }}
+                  >
+                    {isSaved(project.id) ? (
+                      <>
+                        <BookmarkCheck size={14} />
+                        <span>{lang === 'ar' ? 'محفوظ' : 'Saved'}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Bookmark size={14} />
+                        <span>{lang === 'ar' ? 'حفظ' : 'Save'}</span>
+                      </>
+                    )}
+                  </Button>
                 </div>
               </div>
             );
