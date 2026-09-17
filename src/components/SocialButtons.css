@@ -1,4 +1,4 @@
-﻿/* حاوية أزرار التواصل الاجتماعي */
+/* حاوية أزرار التواصل الاجتماعي */
 .social-buttons-wrapper {
   display: inline-flex;
   align-items: center;
@@ -105,3 +105,44 @@
   width: 23px;
   height: 23px;
 }
+
+/* =========================================================
+   LIGHT MODE OVERRIDES FOR SOCIAL BUTTONS
+   ========================================================= */
+[data-theme="light"] .social-btn {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .social-btn::before {
+  background-color: #ffffff;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .social-btn.linkedin svg {
+  color: #0077b5;
+}
+
+[data-theme="light"] .social-btn.github svg {
+  color: #24292e;
+}
+
+[data-theme="light"] .social-btn.email svg {
+  color: #ea4335;
+}
+
+[data-theme="light"] .social-btn:hover svg {
+  color: #ffffff;
+}
+
+[data-theme="light"] .social-btn.linkedin:hover {
+  box-shadow: 0 6px 20px rgba(0, 119, 181, 0.35);
+}
+
+[data-theme="light"] .social-btn.github:hover {
+  box-shadow: 0 6px 20px rgba(36, 41, 46, 0.25);
+}
+
+[data-theme="light"] .social-btn.email:hover {
+  box-shadow: 0 6px 20px rgba(234, 67, 53, 0.35);
+}
+

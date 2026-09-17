@@ -491,3 +491,123 @@
   color: #00d2ff;
   flex-shrink: 0;
 }
+
+/* ==========================================================================
+   LIGHT MODE OVERRIDES FOR AUTH SWITCH
+   ========================================================================== */
+[data-theme="light"] .auth-switch-container {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 
+    0 25px 60px -15px rgba(0, 0, 0, 0.08),
+    0 0 50px -10px rgba(2, 132, 199, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="light"] .auth-switch-form-title {
+  color: #0f172a;
+}
+
+[data-theme="light"] .auth-switch-form-subtitle {
+  color: #64748b;
+}
+
+[data-theme="light"] .auth-switch-social-btn {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #334155;
+}
+
+[data-theme="light"] .auth-switch-social-btn:hover {
+  background: #ffffff;
+  border-color: #0284c7;
+  color: #0284c7;
+}
+
+[data-theme="light"] .auth-switch-divider-line {
+  background: #e2e8f0;
+}
+
+[data-theme="light"] .auth-switch-divider-text {
+  color: #94a3b8;
+}
+
+[data-theme="light"] .auth-switch-label {
+  color: #334155;
+}
+
+[data-theme="light"] .auth-switch-input {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+[data-theme="light"] .auth-switch-input:focus {
+  background: #ffffff;
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+[data-theme="light"] .auth-switch-input::placeholder {
+  color: #94a3b8;
+}
+
+[data-theme="light"] .auth-switch-input-icon {
+  color: #94a3b8;
+}
+
+[data-theme="light"] .auth-switch-eye-btn {
+  color: #94a3b8;
+}
+
+[data-theme="light"] .auth-switch-eye-btn:hover {
+  color: #0284c7;
+}
+
+[data-theme="light"] .auth-switch-remember {
+  color: #475569;
+}
+
+[data-theme="light"] .auth-switch-remember input {
+  accent-color: #0284c7;
+}
+
+[data-theme="light"] .auth-switch-forgot {
+  color: #0284c7;
+}
+
+[data-theme="light"] .auth-switch-submit-btn {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  box-shadow: 0 4px 20px rgba(2, 132, 199, 0.25);
+}
+
+[data-theme="light"] .auth-switch-submit-btn:hover {
+  box-shadow: 0 8px 25px rgba(2, 132, 199, 0.4);
+}
+
+[data-theme="light"] .auth-switch-overlay-panel {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 50%, #0284c7 100%);
+  box-shadow: 0 0 40px rgba(2, 132, 199, 0.2);
+}
+
+[data-theme="light"] .auth-switch-mobile-tabs {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+}
+
+[data-theme="light"] .auth-switch-mobile-tab-btn {
+  color: #64748b;
+}
+
+[data-theme="light"] .auth-switch-mobile-tab-btn.active {
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .auth-bottom-toast-content {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(2, 132, 199, 0.3);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
+  color: #0f172a;
+}

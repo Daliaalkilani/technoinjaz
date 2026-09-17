@@ -1,4 +1,4 @@
-﻿/* تصميم صفحة الملف التعريفي */
+/* تصميم صفحة الملف التعريفي */
 .profile-wrapper {
   position: relative;
   min-height: 100vh;
@@ -359,4 +359,128 @@
     width: 100%;
     justify-content: center;
   }
+}
+
+/* =========================================================
+   LIGHT MODE OVERRIDES FOR PROFILE PAGE
+   ========================================================= */
+[data-theme="light"] .profile-wrapper {
+  background: linear-gradient(180deg, #f8fafc 0%, #edf2f7 100%);
+  color: #0f172a;
+}
+
+[data-theme="light"] .profile-ambient-glow {
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.08) 0%, transparent 70%);
+}
+
+[data-theme="light"] .back-btn {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #334155;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .back-btn:hover {
+  background: #ffffff;
+  color: #5227ff;
+  border-color: #5227ff;
+}
+
+[data-theme="light"] .profile-tag {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.08);
+  color: #64748b;
+}
+
+[data-theme="light"] .profile-hero-card {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .status-dot {
+  border-color: #ffffff;
+}
+
+[data-theme="light"] .profile-dept-badge {
+  color: #7c3aed;
+  font-weight: 600;
+}
+
+[data-theme="light"] .profile-name {
+  color: #0f172a;
+}
+
+[data-theme="light"] .profile-role-pill {
+  background: rgba(124, 58, 237, 0.08);
+  border-color: rgba(124, 58, 237, 0.25);
+  color: #6d28d9;
+}
+
+[data-theme="light"] .profile-location {
+  color: #64748b;
+}
+
+[data-theme="light"] .profile-card {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .profile-card:hover {
+  border-color: rgba(82, 39, 255, 0.35);
+  box-shadow: 0 14px 30px rgba(82, 39, 255, 0.08);
+}
+
+[data-theme="light"] .section-title {
+  color: #0f172a;
+}
+
+[data-theme="light"] .profile-bio-text {
+  color: #334155;
+}
+
+[data-theme="light"] .skill-chip {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+[data-theme="light"] .project-item {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+[data-theme="light"] .project-title {
+  color: #4338ca;
+}
+
+[data-theme="light"] .project-desc {
+  color: #475569;
+}
+
+[data-theme="light"] .future-build-card {
+  background: rgba(82, 39, 255, 0.03);
+  border-color: rgba(82, 39, 255, 0.2);
+}
+
+[data-theme="light"] .placeholder-title {
+  color: #5227ff;
+}
+
+[data-theme="light"] .placeholder-text {
+  color: #64748b;
+}
+
+[data-theme="light"] .secondary-back-btn {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #475569;
+}
+
+[data-theme="light"] .secondary-back-btn:hover {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: #0f172a;
 }

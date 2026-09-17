@@ -494,21 +494,67 @@
   color: #0f172a;
 }
 
+[data-theme="light"] .contact-ambient-glow {
+  background: radial-gradient(
+    ellipse at 50% 30%,
+    rgba(2, 132, 199, 0.1) 0%,
+    rgba(147, 51, 234, 0.08) 40%,
+    transparent 75%
+  );
+  filter: blur(80px);
+}
+
+[data-theme="light"] .contact-grid-pattern {
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.035) 1px, transparent 1px);
+}
+
+[data-theme="light"] .contact-top-nav {
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .contact-back-btn {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #334155;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .contact-back-btn:hover {
+  background: #ffffff;
+  border-color: #0284c7;
+  color: #0284c7;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
+}
+
+[data-theme="light"] .contact-hero-badge {
+  background: rgba(124, 58, 237, 0.08);
+  border-color: rgba(124, 58, 237, 0.2);
+  color: #7c3aed;
+}
+
 [data-theme="light"] .contact-hero-title {
-  color: #0f172a;
-  text-shadow: none;
+  background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0284c7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: none;
 }
 
 [data-theme="light"] .contact-hero-desc {
-  color: #334155;
+  color: #475569;
 }
 
-[data-theme="light"] .contact-form-panel,
-[data-theme="light"] .contact-info-card,
-[data-theme="light"] .contact-map-card {
-  background: #ffffff;
-  border-color: rgba(0, 0, 0, 0.08);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+[data-theme="light"] .contact-form-panel {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(0, 0, 0, 0.09);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.06), 0 0 30px rgba(2, 132, 199, 0.05);
+}
+
+[data-theme="light"] .contact-form-panel:hover {
+  border-color: rgba(2, 132, 199, 0.4);
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.08), 0 0 35px rgba(2, 132, 199, 0.1);
 }
 
 [data-theme="light"] .contact-panel-title {
@@ -516,25 +562,74 @@
 }
 
 [data-theme="light"] .contact-panel-subtitle {
-  color: #475569;
+  color: #64748b;
 }
 
-[data-theme="light"] .contact-input,
-[data-theme="light"] .contact-textarea {
+[data-theme="light"] .form-label {
+  color: #334155;
+}
+
+[data-theme="light"] .form-input,
+[data-theme="light"] .form-textarea {
   background: #f8fafc;
-  border-color: rgba(0, 0, 0, 0.12);
+  border-color: #cbd5e1;
   color: #0f172a;
 }
 
-[data-theme="light"] .contact-input:focus,
-[data-theme="light"] .contact-textarea:focus {
+[data-theme="light"] .form-input:focus,
+[data-theme="light"] .form-textarea:focus {
   background: #ffffff;
   border-color: #0284c7;
   box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
 }
 
-[data-theme="light"] .contact-label {
-  color: #334155;
+[data-theme="light"] .form-input::placeholder,
+[data-theme="light"] .form-textarea::placeholder {
+  color: #94a3b8;
+}
+
+[data-theme="light"] .info-card {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .info-card.clickable:hover {
+  background: #ffffff;
+  border-color: rgba(2, 132, 199, 0.4);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08), 0 0 15px rgba(2, 132, 199, 0.1);
+}
+
+[data-theme="light"] .info-icon-box {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .info-title {
+  color: #64748b;
+}
+
+[data-theme="light"] .info-value {
+  color: #0f172a;
+}
+
+[data-theme="light"] .contact-map-card {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.09);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .map-card-header {
+  background: #f8fafc;
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .map-title {
+  color: #0f172a;
+}
+
+[data-theme="light"] .map-iframe-wrapper {
+  background: #e2e8f0;
 }
 
 [data-theme="light"] .map-iframe {

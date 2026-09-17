@@ -490,3 +490,84 @@
     font-size: 22px;
   }
 }
+
+/* =========================================================
+   LIGHT MODE OVERRIDES FOR AUTH PAGE
+   ========================================================= */
+[data-theme="light"] .auth-page-wrapper {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+[data-theme="light"] .auth-ambient-bg {
+  background: 
+    radial-gradient(circle at 50% 15%, rgba(2, 132, 199, 0.1) 0%, transparent 60%),
+    radial-gradient(circle at 20% 40%, rgba(147, 51, 234, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 80% 30%, rgba(2, 132, 199, 0.08) 0%, transparent 50%);
+}
+
+[data-theme="light"] .auth-grid-overlay {
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.035) 1px, transparent 1px);
+}
+
+[data-theme="light"] .auth-back-btn {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #334155;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .auth-back-btn:hover {
+  background: #ffffff;
+  color: #0284c7;
+  border-color: #0284c7;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
+}
+
+[data-theme="light"] .auth-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .auth-heading {
+  color: #0f172a;
+}
+
+[data-theme="light"] .auth-subheading {
+  color: #64748b;
+}
+
+[data-theme="light"] .auth-input {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+[data-theme="light"] .auth-input:focus {
+  background: #ffffff;
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+[data-theme="light"] .auth-input::placeholder {
+  color: #94a3b8;
+}
+
+[data-theme="light"] .auth-input-label {
+  color: #334155;
+}
+
+[data-theme="light"] .auth-social-btn {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #334155;
+}
+
+[data-theme="light"] .auth-social-btn:hover {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
