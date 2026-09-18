@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import OfficeBlogSection from './OfficeBlogSection';
+import MagicBento from './MagicBento';
 import heroBgDistortion from '../../assets/hero-bg-distortion.png';
 import im1Bg from '../../assets/im1.png';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
@@ -53,12 +53,20 @@ const ArticlesSection: React.FC<ArticlesSectionProps> = ({
           )}
         </div>
 
-        {/* Office Blog Interactive Grid */}
-        <div className="articles-bento-wrapper" style={{ width: '100%' }}>
-          <OfficeBlogSection 
-            showHeroBanner={false} 
-            limit={3} 
-            onNavigateToArticlesTab={onNavigateToArticles || (() => { window.location.hash = '#articles'; })} 
+        {/* MagicBento Interactive Grid */}
+        <div className="articles-bento-wrapper">
+          <MagicBento 
+            textAutoHide={true}
+            enableStars
+            enableSpotlight
+            enableBorderGlow={true}
+            enableTilt
+            enableMagnetism
+            clickEffect
+            spotlightRadius={120}
+            particleCount={12}
+            glowColor="132, 0, 255"
+            disableAnimations={false}
           />
         </div>
       </div>
