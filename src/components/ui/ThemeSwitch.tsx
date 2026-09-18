@@ -53,6 +53,7 @@ export function ThemeSwitch({ className = '' }: ThemeSwitchProps) {
 
   return (
     <button
+      id="theme-toggle-btn"
       type="button"
       onClick={toggleTheme}
       title={isLight ? "تفعيل الوضع الليلي / Switch to Dark Mode" : "تفعيل الوضع النهاري / Switch to Light Mode"}

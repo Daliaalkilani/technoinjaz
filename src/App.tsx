@@ -8,8 +8,7 @@ import InfiniteMenu from './InfiniteMenu';
 import Orb from './Orb';
 import CinematicFooter from './components/CinematicFooter';
 import VideosSection from './components/videos/VideosSection';
-import ArticlesSection from './components/articles/ArticlesSection';
-import { Cpu, Video, Sparkles, BookOpen, User, BookmarkCheck } from 'lucide-react';
+import { Video, Sparkles, User, BookmarkCheck } from 'lucide-react';
 import { teamMembers } from './data/teamData';
 import { useThemeLanguage } from './context/ThemeLanguageContext';
 import ThemeSwitch from './components/ui/ThemeSwitch';
@@ -22,6 +21,7 @@ const AuthPage = lazy(() => import('./AuthPage'));
 const UserProfilePage = lazy(() => import('./UserProfilePage'));
 const LiveProjectsShowcase = lazy(() => import('./components/projects/LiveProjectsShowcase'));
 const ProjectsCatalogSection = lazy(() => import('./components/projects/ProjectsCatalogSection'));
+import OfficeBlogSection from './components/articles/OfficeBlogSection';
 
 interface NavItem {
   label: string;
@@ -453,43 +453,8 @@ export default function App() {
           </div>
         </div>
       ) : currentTab === 'articles' ? (
-        <div className="tab-page-container">
-          <div className="tab-page-header">
-            <h1 className="tab-page-title">{t.articles.pageTitle}</h1>
-            <p className="tab-page-subtitle">{t.articles.pageSubtitle}</p>
-          </div>
-
-          <ArticlesSection showNavigateButton={false} />
-
-          <div className="tab-page-cards-grid">
-            <div className="tab-page-card">
-              <div className="tab-page-card-icon">
-                <BookOpen size={26} />
-              </div>
-              <h3 className="tab-page-card-title">
-                {lang === 'ar' ? 'أبحاث الذكاء الاصطناعي التوليدي' : 'Generative AI Research'}
-              </h3>
-              <p className="tab-page-card-desc">
-                {lang === 'ar' 
-                  ? 'سلسلة مقالات تخصصية تناقش بنية النماذج العصبية المتقدمة وكيفية تسخيرها في تسريع دورة الإنتاج البرمجي.' 
-                  : 'Specialized articles discussing neural models and their application in accelerating development cycles.'}
-              </p>
-            </div>
-
-            <div className="tab-page-card">
-              <div className="tab-page-card-icon">
-                <Cpu size={26} />
-              </div>
-              <h3 className="tab-page-card-title">
-                {lang === 'ar' ? 'المعمارية النظيفة وهندسة النظم' : 'Clean Architecture & Systems'}
-              </h3>
-              <p className="tab-page-card-desc">
-                {lang === 'ar'
-                  ? 'رؤى هندسية تطبيقية حول بناء أنظمة قابلة للتوسع وتصميم واجهات برمجية متماسكة ومرنة للمستقبل.'
-                  : 'Engineering insights on building scalable systems and cohesive, future-proof APIs.'}
-              </p>
-            </div>
-          </div>
+        <div className="tab-page-container" style={{ padding: '0', maxWidth: '100%' }}>
+          <OfficeBlogSection showHeroBanner={true} />
         </div>
       ) : currentTab === 'about' ? (
         <section

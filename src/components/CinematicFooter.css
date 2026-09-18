@@ -118,36 +118,48 @@
   color: var(--foreground);
 }
 
-/* Giant Background Text Masking */
-.footer-giant-bg-text {
+/* Giant Background Text Container (Spans the full screen, perfectly centered, never clipped) */
+.footer-giant-bg-wrapper {
   position: absolute;
-  bottom: -3vh;
-  left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  z-index: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
   pointer-events: none;
   user-select: none;
-  font-size: clamp(60px, 18vw, 260px);
-  line-height: 0.85;
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  text-align: center;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.07);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(0, 210, 255, 0.03) 40%, transparent 80%);
-  -webkit-background-clip: text;
-  background-clip: text;
+  z-index: 0;
+  overflow: visible;
+  padding: 0 1vw 10px;
+  box-sizing: border-box;
 }
 
-/* English / LTR Giant Background Text: scaled and centered so TECHNO ENJAZ is 100% visible */
-[dir="ltr"] .footer-giant-bg-text,
-.footer-curtain-wrapper[dir="ltr"] .footer-giant-bg-text,
-[lang="en"] .footer-giant-bg-text {
-  font-size: clamp(20px, 9.5vw, 140px);
-  letter-spacing: -0.01em;
-  max-width: 96vw;
-  text-align: center;
+.footer-giant-svg {
+  width: 98vw;
+  max-width: 1680px;
+  height: auto;
+  max-height: 26vh;
+  display: block;
+  overflow: visible;
+  filter: drop-shadow(0 -4px 30px rgba(0, 210, 255, 0.08));
+  transition: filter 0.3s ease;
+}
+
+.footer-giant-svg-text {
+  font-family: var(--font-arabic, 'Readex Pro', sans-serif);
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+[dir="rtl"] .footer-giant-svg-text {
+  font-size: 200px;
+}
+
+[dir="ltr"] .footer-giant-svg-text {
+  font-size: 155px;
+  letter-spacing: 0.03em;
 }
 
 /* Metallic Text Glow */
@@ -527,11 +539,8 @@
   );
 }
 
-[data-theme="light"] .footer-giant-bg-text {
-  -webkit-text-stroke: 1px rgba(0, 0, 0, 0.05);
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.08) 0%, rgba(2, 132, 199, 0.03) 40%, transparent 80%);
-  -webkit-background-clip: text;
-  background-clip: text;
+[data-theme="light"] .footer-giant-svg {
+  filter: drop-shadow(0 -4px 20px rgba(2, 132, 199, 0.08));
 }
 
 [data-theme="light"] .footer-heading.footer-text-glow {

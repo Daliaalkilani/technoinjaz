@@ -128,10 +128,9 @@ export function CinematicFooter() {
       if (giantTextRef.current) {
         gsap.fromTo(
           giantTextRef.current,
-          { y: "6vh", xPercent: -50, scale: 0.88, opacity: 0.25 },
+          { y: 50, scale: 0.94, opacity: 0.3 },
           {
-            y: "0vh",
-            xPercent: -50,
+            y: 0,
             scale: 1,
             opacity: 1,
             ease: "power1.out",
@@ -195,12 +194,44 @@ export function CinematicFooter() {
         <div className="footer-aurora animate-footer-breathe" />
         <div className="footer-bg-grid" />
 
-        {/* Giant background text */}
+        {/* Giant background text (Responsive SVG: fills screen width, never clipped, perfectly centered) */}
         <div
           ref={giantTextRef}
-          className="footer-giant-bg-text"
+          className="footer-giant-bg-wrapper"
+          aria-hidden="true"
         >
-          {t.footer?.giantText || (lang === 'ar' ? 'تكنو إنجاز' : 'TECHNO ENJAZ')}
+          <svg
+            className="footer-giant-svg"
+            viewBox={lang === 'ar' ? "0 0 1020 260" : "0 0 1200 190"}
+            preserveAspectRatio="xMidYMid meet"
+          >
+            <defs>
+              <linearGradient id="footerGiantGradDark" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="rgba(255, 255, 255, 0.18)" />
+                <stop offset="45%" stopColor="rgba(0, 210, 255, 0.08)" />
+                <stop offset="85%" stopColor="rgba(0, 210, 255, 0.02)" />
+                <stop offset="100%" stopColor="transparent" />
+              </linearGradient>
+              <linearGradient id="footerGiantGradLight" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="rgba(15, 23, 42, 0.16)" />
+                <stop offset="45%" stopColor="rgba(2, 132, 199, 0.08)" />
+                <stop offset="85%" stopColor="rgba(2, 132, 199, 0.02)" />
+                <stop offset="100%" stopColor="transparent" />
+              </linearGradient>
+            </defs>
+            <text
+              x="50%"
+              y={lang === 'ar' ? "56%" : "62%"}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              className="footer-giant-svg-text"
+              fill={theme === 'light' ? "url(#footerGiantGradLight)" : "url(#footerGiantGradDark)"}
+              stroke={theme === 'light' ? "rgba(2, 132, 199, 0.22)" : "rgba(255, 255, 255, 0.12)"}
+              strokeWidth="1.5"
+            >
+              {t.footer?.giantText || (lang === 'ar' ? 'تكنو إنجاز' : 'TECHNO ENJAZ')}
+            </text>
+          </svg>
         </div>
 
         {/* 1. Diagonal Sleek Marquee (Top of footer) */}
