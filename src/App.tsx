@@ -7,8 +7,7 @@ import TeamMomentsRing from './components/TeamMomentsRing';
 import InfiniteMenu from './InfiniteMenu';
 import Orb from './Orb';
 import CinematicFooter from './components/CinematicFooter';
-import VideosSection from './components/videos/VideosSection';
-import { Video, Sparkles, User, BookmarkCheck } from 'lucide-react';
+import { User, BookmarkCheck } from 'lucide-react';
 import { teamMembers } from './data/teamData';
 import { useThemeLanguage } from './context/ThemeLanguageContext';
 import ThemeSwitch from './components/ui/ThemeSwitch';
@@ -22,6 +21,7 @@ const UserProfilePage = lazy(() => import('./UserProfilePage'));
 const LiveProjectsShowcase = lazy(() => import('./components/projects/LiveProjectsShowcase'));
 const ProjectsCatalogSection = lazy(() => import('./components/projects/ProjectsCatalogSection'));
 import OfficeBlogSection from './components/articles/OfficeBlogSection';
+import ProjectReelsFeed from './components/videos/ProjectReelsFeed';
 
 interface NavItem {
   label: string;
@@ -362,7 +362,7 @@ export default function App() {
             <span className="navbar-auth-btn-icon">
               {currentUser ? <BookmarkCheck size={15} /> : <User size={15} />}
             </span>
-            <span>
+            <span className="navbar-auth-btn-label">
               {currentUser 
                 ? (currentUser.name ? currentUser.name.split(' ')[0] : (lang === 'en' ? 'My Profile' : 'حسابي')) 
                 : t.nav.login}
@@ -426,31 +426,12 @@ export default function App() {
           </Suspense>
         </div>
       ) : currentTab === 'videos' ? (
-        <div className="tab-page-container">
-          <div className="tab-page-header">
-            <h1 className="tab-page-title">{t.videos.pageTitle}</h1>
-            <p className="tab-page-subtitle">{t.videos.pageSubtitle}</p>
+        <div className="tab-page-container tab-page-videos" style={{ padding: '0', maxWidth: '100%' }}>
+          <div className="tab-page-header reels-page-header" style={{ marginBottom: '0.75rem', paddingTop: '1rem', paddingBottom: '0.25rem' }}>
+            <h1 className="tab-page-title reels-page-title" style={{ fontSize: 'clamp(1.75rem, 3vw, 2.3rem)', marginBottom: '0.4rem' }}>{t.videos.pageTitle}</h1>
+            <p className="tab-page-subtitle reels-page-subtitle" style={{ fontSize: '0.92rem', maxWidth: '600px' }}>{t.videos.pageSubtitle}</p>
           </div>
-
-          <VideosSection showNavigateButton={false} />
-
-          <div className="tab-page-cards-grid">
-            <div className="tab-page-card">
-              <div className="tab-page-card-icon">
-                <Video size={26} />
-              </div>
-              <h3 className="tab-page-card-title">{t.videos.card1Title}</h3>
-              <p className="tab-page-card-desc">{t.videos.card1Desc}</p>
-            </div>
-
-            <div className="tab-page-card">
-              <div className="tab-page-card-icon">
-                <Sparkles size={26} />
-              </div>
-              <h3 className="tab-page-card-title">{t.videos.card2Title}</h3>
-              <p className="tab-page-card-desc">{t.videos.card2Desc}</p>
-            </div>
-          </div>
+          <ProjectReelsFeed />
         </div>
       ) : currentTab === 'articles' ? (
         <div className="tab-page-container" style={{ padding: '0', maxWidth: '100%' }}>

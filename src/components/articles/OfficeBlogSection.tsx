@@ -1,23 +1,23 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { 
   Search, 
   Sparkles, 
   Heart, 
-  MessageSquare, 
   Bookmark, 
   BookmarkCheck, 
   Clock, 
-  ArrowLeft, 
-  ArrowRight, 
-  CheckCircle2, 
-  BookOpen, 
-  X
+  Tag, 
+  ChevronDown, 
+  Share2, 
+  X, 
+  Check, 
+  BookOpen
 } from 'lucide-react';
 import { blogArticlesData, blogCategories } from '../../data/blogArticlesData';
 import type { BlogArticle, BlogComment } from '../../data/blogArticlesData';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import { useSavedProjects } from '../../hooks/useSavedProjects';
-import ArticleReaderModal from './ArticleReaderModal';
+import ArticleDetailView from './ArticleDetailView';
 import './OfficeBlogSection.css';
 
 interface OfficeBlogSectionProps {
@@ -26,18 +26,57 @@ interface OfficeBlogSectionProps {
   onNavigateToArticlesTab?: () => void;
 }
 
+const POPULAR_TAGS = [
+  'شركات',
+  'ريادة',
+  'مشاريع',
+  'تكنولوجيا',
+  'ذكاء_اصطناعي',
+  'سحابة',
+  'companies',
+  'investment',
+  'business'
+];
+
 export const OfficeBlogSection: React.FC<OfficeBlogSectionProps> = ({
   showHeroBanner = true,
-  limit,
-  onNavigateToArticlesTab
+  limit
 }) => {
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
   const { isSaved, toggleSave } = useSavedProjects();
 
+  // Notification Banner Dismissal
+  const [showNotification, setShowNotification] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('techno_blog_banner_dismissed') !== 'true';
+    }
+    return true;
+  });
+
   // Search & Filter State
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [sortOrder, setSortOrder] = useState<'latest' | 'popular'>('latest');
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  // Dedicated Full-Screen Article View
+  const [selectedArticle, setSelectedArticle] = useState<BlogArticle | null>(null);
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsCategoryMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
 
   // Likes state: stored in localStorage
   const [likesState, setLikesState] = useState<Record<string, { count: number; userLiked: boolean }>>(() => {
@@ -73,11 +112,7 @@ export const OfficeBlogSection: React.FC<OfficeBlogSectionProps> = ({
     return initial;
   });
 
-  // Reader Modal State
-  const [activeArticle, setActiveArticle] = useState<BlogArticle | null>(null);
-  const [openAtComments, setOpenAtComments] = useState(false);
-
-  // Sync likes to localStorage
+  // Handle Like Toggle
   const handleToggleLike = (articleId: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     setLikesState(prev => {
@@ -108,19 +143,43 @@ export const OfficeBlogSection: React.FC<OfficeBlogSectionProps> = ({
     });
   };
 
-  // Filter & Search Logic
-  const filteredArticles = useMemo(() => {
-    const activeCatObj = blogCategories.find(c => c.id === selectedCategory);
+  // Handle Share Link
+  const handleShare = (articleId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(`${window.location.origin}/#articles`);
+      setCopiedId(articleId);
+      setTimeout(() => setCopiedId(null), 2000);
+    }
+  };
 
-    return blogArticlesData.filter(art => {
+  // Dismiss notification banner
+  const handleDismissBanner = () => {
+    setShowNotification(false);
+    try {
+      localStorage.setItem('techno_blog_banner_dismissed', 'true');
+    } catch (e) {}
+  };
+
+  // Active Category Object
+  const currentCategoryObj = useMemo(() => {
+    return blogCategories.find(c => c.id === selectedCategory) || blogCategories[0];
+  }, [selectedCategory]);
+
+  // Filter & Sort Logic
+  const filteredArticles = useMemo(() => {
+    let result = blogArticlesData.filter(art => {
       // Category Match
       const matchesCategory = 
         selectedCategory === 'all' || 
-        (activeCatObj && (
-          art.category.includes(activeCatObj.name) ||
-          art.categoryEn.toLowerCase().includes(activeCatObj.nameEn.toLowerCase()) ||
-          art.categoryEn.toLowerCase().includes(activeCatObj.id.toLowerCase())
+        (currentCategoryObj && (
+          art.category.includes(currentCategoryObj.name) ||
+          art.categoryEn.toLowerCase().includes(currentCategoryObj.nameEn.toLowerCase()) ||
+          art.categoryEn.toLowerCase().includes(currentCategoryObj.id.toLowerCase())
         ));
+
+      // Tag Match
+      const matchesTag = !selectedTag || art.tags.some(t => t.toLowerCase() === selectedTag.toLowerCase());
 
       // Query Match (title, excerpt, author, tags)
       const q = searchQuery.toLowerCase().trim();
@@ -135,15 +194,72 @@ export const OfficeBlogSection: React.FC<OfficeBlogSectionProps> = ({
         art.category.toLowerCase().includes(q) ||
         art.tags.some(t => t.toLowerCase().includes(q));
 
-      return matchesCategory && matchesQuery;
+      return matchesCategory && matchesTag && matchesQuery;
     });
-  }, [searchQuery, selectedCategory]);
+
+    // Sort order: latest vs popular (based on likes)
+    if (sortOrder === 'popular') {
+      result = [...result].sort((a, b) => {
+        const likesA = likesState[a.id]?.count || a.initialLikes;
+        const likesB = likesState[b.id]?.count || b.initialLikes;
+        return likesB - likesA;
+      });
+    } else {
+      // Default latest (as ordered in data)
+    }
+
+    return result;
+  }, [searchQuery, selectedCategory, selectedTag, sortOrder, likesState, currentCategoryObj]);
 
   const displayedArticles = limit ? filteredArticles.slice(0, limit) : filteredArticles;
 
+  // If user selected an article, open dedicated Full-Screen Article View!
+  if (selectedArticle) {
+    const articleLikes = likesState[selectedArticle.id]?.count || selectedArticle.initialLikes;
+    const articleIsLiked = likesState[selectedArticle.id]?.userLiked || false;
+    const articleComments = commentsState[selectedArticle.id] || selectedArticle.initialComments || [];
+
+    return (
+      <ArticleDetailView
+        article={selectedArticle}
+        onBack={() => {
+          setSelectedArticle(null);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onSelectArticle={(art) => setSelectedArticle(art)}
+        likes={articleLikes}
+        isLiked={articleIsLiked}
+        onToggleLike={() => handleToggleLike(selectedArticle.id)}
+        comments={articleComments}
+        onAddComment={(comment) => handleAddComment(selectedArticle.id, comment)}
+        allArticles={blogArticlesData}
+      />
+    );
+  }
+
   return (
     <div className="office-blog-section" dir={isEn ? 'ltr' : 'rtl'}>
-      {/* Optional Hero Banner for Dedicated Page */}
+      {/* 1. Notification Banner (strictly matching user design) */}
+      {showNotification && (
+        <div className="blog-notification-banner">
+          <div className="notification-content">
+            <span className="notification-icon">🔔</span>
+            <span className="notification-text">
+              {isEn ? "Enable notifications to get new engineering articles instantly" : "فعّل الإشعارات لتصلك المقالات الجديدة فوراً"}
+            </span>
+          </div>
+          <button 
+            type="button" 
+            className="notification-dismiss-btn"
+            onClick={handleDismissBanner}
+            aria-label="Dismiss notification"
+          >
+            <X size={15} />
+          </button>
+        </div>
+      )}
+
+      {/* 2. Optional Hero Banner for Dedicated Page */}
       {showHeroBanner && (
         <div className="office-blog-header">
           <div className="blog-badge-pill">
@@ -151,75 +267,141 @@ export const OfficeBlogSection: React.FC<OfficeBlogSectionProps> = ({
             <span>{isEn ? "Techno Enjaz Knowledge Hub" : "مدونة ومقالات مكتب تكنو إنجاز"}</span>
           </div>
           <h1 className="blog-main-title">
-            {isEn ? "Engineering Perspectives & Research" : "أحدث الرؤى والأبحاث الهندسية والتقنية"}
+            {isEn ? "Engineering Insights & Breakthroughs" : "المقالات والأبحاث الهندسية والتقنية"}
           </h1>
           <p className="blog-main-desc">
             {isEn
-              ? "Specialized articles, system architectures, and engineering breakthroughs authored by our elite tech leads and AI engineers."
-              : "مقالات تخصصية، تصاميم معمارية، وحلول برمجية متقدمة ينشرها نخبة مهندسينا لتبادل المعرفة وإثراء المحتوى التقني العربي والعالمي."}
+              ? "Deep technical explorations, system architectures, and interface methodologies authored by our elite engineering team."
+              : "مقالات معمارية تخصصية، حلول برمجية متطورة، وتحليلات تقنية ينشرها نخبة مهندسينا لإثراء المحتوى الهندسي العربي."}
           </p>
         </div>
       )}
 
-      {/* Control Bar: Real-time Search & Category Filters */}
-      <div className="blog-controls-wrapper">
-        {/* Search Input */}
-        <div className="blog-search-container">
-          <Search size={18} className="blog-search-icon" />
+      {/* 3. Search Bar (strictly matching user screenshot media_1789724320518.png) */}
+      <div className="blog-search-bar-wrap">
+        <div className="blog-search-inner-box">
           <input
             type="text"
-            className="blog-search-input"
-            placeholder={isEn ? "Search articles by title, author, or keyword..." : "ابحث في المقالات، العناوين، أو أسماء المهندسين..."}
+            className="blog-search-pill-input"
+            placeholder={isEn ? "Search in articles..." : "ابحث في المقالات..."}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
+          <Search size={18} className="blog-search-pill-icon" />
           {searchQuery && (
             <button 
               type="button" 
-              className="blog-search-clear-btn" 
+              className="blog-search-clear-pill-btn" 
               onClick={() => setSearchQuery('')}
-              title={isEn ? "Clear search" : "مسح البحث"}
+              title={isEn ? "Clear search" : "مسح"}
             >
               <X size={14} />
             </button>
           )}
         </div>
+      </div>
 
-        {/* Filter Pills */}
-        <div className="blog-categories-pills">
-          {blogCategories.map(cat => {
-            const count = cat.id === 'all' 
-              ? blogArticlesData.length 
-              : blogArticlesData.filter(a => a.category.includes(cat.name) || a.categoryEn.toLowerCase().includes(cat.id)).length;
-            const isActive = selectedCategory === cat.id;
+      {/* 4. Filter Buttons Row (matching user screenshot media_1789724320518.png) */}
+      <div className="blog-filters-capsule-row">
+        {/* Latest Button */}
+        <button
+          type="button"
+          className={`filter-capsule-btn ${sortOrder === 'latest' && !selectedTag ? 'active' : ''}`}
+          onClick={() => {
+            setSortOrder('latest');
+            setSelectedTag(null);
+          }}
+        >
+          {isEn ? "Latest" : "الأحدث"}
+        </button>
 
-            return (
-              <button
-                key={cat.id}
-                type="button"
-                className={`blog-category-pill ${isActive ? 'active' : ''}`}
-                onClick={() => setSelectedCategory(cat.id)}
-              >
-                <span>{isEn ? cat.nameEn : cat.name}</span>
-                <span className="pill-count">({count})</span>
-              </button>
-            );
-          })}
+        {/* Most Read / Popular Button */}
+        <button
+          type="button"
+          className={`filter-capsule-btn ${sortOrder === 'popular' ? 'active' : ''}`}
+          onClick={() => {
+            setSortOrder('popular');
+            setSelectedTag(null);
+          }}
+        >
+          {isEn ? "Most Read" : "الأكثر قراءة"}
+        </button>
+
+        {/* Categories Dropdown Capsule */}
+        <div className="categories-dropdown-wrapper" ref={dropdownRef}>
+          <button
+            type="button"
+            className={`categories-dropdown-toggle ${selectedCategory !== 'all' ? 'has-selection' : ''}`}
+            onClick={() => setIsCategoryMenuOpen(prev => !prev)}
+          >
+            <Tag size={15} className="dropdown-tag-icon" />
+            <span className="dropdown-label">
+              {selectedCategory === 'all' 
+                ? (isEn ? "All Categories" : "كل التصنيفات") 
+                : (isEn ? currentCategoryObj.nameEn : currentCategoryObj.name)}
+            </span>
+            <ChevronDown size={15} className={`dropdown-chevron ${isCategoryMenuOpen ? 'open' : ''}`} />
+          </button>
+
+          {/* Floating Dropdown Menu */}
+          {isCategoryMenuOpen && (
+            <div className="categories-dropdown-menu">
+              {blogCategories.map(cat => {
+                const count = cat.id === 'all' 
+                  ? blogArticlesData.length 
+                  : blogArticlesData.filter(a => a.category.includes(cat.name) || a.categoryEn.toLowerCase().includes(cat.id)).length;
+                const isCatActive = selectedCategory === cat.id;
+
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    className={`dropdown-menu-item ${isCatActive ? 'active' : ''}`}
+                    onClick={() => {
+                      setSelectedCategory(cat.id);
+                      setIsCategoryMenuOpen(false);
+                    }}
+                  >
+                    <span>{isEn ? cat.nameEn : cat.name}</span>
+                    <span className="dropdown-item-count">({count})</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Articles Grid */}
+      {/* 5. Popular Tags Bar (matching user screenshot 3) */}
+      <div className="blog-popular-tags-row">
+        {POPULAR_TAGS.map(tag => {
+          const isTagActive = selectedTag === tag;
+          return (
+            <button
+              key={tag}
+              type="button"
+              className={`tag-pill-btn ${isTagActive ? 'active' : ''}`}
+              onClick={() => setSelectedTag(isTagActive ? null : tag)}
+            >
+              #{tag}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* 6. Articles Grid (matching user screenshot media_1789724320519.png) */}
       {displayedArticles.length === 0 ? (
         <div className="blog-empty-state">
           <BookOpen size={48} className="blog-empty-icon" />
           <h3>{isEn ? "No Articles Found" : "لم يتم العثور على مقالات تطابق بحثك"}</h3>
-          <p>{isEn ? "Try adjusting your search query or switching categories." : "جرب تعديل كلمات البحث أو تصفح تصنيف آخر."}</p>
+          <p>{isEn ? "Try adjusting your search query or selecting another category." : "جرب تعديل كلمات البحث أو اختيار تصنيف آخر."}</p>
           <button
             type="button"
             className="blog-reset-btn"
             onClick={() => {
               setSearchQuery('');
               setSelectedCategory('all');
+              setSelectedTag(null);
             }}
           >
             {isEn ? "Show All Articles" : "عرض كافة المقالات"}
@@ -230,114 +412,87 @@ export const OfficeBlogSection: React.FC<OfficeBlogSectionProps> = ({
           {displayedArticles.map((article) => {
             const isItemSaved = isSaved(article.id);
             const currentLikes = likesState[article.id] || { count: article.initialLikes, userLiked: false };
-            const currentComments = commentsState[article.id] || article.initialComments || [];
             const title = isEn ? article.titleEn : article.title;
             const excerpt = isEn ? article.excerptEn : article.excerpt;
             const category = isEn ? article.categoryEn : article.category;
             const readTime = isEn ? article.readTimeEn : article.readTime;
             const authorName = isEn ? article.author.nameEn : article.author.name;
-            const authorRole = isEn ? article.author.roleEn : article.author.role;
+            const publishDate = isEn ? article.publishDateEn : article.publishDate;
 
             return (
               <article 
                 key={article.id} 
-                className="blog-card"
-                onClick={() => {
-                  setActiveArticle(article);
-                  setOpenAtComments(false);
-                }}
+                className="blog-modern-card"
+                onClick={() => setSelectedArticle(article)}
               >
-                {/* Image Media Container */}
-                <div className="blog-card-media-wrap">
-                  <img src={article.image} alt={title} className="blog-card-img" loading="lazy" />
-                  <div className="blog-card-media-gradient" />
-                  <div className="blog-card-media-top">
+                {/* 1. Image Media Container with rounded corners */}
+                <div className="card-media-banner">
+                  <img src={article.image} alt={title} className="card-media-img" loading="lazy" />
+                  <div className="card-media-gradient-overlay" />
+                </div>
+
+                {/* 2. Card Content Body */}
+                <div className="card-body-content">
+                  {/* Category Pill & Reading Time Row */}
+                  <div className="card-meta-category-row">
                     <span 
-                      className="blog-card-category"
+                      className="card-category-capsule"
                       style={{ 
-                        backgroundColor: `${article.categoryColor}25`, 
+                        backgroundColor: `${article.categoryColor}18`, 
                         color: article.categoryColor,
-                        borderColor: `${article.categoryColor}50` 
+                        borderColor: `${article.categoryColor}35`
                       }}
                     >
                       {category}
                     </span>
-                    <span className="blog-card-read-time">
+
+                    <span className="card-readtime-capsule">
                       <Clock size={12} />
                       <span>{readTime}</span>
                     </span>
                   </div>
-                </div>
 
-                {/* Card Content */}
-                <div className="blog-card-content">
-                  {/* Publisher / Author Row */}
-                  <div className="blog-author-row">
-                    <img 
-                      src={article.author.avatar} 
-                      alt={authorName} 
-                      className="blog-author-avatar" 
-                    />
-                    <div className="blog-author-info">
-                      <div className="blog-author-name-wrap">
-                        <span className="blog-author-name">{authorName}</span>
-                        <span className="blog-author-verified" title={isEn ? "Office Author" : "كاتب معتمد بالمكتب"}>
-                          <CheckCircle2 size={12} color="var(--accent-cyan)" />
-                        </span>
-                      </div>
-                      <span className="blog-author-role">{authorRole}</span>
+                  {/* Big Headline Title */}
+                  <h3 className="card-main-title">{title}</h3>
+
+                  {/* Excerpt Description */}
+                  <p className="card-main-excerpt">{excerpt}</p>
+
+                  {/* 3. Card Footer: Author Capsule & Share / Engagement (matching screenshot 1) */}
+                  <div className="card-footer-capsule-row" onClick={(e) => e.stopPropagation()}>
+                    {/* Author Pill Capsule */}
+                    <div className="card-author-pill">
+                      <img 
+                        src={article.author.avatar} 
+                        alt={authorName} 
+                        className="author-pill-avatar" 
+                      />
+                      <span className="author-pill-name">{authorName}</span>
+                      <span className="author-pill-divider">|</span>
+                      <span className="author-pill-date">{publishDate}</span>
                     </div>
-                  </div>
 
-                  {/* Article Title */}
-                  <h3 className="blog-card-title">{title}</h3>
-
-                  {/* Article Excerpt */}
-                  <p className="blog-card-excerpt">{excerpt}</p>
-
-                  {/* Tags */}
-                  <div className="blog-card-tags">
-                    {article.tags.slice(0, 3).map((tag, idx) => (
-                      <span key={idx} className="blog-card-tag">#{tag}</span>
-                    ))}
-                  </div>
-
-                  {/* Interactive Action Bar: Likes, Comments, Save, Read */}
-                  <div className="blog-card-footer" onClick={(e) => e.stopPropagation()}>
-                    <div className="blog-actions-group">
+                    {/* Action Group: Share, Likes, Bookmark */}
+                    <div className="card-action-icons-group">
                       {/* Like Button */}
                       <button
                         type="button"
-                        className={`blog-action-btn like-btn ${currentLikes.userLiked ? 'liked' : ''}`}
+                        className={`card-icon-action-btn ${currentLikes.userLiked ? 'liked' : ''}`}
                         onClick={(e) => handleToggleLike(article.id, e)}
-                        title={currentLikes.userLiked ? (isEn ? "Liked" : "معجب بهذا") : (isEn ? "Like" : "إعجاب")}
+                        title={currentLikes.userLiked ? (isEn ? "Liked" : "معجب") : (isEn ? "Like" : "إعجاب")}
                       >
                         <Heart 
                           size={15} 
                           fill={currentLikes.userLiked ? "#ef4444" : "none"} 
                           color={currentLikes.userLiked ? "#ef4444" : "currentColor"} 
                         />
-                        <span>{currentLikes.count}</span>
+                        <span className="icon-action-count">{currentLikes.count}</span>
                       </button>
 
-                      {/* Comments Button */}
+                      {/* Save Button */}
                       <button
                         type="button"
-                        className="blog-action-btn comment-btn"
-                        onClick={() => {
-                          setActiveArticle(article);
-                          setOpenAtComments(true);
-                        }}
-                        title={isEn ? "View Comments" : "عرض التعليقات"}
-                      >
-                        <MessageSquare size={15} />
-                        <span>{currentComments.length}</span>
-                      </button>
-
-                      {/* Save / Bookmark Button */}
-                      <button
-                        type="button"
-                        className={`blog-action-btn save-btn ${isItemSaved ? 'saved' : ''}`}
+                        className={`card-icon-action-btn ${isItemSaved ? 'saved' : ''}`}
                         onClick={() => {
                           toggleSave({
                             id: article.id,
@@ -348,60 +503,30 @@ export const OfficeBlogSection: React.FC<OfficeBlogSectionProps> = ({
                             description: article.excerpt,
                             descriptionEn: article.excerptEn,
                             type: 'article',
-                            image: article.image
+                            tags: article.tags
                           });
                         }}
-                        title={isItemSaved ? (isEn ? "Saved to Library" : "محفوظ في مكتبتك") : (isEn ? "Save Article" : "حفظ في المفضلة")}
+                        title={isItemSaved ? (isEn ? "Saved" : "محفوظ") : (isEn ? "Save" : "حفظ")}
                       >
-                        {isItemSaved ? <BookmarkCheck size={15} color="var(--accent-cyan)" /> : <Bookmark size={15} />}
+                        {isItemSaved ? <BookmarkCheck size={15} /> : <Bookmark size={15} />}
+                      </button>
+
+                      {/* Share Button */}
+                      <button
+                        type="button"
+                        className="card-icon-action-btn share-btn"
+                        onClick={(e) => handleShare(article.id, e)}
+                        title={isEn ? "Share link" : "مشاركة الرابط"}
+                      >
+                        {copiedId === article.id ? <Check size={15} color="#10b981" /> : <Share2 size={15} />}
                       </button>
                     </div>
-
-                    {/* Read More Link */}
-                    <button
-                      type="button"
-                      className="blog-read-more-btn"
-                      onClick={() => {
-                        setActiveArticle(article);
-                        setOpenAtComments(false);
-                      }}
-                    >
-                      <span>{isEn ? "Read Article" : "قراءة المقال"}</span>
-                      {isEn ? <ArrowRight size={14} /> : <ArrowLeft size={14} />}
-                    </button>
                   </div>
                 </div>
               </article>
             );
           })}
         </div>
-      )}
-
-      {limit && filteredArticles.length > limit && onNavigateToArticlesTab && (
-        <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
-          <button
-            type="button"
-            className="projects-view-all-btn"
-            onClick={onNavigateToArticlesTab}
-          >
-            <span>{isEn ? 'View All Office Articles' : 'عرض كافة مقالات المكتب'}</span>
-            {isEn ? <ArrowRight size={18} /> : <ArrowLeft size={18} />}
-          </button>
-        </div>
-      )}
-
-      {/* Reader Modal */}
-      {activeArticle && (
-        <ArticleReaderModal
-          article={activeArticle}
-          onClose={() => setActiveArticle(null)}
-          likes={(likesState[activeArticle.id] || { count: activeArticle.initialLikes }).count}
-          isLiked={(likesState[activeArticle.id] || { userLiked: false }).userLiked}
-          onToggleLike={() => handleToggleLike(activeArticle.id)}
-          comments={commentsState[activeArticle.id] || activeArticle.initialComments || []}
-          onAddComment={(newComment) => handleAddComment(activeArticle.id, newComment)}
-          initialScrollToComments={openAtComments}
-        />
       )}
     </div>
   );

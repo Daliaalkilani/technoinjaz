@@ -301,15 +301,149 @@ export const blogArticlesData: BlogArticle[] = [
     tags: ['بيانات ضخمة', 'سحابة', 'Data Lake', 'ذكاء الأعمال'],
     initialLikes: 35,
     initialComments: []
+  },
+  {
+    id: 'blog-honor-robot-phone',
+    title: 'الهاتف الروبوت | تعرف على إبداع شركة Honor الجديد في عالم الهواتف',
+    titleEn: "The Robot Phone | Discover Honor's Groundbreaking Innovation in Smartphones",
+    slug: 'honor-robot-phone-gimbal-innovation',
+    category: 'التكنولوجيا',
+    categoryEn: 'Technology',
+    categoryColor: '#a855f7',
+    image: '/projects-live/dermocean.jpg',
+    publishDate: '15 أغسطس 2026',
+    publishDateEn: 'Aug 15, 2026',
+    readTime: '3 دقائق قراءة',
+    readTimeEn: '3 min read',
+    author: {
+      id: 'muneer-aldakkak',
+      name: 'منير الدكاك',
+      nameEn: 'Muneer Al-Dakkak',
+      role: 'محرر تقني وباحث هندسي',
+      roleEn: 'Tech Editor & Research Lead',
+      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200&h=200&fit=crop'
+    },
+    excerpt: 'في زحام الهواتف المتشابهة، تبرز إبداعات جديدة من حين إلى آخر. تعرف على هاتف Honor الجديد الذي يضع كاميرا مع مثبت ميكانيكي gimbal على ظهر هاتفك!',
+    excerptEn: "In an ocean of homogenous smartphones, breakthrough innovations emerge. Explore Honor's new device featuring a mechanical micro-gimbal camera stabilization module.",
+    content: [
+      'في زحام الهواتف المتشابهة، تبرز إبداعات جديدة من حين إلى آخر تجعلنا نعيد التفكير في مستقبل الأجهزة المحمولة. تعرف على الهاتف الجديد من شركة Honor الذي يدمج كاميرا روبوتية دقيقة مع مثبت ميكانيكي حقيقي (Gimbal) على ظهر الهاتف.',
+      'تعتمد هذه التقنية على محركات كهروميكانيكية فائقة الصغر (Micro-Servos) قادرة على تتبع الأجسام المتحركة بدقة 360 درجة، وتثبيت الصورة الميكانيكي الحقيقي دون الحاجة إلى اقتصاص الحواف بالبرمجيات.',
+      'هذا الابتكار يفتح الباب أمام الجيل القادم من صناعة المحتوى، حيث يمكن للهاتف تصوير مقاطع احترافية متتبعة بحرية كاملة ودون الحاجة لحمل أدوات تثبيت إضافية.',
+      'الخلاصة: الدمج بين هندسة الروبوتات الدقيقة وهندسة الهواتف الذكية يثبت أن الابتكار في العتاد الصلب لم يصل بعد إلى نهايته، بل يدخل عصراً ميكانيكياً جديداً.'
+    ],
+    contentEn: [
+      "In an ocean of homogenous smartphones, revolutionary hardware concepts remind us that mobile engineering is far from stagnant. Honor's new phone integrates a motorized mechanical gimbal directly onto its chassis.",
+      "Utilizing micro-electromechanical servos (MEMS), the camera actively pans, tilts, and tracks targets with physical gyro stabilization, rendering digital cropping artifacts obsolete.",
+      "This unlocks unprecedented creative freedom for mobile cinematographers and autonomous vlogging without auxiliary stabilizers.",
+      "Takeaway: Converging micro-robotics with mobile engineering proves hardware form-factor innovation is entering a vivid new chapter."
+    ],
+    tags: ['تكنولوجيا', 'هواتف_ذكية', 'ابتكار', 'روبوتات', 'Honor'],
+    initialLikes: 89,
+    initialComments: [
+      {
+        id: 'c-honor-1',
+        author: 'م. حسام الدين',
+        avatar: '',
+        date: 'منذ 3 ساعات',
+        text: 'فكرة الجيمبال الميكانيكي المدمج ثورة حقيقية في كاميرات الهواتف!'
+      }
+    ]
+  },
+  {
+    id: 'blog-apple-design',
+    title: 'هل وقعت آبل في خطأ المصممين الجدد؟',
+    titleEn: 'Did Apple Fall Into the Trap of Junior Designers?',
+    slug: 'did-apple-fall-into-junior-designers-trap',
+    category: 'التكنولوجيا',
+    categoryEn: 'Technology',
+    categoryColor: '#a855f7',
+    image: '/projects-live/cablexperts.jpg',
+    publishDate: '12 يوليو 2025',
+    publishDateEn: 'Jul 12, 2025',
+    readTime: 'دقيقتا قراءة',
+    readTimeEn: '2 min read',
+    author: {
+      id: 'muneer-aldakkak',
+      name: 'منير الدكاك',
+      nameEn: 'Muneer Al-Dakkak',
+      role: 'محرر تقني وباحث هندسي',
+      roleEn: 'Tech Editor & Research Lead',
+      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200&h=200&fit=crop'
+    },
+    excerpt: 'في هذا المقال نتناول الحديث عن النظام التصميمي الجديد لأجهزة آبل - Liquid Glass - ونسلط الضوء على أبرز ما جاء فيه من مشاكل وتعامل شركة Apple مع ردود أفعال المصممين.',
+    excerptEn: "Analyzing Apple's Liquid Glass interface paradigm, examining the usability hurdles and how the Cupertino giant addresses community critique.",
+    content: [
+      'في هذا المقال نتناول الحديث عن النظام التصميمي الجديد لأجهزة آبل - Liquid Glass - ونسلط الضوء على أبرز ما جاء فيه من مشاكل وتعامل شركة Apple مع ردود أفعال مجتمع المصممين والمهندسين حول العالم.',
+      'تاريخياً، قادت شركة آبل ثورات التصميم من الواقعية المفرطة (Skeuomorphism) إلى التصميم المسطح (Flat Design). إلا أن الإفراط في الشفافيات المعقدة والانكسارات البصرية في بعض الواجهات التجريبية أثار تساؤلات جدية حول إمكانية الوصول وتباين الألوان.',
+      'القاعدة الذهبية في تجربة المستخدم: لا يمكن للجماليات البصرية الفائقة أن تحل محل الوضوح الوظيفي وسرعة إنجاز المهام.',
+      'كيف استجابت آبل؟ عبر إتاحة خيارات متقدمة لتقليل الشفافية وزيادة التباين دون المساس بجماليات النظام.'
+    ],
+    contentEn: [
+      "In this retrospective, we analyze Apple's design trajectory with Liquid Glass, evaluating where aesthetics momentarily challenged practical accessibility.",
+      "From hyper-realistic skeuomorphism to ultra-flat minimalism, Apple has consistently steered design discourse. Yet excessive blur radii and refractive materials pose real contrast dilemmas.",
+      "The cardinal rule of UI/UX remains immutable: visual splendor must never compromise cognitive clarity or ergonomic task velocity.",
+      "Apple's remedy: granular system toggles for contrast enforcement and refined backdrop filters."
+    ],
+    tags: ['آبل', 'تصميم', 'Liquid_Glass', 'واجهات', 'UI_UX'],
+    initialLikes: 114,
+    initialComments: [
+      {
+        id: 'c-apple-1',
+        author: 'رغد الشامي',
+        avatar: '',
+        date: 'منذ يوم',
+        text: 'مقال دقيق جداً! التوازن بين الجمال والوظيفة هو التحدي الأكبر لأي مصمم.'
+      }
+    ]
+  },
+  {
+    id: 'blog-ux-influence',
+    title: 'ما هي تجربة المستخدم؟ وكيف تستخدمها الشركات للتأثير على قراراتك؟',
+    titleEn: 'What is User Experience? How Enterprises Shape Decision Architecture',
+    slug: 'what-is-ux-enterprise-decision-shaping',
+    category: 'التصميم والواجهات',
+    categoryEn: 'UI/UX & Design',
+    categoryColor: '#06b6d4',
+    image: '/projects-live/interactive-cv.jpg',
+    publishDate: '20 أغسطس 2026',
+    publishDateEn: 'Aug 20, 2026',
+    readTime: '4 دقائق قراءة',
+    readTimeEn: '4 min read',
+    author: {
+      id: 'tala-khatib',
+      name: 'تالا الخطيب',
+      nameEn: 'Tala Al-Khatib',
+      role: 'رئيسة قسم تجربة المستخدم',
+      roleEn: 'Head of UX Design',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&h=200&fit=crop'
+    },
+    excerpt: 'في هذا المقال سوف نتعرف على تجربة المستخدم وكيف تستخدمها الشركات لتوجيه سلوك المستخدمين والتأثير على قراراتهم واستمراريتهم.',
+    excerptEn: 'Demystifying User Experience engineering: behavioral psychology heuristics and ethical decision architecture in modern consumer products.',
+    content: [
+      'في هذا المقال سوف نتعرف على تجربة المستخدم (User Experience) وكيف تستخدمها الشركات لتوجيه سلوك المستخدمين والتأثير على قراراتهم واستمراريتهم في استخدام المنصة.',
+      'تجربة المستخدم ليست مجرد ألوان جذابة أو أزرار لامعة؛ إنها هندسة نفسية وسلوكية دقيقة تستند إلى مبادئ Gestalt وقوانين Hick و Fitts لتقليل الجهد الذهني وتوجيه الانتباه.',
+      'الشركات الرائدة لا تترك أي تفاعل للصدفة؛ فكل حركة، وكل انتقال، وكل مسافة تم حسابها بعناية لتعزيز الشعور بالإنجاز والرضا لدى المستخدم.',
+      'في تكنو إنجاز، نلتزم بتطبيق معايير التصميم الأخلاقي (Ethical UX) التي تحترم وقت المستخدم وتقدم له أعلى قيمة وظيفية بأقل احتكاك ممكن.'
+    ],
+    contentEn: [
+      'In this guide, we demystify User Experience architecture and how organizations deploy behavioral psychology to streamline user adoption and retention.',
+      'UX extends far beyond color palettes and slick buttons; it is cognitive ergonomics grounded in Hick’s Law, Fitts’s Law, and Gestalt perceptual psychology.',
+      'Market leaders engineer micro-interactions to foster continuous user delight and seamless task execution.',
+      'At Techno Enjaz, our design ethos centers on Ethical UX: honoring user attention while delivering maximum functional velocity.'
+    ],
+    tags: ['تجربة_المستخدم', 'تصميم_المنتجات', 'سلوك_المستخدم', 'شركات'],
+    initialLikes: 68,
+    initialComments: []
   }
 ];
 
 export const blogCategories = [
   { id: 'all', name: 'الكل', nameEn: 'All' },
+  { id: 'tech', name: 'التكنولوجيا', nameEn: 'Technology' },
   { id: 'ai', name: 'ذكاء اصطناعي', nameEn: 'Artificial Intelligence' },
   { id: 'software', name: 'هندسة برمجيات', nameEn: 'Software Engineering' },
+  { id: 'ux', name: 'التصميم والواجهات', nameEn: 'UI/UX & Design' },
   { id: 'vision', name: 'رؤية حاسوبية', nameEn: 'Computer Vision' },
   { id: 'cyber', name: 'أمن سيبراني', nameEn: 'Cybersecurity' },
-  { id: 'ux', name: 'واجهات وتجربة مستخدم', nameEn: 'UI/UX & WebGL' },
   { id: 'cloud', name: 'سحابة وبيانات', nameEn: 'Cloud & Data' }
 ];

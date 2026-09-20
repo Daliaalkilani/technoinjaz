@@ -278,21 +278,69 @@ body {
   .top-navbar-container {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     justify-content: space-between;
-    gap: 14px;
-    padding: 14px 16px;
+    gap: 12px;
+    padding: 10px 14px;
   }
   .navbar-brand-link {
     order: 1;
   }
   .navbar-end-actions {
     order: 2;
+    gap: 8px;
   }
   .navbar-center-menu {
     order: 3;
     width: 100%;
     overflow-x: auto;
-    padding-bottom: 4px;
+    padding: 2px 0 6px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .navbar-center-menu::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .top-navbar-container {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+  .navbar-brand-text {
+    font-size: 16px;
+  }
+  .navbar-brand-logo-img {
+    width: 26px;
+    height: 26px;
+  }
+  .navbar-end-actions {
+    gap: 6px;
+  }
+  .navbar-auth-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    gap: 5px;
+  }
+  .navbar-auth-btn-label {
+    display: none;
+  }
+  .tab-page-container {
+    padding-top: 1rem;
+    padding-bottom: 3.5rem;
+  }
+  .tab-page-header {
+    padding: 1rem 1rem 0.5rem;
+    margin: 0 auto 1.5rem auto;
+  }
+  .tab-page-title {
+    font-size: clamp(1.6rem, 5.5vw, 2.2rem);
+    margin-bottom: 0.5rem;
+  }
+  .tab-page-subtitle {
+    font-size: 0.875rem;
+    line-height: 1.5;
   }
 }
 
