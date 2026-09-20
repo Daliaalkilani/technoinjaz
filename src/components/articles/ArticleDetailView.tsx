@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   ArrowRight, 
   ArrowLeft, 
@@ -9,12 +9,16 @@ import {
   Share2, 
   Check, 
   MessageSquare, 
-  Send, 
-  Sparkles
+  Send,
+  User,
+  Home,
+  BookOpen
 } from 'lucide-react';
+import { marked } from 'marked';
 import type { BlogArticle, BlogComment } from '../../data/blogArticlesData';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import { useSavedProjects } from '../../hooks/useSavedProjects';
+import { getLoggedInUser, requireAuth } from '../../utils/authUtils';
 import './ArticleDetailView.css';
 
 interface ArticleDetailViewProps {
@@ -44,14 +48,122 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   const isEn = lang === 'en';
   const { isSaved, toggleSave } = useSavedProjects();
 
-  const [commentName, setCommentName] = useState('');
   const [commentText, setCommentText] = useState('');
   const [copied, setCopied] = useState(false);
+  const loggedUser = getLoggedInUser();
 
-  // Scroll to top on article change
+  // Scroll to top on article change and update SEO & Schema
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [article.id]);
+
+    // Dynamic Title
+    document.title = `${article.seoTitle || article.title} | تكنو إنجاز`;
+
+    // Meta Description
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (!metaDesc) {
+      metaDesc = document.createElement('meta');
+      metaDesc.setAttribute('name', 'description');
+      document.head.appendChild(metaDesc);
+    }
+    metaDesc.setAttribute('content', article.metaDescription || article.excerpt);
+
+    // Canonical link
+    let canonicalEl = document.querySelector('link[rel="canonical"]');
+    if (!canonicalEl) {
+      canonicalEl = document.createElement('link');
+      canonicalEl.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonicalEl);
+    }
+    canonicalEl.setAttribute('href', article.canonical);
+
+    // Inject Schema.org JSON-LD (BlogPosting & Breadcrumbs)
+    const scriptId = 'schema-article-jsonld';
+    let scriptTag = document.getElementById(scriptId) as HTMLScriptElement | null;
+    if (!scriptTag) {
+      scriptTag = document.createElement('script');
+      scriptTag.id = scriptId;
+      scriptTag.type = 'application/ld+json';
+      document.head.appendChild(scriptTag);
+    }
+
+    const schemaData = {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BlogPosting",
+          "@id": `${article.canonical}#article`,
+          "isPartOf": {
+            "@type": "WebPage",
+            "@id": article.canonical
+          },
+          "headline": article.title,
+          "name": article.seoTitle,
+          "description": article.metaDescription,
+          "image": `https://techno-enjaz.com${article.image}`,
+          "datePublished": "2026-09-20T00:00:00+03:00",
+          "dateModified": "2026-09-20T00:00:00+03:00",
+          "mainEntityOfPage": article.canonical,
+          "author": {
+            "@type": "Organization",
+            "name": article.author.name,
+            "url": "https://techno-enjaz.com"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "مكتب تكنو إنجاز",
+            "url": "https://techno-enjaz.com",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://techno-enjaz.com/techno-logo.png"
+            }
+          },
+          "inLanguage": "ar"
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": `${article.canonical}#breadcrumb`,
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "الرئيسية",
+              "item": "https://techno-enjaz.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "المقالات",
+              "item": "https://techno-enjaz.com/#articles"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": article.category,
+              "item": `${article.canonical}`
+            },
+            {
+              "@type": "ListItem",
+              "position": 4,
+              "name": article.title
+            }
+          ]
+        }
+      ]
+    };
+
+    scriptTag.text = JSON.stringify(schemaData);
+
+    // Update URL hash for clean deep linking
+    if (window.location.hash !== `#article/${article.slug}`) {
+      window.history.replaceState(null, '', `#article/${article.slug}`);
+    }
+
+    return () => {
+      const el = document.getElementById(scriptId);
+      if (el) el.remove();
+    };
+  }, [article]);
 
   const isItemSaved = isSaved(article.id);
   const title = isEn ? article.titleEn : article.title;
@@ -60,7 +172,33 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   const readTime = isEn ? article.readTimeEn : article.readTime;
   const authorName = isEn ? article.author.nameEn : article.author.name;
   const excerpt = isEn ? article.excerptEn : article.excerpt;
-  const content = isEn ? article.contentEn : article.content;
+
+  // Process raw markdown to HTML
+  const parsedMarkdownHtml = useMemo(() => {
+    if (!article.rawMarkdown) return '';
+
+    // Strip front matter comments <!-- ... -->
+    let cleanMd = article.rawMarkdown.replace(/^\s*<!--[\s\S]*?-->\s*/, '');
+    // Strip SEO Title, Meta Description, Suggested Slug lines
+    cleanMd = cleanMd.replace(/^(SEO Title|Meta Description|Suggested Slug):.*$/gim, '');
+    // Strip leading H1 title `# Title` because H1 is rendered prominently by component
+    cleanMd = cleanMd.replace(/^\s*#\s+[^\r\n]+[\r\n]*/, '');
+
+    // Configure marked options
+    marked.setOptions({
+      gfm: true,
+      breaks: true
+    });
+
+    try {
+      const parsed = marked.parse(cleanMd.trim());
+      if (typeof parsed === 'string') return parsed;
+      return '';
+    } catch (e) {
+      console.error('Error parsing article markdown:', e);
+      return '';
+    }
+  }, [article.rawMarkdown]);
 
   const handleShare = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
@@ -73,11 +211,15 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
 
   const handleCommentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!requireAuth()) return;
     if (!commentText.trim()) return;
+
+    const currentUser = getLoggedInUser();
+    const commentAuthor = currentUser?.name || (isEn ? 'Techno User' : 'مستخدم تكنو');
 
     const newComment: BlogComment = {
       id: 'c-' + Date.now(),
-      author: commentName.trim() || (isEn ? 'Engineering Visitor' : 'زائر مهتم'),
+      author: commentAuthor,
       date: isEn ? 'Just now' : 'الآن',
       text: commentText.trim()
     };
@@ -86,121 +228,166 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
     setCommentText('');
   };
 
-  // Find related articles (same category or others, excluding current)
+  // Intercept link clicks inside markdown for seamless SPA navigation
+  const handleContentClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = (e.target as HTMLElement).closest('a');
+    if (!target) return;
+
+    const href = target.getAttribute('href');
+    if (!href) return;
+
+    // Handle internal article links like `#article/slug` or `/articles/slug`
+    if (href.startsWith('#article/') || href.startsWith('/articles/')) {
+      e.preventDefault();
+      const slug = href.replace(/^#article\//, '').replace(/^\/articles\//, '').replace(/\/$/, '');
+      const found = allArticles.find(a => a.slug === slug || a.id === slug);
+      if (found) {
+        onSelectArticle(found);
+      }
+      return;
+    }
+
+    // External links open safely in a new tab
+    if (href.startsWith('http://') || href.startsWith('https://')) {
+      target.setAttribute('target', '_blank');
+      target.setAttribute('rel', 'noopener noreferrer');
+    }
+  };
+
+  // Related articles (excluding current article)
   const relatedArticles = allArticles
     .filter(a => a.id !== article.id)
     .slice(0, 3);
 
   return (
     <article className="article-fullscreen-view" dir={isEn ? 'ltr' : 'rtl'}>
-      {/* Top Breadcrumb / Back Navigation */}
+      {/* Top Breadcrumb & Actions Bar */}
       <div className="article-view-top-bar">
-        <button 
-          type="button" 
-          className="article-back-nav-btn"
-          onClick={onBack}
-        >
-          {isEn ? <ArrowLeft size={18} /> : <ArrowRight size={18} />}
-          <span>{isEn ? "Back to All Articles" : "العودة إلى كافة المقالات"}</span>
-        </button>
+        {/* Semantic Breadcrumbs */}
+        <nav className="article-breadcrumbs" aria-label="مسار التصفح">
+          <ol className="breadcrumb-list">
+            <li className="breadcrumb-item">
+              <button 
+                type="button" 
+                className="breadcrumb-link-btn"
+                onClick={() => { window.location.hash = ''; onBack(); }}
+              >
+                <Home size={14} />
+                <span>{isEn ? 'Home' : 'الرئيسية'}</span>
+              </button>
+              <span className="breadcrumb-sep">/</span>
+            </li>
+            <li className="breadcrumb-item">
+              <button 
+                type="button" 
+                className="breadcrumb-link-btn"
+                onClick={onBack}
+              >
+                <BookOpen size={14} />
+                <span>{isEn ? 'Articles' : 'المقالات'}</span>
+              </button>
+              <span className="breadcrumb-sep">/</span>
+            </li>
+            <li className="breadcrumb-item">
+              <span className="breadcrumb-category-pill" style={{ borderColor: `${article.categoryColor}40`, color: article.categoryColor }}>
+                {category}
+              </span>
+              <span className="breadcrumb-sep">/</span>
+            </li>
+            <li className="breadcrumb-item breadcrumb-current" aria-current="page">
+              <span>{title}</span>
+            </li>
+          </ol>
+        </nav>
 
         <div className="article-top-actions">
+          <button 
+            type="button" 
+            className="article-back-nav-btn"
+            onClick={onBack}
+          >
+            {isEn ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
+            <span>{isEn ? "Back to Articles" : "العودة للمقالات"}</span>
+          </button>
+
           <button
             type="button"
             className="article-top-share-btn"
             onClick={handleShare}
             title={isEn ? "Share link" : "مشاركة الرابط"}
           >
-            {copied ? <Check size={16} color="#10b981" /> : <Share2 size={16} />}
+            {copied ? <Check size={15} color="#10b981" /> : <Share2 size={15} />}
             <span>{copied ? (isEn ? "Copied!" : "تم النسخ!") : (isEn ? "Share" : "مشاركة")}</span>
           </button>
         </div>
       </div>
 
-      <div className="article-main-container">
-        {/* Category Pill Tag (matching user screenshot 5) */}
-        <div className="article-lead-category-wrap">
-          <span 
-            className="article-lead-category-pill"
-            style={{ 
-              backgroundColor: `${article.categoryColor}18`, 
-              color: article.categoryColor,
-              borderColor: `${article.categoryColor}35`
-            }}
-          >
-            {category}
-          </span>
-          <span className="article-lead-readtime">
-            <Clock size={13} />
-            <span>{readTime}</span>
-          </span>
-        </div>
+      <div className="article-fullscreen-layout">
+        {/* Main Reading Column */}
+        <div className="article-main-container">
+          {/* Category Pill Tag & Read Time */}
+          <div className="article-lead-category-wrap">
+            <span 
+              className="article-lead-category-pill"
+              style={{ 
+                backgroundColor: `${article.categoryColor}18`, 
+                color: article.categoryColor,
+                borderColor: `${article.categoryColor}35`
+              }}
+            >
+              {category}
+            </span>
+            <span className="article-lead-readtime">
+              <Clock size={13} />
+              <span>{readTime}</span>
+            </span>
+          </div>
 
-        {/* Massive Headline Title */}
-        <h1 className="article-fullscreen-title">
-          {title}
-        </h1>
+          {/* Single H1 Headline */}
+          <h1 className="article-fullscreen-title">
+            {title}
+          </h1>
 
-        {/* Lead Excerpt Paragraph */}
-        <p className="article-fullscreen-excerpt">
-          {excerpt}
-        </p>
+          {/* Lead Excerpt */}
+          <p className="article-fullscreen-excerpt">
+            {excerpt}
+          </p>
 
-        {/* Author Capsule & Share Row (strictly matching user screenshot) */}
-        <div className="article-author-capsule-row">
-          <div className="article-author-capsule-pill">
+          {/* Author Capsule Row */}
+          <div className="article-author-capsule-row">
+            <div className="article-author-capsule-pill">
+              <img 
+                src={article.author.avatar} 
+                alt={authorName} 
+                className="author-capsule-avatar" 
+              />
+              <div className="author-capsule-text">
+                <span className="author-capsule-name">{authorName}</span>
+                <span className="author-capsule-divider">|</span>
+                <span className="author-capsule-role">{article.author.role}</span>
+                <span className="author-capsule-divider">|</span>
+                <span className="author-capsule-date">{publishDate}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* High-Definition Featured Banner */}
+          <div className="article-fullscreen-banner-wrap">
             <img 
-              src={article.author.avatar} 
-              alt={authorName} 
-              className="author-capsule-avatar" 
+              src={article.image} 
+              alt={title} 
+              className="article-fullscreen-banner-img" 
+              loading="eager"
             />
-            <div className="author-capsule-text">
-              <span className="author-capsule-name">{authorName}</span>
-              <span className="author-capsule-divider">|</span>
-              <span className="author-capsule-date">{publishDate}</span>
-            </div>
+            <div className="article-banner-ambient-glow" style={{ backgroundColor: article.categoryColor }} />
           </div>
 
-          <button 
-            type="button" 
-            className="article-inline-share-btn"
-            onClick={handleShare}
-            title={isEn ? "Share article" : "مشاركة المقال"}
-          >
-            {copied ? <Check size={18} color="#10b981" /> : <Share2 size={18} />}
-          </button>
-        </div>
-
-        {/* High-Definition Featured Banner */}
-        <div className="article-fullscreen-banner-wrap">
-          <img 
-            src={article.image} 
-            alt={title} 
-            className="article-fullscreen-banner-img" 
+          {/* Rich Rendered Article Markdown Body */}
+          <div 
+            className="article-fullscreen-markdown-body"
+            dangerouslySetInnerHTML={{ __html: parsedMarkdownHtml }}
+            onClick={handleContentClick}
           />
-          <div className="article-banner-ambient-glow" style={{ backgroundColor: article.categoryColor }} />
-        </div>
-
-        {/* Article Body Content */}
-        <div className="article-fullscreen-content">
-          {content.map((paragraph, index) => (
-            <p key={index} className="article-content-paragraph">
-              {paragraph}
-            </p>
-          ))}
-
-          {/* Key Insights Callout Box */}
-          <div className="article-insight-callout" style={{ borderInlineStartColor: article.categoryColor }}>
-            <div className="callout-header">
-              <Sparkles size={18} style={{ color: article.categoryColor }} />
-              <h4>{isEn ? "Techno Enjaz Engineering Principle" : "خلاصة الرؤية الهندسية في تكنو إنجاز"}</h4>
-            </div>
-            <p>
-              {isEn 
-                ? "Software architecture and design excellence are complementary pillars. True engineering resilience honors user attention, maintains verifiable security, and scales gracefully under peak real-world pressure."
-                : "المعمارية البرمجية الرصينة وجماليات الواجهات ليست خيارات متناقضة؛ بل ركيزتان متكاملتان تصنعان منتجاً هندسياً يحترم انتباه المستخدم، يحقق أعلى مستويات الأمان، ويتوسع بكفاءة تحت أقصى ضغوط الاستخدام."}
-            </p>
-          </div>
 
           {/* Tags Row */}
           <div className="article-tags-wrap">
@@ -211,106 +398,97 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             ))}
           </div>
 
-          {/* Engagement Interactive Bar */}
+          {/* Interactive Engagement Bar */}
           <div className="article-engagement-bar">
-            <div className="engagement-actions-group">
+            <div className="engagement-left-actions">
               <button
                 type="button"
-                className={`engagement-btn like-btn ${isLiked ? 'liked' : ''}`}
+                className={`article-action-btn like-btn ${isLiked ? 'active' : ''}`}
                 onClick={onToggleLike}
-                title={isLiked ? (isEn ? "Unlike" : "إلغاء الإعجاب") : (isEn ? "Like" : "إعجاب")}
               >
-                <Heart size={18} fill={isLiked ? "#ef4444" : "none"} color={isLiked ? "#ef4444" : "currentColor"} />
+                <Heart size={18} fill={isLiked ? '#ef4444' : 'none'} color={isLiked ? '#ef4444' : 'currentColor'} />
                 <span>{likes}</span>
               </button>
 
               <button
                 type="button"
-                className={`engagement-btn save-btn ${isItemSaved ? 'saved' : ''}`}
-                onClick={() => {
-                  toggleSave({
-                    id: article.id,
-                    title: article.title,
-                    titleEn: article.titleEn,
-                    category: 'مقالات تقنية',
-                    categoryLabel: category,
-                    description: article.excerpt,
-                    descriptionEn: article.excerptEn,
-                    type: 'article',
-                    tags: article.tags
-                  });
-                }}
-                title={isItemSaved ? (isEn ? "Saved" : "محفوظ") : (isEn ? "Save" : "حفظ المقال")}
+                className={`article-action-btn save-btn ${isItemSaved ? 'active' : ''}`}
+                onClick={() => toggleSave({
+                  id: article.id,
+                  title: article.title,
+                  titleEn: article.titleEn,
+                  category: 'مقالات تقنية',
+                  categoryLabel: category,
+                  description: article.excerpt,
+                  descriptionEn: article.excerptEn,
+                  type: 'article',
+                  image: article.image,
+                  tags: article.tags
+                })}
               >
-                {isItemSaved ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
+                {isItemSaved ? <BookmarkCheck size={18} color="#0aeec3" /> : <Bookmark size={18} />}
                 <span>{isItemSaved ? (isEn ? "Saved" : "محفوظ") : (isEn ? "Save" : "حفظ")}</span>
               </button>
             </div>
 
             <button
               type="button"
-              className="engagement-share-pill"
+              className="article-action-btn share-btn"
               onClick={handleShare}
             >
-              {copied ? <Check size={16} color="#10b981" /> : <Share2 size={16} />}
-              <span>{copied ? (isEn ? "Link Copied!" : "تم نسخ الرابط!") : (isEn ? "Share Article" : "مشاركة المقالة")}</span>
+              {copied ? <Check size={18} color="#10b981" /> : <Share2 size={18} />}
+              <span>{copied ? (isEn ? "Copied" : "تم النسخ") : (isEn ? "Share" : "مشاركة")}</span>
             </button>
           </div>
 
           {/* Comments Section */}
-          <section className="article-comments-section" id="comments">
-            <div className="comments-section-header">
-              <div className="comments-header-title">
-                <MessageSquare size={20} style={{ color: 'var(--accent-cyan, #00d2ff)' }} />
-                <h3>{isEn ? `Discussion & Insights (${comments.length})` : `نقاشات وتعليقات المهندسين (${comments.length})`}</h3>
-              </div>
+          <section className="article-comments-section">
+            <div className="comments-header">
+              <MessageSquare size={20} color="#38bdf8" />
+              <h3>{isEn ? `Comments (${comments.length})` : `التعليقات (${comments.length})`}</h3>
             </div>
 
-            {/* Comment Form */}
-            <form className="article-comment-form" onSubmit={handleCommentSubmit}>
-              <div className="comment-inputs-row">
-                <input
-                  type="text"
-                  placeholder={isEn ? "Your Name (Optional)" : "اسمك (اختياري)"}
-                  value={commentName}
-                  onChange={(e) => setCommentName(e.target.value)}
-                  className="comment-name-field"
-                />
+            <form onSubmit={handleCommentSubmit} className="comment-input-form">
+              <div className="comment-avatar-stub">
+                {loggedUser?.avatar ? (
+                  <img src={loggedUser.avatar} alt="User" className="user-avatar-mini" />
+                ) : (
+                  <User size={20} />
+                )}
               </div>
-              <div className="comment-textarea-wrap">
-                <textarea
-                  placeholder={isEn ? "Share your engineering feedback, inquiry, or insights..." : "شاركنا رأيك أو استفسارك الهندسي حول هذا المقال..."}
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  className="comment-text-field"
-                  rows={3}
-                  required
-                />
-                <button type="submit" className="comment-submit-btn">
-                  <Send size={16} />
-                  <span>{isEn ? "Post" : "إرسال"}</span>
-                </button>
-              </div>
+              <input
+                type="text"
+                placeholder={isEn ? "Add a constructive comment..." : "أضف تعليقاً أو استفساراً تقنياً..."}
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                className="comment-text-input"
+              />
+              <button type="submit" className="comment-submit-btn" disabled={!commentText.trim()}>
+                <Send size={16} />
+              </button>
             </form>
 
-            {/* Comments List */}
-            <div className="article-comments-list">
+            <div className="comments-feed-list">
               {comments.length === 0 ? (
-                <div className="no-comments-msg">
-                  <p>{isEn ? "Be the first to comment on this article!" : "كن أول من يشارك برأيه حول هذا المقال الهندسي!"}</p>
-                </div>
+                <p className="no-comments-yet">
+                  {isEn ? "No comments yet. Be the first to start the discussion!" : "لا توجد تعليقات بعد. كن أول من يشارك رأيه الهندسي!"}
+                </p>
               ) : (
-                comments.map((c) => (
-                  <div key={c.id} className="article-comment-item">
-                    <div className="comment-avatar-placeholder">
-                      {c.author.charAt(0).toUpperCase()}
+                comments.map((comm) => (
+                  <div key={comm.id} className="comment-item-card">
+                    <div className="comment-item-avatar">
+                      {comm.avatar ? (
+                        <img src={comm.avatar} alt={comm.author} />
+                      ) : (
+                        <div className="avatar-placeholder">{comm.author[0]}</div>
+                      )}
                     </div>
-                    <div className="comment-bubble">
-                      <div className="comment-bubble-header">
-                        <span className="comment-author-name">{c.author}</span>
-                        <span className="comment-date-meta">{c.date}</span>
+                    <div className="comment-item-body">
+                      <div className="comment-meta">
+                        <span className="comment-author-name">{comm.author}</span>
+                        <span className="comment-time-ago">{comm.date}</span>
                       </div>
-                      <p className="comment-body-text">{c.text}</p>
+                      <p className="comment-message-text">{comm.text}</p>
                     </div>
                   </div>
                 ))
@@ -319,96 +497,45 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
           </section>
         </div>
 
-        {/* ==========================================================================
-            RELATED ARTICLES (مقالات ذات صلة - matching user screenshot media_1789724320519.png)
-            ========================================================================== */}
-        <section className="article-related-section">
-          <div className="related-section-header">
-            <h2 className="related-section-title">
-              {isEn ? "Related Articles" : "مقالات ذات صلة"}
-            </h2>
+        {/* Sidebar: Related Articles */}
+        <aside className="article-related-sidebar">
+          <div className="related-sidebar-header">
+            <h3 className="related-sidebar-title">{isEn ? "Related Articles" : "مقالات ذات صلة"}</h3>
           </div>
 
-          <div className="related-articles-grid">
-            {relatedArticles.map((rel) => {
-              const relTitle = isEn ? rel.titleEn : rel.title;
-              const relCategory = isEn ? rel.categoryEn : rel.category;
-              const relReadTime = isEn ? rel.readTimeEn : rel.readTime;
-              const relAuthor = isEn ? rel.author.nameEn : rel.author.name;
-              const relDate = isEn ? rel.publishDateEn : rel.publishDate;
-              const relExcerpt = isEn ? rel.excerptEn : rel.excerpt;
-
-              return (
-                <div 
-                  key={rel.id} 
-                  className="related-article-card"
-                  onClick={() => onSelectArticle(rel)}
-                >
-                  {/* Card Cover Image */}
-                  <div className="related-card-media">
-                    <img src={rel.image} alt={relTitle} className="related-card-img" />
-                    <div className="related-card-overlay" />
-                  </div>
-
-                  {/* Card Body */}
-                  <div className="related-card-body">
-                    {/* Category & Read Time Row */}
-                    <div className="related-card-meta-row">
-                      <span 
-                        className="related-category-pill"
-                        style={{ 
-                          backgroundColor: `${rel.categoryColor}18`, 
-                          color: rel.categoryColor,
-                          borderColor: `${rel.categoryColor}35`
-                        }}
-                      >
-                        {relCategory}
-                      </span>
-                      <span className="related-readtime">
-                        <Clock size={12} />
-                        <span>{relReadTime}</span>
-                      </span>
-                    </div>
-
-                    {/* Title */}
-                    <h3 className="related-card-title">{relTitle}</h3>
-
-                    {/* Excerpt */}
-                    <p className="related-card-excerpt">{relExcerpt}</p>
-
-                    {/* Card Footer: Author Capsule & Share */}
-                    <div className="related-card-footer" onClick={(e) => e.stopPropagation()}>
-                      <div className="related-author-capsule">
-                        <img 
-                          src={rel.author.avatar} 
-                          alt={relAuthor} 
-                          className="related-author-avatar" 
-                        />
-                        <span className="related-author-name">{relAuthor}</span>
-                        <span className="related-author-divider">|</span>
-                        <span className="related-author-date">{relDate}</span>
-                      </div>
-
-                      <button
-                        type="button"
-                        className="related-card-share-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (navigator.clipboard) {
-                            navigator.clipboard.writeText(`${window.location.origin}/#articles`);
-                          }
-                        }}
-                        title={isEn ? "Share" : "مشاركة"}
-                      >
-                        <Share2 size={16} />
-                      </button>
-                    </div>
+          <div className="related-sidebar-list">
+            {relatedArticles.map((relArt) => (
+              <div
+                key={relArt.id}
+                className="related-sidebar-card"
+                onClick={() => onSelectArticle(relArt)}
+              >
+                <div className="related-sidebar-media">
+                  <img src={relArt.image} alt={relArt.title} className="related-sidebar-img" loading="lazy" />
+                  <div className="related-sidebar-overlay" />
+                </div>
+                <div className="related-sidebar-body">
+                  <span 
+                    className="related-sidebar-category"
+                    style={{ color: relArt.categoryColor }}
+                  >
+                    {isEn ? relArt.categoryEn : relArt.category}
+                  </span>
+                  <h4 className="related-sidebar-item-title">
+                    {isEn ? relArt.titleEn : relArt.title}
+                  </h4>
+                  <div className="related-sidebar-author-row">
+                    <span className="related-sidebar-author-name">{isEn ? relArt.author.nameEn : relArt.author.name}</span>
+                    <span className="related-sidebar-time">
+                      <Clock size={11} />
+                      <span>{isEn ? relArt.readTimeEn : relArt.readTime}</span>
+                    </span>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
-        </section>
+        </aside>
       </div>
     </article>
   );

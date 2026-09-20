@@ -23,6 +23,12 @@ const InstagramIcon = ({ size = 22, ...props }) => (
   </svg>
 );
 
+const FacebookIcon = ({ size = 22, ...props }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" {...props}>
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+  </svg>
+);
+
 export default function ContactPage({ onBack }) {
   const { lang, t } = useThemeLanguage();
   const isEn = lang === 'en';
@@ -370,6 +376,27 @@ export default function ContactPage({ onBack }) {
                 </div>
                 <span className="info-badge-action insta">
                   {t.contact.followNow}
+                </span>
+              </a>
+
+              {/* Facebook */}
+              <a
+                href="https://facebook.com/share/19jb1uyhbg"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="info-card clickable"
+              >
+                <div className="info-icon-box blue">
+                  <FacebookIcon size={22} />
+                </div>
+                <div className="info-text-box">
+                  <span className="info-title">{t.contact.facebookTitle}</span>
+                  <span className="info-value" dir="ltr" style={{ textAlign: isEn ? 'left' : 'right' }}>
+                    Techno Enjaz
+                  </span>
+                </div>
+                <span className="info-badge-action facebook">
+                  {t.contact.followFacebook}
                 </span>
               </a>
             </div>

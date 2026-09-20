@@ -7,12 +7,12 @@ import TeamMomentsRing from './components/TeamMomentsRing';
 import InfiniteMenu from './InfiniteMenu';
 import Orb from './Orb';
 import CinematicFooter from './components/CinematicFooter';
-import { User, BookmarkCheck } from 'lucide-react';
+import { User } from 'lucide-react';
 import { teamMembers } from './data/teamData';
 import { useThemeLanguage } from './context/ThemeLanguageContext';
 import ThemeSwitch from './components/ui/ThemeSwitch';
 import LanguageDropdown from './components/ui/LanguageDropdown';
-import { useSavedProjects } from './hooks/useSavedProjects';
+import { getLoggedInUser } from './utils/authUtils';
 
 const ProfilePage = lazy(() => import('./ProfilePage'));
 const ContactPage = lazy(() => import('./ContactPage'));
@@ -38,27 +38,13 @@ export default function App() {
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [isUserProfileOpen, setIsUserProfileOpen] = useState(false);
   const [activeNavIndex, setActiveNavIndex] = useState(0);
-  const { count: savedCount } = useSavedProjects();
   const [currentUser, setCurrentUser] = useState<any>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const stored = localStorage.getItem('techno_user');
-        return stored ? JSON.parse(stored) : null;
-      } catch (e) {
-        return null;
-      }
-    }
-    return null;
+    return getLoggedInUser();
   });
 
   useEffect(() => {
     const handleAuthSync = () => {
-      try {
-        const stored = localStorage.getItem('techno_user');
-        setCurrentUser(stored ? JSON.parse(stored) : null);
-      } catch (e) {
-        setCurrentUser(null);
-      }
+      setCurrentUser(getLoggedInUser());
     };
     window.addEventListener('techno_auth_updated', handleAuthSync);
     window.addEventListener('storage', handleAuthSync);
@@ -66,6 +52,29 @@ export default function App() {
       window.removeEventListener('techno_auth_updated', handleAuthSync);
       window.removeEventListener('storage', handleAuthSync);
     };
+  }, []);
+
+  // Listen for login requirement triggers from save/like/comment actions
+  useEffect(() => {
+    const handleRequireLogin = (e: any) => {
+      const returnHash = e?.detail?.returnHash || window.location.hash || '#top';
+      try {
+        if (returnHash && returnHash !== '#login' && returnHash !== '#auth' && returnHash !== '#register') {
+          sessionStorage.setItem('techno_auth_return_hash', returnHash);
+        }
+      } catch (err) {}
+
+      setSelectedMember(null);
+      setIsContactOpen(false);
+      setIsUserProfileOpen(false);
+      setIsAuthOpen(true);
+      setAuthMode('login');
+      window.location.hash = '#login';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.addEventListener('techno_require_login', handleRequireLogin);
+    return () => window.removeEventListener('techno_require_login', handleRequireLogin);
   }, []);
 
   const localizedTeamMembers = teamMembers.map((m: any) => ({
@@ -133,6 +142,17 @@ export default function App() {
         return;
       }
       if (hash === '#my-profile' || hash === '#favorites' || hash === '#profile') {
+        const user = getLoggedInUser();
+        if (!user) {
+          setSelectedMember(null);
+          setIsContactOpen(false);
+          setIsUserProfileOpen(false);
+          setIsAuthOpen(true);
+          setAuthMode('login');
+          window.location.hash = '#login';
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
         setSelectedMember(null);
         setIsContactOpen(false);
         setIsAuthOpen(false);
@@ -152,7 +172,7 @@ export default function App() {
       } else if (hash === '#videos') {
         setCurrentTab('videos');
         setActiveNavIndex(2);
-      } else if (hash === '#articles') {
+      } else if (hash === '#articles' || hash.startsWith('#article/')) {
         setCurrentTab('articles');
         setActiveNavIndex(3);
       } else if (hash === '#about') {
@@ -203,6 +223,12 @@ export default function App() {
   };
 
   const handleOpenAuth = (mode: 'login' | 'register' = 'login') => {
+    const currentHash = window.location.hash;
+    if (currentHash && currentHash !== '#login' && currentHash !== '#auth' && currentHash !== '#register') {
+      try {
+        sessionStorage.setItem('techno_auth_return_hash', currentHash);
+      } catch (e) {}
+    }
     setIsContactOpen(false);
     setSelectedMember(null);
     setIsAuthOpen(true);
@@ -213,8 +239,18 @@ export default function App() {
 
   const handleBackFromAuth = () => {
     setIsAuthOpen(false);
-    setActiveNavIndex(0);
-    window.location.hash = '';
+    let returnHash: string | null = null;
+    try {
+      returnHash = sessionStorage.getItem('techno_auth_return_hash');
+      sessionStorage.removeItem('techno_auth_return_hash');
+    } catch (e) {}
+
+    if (returnHash && returnHash !== '#login' && returnHash !== '#auth' && returnHash !== '#register') {
+      window.location.hash = returnHash;
+    } else {
+      setActiveNavIndex(0);
+      window.location.hash = '';
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -267,12 +303,27 @@ export default function App() {
         <UserProfilePage
           onBack={() => {
             setIsUserProfileOpen(false);
+            try {
+              if (window.history && window.history.pushState) {
+                window.history.pushState(null, '', window.location.pathname);
+              }
+            } catch (e) {}
             window.location.hash = '';
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           onLogout={() => {
             setIsUserProfileOpen(false);
+            setIsAuthOpen(false);
+            setIsContactOpen(false);
+            setSelectedMember(null);
             setCurrentUser(null);
+            setCurrentTab('home');
+            setActiveNavIndex(0);
+            try {
+              if (window.history && window.history.pushState) {
+                window.history.pushState(null, '', window.location.pathname);
+              }
+            } catch (e) {}
             window.location.hash = '';
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
@@ -343,7 +394,7 @@ export default function App() {
             type="button"
             className={`navbar-auth-btn ${isUserProfileOpen || isAuthOpen ? 'active' : ''}`}
             onClick={() => {
-              if (currentUser || savedCount > 0) {
+              if (currentUser) {
                 setIsContactOpen(false);
                 setSelectedMember(null);
                 setIsAuthOpen(false);
@@ -355,38 +406,26 @@ export default function App() {
               }
             }}
             title={currentUser 
-              ? (lang === 'en' ? `My Profile & Saved Projects (${savedCount})` : `حسابي والمشاريع المحفوظة (${savedCount})`) 
+              ? (currentUser.name || (lang === 'en' ? 'My Profile' : 'حسابي')) 
               : t.nav.login}
             style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
           >
             <span className="navbar-auth-btn-icon">
-              {currentUser ? <BookmarkCheck size={15} /> : <User size={15} />}
+              {currentUser?.avatar ? (
+                <img
+                  src={currentUser.avatar}
+                  alt=""
+                  style={{ width: '18px', height: '18px', borderRadius: '50%', objectFit: 'cover', display: 'block' }}
+                />
+              ) : (
+                <User size={15} />
+              )}
             </span>
             <span className="navbar-auth-btn-label">
               {currentUser 
-                ? (currentUser.name ? currentUser.name.split(' ')[0] : (lang === 'en' ? 'My Profile' : 'حسابي')) 
+                ? (currentUser.name || (lang === 'en' ? 'My Profile' : 'حسابي')) 
                 : t.nav.login}
             </span>
-            {savedCount > 0 && (
-              <span
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  minWidth: '18px',
-                  height: '18px',
-                  padding: '0 5px',
-                  borderRadius: '9999px',
-                  fontSize: '0.7rem',
-                  fontWeight: 700,
-                  backgroundColor: 'var(--accent-cyan)',
-                  color: '#030508',
-                  lineHeight: 1
-                }}
-              >
-                {savedCount}
-              </span>
-            )}
           </button>
         </div>
       </nav>
@@ -400,8 +439,19 @@ export default function App() {
             onSuccess={(loggedInUser: any) => {
               if (loggedInUser) setCurrentUser(loggedInUser);
               setIsAuthOpen(false);
-              setIsUserProfileOpen(true);
-              window.location.hash = '#my-profile';
+
+              let returnHash: string | null = null;
+              try {
+                returnHash = sessionStorage.getItem('techno_auth_return_hash');
+                sessionStorage.removeItem('techno_auth_return_hash');
+              } catch (e) {}
+
+              if (returnHash && returnHash !== '#login' && returnHash !== '#auth' && returnHash !== '#register') {
+                window.location.hash = returnHash;
+              } else {
+                setIsUserProfileOpen(true);
+                window.location.hash = '#my-profile';
+              }
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />

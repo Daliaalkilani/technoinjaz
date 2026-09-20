@@ -62,10 +62,11 @@
 ## Technical Articles & Research Hub (المدونة الهندسية)
 
 Techno Enjaz maintains an active engineering blog with deep-dive technical articles written by our leads:
-- *Generative AI Agents Architecture in Live Production Environments* (معمارية وكلاء الذكاء الاصطناعي التوليدي)
-- *Clean Architecture & Scaling Cloud ERP Systems* (المعمارية النظيفة وتوسيع أنظمة الـ ERP السحابية)
-- *Hardware-in-the-Loop Testing & WebSockets Telemetry* (تقنيات محاكاة العتاد الصلب)
-- *Interactive 3D Canvas & WebGL Performance Optimization* (تحسين أداء الرسوم ثلاثية الأبعاد)
+- *Digital Twin: Definition, Architecture, and Enterprise Applications* (التوأم الرقمي: ما هو وكيف يعمل وتطبيقاته) - `/articles/digital-twin`
+- *Affective Computing: How AI Analyzes Human Emotional Expressions* (الحوسبة العاطفية: كيف يحلل الذكاء الاصطناعي التعبير العاطفي) - `/articles/affective-computing`
+- *Facial Expression Analysis for Emotion-Aware Recommendation Systems* (تحليل تعابير الوجه بالكاميرا وتخصيص المحتوى) - `/articles/emotion-aware-recommendation`
+- *Model Context Protocol (MCP): Standardizing AI Tool & Data Integration* (بروتوكول MCP لربط نماذج الذكاء الاصطناعي بالأدوات والبيانات) - `/articles/model-context-protocol-mcp`
+- *Next Token Prediction: From N-grams to Transformers and Arabic LLMs* (كيف تتنبأ نماذج الذكاء الاصطناعي بالكلمة التالية؟) - `/articles/next-token-prediction`
 
 ---
 

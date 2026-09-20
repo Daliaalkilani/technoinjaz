@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   X, 
   Heart, 
@@ -15,6 +16,7 @@ import {
 import type { BlogArticle, BlogComment } from '../../data/blogArticlesData';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import { useSavedProjects } from '../../hooks/useSavedProjects';
+import { getLoggedInUser, requireAuth } from '../../utils/authUtils';
 import './ArticleReaderModal.css';
 
 interface ArticleReaderModalProps {
@@ -42,10 +44,10 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
   const isEn = lang === 'en';
   const { isSaved, toggleSave } = useSavedProjects();
 
-  const [commentName, setCommentName] = useState('');
   const [commentText, setCommentText] = useState('');
   const [copied, setCopied] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const loggedUser = getLoggedInUser();
 
   // Close on Escape
   useEffect(() => {
@@ -95,12 +97,16 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
 
   const handleCommentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!commentText.trim()) return;
+    if (!requireAuth()) return;
+    if (!commentText.trim() || isSubmitting) return;
 
     setIsSubmitting(true);
+    const currentUser = getLoggedInUser();
+    const commentAuthor = currentUser?.name || (isEn ? 'Techno User' : 'مستخدم تكنو');
+
     const newComment: BlogComment = {
       id: 'c-' + Date.now(),
-      author: commentName.trim() || (isEn ? 'Guest Reader' : 'قارئ زائر'),
+      author: commentAuthor,
       date: isEn ? 'Just now' : 'الآن',
       text: commentText.trim()
     };
@@ -110,7 +116,7 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
     setIsSubmitting(false);
   };
 
-  return (
+  const modalContent = (
     <div className="article-modal-backdrop" onClick={onClose} dir={isEn ? 'ltr' : 'rtl'}>
       <div 
         className="article-modal-container"
@@ -182,7 +188,11 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
               <button
                 type="button"
                 className={`article-action-pill ${isLiked ? 'liked' : ''}`}
-                onClick={onToggleLike}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (!requireAuth()) return;
+                  onToggleLike();
+                }}
                 title={isLiked ? (isEn ? "Unlike" : "إلغاء الإعجاب") : (isEn ? "Like article" : "أعجبني")}
               >
                 <Heart size={16} fill={isLiked ? "#ef4444" : "none"} color={isLiked ? "#ef4444" : "currentColor"} />
@@ -268,22 +278,68 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
 
             {/* Add Comment Form */}
             <form className="article-comment-form" onSubmit={handleCommentSubmit}>
-              <div className="comment-form-row">
-                <input
-                  type="text"
-                  className="comment-name-input"
-                  placeholder={isEn ? "Your Name (Optional)" : "اسمك الكريم (اختياري)..."}
-                  value={commentName}
-                  onChange={(e) => setCommentName(e.target.value)}
-                />
-              </div>
+              {loggedUser ? (
+                <div 
+                  className="comment-user-identity" 
+                  style={{ 
+                    display: 'inline-flex', 
+                    alignItems: 'center', 
+                    gap: '8px', 
+                    marginBottom: '10px',
+                    padding: '4px 12px',
+                    borderRadius: '20px',
+                    background: 'rgba(14, 165, 233, 0.1)',
+                    border: '1px solid rgba(56, 189, 248, 0.25)',
+                    color: 'var(--accent-cyan, #38bdf8)',
+                    fontSize: '0.85rem',
+                    fontWeight: 600
+                  }}
+                >
+                  {loggedUser.avatar ? (
+                    <img 
+                      src={loggedUser.avatar} 
+                      alt="" 
+                      style={{ width: '18px', height: '18px', borderRadius: '50%', objectFit: 'cover' }} 
+                    />
+                  ) : (
+                    <User size={14} />
+                  )}
+                  <span>{loggedUser.name}</span>
+                </div>
+              ) : (
+                <div 
+                  className="comment-guest-prompt"
+                  onClick={() => requireAuth()}
+                  style={{ 
+                    display: 'inline-flex', 
+                    alignItems: 'center', 
+                    gap: '8px', 
+                    marginBottom: '10px',
+                    padding: '6px 14px',
+                    borderRadius: '20px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px dashed rgba(255, 255, 255, 0.2)',
+                    color: '#94a3b8',
+                    fontSize: '0.85rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <User size={14} />
+                  <span>{isEn ? "Sign in to post comments as yourself" : "سجل الدخول للنشر باسم حسابك"}</span>
+                </div>
+              )}
               <div className="comment-form-row">
                 <textarea
                   className="comment-textarea"
-                  placeholder={isEn ? "Share your technical perspective or feedback..." : "شاركنا رأيك أو استفسارك التقني حول المقال..."}
+                  placeholder={loggedUser 
+                    ? (isEn ? "Share your technical perspective or feedback..." : "شاركنا رأيك أو استفسارك التقني حول المقال...")
+                    : (isEn ? "Please sign in to post a comment..." : "يرجى تسجيل الدخول لكتابة تعليق...")}
                   rows={3}
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
+                  onFocus={() => {
+                    if (!loggedUser) requireAuth();
+                  }}
                   required
                 />
               </div>
@@ -327,6 +383,12 @@ export const ArticleReaderModal: React.FC<ArticleReaderModalProps> = ({
       </div>
     </div>
   );
+
+  if (typeof document !== 'undefined') {
+    return createPortal(modalContent, document.body);
+  }
+
+  return modalContent;
 };
 
 export default ArticleReaderModal;

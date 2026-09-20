@@ -95,6 +95,8 @@ export interface Translations {
     chatNow: string;
     instaTitle: string;
     followNow: string;
+    facebookTitle: string;
+    followFacebook: string;
     mapTitle: string;
     openGoogleMaps: string;
     mapIframeTitle: string;
@@ -309,6 +311,8 @@ export const translations: Record<'ar' | 'en', Translations> = {
       chatNow: 'محادثة فورية ↗',
       instaTitle: 'انستغرام تكنو إنجاز',
       followNow: 'متابعة ↗',
+      facebookTitle: 'صفحة فيسبوك الرسمية',
+      followFacebook: 'متابعة ↗',
       mapTitle: 'موقعنا الجغرافي على الخريطة',
       openGoogleMaps: 'فتح في خرائط جوجل',
       mapIframeTitle: 'موقع تكنو إنجاز - حماة',
@@ -529,6 +533,8 @@ export const translations: Record<'ar' | 'en', Translations> = {
       chatNow: 'Chat ↗',
       instaTitle: 'Instagram',
       followNow: 'Follow ↗',
+      facebookTitle: 'Official Facebook Page',
+      followFacebook: 'Follow ↗',
       mapTitle: 'Our Office Location on the Map',
       openGoogleMaps: 'Open in Google Maps',
       mapIframeTitle: 'Techno Enjaz Headquarters - Hama',

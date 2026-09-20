@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   ArrowLeft, 
   ArrowRight, 
@@ -8,8 +8,8 @@ import {
   ExternalLink, 
   BookOpen, 
   User, 
+  Camera,
   Sparkles, 
-  CheckCircle2, 
   LogOut,
   FileText,
   Video,
@@ -18,6 +18,7 @@ import {
 import { useThemeLanguage } from './context/ThemeLanguageContext';
 import { useSavedProjects } from './hooks/useSavedProjects';
 import { Button } from './components/ui/button';
+import VideoPlayerModal from './components/videos/VideoPlayerModal';
 import './UserProfilePage.css';
 
 export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExploreProjects }) {
@@ -26,42 +27,112 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
   const { savedProjects, removeSaved, clearAll } = useSavedProjects();
   // Filter types: 'all' | 'projects' | 'articles' | 'videos'
   const [filterType, setFilterType] = useState('all');
+  const [activeVideoModal, setActiveVideoModal] = useState(null);
+  const fileInputRef = useRef(null);
+  const [avatarFeedback, setAvatarFeedback] = useState(null);
 
   // Retrieve user info from localStorage if available
   const [user, setUser] = useState(() => {
     if (typeof window !== 'undefined') {
       try {
+        const isLoggedOut = localStorage.getItem('techno_logged_out');
+        if (isLoggedOut === 'true') return null;
+
         const stored = localStorage.getItem('techno_user');
         if (stored) return JSON.parse(stored);
       } catch (e) {
         console.error('Error reading techno_user:', e);
       }
     }
-    return {
-      name: isEn ? 'Eng. Techno User' : 'م. مهندس تكنو إنجاز',
-      email: 'user@technoenjaz.com',
-      joined: isEn ? 'Member since 2026' : 'عضو منذ 2026',
-      status: isEn ? 'Verified Account' : 'حساب موثق'
-    };
+    return null;
   });
 
-  const handleLogout = () => {
+  const handleAvatarUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setAvatarFeedback({
+        type: 'error',
+        message: isEn ? 'Please select a valid image file.' : 'يرجى اختيار ملف صورة صالح.'
+      });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setAvatarFeedback({
+        type: 'error',
+        message: isEn ? 'Image size must be less than 5MB.' : 'حجم الصورة يجب أن يكون أقل من 5 ميغابايت.'
+      });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result;
+      const updatedUser = { ...(user || {}), avatar: dataUrl };
+      setUser(updatedUser);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('techno_user', JSON.stringify(updatedUser));
+        window.dispatchEvent(new CustomEvent('techno_auth_updated', { detail: updatedUser }));
+        window.dispatchEvent(new CustomEvent('storage'));
+      }
+      setAvatarFeedback({
+        type: 'success',
+        message: isEn ? 'Profile photo updated successfully!' : 'تم تحديث الصورة الشخصية بنجاح!'
+      });
+      setTimeout(() => setAvatarFeedback(null), 3000);
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
+  const handleAvatarDelete = () => {
+    if (!user?.avatar) return;
+    const { avatar, ...restUser } = user;
+    setUser(restUser);
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('techno_user');
-      localStorage.removeItem('techno_pending_save');
-      window.dispatchEvent(new CustomEvent('techno_auth_updated', { detail: null }));
+      localStorage.setItem('techno_user', JSON.stringify(restUser));
+      window.dispatchEvent(new CustomEvent('techno_auth_updated', { detail: restUser }));
       window.dispatchEvent(new CustomEvent('storage'));
     }
+    setAvatarFeedback({
+      type: 'success',
+      message: isEn ? 'Profile photo removed successfully.' : 'تم حذف الصورة الشخصية بنجاح.'
+    });
+    setTimeout(() => setAvatarFeedback(null), 3000);
+  };
+
+  const handleLogout = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    try {
+      localStorage.removeItem('techno_user');
+      localStorage.removeItem('techno_pending_save');
+      localStorage.setItem('techno_logged_out', 'true');
+      sessionStorage.removeItem('techno_user');
+    } catch (err) {
+      console.error('Error during logout:', err);
+    }
     setUser(null);
+    window.dispatchEvent(new CustomEvent('techno_auth_updated', { detail: null }));
+    window.dispatchEvent(new CustomEvent('storage'));
+
     if (onLogout) {
       onLogout();
     } else if (onBack) {
       onBack();
     }
-    if (typeof window !== 'undefined') {
-      window.location.hash = '';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+
+    try {
+      if (window.history && window.history.pushState) {
+        window.history.pushState(null, '', window.location.pathname);
+      }
+    } catch (err) {}
+    window.location.hash = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Group items by projects, articles, videos
@@ -80,6 +151,86 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
     if (filterType === 'videos') return p.type === 'video';
     return true;
   });
+
+  if (!user) {
+    return (
+      <div className="user-profile-wrapper" dir={isEn ? 'ltr' : 'rtl'}>
+        <div className="user-profile-container">
+          <div className="user-profile-back-nav">
+            <button 
+              type="button" 
+              onClick={onBack} 
+              className="user-profile-back-btn"
+              title={isEn ? "Back to Home" : "العودة إلى الرئيسية"}
+            >
+              {isEn ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
+              <span>{isEn ? "Back to Home" : "العودة إلى الرئيسية"}</span>
+            </button>
+          </div>
+
+          <div
+            className="user-profile-empty-card"
+            style={{
+              textAlign: 'center',
+              padding: '60px 24px',
+              background: 'linear-gradient(165deg, rgba(14, 23, 42, 0.7) 0%, rgba(3, 7, 18, 0.9) 100%)',
+              borderRadius: '24px',
+              border: '1px solid rgba(56, 189, 248, 0.25)',
+              margin: '30px auto',
+              maxWidth: '520px',
+              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)'
+            }}
+          >
+            <div
+              style={{
+                width: '64px',
+                height: '64px',
+                borderRadius: '50%',
+                background: 'rgba(14, 165, 233, 0.12)',
+                border: '1px solid rgba(56, 189, 248, 0.3)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 20px',
+                color: 'var(--accent-cyan, #38bdf8)'
+              }}
+            >
+              <User size={30} />
+            </div>
+            <h2 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '10px', color: '#ffffff' }}>
+              {isEn ? 'Authentication Required' : 'تسجيل الدخول مطلوب'}
+            </h2>
+            <p style={{ fontSize: '0.95rem', color: '#94a3b8', lineHeight: 1.6, marginBottom: '24px' }}>
+              {isEn 
+                ? 'You must be logged in to view your profile and saved projects, articles, and videos.' 
+                : 'يجب تسجيل الدخول للوصول إلى ملفك الشخصي ومحفوظاتك من المشاريع والمقالات والفيديوهات.'}
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                if (onBack) onBack();
+                window.location.hash = '#login';
+              }}
+              className="btn-explore-live"
+              style={{
+                padding: '10px 28px',
+                fontSize: '0.95rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                margin: '0 auto',
+                cursor: 'pointer'
+              }}
+            >
+              <User size={16} />
+              <span>{isEn ? 'Sign In Now' : 'تسجيل الدخول الآن'}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="user-profile-wrapper" dir={isEn ? 'ltr' : 'rtl'}>
@@ -100,40 +251,116 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
         {/* User Profile Card */}
         <div className="user-profile-card">
           <div className="user-profile-identity">
-            <div className="user-avatar-wrap">
-              <User size={36} />
+            {/* Hidden File Input for Avatar Upload */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={handleAvatarUpload}
+            />
+
+            {/* Avatar with click & hover change overlay */}
+            <div
+              className="user-avatar-wrap"
+              onClick={() => {
+                if (user) {
+                  fileInputRef.current?.click();
+                } else {
+                  if (onBack) onBack();
+                  window.location.hash = '#login';
+                }
+              }}
+              title={user?.avatar ? (isEn ? "Click to change photo" : "انقر لتغيير الصورة") : user ? (isEn ? "Click to add photo" : "انقر لإضافة صورة شخصية") : (isEn ? "Sign In" : "تسجيل الدخول")}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  if (user) fileInputRef.current?.click();
+                }
+              }}
+            >
+              {user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt={user?.name || "User Avatar"}
+                  className="user-avatar-img"
+                />
+              ) : (
+                <User size={38} />
+              )}
+              {user && (
+                <div className="user-avatar-hover-overlay">
+                  <Camera size={20} />
+                  <span style={{ fontSize: '10px', marginTop: '3px', fontWeight: 700 }}>
+                    {user?.avatar ? (isEn ? "Edit" : "تعديل") : (isEn ? "Add" : "إضافة")}
+                  </span>
+                </div>
+              )}
             </div>
+
             <div className="user-info-meta">
               <div className="user-name-row">
-                <h2>{user.name}</h2>
-                <span className="user-verified-badge" title={user.status}>
-                  <CheckCircle2 size={13} />
-                  <span>{user.status}</span>
-                </span>
+                <h2>{user ? user.name : (isEn ? "Guest User" : "مستخدم زائر")}</h2>
               </div>
-              <p className="user-email">{user.email}</p>
-              <div className="user-status-badges">
-                <span className="user-badge-item">{user.joined}</span>
-              </div>
-            </div>
-          </div>
+              <p className="user-email">
+                {user ? user.email : (isEn ? "Explore and save projects & articles" : "تصفح واحفظ مشاريعك ومقالاتك المفضلة")}
+              </p>
 
-          <div className="user-profile-stats">
-            <div className="stat-box">
-              <div className="stat-number">{savedProjects.length}</div>
-              <div className="stat-label">
-                {isEn ? "Saved Items" : "إجمالي المحفوظات"}
+              <div className="user-status-badges">
+                <span className="user-badge-item">
+                  {user ? user.joined : (isEn ? "Guest Session" : "جلسة زائر")}
+                </span>
+
+                {user ? (
+                  <>
+                    {/* Add / Change Photo Button */}
+                    <button
+                      type="button"
+                      className="avatar-action-btn upload"
+                      onClick={() => fileInputRef.current?.click()}
+                      title={user?.avatar ? (isEn ? "Change photo" : "تغيير الصورة الشخصية") : (isEn ? "Add photo" : "إضافة صورة شخصية")}
+                    >
+                      <Camera size={13} />
+                      <span>{user?.avatar ? (isEn ? "Change Photo" : "تغيير الصورة") : (isEn ? "Add Photo" : "إضافة صورة")}</span>
+                    </button>
+
+                    {/* Delete Photo Button (only when photo exists) */}
+                    {user?.avatar && (
+                      <button
+                        type="button"
+                        className="avatar-action-btn delete"
+                        onClick={handleAvatarDelete}
+                        title={isEn ? "Delete photo" : "حذف الصورة الشخصية"}
+                      >
+                        <Trash2 size={13} />
+                        <span>{isEn ? "Delete Photo" : "حذف الصورة"}</span>
+                      </button>
+                    )}
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    className="avatar-action-btn upload"
+                    onClick={() => {
+                      if (onBack) onBack();
+                      window.location.hash = '#login';
+                    }}
+                    title={isEn ? "Sign In / Register" : "تسجيل الدخول / إنشاء حساب"}
+                  >
+                    <User size={13} />
+                    <span>{isEn ? "Sign In" : "تسجيل الدخول"}</span>
+                  </button>
+                )}
               </div>
+
+              {/* Feedback Alert Toast */}
+              {avatarFeedback && (
+                <div className={`avatar-feedback-msg ${avatarFeedback.type}`}>
+                  {avatarFeedback.message}
+                </div>
+              )}
             </div>
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="user-logout-btn"
-              title={isEn ? "Sign Out" : "تسجيل الخروج"}
-            >
-              <LogOut size={15} style={{ [isEn ? 'marginRight' : 'marginLeft']: '6px' }} />
-              <span>{isEn ? "Sign Out" : "تسجيل الخروج"}</span>
-            </button>
           </div>
         </div>
 
@@ -363,13 +590,7 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
                         <Button
                           variant="default"
                           size="sm"
-                          onClick={() => {
-                            onBack();
-                            setTimeout(() => {
-                              const el = document.getElementById('videos');
-                              if (el) el.scrollIntoView({ behavior: 'smooth' });
-                            }, 150);
-                          }}
+                          onClick={() => setActiveVideoModal(project)}
                         >
                           <Play size={14} style={{ [isEn ? 'marginRight' : 'marginLeft']: '6px' }} />
                           <span>{isEn ? "Watch Video" : "مشاهدة الفيديو"}</span>
@@ -392,7 +613,42 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
             })}
           </div>
         )}
+
+        {/* Bottom Actions Bar - Sign Out / Sign In */}
+        <div className="user-profile-bottom-actions">
+          {user ? (
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="user-logout-bottom-btn"
+              title={isEn ? "Sign Out" : "تسجيل الخروج"}
+            >
+              <LogOut size={16} />
+              <span>{isEn ? "Sign Out" : "تسجيل الخروج"}</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                if (onBack) onBack();
+                window.location.hash = '#login';
+              }}
+              className="user-login-bottom-btn"
+              title={isEn ? "Sign In" : "تسجيل الدخول"}
+            >
+              <LogOut size={16} style={{ transform: 'rotate(180deg)' }} />
+              <span>{isEn ? "Sign In to Your Account" : "تسجيل الدخول إلى حسابك"}</span>
+            </button>
+          )}
+        </div>
       </div>
+
+      {/* In-page Video Player Modal for Saved Videos */}
+      <VideoPlayerModal
+        isOpen={Boolean(activeVideoModal)}
+        onClose={() => setActiveVideoModal(null)}
+        video={activeVideoModal}
+      />
     </div>
   );
 }

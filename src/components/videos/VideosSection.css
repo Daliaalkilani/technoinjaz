@@ -2,7 +2,7 @@
 .videos-section {
   position: relative;
   width: 100%;
-  padding: 6rem 1.5rem 8rem;
+  padding: 6rem 1rem 8rem;
   background-color: var(--bg-dark);
   color: var(--text-pure);
   font-family: var(--font-arabic);
@@ -19,7 +19,7 @@
 }
 
 .videos-container {
-  max-width: 1280px;
+  max-width: 1680px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -273,8 +273,8 @@
 
 .video-card-screen {
   position: relative;
-  height: 190px;
-  background: radial-gradient(circle at center, #102a50 0%, #030a17 100%);
+  height: 200px;
+  background: #030a17;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -282,23 +282,51 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.video-card-thumb {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.video-card:hover .video-card-thumb {
+  transform: scale(1.08);
+}
+
+.video-card-screen-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(3, 7, 18, 0.8) 0%, rgba(3, 7, 18, 0.25) 50%, rgba(3, 7, 18, 0.1) 100%);
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.video-card:hover .video-card-screen-overlay {
+  opacity: 0.85;
+}
+
 .video-play-btn {
-  width: 54px;
-  height: 54px;
+  position: relative;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
   color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 25px rgba(14, 165, 233, 0.6);
+  box-shadow: 0 0 25px rgba(14, 165, 233, 0.7);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
   z-index: 2;
+  cursor: pointer;
 }
 
 .video-card:hover .video-play-btn {
-  transform: scale(1.12);
-  box-shadow: 0 0 35px rgba(56, 189, 248, 0.85);
+  transform: scale(1.15);
+  box-shadow: 0 0 35px rgba(56, 189, 248, 0.95);
 }
 
 .video-screen-glow {
@@ -311,26 +339,63 @@
 }
 
 .video-card-body {
-  padding: 1.25rem 1.5rem 1.5rem;
+  padding: 1.15rem 1.35rem 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.45rem;
   flex: 1;
+  justify-content: space-between;
 }
 
+.video-card-title,
 .video-card-body h3 {
   margin: 0;
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: #ffffff;
-  line-height: 1.4;
+  line-height: 1.45;
+  transition: color 0.2s ease;
 }
 
+.video-card:hover .video-card-title,
+.video-card:hover .video-card-body h3 {
+  color: #38bdf8;
+}
+
+.video-card-desc,
 .video-card-body p {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   color: #94a3b8;
-  line-height: 1.6;
+  line-height: 1.55;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.video-card-action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 0.35rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.video-watch-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #38bdf8;
+  transition: gap 0.2s ease, color 0.2s ease;
+}
+
+.video-card:hover .video-watch-link {
+  color: #7dd3fc;
+  gap: 0.65rem;
 }
 
 /* Responsive Rules */
@@ -487,10 +552,34 @@
   background: #ffffff !important;
 }
 
+[data-theme="light"] .video-card-title,
 [data-theme="light"] .video-card-body h3 {
   color: #0f172a !important;
 }
 
+[data-theme="light"] .video-card:hover .video-card-title,
+[data-theme="light"] .video-card:hover .video-card-body h3 {
+  color: #0284c7 !important;
+}
+
+[data-theme="light"] .video-card-desc,
 [data-theme="light"] .video-card-body p {
   color: #64748b !important;
 }
+
+[data-theme="light"] .video-card-action {
+  border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+[data-theme="light"] .video-watch-link {
+  color: #0284c7 !important;
+}
+
+[data-theme="light"] .video-card:hover .video-watch-link {
+  color: #0369a1 !important;
+}
+
+[data-theme="light"] .video-card-screen-overlay {
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.65) 0%, rgba(15, 23, 42, 0.15) 50%, transparent 100%) !important;
+}
+

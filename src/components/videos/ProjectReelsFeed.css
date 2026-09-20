@@ -1,12 +1,12 @@
 /* ==========================================================================
-   CINEMA REELS FEED - CONTINUOUS VERTICAL FULL-SCREEN STREAM
+   CINEMA REELS FEED - WIDE ADAPTIVE SCREEN & SIDEBAR FILTER
    ========================================================================== */
 
 .cinema-reels-experience {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1750px;
   margin: 0 auto;
-  padding: 0.5rem 1rem 2rem;
+  padding: 0.5rem 0.5rem 2rem;
   box-sizing: border-box;
   font-family: var(--font-arabic, 'Readex Pro', sans-serif);
   display: flex;
@@ -15,136 +15,123 @@
   position: relative;
 }
 
-/* 1. Category Bar Header */
-.cinema-reels-header-bar {
-  width: 100%;
-  max-width: 680px;
+/* 1. Main Layout: Sidebar on the side + Continuous Feed */
+.cinema-reels-layout {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 1rem;
-  padding: 8px 14px;
-  background: rgba(15, 23, 42, 0.65);
-  border: 1px solid rgba(56, 189, 248, 0.16);
-  border-radius: 9999px;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  z-index: 10;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 24px;
+  width: 100%;
+  position: relative;
 }
 
-.cinema-category-pills {
+/* 2. Side Categories Filter Bar */
+.cinema-reels-sidebar {
+  width: 230px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 90px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(56, 189, 248, 0.16);
+  border-radius: 20px;
+  padding: 16px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 15;
+}
+
+.cinema-sidebar-header {
   display: flex;
   align-items: center;
   gap: 8px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  padding: 2px 4px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: #38bdf8;
+  font-weight: 700;
+  font-size: 0.925rem;
 }
 
-.cinema-category-pills::-webkit-scrollbar {
-  display: none;
+.cinema-sidebar-header-icon {
+  color: #38bdf8;
 }
 
-.cinema-category-pill {
-  display: inline-flex;
+.cinema-sidebar-category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cinema-sidebar-category-item {
+  display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.05);
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: #94a3b8;
-  font-size: 0.8125rem;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
-  white-space: nowrap;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   font-family: inherit;
+  text-align: start;
 }
 
-.cinema-category-pill:hover {
+.cinema-sidebar-category-item:hover {
   color: #f1f5f9;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.09);
   border-color: rgba(56, 189, 248, 0.3);
+  transform: translateX(-3px);
 }
 
-.cinema-category-pill.active {
+[dir="ltr"] .cinema-sidebar-category-item:hover {
+  transform: translateX(3px);
+}
+
+.cinema-sidebar-category-item.active {
   background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
   color: #ffffff;
   border-color: #38bdf8;
-  box-shadow: 0 0 14px rgba(14, 165, 233, 0.4);
+  box-shadow: 0 4px 16px rgba(14, 165, 233, 0.4);
 }
 
-.cinema-category-pill .pill-badge {
+.category-item-badge {
   font-size: 0.72rem;
-  opacity: 0.85;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: inherit;
 }
 
 .cinema-counter-badge {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 6px 14px;
-  border-radius: 9999px;
-  background: rgba(0, 210, 255, 0.1);
-  border: 1px solid rgba(0, 210, 255, 0.25);
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: rgba(0, 210, 255, 0.08);
+  border: 1px solid rgba(0, 210, 255, 0.2);
   color: #38bdf8;
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 700;
   white-space: nowrap;
-  flex-shrink: 0;
-}
-
-/* 2. Floating Quick Jumper Controls (Desktop) */
-.cinema-floating-controls {
-  position: fixed;
-  inset-inline-end: calc(50% - 310px);
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  z-index: 25;
-}
-
-.cinema-nav-jump-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #f1f5f9;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  backdrop-filter: blur(12px);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
-}
-
-.cinema-nav-jump-btn:hover:not(:disabled) {
-  background: #0284c7;
-  color: #ffffff;
-  border-color: #38bdf8;
-  transform: scale(1.1);
-  box-shadow: 0 0 20px rgba(14, 165, 233, 0.5);
-}
-
-.cinema-nav-jump-btn:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
+  margin-top: 4px;
 }
 
 /* 3. Continuous Vertical Cinema Stream Container */
 .cinema-reels-feed-stream {
+  flex: 1;
+  max-width: 1400px;
   width: 100%;
-  max-width: 680px;
-  height: calc(100vh - 190px);
-  min-height: 560px;
+  height: calc(100vh - 140px);
+  min-height: 580px;
   overflow-y: auto;
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
@@ -154,7 +141,7 @@
   flex-direction: column;
   align-items: center;
   gap: 32px;
-  padding: 10px 0 60px 0;
+  padding: 4px 0 60px 0;
   box-sizing: border-box;
 }
 
@@ -167,7 +154,7 @@
   border-radius: 999px;
 }
 
-/* Individual Reel Card Item */
+/* Individual Reel Card Item - Much wider container */
 .cinema-reel-card-item {
   scroll-snap-align: center;
   scroll-snap-stop: always;
@@ -176,30 +163,30 @@
   justify-content: center;
   gap: 20px;
   width: 100%;
-  height: min(650px, calc(100vh - 220px));
+  height: min(720px, calc(100vh - 160px));
   flex-shrink: 0;
   position: relative;
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .cinema-reel-card-item.inactive-stage {
-  opacity: 0.75;
+  opacity: 0.85;
 }
 
 .cinema-reel-card-item.active-stage {
   opacity: 1;
 }
 
-/* The Cinema 9:16 Video Frame */
+/* The Cinema Wide Adaptive Video Frame */
 .cinema-reel-phone-frame {
   position: relative;
   width: 100%;
-  max-width: 390px;
+  max-width: min(1320px, 100%);
   height: 100%;
-  border-radius: 30px;
+  border-radius: 24px;
   overflow: hidden;
-  background: #05070e;
-  border: 2px solid rgba(255, 255, 255, 0.12);
+  background: #04060d;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.75), 0 0 35px -8px var(--reel-accent, rgba(0, 210, 255, 0.25));
   transition: box-shadow 0.4s ease, border-color 0.4s ease;
   display: flex;
@@ -229,24 +216,46 @@
   cursor: pointer;
   overflow: hidden;
   z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cinema-media-inner {
   position: relative;
   width: 100%;
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+/* Blurred backdrop layer for wide / varying aspect ratios */
+.cinema-backdrop-blur {
+  position: absolute;
+  inset: -20px;
+  width: calc(100% + 40px);
+  height: calc(100% + 40px);
+  object-fit: cover;
+  filter: blur(35px) brightness(0.45);
+  transform: scale(1.12);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Foreground cover image: contained adaptively so it scales to full wide space */
 .cinema-cover-image {
+  position: relative;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  z-index: 1;
   transform: scale(1);
   transition: transform 10s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .cinema-media-inner.is-animating .cinema-cover-image {
-  transform: scale(1.12);
+  transform: scale(1.04);
 }
 
 /* Dark Vignette Overlay */
@@ -264,47 +273,24 @@
   pointer-events: none;
 }
 
-/* Live Telemetry Pill */
+/* Live Telemetry Pill: Views Count Only */
 .cinema-live-telemetry {
   position: absolute;
   top: 18px;
   inset-inline-start: 18px;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 5px 12px;
+  gap: 6px;
+  padding: 6px 14px;
   border-radius: 9999px;
   background: rgba(0, 0, 0, 0.65);
   border: 1px solid rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: #ffffff;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 700;
   z-index: 5;
-}
-
-.telemetry-pulse-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #22c55e;
-  box-shadow: 0 0 8px #22c55e;
-  animation: liveBeaconPulse 1.8s infinite;
-}
-
-@keyframes liveBeaconPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.35; transform: scale(0.85); }
-}
-
-.telemetry-views {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: #94a3b8;
-  font-size: 0.72rem;
-  border-inline-start: 1px solid rgba(255, 255, 255, 0.2);
-  padding-inline-start: 8px;
 }
 
 /* Sound Toggle */
@@ -858,6 +844,54 @@
 /* ==========================================================================
    RESPONSIVE MOBILE OVERHAUL
    ========================================================================== */
+
+@media (max-width: 900px) {
+  .cinema-reels-layout {
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .cinema-reels-sidebar {
+    width: 100%;
+    position: static;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    border-radius: 9999px;
+  }
+
+  .cinema-sidebar-header {
+    display: none;
+  }
+
+  .cinema-sidebar-category-list {
+    flex-direction: row;
+    overflow-x: auto;
+    scrollbar-width: none;
+    flex: 1;
+    gap: 6px;
+  }
+
+  .cinema-sidebar-category-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .cinema-sidebar-category-item {
+    width: auto;
+    white-space: nowrap;
+    padding: 6px 14px;
+    border-radius: 9999px;
+  }
+
+  .cinema-counter-badge {
+    margin-top: 0;
+    flex-shrink: 0;
+    padding: 6px 12px;
+    border-radius: 9999px;
+  }
+}
 
 @media (max-width: 640px) {
   .cinema-reels-experience {

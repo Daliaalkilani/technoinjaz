@@ -6,37 +6,77 @@ import im1Bg from '../../assets/im1.png';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import './ProjectsSection.css';
 
-import ch4_01 from '../../assets/projects/techno-projects/chapter4-01.webp';
-import ch4_02 from '../../assets/projects/techno-projects/chapter4-02.webp';
-import ch4_03 from '../../assets/projects/techno-projects/chapter4-03.webp';
-import ch4_04 from '../../assets/projects/techno-projects/chapter4-04.webp';
-import ch4_05 from '../../assets/projects/techno-projects/chapter4-05.webp';
-import ch4_06 from '../../assets/projects/techno-projects/chapter4-06.webp';
+import proj01 from '../../assets/projects/techno-projects/project-01.png';
+import proj02 from '../../assets/projects/techno-projects/project-02.png';
+import proj03 from '../../assets/projects/techno-projects/project-03.png';
+import proj04 from '../../assets/projects/techno-projects/project-04.png';
+import proj05 from '../../assets/projects/techno-projects/project-05.png';
+import proj06 from '../../assets/projects/techno-projects/project-06.png';
+import proj07 from '../../assets/projects/techno-projects/project-07.png';
+import proj08 from '../../assets/projects/techno-projects/project-08.png';
+import proj09 from '../../assets/projects/techno-projects/project-09.jpg';
+import proj10 from '../../assets/projects/techno-projects/project-10.jpg';
+import proj11 from '../../assets/projects/techno-projects/project-11.jpg';
+import proj12 from '../../assets/projects/techno-projects/project-12.jpg';
+import proj13 from '../../assets/projects/techno-projects/project-13.jpg';
+import proj14 from '../../assets/projects/techno-projects/project-14.jpg';
 
 const getProjectImages = (lang: string): InfiniteSpiralItem[] => [
   {
-    src: ch4_01,
-    alt: lang === 'ar' ? 'مخطط خوارزمية النظام الأمني والتحقق' : 'Security Verification Algorithm Diagram'
+    src: proj01,
+    alt: lang === 'ar' ? 'منظومة الأمان الذكي والتعرف البيومتري' : 'Smart Security & Biometric Recognition System'
   },
   {
-    src: ch4_02,
-    alt: lang === 'ar' ? 'مخطط بنية قاعدة البيانات وسجلات الدخول' : 'Database Architecture & Access Logs Diagram'
+    src: proj02,
+    alt: lang === 'ar' ? 'لوحة التحكم السحابية وإدارة الأجهزة' : 'Cloud Dashboard & Device Management'
   },
   {
-    src: ch4_03,
-    alt: lang === 'ar' ? 'سجل الصور المرجعية للأشخاص المصرح لهم' : 'Authorized Personnel Reference Images'
+    src: proj03,
+    alt: lang === 'ar' ? 'محطة الرصد البيئي والاستشعار الذكي' : 'Environmental Monitoring & Smart Sensing Station'
   },
   {
-    src: ch4_04,
-    alt: lang === 'ar' ? 'التحقق الناجح من وجه مصرح له بالدخول' : 'Successful Biometric Face Clearance'
+    src: proj04,
+    alt: lang === 'ar' ? 'أنظمة الأتمتة والتحكم الصناعي الذكي' : 'Automation & Smart Industrial Control Systems'
   },
   {
-    src: ch4_05,
-    alt: lang === 'ar' ? 'أرشيف توثيق صور محاولات الدخول غير المصرح بها' : 'Unauthorized Access Attempt Archive'
+    src: proj05,
+    alt: lang === 'ar' ? 'وحدة المعالجة الطرفية والذكاء الاصطناعي' : 'Edge Computing & AI Processing Unit'
   },
   {
-    src: ch4_06,
-    alt: lang === 'ar' ? 'كشف محاولة اختراق غير مصرح بها وإطلاق الإنذار' : 'Intrusion Detection & Alarm Alert'
+    src: proj06,
+    alt: lang === 'ar' ? 'شبكة المستشعرات اللاسلكية المتكاملة' : 'Integrated Wireless Sensor Network'
+  },
+  {
+    src: proj07,
+    alt: lang === 'ar' ? 'واجهة التحليلات المتقدمة للبيانات الهندسية' : 'Advanced Engineering Data Analytics Interface'
+  },
+  {
+    src: proj08,
+    alt: lang === 'ar' ? 'نظام المراقبة وتتبع العمليات في الوقت الفعلي' : 'Real-Time Operation Tracking & Surveillance System'
+  },
+  {
+    src: proj09,
+    alt: lang === 'ar' ? 'نموذج أولي لنظام المراقبة والأمان الميداني' : 'Field Security & Monitoring System Prototype'
+  },
+  {
+    src: proj10,
+    alt: lang === 'ar' ? 'التطوير البرمجي والعتادي المتكامل' : 'Integrated Hardware & Software Development'
+  },
+  {
+    src: proj11,
+    alt: lang === 'ar' ? 'منصة فحص واختبار الدوائر الإلكترونية' : 'Electronic Circuit Testing & Verification Platform'
+  },
+  {
+    src: proj12,
+    alt: lang === 'ar' ? 'تكامل منظومات الاستشعار والمتحكمات الدقيقة' : 'Sensors & Microcontrollers Integration'
+  },
+  {
+    src: proj13,
+    alt: lang === 'ar' ? 'معايرة الأجهزة وتتبع الإشارات الرقمية' : 'Hardware Calibration & Digital Signal Tracking'
+  },
+  {
+    src: proj14,
+    alt: lang === 'ar' ? 'الفحص الميداني واختبار الأداء الهندسي' : 'Field Testing & Engineering Performance Verification'
   }
 ];
 

@@ -9,20 +9,19 @@ import {
   Bookmark, 
   BookmarkCheck, 
   Share2, 
-  ExternalLink, 
-  ChevronUp, 
-  ChevronDown, 
   CheckCircle2, 
   X, 
   Send, 
   Layers, 
   Eye, 
-  Check 
+  Check,
+  User
 } from 'lucide-react';
 import { projectReelsData, reelCategories } from '../../data/projectReelsData';
 import type { ProjectReel, ReelComment } from '../../data/projectReelsData';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import { useSavedProjects } from '../../hooks/useSavedProjects';
+import { getLoggedInUser, requireAuth } from '../../utils/authUtils';
 import './ProjectReelsFeed.css';
 
 export const ProjectReelsFeed: React.FC = () => {
@@ -58,7 +57,6 @@ export const ProjectReelsFeed: React.FC = () => {
   // Comments Drawer State
   const [activeCommentReel, setActiveCommentReel] = useState<ProjectReel | null>(null);
   const [commentInput, setCommentInput] = useState<string>('');
-  const [commenterName, setCommenterName] = useState<string>('');
 
   // Center Play/Pause pulse
   const [pulseReelId, setPulseReelId] = useState<string | null>(null);
@@ -211,6 +209,8 @@ export const ProjectReelsFeed: React.FC = () => {
 
   // Toggle Like
   const handleToggleLike = (reelId: string) => {
+    if (!requireAuth()) return;
+
     setLikesState(prev => {
       const current = prev[reelId] || { count: 0, isLiked: false };
       const isLiked = !current.isLiked;
@@ -228,13 +228,17 @@ export const ProjectReelsFeed: React.FC = () => {
   // Add Comment
   const handleAddComment = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!requireAuth()) return;
     if (!commentInput.trim() || !activeCommentReel) return;
+
+    const loggedUser = getLoggedInUser();
+    const authorName = loggedUser?.name || (isEn ? 'Techno User' : 'مستخدم تكنو');
 
     const newComment: ReelComment = {
       id: 'rc-' + Date.now(),
-      author: commenterName.trim() || (isEn ? 'Tech Explorer' : 'مهندس زائر'),
-      authorEn: commenterName.trim() || 'Tech Explorer',
-      avatar: '',
+      author: authorName,
+      authorEn: authorName,
+      avatar: loggedUser?.avatar || '',
       timeAgo: isEn ? 'Just now' : 'الآن',
       timeAgoEn: 'Just now',
       content: commentInput.trim(),
@@ -270,62 +274,43 @@ export const ProjectReelsFeed: React.FC = () => {
 
   return (
     <section className="cinema-reels-experience" dir={isEn ? 'ltr' : 'rtl'}>
-      {/* 1. Category Bar Header */}
-      <div className="cinema-reels-header-bar">
-        <div className="cinema-category-pills">
-          {reelCategories.map(cat => {
-            const count = cat.id === 'all' 
-              ? projectReelsData.length 
-              : projectReelsData.filter(r => r.category.includes(cat.name) || r.categoryEn.toLowerCase().includes(cat.id)).length;
-            const isActive = selectedCategory === cat.id;
+      <div className="cinema-reels-layout">
+        {/* 1. Category Filter Sidebar on the side */}
+        <aside className="cinema-reels-sidebar">
+          <div className="cinema-sidebar-header">
+            <Layers size={16} className="sidebar-header-icon" />
+            <span className="sidebar-header-title">{isEn ? "Categories" : "التصنيفات"}</span>
+          </div>
 
-            return (
-              <button
-                key={cat.id}
-                type="button"
-                className={`cinema-category-pill ${isActive ? 'active' : ''}`}
-                onClick={() => setSelectedCategory(cat.id)}
-              >
-                <span>{isEn ? cat.nameEn : cat.name}</span>
-                <span className="pill-badge">({count})</span>
-              </button>
-            );
-          })}
-        </div>
+          <div className="cinema-sidebar-category-list">
+            {reelCategories.map(cat => {
+              const count = cat.id === 'all' 
+                ? projectReelsData.length 
+                : projectReelsData.filter(r => r.category.includes(cat.name) || r.categoryEn.toLowerCase().includes(cat.id)).length;
+              const isActive = selectedCategory === cat.id;
 
-        <div className="cinema-counter-badge">
-          <Layers size={14} />
-          <span>{activeIndex + 1} / {filteredReels.length}</span>
-        </div>
-      </div>
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  className={`cinema-sidebar-category-item ${isActive ? 'active' : ''}`}
+                  onClick={() => setSelectedCategory(cat.id)}
+                >
+                  <span className="category-item-name">{isEn ? cat.nameEn : cat.name}</span>
+                  <span className="category-item-badge">{count}</span>
+                </button>
+              );
+            })}
+          </div>
 
-      {/* 2. Floating Stream Navigator Quick Jumper Buttons (Desktop / Tablet) */}
-      <div className="cinema-floating-controls">
-        <button
-          type="button"
-          className="cinema-nav-jump-btn"
-          onClick={scrollToPrev}
-          disabled={activeIndex <= 0}
-          title={isEn ? "Previous Reel (Up Arrow)" : "الريل السابق (السهم لأعلى)"}
-          aria-label="Previous Reel"
-        >
-          <ChevronUp size={22} />
-        </button>
+          <div className="cinema-counter-badge">
+            <Layers size={14} />
+            <span>{activeIndex + 1} / {filteredReels.length}</span>
+          </div>
+        </aside>
 
-        <button
-          type="button"
-          className="cinema-nav-jump-btn"
-          onClick={scrollToNext}
-          disabled={activeIndex >= filteredReels.length - 1}
-          title={isEn ? "Next Reel (Down Arrow)" : "الريل التالي (السهم لأسفل)"}
-          aria-label="Next Reel"
-        >
-          <ChevronDown size={22} />
-        </button>
-      </div>
-
-      {/* 3. Continuous Vertical Cinema Stream (Sequence of Reels one after another!) */}
-      <div className="cinema-reels-feed-stream" ref={feedContainerRef}>
+        {/* 2. Continuous Vertical Cinema Stream */}
+        <div className="cinema-reels-feed-stream" ref={feedContainerRef}>
         {filteredReels.map((reel, index) => {
           const isActive = activeReelId === reel.id;
           const isSavedItem = isSaved(reel.id);
@@ -364,6 +349,13 @@ export const ProjectReelsFeed: React.FC = () => {
                 >
                   {/* Media Layer */}
                   <div className={`cinema-media-inner ${isActive && isPlaying ? 'is-animating' : 'is-paused'}`}>
+                    {/* Blurred backdrop image for wide/different aspect ratios */}
+                    <img 
+                      src={reel.coverImage} 
+                      alt="" 
+                      className="cinema-backdrop-blur" 
+                      aria-hidden="true" 
+                    />
                     <img 
                       src={reel.coverImage} 
                       alt={reelTitle}
@@ -373,14 +365,10 @@ export const ProjectReelsFeed: React.FC = () => {
                     {/* Vignette Overlay */}
                     <div className="cinema-video-vignette" />
 
-                    {/* Live Telemetry Pill */}
+                    {/* Live Telemetry Pill: Only Views Count */}
                     <div className="cinema-live-telemetry">
-                      <div className="telemetry-pulse-dot" />
-                      <span>{isEn ? 'LIVE WALKTHROUGH' : 'استعراض حي للمشروع'}</span>
-                      <span className="telemetry-views">
-                        <Eye size={12} />
-                        <span>{reel.initialViews}</span>
-                      </span>
+                      <Eye size={13} />
+                      <span>{reel.initialViews}</span>
                     </div>
 
                     {/* Sound Mute / Unmute Toggle */}
@@ -544,23 +532,11 @@ export const ProjectReelsFeed: React.FC = () => {
                   <span className="action-label-count">{copiedId === reel.id ? (isEn ? "Copied" : "تم") : (isEn ? "Share" : "مشاركة")}</span>
                 </button>
 
-                {/* Live Demo Project Launch Button */}
-                <a
-                  href={reel.liveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="cinema-action-btn live-launch-action"
-                  title={isEn ? "Launch Live Project" : "تجربة المشروع الحي"}
-                >
-                  <div className="action-circle-icon live-launch-glow">
-                    <ExternalLink size={20} />
-                  </div>
-                  <span className="action-label-count live-tag">{isEn ? "Demo" : "تجربة"}</span>
-                </a>
               </div>
             </article>
           );
         })}
+        </div>
       </div>
 
       {/* 5. Comments Slide-up Drawer */}
@@ -607,19 +583,72 @@ export const ProjectReelsFeed: React.FC = () => {
 
             {/* Add Comment Bar */}
             <form className="comments-input-bar" onSubmit={handleAddComment}>
-              <input 
-                type="text"
-                placeholder={isEn ? "Your name (optional)" : "اسمك (اختياري)"}
-                value={commenterName}
-                onChange={(e) => setCommenterName(e.target.value)}
-                className="commenter-name-input"
-              />
+              {(() => {
+                const logged = getLoggedInUser();
+                return logged ? (
+                  <div
+                    className="reel-commenter-badge"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '4px 10px',
+                      marginBottom: '8px',
+                      borderRadius: '16px',
+                      background: 'rgba(14, 165, 233, 0.12)',
+                      border: '1px solid rgba(56, 189, 248, 0.25)',
+                      color: 'var(--accent-cyan, #38bdf8)',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      width: 'fit-content'
+                    }}
+                  >
+                    {logged.avatar ? (
+                      <img
+                        src={logged.avatar}
+                        alt=""
+                        style={{ width: '16px', height: '16px', borderRadius: '50%', objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <User size={13} />
+                    )}
+                    <span>{logged.name}</span>
+                  </div>
+                ) : (
+                  <div
+                    className="reel-commenter-prompt"
+                    onClick={() => requireAuth()}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '4px 10px',
+                      marginBottom: '8px',
+                      borderRadius: '16px',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px dashed rgba(255, 255, 255, 0.2)',
+                      color: '#94a3b8',
+                      fontSize: '0.8rem',
+                      cursor: 'pointer',
+                      width: 'fit-content'
+                    }}
+                  >
+                    <User size={13} />
+                    <span>{isEn ? 'Sign in to comment as yourself' : 'سجل الدخول للتعليق باسمك'}</span>
+                  </div>
+                );
+              })()}
               <div className="comment-input-row">
                 <input 
                   type="text"
-                  placeholder={isEn ? "Add your engineering feedback..." : "أضف رأيك أو استفسارك الهندسي..."}
+                  placeholder={getLoggedInUser() 
+                    ? (isEn ? "Add your engineering feedback..." : "أضف رأيك أو استفسارك الهندسي...")
+                    : (isEn ? "Please sign in to write a comment..." : "يرجى تسجيل الدخول للتعليق...")}
                   value={commentInput}
                   onChange={(e) => setCommentInput(e.target.value)}
+                  onFocus={() => {
+                    if (!getLoggedInUser()) requireAuth();
+                  }}
                   className="comment-text-input"
                   required
                 />

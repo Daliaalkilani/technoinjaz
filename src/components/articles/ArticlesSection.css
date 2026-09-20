@@ -2,7 +2,7 @@
 .articles-section {
   position: relative;
   width: 100%;
-  padding: 6rem 1.5rem 8rem;
+  padding: 6rem 1rem 8rem;
   background-color: var(--bg-dark);
   color: var(--text-pure);
   font-family: var(--font-arabic);
@@ -19,7 +19,7 @@
 }
 
 .articles-container {
-  max-width: 1280px;
+  max-width: 1680px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;

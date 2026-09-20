@@ -360,6 +360,12 @@
   color: #e1306c;
 }
 
+.info-icon-box.blue {
+  background: rgba(24, 119, 242, 0.14);
+  border-color: rgba(24, 119, 242, 0.38);
+  color: #1877f2;
+}
+
 .info-icon-box.violet {
   background: rgba(139, 92, 246, 0.14);
   border-color: rgba(139, 92, 246, 0.35);
@@ -413,6 +419,12 @@
   background: rgba(225, 48, 108, 0.15);
   color: #f472b6;
   border: 1px solid rgba(225, 48, 108, 0.3);
+}
+
+.info-badge-action.facebook {
+  background: rgba(24, 119, 242, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(24, 119, 242, 0.35);
 }
 
 /* بطاقة خريطة Google */
@@ -610,6 +622,18 @@
 [data-theme="light"] .info-icon-box {
   background: rgba(0, 0, 0, 0.03);
   border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .info-icon-box.blue {
+  background: rgba(24, 119, 242, 0.08);
+  border-color: rgba(24, 119, 242, 0.22);
+  color: #1877f2;
+}
+
+[data-theme="light"] .info-badge-action.facebook {
+  background: rgba(24, 119, 242, 0.08);
+  color: #1877f2;
+  border-color: rgba(24, 119, 242, 0.25);
 }
 
 [data-theme="light"] .info-title {

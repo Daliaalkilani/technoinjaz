@@ -59,3 +59,34 @@ The Techno Enjaz web portal is engineered using:
 - **Styling Architecture**: Custom CSS Variables, Fluid Typography (`clamp()`), Glassmorphic backdrops, Bi-directional RTL & LTR engine.
 - **Motion & 3D**: Three.js, CSS 3D transforms, Canvas visualizers, InfiniteMenu wheel navigation.
 - **State & Storage**: Persistent Theme & Language states via localStorage, reactive custom hooks (`useSavedProjects`, `useThemeLanguage`).
+
+---
+
+## 5. Authoritative Engineering Articles & Research Papers
+Techno Enjaz publishes comprehensive, peer-reviewed engineering analyses covering advanced paradigms:
+
+### 5.1 Digital Twin: Definition, Architecture, and Enterprise Applications
+- **Canonical URL**: `https://techno-enjaz.com/articles/digital-twin`
+- **Keywords & Entities**: Digital Twin, Digital Twin Consortium, NIST, ISO 23247-6:2026, VVUQ, Azure Digital Twins, DTDL, Siemens Insights Hub, IIoT, BIM.
+- **Summary**: Comprehensive engineering guide detailing synchronization frequency, physical-to-virtual fidelity, verification/validation (VVUQ), building energy simulation (EnergyPlus case study), and flexible manufacturing systems (FMS).
+
+### 5.2 Affective Computing: How AI Analyzes Human Emotional Expressions
+- **Canonical URL**: `https://techno-enjaz.com/articles/affective-computing`
+- **Keywords & Entities**: Affective Computing, Rosalind Picard, Emotion Recognition, Expression Measurement, FACS, Multimodal AI, Voice AI, EU AI Act 2026.
+- **Summary**: Rigorous technical exploration of affective signal analysis across computer vision, acoustic prosody, text, and physiological telemetry; establishing scientific boundaries between observable expression measurement and internal subjective affective states.
+
+### 5.3 Facial Expression Analysis for Emotion-Aware Recommendation Systems
+- **Canonical URL**: `https://techno-enjaz.com/articles/emotion-aware-recommendation`
+- **Keywords & Entities**: Recommender Systems, Computer Vision, Facial Landmarks, CNN, AffectNet, RAF-DB, On-Device Inference, Privacy By Design, EU AI Act.
+- **Summary**: Practical architectural blueprint on integrating camera-derived facial expression probabilities as contextual non-deterministic signals in recommender engines, accompanied by strict ethical, legal, and privacy guardrails.
+
+### 5.4 Model Context Protocol (MCP): Standardizing AI Tool & Data Integration
+- **Canonical URL**: `https://techno-enjaz.com/articles/model-context-protocol-mcp`
+- **Keywords & Entities**: Model Context Protocol, MCP, Anthropic, Agentic AI Foundation, Linux Foundation, Streamable HTTP, stdio, OAuth, Prompt Injection, Least Privilege.
+- **Summary**: Production implementation guide to the open MCP specification, covering host-client-server topology, standardized tools/resources/prompts, modern 2026 Streamable HTTP transport, and zero-trust security postures.
+
+### 5.5 Next Token Prediction: From N-grams to Transformers and Arabic LLMs
+- **Canonical URL**: `https://techno-enjaz.com/articles/next-token-prediction`
+- **Keywords & Entities**: Next Token Prediction, N-gram, RNN, LSTM, Causal Transformers, Self-Attention, Decoding Strategies, Arabic Morphology, Jais, ALLaM.
+- **Summary**: End-to-end mathematical and algorithmic examination of autoregressive sequence generation, from statistical n-grams and recurrence to causal self-attention, temperature sampling, top-p, and nonconcatenative Arabic morphological tokenization.
+

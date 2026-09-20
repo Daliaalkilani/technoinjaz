@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://techno-enjaz.com/sitemap.xml

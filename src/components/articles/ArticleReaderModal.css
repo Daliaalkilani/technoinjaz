@@ -22,7 +22,7 @@
 .article-modal-container {
   position: relative;
   width: 100%;
-  max-width: 820px;
+  max-width: 1240px;
   max-height: 90vh;
   background: #090d16;
   border: 1px solid rgba(56, 189, 248, 0.22);

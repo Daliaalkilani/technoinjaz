@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { getLoggedInUser, requireAuth } from '../utils/authUtils';
 
 export interface SavedProject {
   id: string;
@@ -19,13 +20,38 @@ export interface SavedProject {
   savedAt: number;
 }
 
-const STORAGE_KEY = 'techno_saved_projects';
+const LEGACY_STORAGE_KEY = 'techno_saved_projects';
 const EVENT_NAME = 'techno_saved_projects_updated';
+
+function getStorageKey(): string | null {
+  const user = getLoggedInUser();
+  if (!user) return null;
+  const userKey = (user.email || user.name || 'user')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '_');
+  return `techno_saved_projects_${userKey}`;
+}
 
 function getStoredProjects(): SavedProject[] {
   if (typeof window === 'undefined') return [];
+  const user = getLoggedInUser();
+  // Unauthenticated guests have no permission and zero saved items
+  if (!user) return [];
+
+  const key = getStorageKey();
+  if (!key) return [];
+
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    let raw = localStorage.getItem(key);
+    // Auto-migrate from legacy key if user-specific key is empty
+    if (!raw) {
+      const legacyRaw = localStorage.getItem(LEGACY_STORAGE_KEY);
+      if (legacyRaw) {
+        raw = legacyRaw;
+        localStorage.setItem(key, legacyRaw);
+      }
+    }
+
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
@@ -44,21 +70,33 @@ export function useSavedProjects() {
 
   useEffect(() => {
     window.addEventListener(EVENT_NAME, sync);
+    window.addEventListener('techno_auth_updated', sync);
     window.addEventListener('storage', sync);
     return () => {
       window.removeEventListener(EVENT_NAME, sync);
+      window.removeEventListener('techno_auth_updated', sync);
       window.removeEventListener('storage', sync);
     };
   }, [sync]);
 
   const isSaved = useCallback(
     (id: string) => {
+      const user = getLoggedInUser();
+      if (!user) return false;
       return savedProjects.some((p) => p.id === id);
     },
     [savedProjects]
   );
 
   const toggleSave = useCallback((project: Omit<SavedProject, 'savedAt'>) => {
+    // If not authenticated, open login and abort saving
+    if (!requireAuth()) {
+      return false;
+    }
+
+    const key = getStorageKey();
+    if (!key) return false;
+
     const current = getStoredProjects();
     const exists = current.some((p) => p.id === project.id);
     let updated: SavedProject[];
@@ -74,7 +112,7 @@ export function useSavedProjects() {
     }
 
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      localStorage.setItem(key, JSON.stringify(updated));
       setSavedProjects(updated);
       window.dispatchEvent(new CustomEvent(EVENT_NAME));
     } catch (e) {
@@ -85,10 +123,16 @@ export function useSavedProjects() {
   }, []);
 
   const removeSaved = useCallback((id: string) => {
+    const user = getLoggedInUser();
+    if (!user) return;
+
+    const key = getStorageKey();
+    if (!key) return;
+
     const current = getStoredProjects();
     const updated = current.filter((p) => p.id !== id);
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      localStorage.setItem(key, JSON.stringify(updated));
       setSavedProjects(updated);
       window.dispatchEvent(new CustomEvent(EVENT_NAME));
     } catch (e) {
@@ -97,8 +141,14 @@ export function useSavedProjects() {
   }, []);
 
   const clearAll = useCallback(() => {
+    const user = getLoggedInUser();
+    if (!user) return;
+
+    const key = getStorageKey();
+    if (!key) return;
+
     try {
-      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(key);
       setSavedProjects([]);
       window.dispatchEvent(new CustomEvent(EVENT_NAME));
     } catch (e) {

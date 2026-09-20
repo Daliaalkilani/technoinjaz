@@ -284,7 +284,7 @@ export const projectReelsData: ProjectReel[] = [
 ];
 
 export const reelCategories = [
-  { id: 'all', name: 'كافة الريلز', nameEn: 'All Reels' },
+  { id: 'all', name: 'كافة الفيديوهات', nameEn: 'All Videos' },
   { id: 'cloud', name: 'أنظمة سحابية', nameEn: 'Cloud Systems' },
   { id: 'iot', name: 'إنترنت الأشياء', nameEn: 'IoT & Hardware' },
   { id: 'identity', name: 'هويات رقمية', nameEn: 'Digital Identities' },

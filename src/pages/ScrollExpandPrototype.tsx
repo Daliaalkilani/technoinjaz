@@ -3,7 +3,7 @@ import ScrollExpand from '../components/ui/ScrollExpand';
 import ProjectsSection from '../components/projects/ProjectsSection';
 import VideosSection from '../components/videos/VideosSection';
 import ArticlesSection from '../components/articles/ArticlesSection';
-import cinematicEngineeringImg from '../assets/cinematic-engineering.jpg';
+import im3Img from '../assets/im3.png';
 import im2Img from '../assets/im2.png';
 import technoEnjazLogo from '../assets/Asset-1@4x.png';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
@@ -78,7 +78,7 @@ const ScrollExpandPrototype: React.FC<ScrollExpandPrototypeProps> = ({
     <div id="top" className="prototype-root">
       <ScrollExpand
         key={`scroll-expand-${config.startWidth}`}
-        src={theme === 'light' ? im2Img : cinematicEngineeringImg}
+        src={theme === 'light' ? im2Img : im3Img}
         mediaType="image"
         alt={lang === 'ar' ? "محطة العمل الهندسية" : "Engineering Workstation"}
         startWidth={config.startWidth}

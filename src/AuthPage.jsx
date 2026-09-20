@@ -17,7 +17,10 @@ export default function AuthPage({ initialMode = 'login', onBack, onSuccess }) {
         status: isEn ? 'Verified Account' : 'حساب موثق'
       };
       if (typeof window !== 'undefined') {
+        localStorage.removeItem('techno_logged_out');
         localStorage.setItem('techno_user', JSON.stringify(user));
+        window.dispatchEvent(new CustomEvent('techno_auth_updated', { detail: user }));
+        window.dispatchEvent(new CustomEvent('storage'));
       }
       if (onSuccess) {
         onSuccess(user);
