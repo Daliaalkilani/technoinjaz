@@ -159,12 +159,15 @@ R8  Performance budgets per device
 R10 Senior additions (Arabic typography, logical props, dynamic header, glass perf, container queries,
     short heights, text zoom, overscroll, motion control, art direction, fonts, content-visibility,
     forced-colors, print, foldables, regression guards, field data)   ← before R9
+R11 Android devices (Samsung / Xiaomi / Redmi / Poco): width & font-scale sweep, Samsung Internet & Mi Browser,
+    in-app browsers, forced dark mode, edge-to-edge, 120Hz, low-end GPU & WebGL context loss,
+    battery killers, slow networks, real-device QA   ← after R10
 R9  Validation matrix (automated + real devices)
 ```
 
 **ترتيب التنفيذ مع خطة الترحيل:**
 - R2 و R3 تُنفذان **ضمن P8 في خطة الترحيل** (الصور والأصول لا تغير الشكل، فهي آمنة قبل P11).
-- R0 و R1 و R4 إلى R10 تُنفذ **بعد P11 في خطة الترحيل**. ترتيب التنفيذ: R0، R1، R4، R5، R6، R10، R7، R8، R9. يأتي R10 بعد R6 لأن R10.4 و R10.9 يعتمدان على `data-tier` الذي يعرّفه R6.
+- R0 و R1 و R4 إلى R10 تُنفذ **بعد P11 في خطة الترحيل**. ترتيب التنفيذ: R0، R1، R4، R5، R6، R10، R11، R7، R8، R9. يأتي R10 بعد R6 لأن R10.4 و R10.9 يعتمدان على `data-tier` الذي يعرّفه R6.
 
 > القواعد العامة كما في خطة الترحيل:
 > - commit لكل مرحلة.
@@ -695,6 +698,7 @@ R9  Validation matrix (automated + real devices)
 **Definition of Done:**
 1. كل فحوص R9 الآلية خضراء على Chromium و WebKit.
 2. ‏C1 إلى C5 و M1 إلى M7 محلولة (كل واحدة مرتبطة بفحص).
+   وبنود R11 منفذة: الـsweep من 280 إلى 1600، و font-scale 200%، و WebGL context loss، و `docs/device-qa.md` لأجهزة Android الحقيقية.
    وبنود R10 كلها منفذة. الفحوص الإضافية: letter-spacing = 0 على العربية، و TOC غير مغطى تحت الـheader، ونص 200% بلا قص، و Stylelint و `check-assets` خضراء، و fold-280 بلا overflow.
 3. الـdesktop مطابق بصرياً لما قبل الخطة.
 4. قائمة الأجهزة الحقيقية موثقة بلا مشاكل مفتوحة.
@@ -817,7 +821,7 @@ R9  Validation matrix (automated + real devices)
 ```css
 .mobile-drawer, .video-modal, .mobile-toc-dropdown, .article-toc-card-scroll { overscroll-behavior: contain; }
 .reels-feed-container /* actual scroller class */ { overscroll-behavior-y: contain; }
-body:has(.mobile-drawer[data-open="true"]), body:has(.video-modal) { overflow: hidden; }
+body.scroll-locked { overflow: hidden; }   /* class toggled by JS when drawer/modal open — no :has() (see R11.4) */
 ```
 و `-webkit-tap-highlight-color: transparent` على العناصر التفاعلية المخصصة، **مع** وجود حالة `:active` واضحة (R6) لتعويض الـfeedback.
 
@@ -930,6 +934,233 @@ body:has(.mobile-drawer[data-open="true"]), body:has(.video-modal) { overflow: h
 1. تفعيل **Cloudflare Web Analytics** (مجاني، بدون cookies، والموقع على Cloudflare أصلاً). يعطي Core Web Vitals (LCP و INP و CLS) من الزوار الحقيقيين مقسّمة حسب الجهاز والدولة والصفحة. التفعيل من Dashboard (Web Analytics ثم Automatic setup للدومين)، بدون كود.
 2. **بعد أسبوعين من الإطلاق:** راجع الـp75 لكل من mobile و tablet و desktop. إذا كان LCP mobile p75 > 2.5s أو INP > 200ms: وثّق أسوأ 3 صفحات في `docs/field-vitals.md` كمدخل لتحسين لاحق.
 3. **الخصوصية:** لا يُضاف أي analytics آخر بـcookies دون قرار المالك.
+
+---
+
+### R11 — أجهزة Android (Samsung و Xiaomi/Redmi/Poco وغيرها)
+
+> **لماذا مرحلة مستقلة:** معظم زوار المنطقة على Android. أجهزة Samsung و Xiaomi تختلف عن iPhone وعن Chrome المكتبي في:
+> - مقاسات الشاشة وإعدادات "حجم العرض".
+> - المتصفحات: Samsung Internet، و Mi Browser، و متصفحات التطبيقات (in-app).
+> - الوضع الداكن المفروض.
+> - شريط الإيماءات، وشاشات 90 إلى 144Hz، و GPU أضعف في الفئات الاقتصادية.
+>
+> **الترتيب:** بعد R10 وقبل R7.
+
+#### R11.1 — لماذا لا تكفي قائمة أجهزة ثابتة
+
+عرض الـviewport على Android **ليس ثابتاً لنفس الهاتف**. يتغير مع:
+- إعداد **Screen zoom / Display size** في One UI (Samsung) و HyperOS/MIUI (Xiaomi). نفس Galaxy S24 Ultra يعطي تقريباً من 320 إلى 450 CSS px حسب الإعداد.
+- **دقة الشاشة المختارة** (HD+ و FHD+ و QHD+ في Samsung)، وهذا يغير DPR.
+- **الشاشات القابلة للطي** (مغلقة ومفتوحة) و **Pop-up view** و **Split screen**.
+
+**القرار:** اختبار **مسح مستمر للعرض (width sweep)** يغطي كل الاحتمالات، **إضافة إلى** قائمة أجهزة للقطات.
+
+#### R11.2 — مصفوفة Android (تُضاف إلى `tests/responsive/devices.ts`)
+
+> القيم أدناه تقريبية للإعداد الافتراضي، ولأغراض اللقطات فقط. الضمان الحقيقي هو الـsweep في R11.3.
+
+| الاسم | يمثّل | viewport (CSS px) | DPR |
+|---|---|---|---|
+| redmi-low | Redmi A و Redmi 12C و 13C، و Galaxy A0x (720p، وهي الأكثر انتشاراً اقتصادياً) | 360×800 | 2 |
+| redmi-note | Redmi Note 12 و 13 و Poco X5 و X6 (1080×2400) | 393×873 | 2.75 |
+| xiaomi-flagship | Xiaomi 13 و 14 | 393×873 | 3 |
+| galaxy-s | Galaxy S23 و S24 (FHD+) | 360×780 | 3 |
+| galaxy-ultra | Galaxy S23 Ultra و S24 Ultra (FHD+ الافتراضي) | 384×832 | 2.8125 |
+| galaxy-ultra-zoomed | نفس الجهاز مع Screen zoom مرتفع | 320×693 | 3.375 |
+| galaxy-a | Galaxy A15 و A25 و A35 و A55 | 412×915 | 2.625 |
+| galaxy-fold-cover | Z Fold 5 و 6 (الشاشة الخارجية) | 344×882 | 2.625 |
+| galaxy-fold-open | Z Fold 5 و 6 (مفتوح) | 690×829 | 2.625 |
+| galaxy-flip | Z Flip 5 و 6 | 412×1004 | 2.625 |
+| galaxy-tab | Galaxy Tab S9 و Tab A9+، و Xiaomi Pad 6 (عمودي) | 800×1280 | 2 |
+| galaxy-tab-landscape | نفسها أفقياً | 1280×800 | 2 |
+| galaxy-tab-ultra-landscape | Tab S9 Ultra أفقياً (عرض desktop مع لمس) | 1480×924 | 2 |
+
+- **ملاحظة مهمة للـTab Ultra الأفقي:** العرض 1480 يعطي layout الـdesktop، لكنه جهاز لمس. قواعد `(hover: hover)` من R6 تحميه، و `data-tier` يُحدد بالقدرة وليس العرض.
+- **مع S-Pen أو ماوس:** يصبح `(pointer: fine)` صحيحاً، فتعمل الـhover effects (سلوك صحيح).
+
+#### R11.3 — Width sweep و Font-scale sweep (آلي)
+
+`tests/responsive/sweep.spec.ts`:
+1. **لكل عرض من 280 إلى 1600 بخطوة 8px** (166 عرضاً)، على ارتفاعَي 700 و 900، وعلى الصفحات `/` و `/articles/digital-twin` و `/projects` و `/projects/virtual-board-hand-tracking` و `/videos` و `/faq` و `/contact`:
+   - لا overflow أفقي (مع تعطيل `overflow-x: clip`).
+   - الـheader: كل عناصره داخل الشاشة، ولا تداخل بين الشعار والأزرار (فحص تقاطع `getBoundingClientRect`).
+   - لا نص مقصوص في الـnav والأزرار (`scrollWidth > clientWidth` على عناصر `overflow:hidden` و `white-space:nowrap` = 0، عدا المقصود بـellipsis والموسوم `data-ellipsis`).
+   - **الأداء:** صفحة واحدة، يُغيَّر `setViewportSize` فقط مع انتظار 150ms، بدون إعادة تحميل.
+2. **Font scale:** على `galaxy-a` و `redmi-low`، مع `html{font-size:130%}` ثم 150% ثم 200% (يحاكي "Font size" في إعدادات Android و "Text scaling" في Samsung Internet): لا overflow، ولا نص مقصوص، والأزرار تتمدد ولا تقص.
+3. **الإبلاغ:** أي فشل يُسجل العرض بالضبط + لقطة في `docs/sweep-failures/`.
+
+#### R11.4 — المتصفحات: Samsung Internet و Mi Browser و In-App Browsers
+
+**الواقع:**
+- **Samsung Internet** مثبت افتراضياً على كل Samsung، و **Mi/HyperOS Browser** على Xiaomi. كلاهما مبني على Chromium لكن **بنسخ أقدم** من Chrome الحالي أحياناً، مع ميزات خاصة (الوضع الداكن المفروض، ومانع الإعلانات، وتكبير النص).
+- الزوار القادمون من **Instagram و WhatsApp و Facebook و Telegram** (الموقع يعتمد على Instagram) يفتحون الروابط داخل **WebView** التطبيق: Android System WebView أو iOS WKWebView. لها شريط علوي خاص، و `100vh` مختلف، و `window.open` محدود.
+
+**مصفوفة الدعم الرسمية** (تُضاف إلى `package.json` لأدوات البناء والـlinting):
+```json
+"browserslist": ["chrome >= 100", "and_chr >= 100", "samsung >= 18", "ios_saf >= 15.4", "safari >= 15.4", "firefox >= 110", "edge >= 100"]
+```
+
+**قاعدة إلزامية:** أي ميزة CSS أو JS أحدث من Chromium 100 يجب أن يكون لها fallback لا يكسر الشكل:
+
+| الميزة | أول Chromium | الـfallback المطلوب |
+|---|---|---|
+| `dvh` و `svh` | 108 | `100vh` قبلها (موجود في R1) |
+| `:has()` | 105 | **ممنوع** للمنطق الوظيفي. استبدل `body:has(.mobile-drawer[data-open])` في R10.8 بـclass على `body` تضيفه JS (`document.body.classList.toggle('scroll-locked', open)`). راجع الاستخدام الوحيد الحالي لـ`:has(` في `src` |
+| Container queries | 105 | الشكل الافتراضي للبطاقة (مقبول، من R10.5) |
+| `inert` | 102 | الـfocus trap في JS يغطي |
+| `text-wrap: balance` | 114 | تجميلي، بدون fallback |
+| `color-mix()` | 111 | لا تستخدمه، أو ضع قيمة ثابتة قبله |
+| AVIF | 85 | `<picture>` مع WebP (R3) |
+| `overflow: clip` | 90 | مدعوم |
+
+**Validation:**
+- Playwright لا يشغّل Samsung Internet. الاختبار الحقيقي في R11.10.
+- آلياً: فحص الكود بـ`eslint-plugin-compat` (JS) و `stylelint-no-unsupported-browser-features` (CSS) مع الـbrowserslist أعلاه، بمستوى error للميزات بدون fallback.
+
+#### R11.5 — الوضع الداكن المفروض (Samsung Internet و Mi Browser و Chrome Auto Dark)
+
+**الدليل:** لا يوجد `<meta name="color-scheme">` ولا `color-scheme` في CSS. عندما يفعّل المستخدم "Dark mode for websites" في Samsung Internet أو Mi Browser، أو "Auto-darken web contents" في Chrome، قد يعكس المتصفح ألوان الموقع **آلياً**:
+- الألوان الفاتحة تنقلب.
+- الصور تتعتم.
+- التدرجات والـglass تُشوّه.
+
+الموقع يملك وضعاً داكناً حقيقياً، فالحل أن **نعلن ذلك**.
+
+**Actions:**
+1. في `layout.tsx` (أو `metadata.other`): `<meta name="color-scheme" content="dark light" />`. الترتيب dark أولاً يطابق الافتراضي للموقع.
+2. في CSS: `:root, [data-theme='dark'] { color-scheme: dark; } [data-theme='light'] { color-scheme: light; }`. هذا يجعل scrollbars وحقول الإدخال و date pickers تتبع الـtheme أيضاً.
+3. **السكربت inline** (الـtheme boot) يحترم `prefers-color-scheme` أصلاً. Samsung Internet مع "Dark mode" يبلّغ `prefers-color-scheme: dark`، فيطبّق الموقع وضعه الداكن الحقيقي بدل العكس الآلي.
+
+**Validation (أجهزة حقيقية R11.10):** Samsung Internet مع Dark mode مفعّل، و Mi Browser مع الوضع الليلي، و Chrome Android مع flag `#enable-force-dark`: الموقع يظهر بوضعه الداكن الأصلي، **لا صور معكوسة ولا ألوان مقلوبة**.
+
+#### R11.6 — شريط التنقل السفلي و Edge-to-edge و Punch-hole
+
+- **Android 15 وما بعده مع Chrome الحديث** يعرض الصفحات edge-to-edge. مع `viewport-fit=cover` (R1)، يصبح `env(safe-area-inset-bottom)` غير صفري فوق شريط الإيماءات، ويختلف بين **Gesture navigation** و **3-button navigation** (Samsung و Xiaomi يدعمان الاثنين).
+- كل عنصر مثبت في الأسفل يستخدم `var(--safe-bottom)`: أزرار Reels، وأسفل الـdrawer، وأزرار الـmodal، و CardSwap controls إن كانت ثابتة.
+- **Punch-hole** (كاميرا مثقوبة) في الوضع الأفقي: `--safe-left` و `--safe-right` على الحاويات العليا (R1).
+- **Validation:** R11.10، مع لقطات بوضعي التنقل على Samsung و Xiaomi.
+
+#### R11.7 — شاشات 90 و 120 و 144Hz
+
+**الدليل (تحققت منه):** حلقات الحركة كلها **مبنية على الزمن وليس عدد الإطارات**:
+- `Orb.jsx`: `t * 0.001`.
+- `InfiniteMenu.jsx`: `timeScale = deltaTime / targetFrameDuration`.
+- `TeamMomentsRing.jsx`: `(now - t0)`.
+- `InfiniteSpiral.tsx`: `delta`.
+
+فالسرعة صحيحة على 120Hz. **لكن** الـGPU يرسم ضعف الإطارات، فيزيد الحرارة والبطارية على Redmi و Galaxy A.
+
+**Actions:**
+1. **قاعدة للكود الجديد:** أي حلقة `requestAnimationFrame` يجب أن تستخدم `delta time`. ممنوع `x += constant` لكل frame. يُذكر في `docs/assets-guide.md` قسم للمطورين، ويُفحص في المراجعة.
+2. **Frame cap حسب الـtier:** helper مشترك `src/lib/raf.ts`:
+   ```ts
+   export function loop(cb: (t: number, dt: number) => void, maxFps: number) {
+     let last = 0, id = 0; const min = 1000 / maxFps;
+     const f = (t: number) => { id = requestAnimationFrame(f); if (t - last < min - 1) return; const dt = last ? t - last : 16.7; last = t; cb(t, dt); };
+     id = requestAnimationFrame(f); return () => cancelAnimationFrame(id);
+   }
+   ```
+   `maxFps`: ‏full = 120، و lite = 60، و minimal = لا حلقة. طبّقه على Orb و InfiniteMenu و TeamMomentsRing و InfiniteSpiral **بدون تغيير منطق الرسم**.
+
+#### R11.8 — GPU الفئات الاقتصادية (Mali و PowerVR) وفقدان سياق WebGL
+
+**الدليل:**
+- `InfiniteMenu` يحتاج **WebGL2**، و `Orb` يستخدم `precision highp float` في الـfragment shader.
+- **لا يوجد أي معالج لـ`webglcontextlost`** في الكود.
+
+على Android، يفقد المتصفح سياق WebGL عند ضغط الذاكرة أو الرجوع من تطبيق آخر، فيبقى الـcanvas **أسود** حتى إعادة التحميل. هذا شائع على Redmi و Galaxy A بذاكرة 3 إلى 4GB.
+
+**Actions:**
+1. **كشف القدرة قبل التحميل** (يُضاف إلى `getTier()` في R6):
+   ```ts
+   const c = document.createElement('canvas');
+   const gl2 = c.getContext('webgl2');
+   const gl = gl2 || c.getContext('webgl');
+   const highp = !!gl && gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT)!.precision > 0;
+   const maxTex = gl ? gl.getParameter(gl.MAX_TEXTURE_SIZE) : 0;
+   // no webgl2 → InfiniteMenu uses static fallback (same as tier minimal)
+   // no highp → Orb uses CSS gradient fallback
+   // maxTex < 4096 → tier at most 'lite'
+   (gl as any)?.getExtension('WEBGL_lose_context')?.loseContext();   // free the probe context
+   ```
+2. **Context loss** في Orb و InfiniteMenu:
+   ```ts
+   canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); stopLoop(); setFallback(true); });
+   canvas.addEventListener('webglcontextrestored', () => { reinit(); setFallback(false); });
+   ```
+   الـfallback هو نفس بديل tier `minimal` (شبكة الفريق أو gradient). **لا canvas أسود أبداً.**
+3. **Texture atlas في InfiniteMenu:** على `lite`، حجم أقصى 1024px لكل صورة عضو في الـatlas، وصور الأعضاء من نسخ `.480.webp` (R3) بدل الأصل.
+
+**Validation:**
+- Playwright: `page.evaluate(() => canvas.getContext('webgl2').getExtension('WEBGL_lose_context').loseContext())` ثم تحقق ظهور الـfallback، ثم `restoreContext()` ثم عودة المؤثر.
+- ‏Emulation بدون WebGL2: `--disable-webgl2` في launch args للـChromium، والـfallback يظهر.
+
+#### R11.9 — إدارة البطارية العدوانية (Xiaomi و Samsung)
+
+**الواقع:** HyperOS و MIUI و One UI تقتل تبويبات المتصفح في الخلفية بسرعة. عند العودة، **تُعاد تحميل الصفحة** ويضيع موضع المستخدم (Reel كان يشاهده، أو فلتر في المشاريع، أو فقرة في مقال طويل).
+
+**Actions:**
+1. **Reels:** احفظ فهرس الـreel الحالي في `sessionStorage('te_reel_index')` عند التغيير، واستعده بعد mount (scroll إليه بدون animation).
+2. **الفلاتر والبحث** في `/articles` و `/projects`: اعكسها في الـURL كـquery (`?category=vision&q=...`) عبر `router.replace` (بدون إضافة history entries). هذا يحفظ الحالة عند إعادة التحميل، **ويجعل الروابط قابلة للمشاركة**. الصفحة تبقى SSG لأن الـquery تُقرأ في Client Component.
+3. **المقالات الطويلة:** المتصفح يستعيد موضع التمرير تلقائياً (`history.scrollRestoration = 'auto'`). تأكد أن `ScrollToTop` (خطة الترحيل P4) **لا يعمل** عند التحميل الأول، فقط عند تغيّر pathname أثناء الجلسة.
+4. **الـdrawer والـmodal:** لا تُستعاد (سلوك متوقع).
+
+#### R11.10 — الشبكات البطيئة وباقات البيانات
+
+**الواقع:** شريحة كبيرة من الزوار على بيانات موبايل محدودة أو 3G و 4G ضعيف.
+
+**Actions:**
+- امتداد `getTier()`:
+  ```ts
+  const et = (navigator as any).connection?.effectiveType;
+  if (saveData || et === 'slow-2g' || et === '2g') return 'minimal';
+  if (et === '3g') tier = min(tier, 'lite');
+  ```
+- **على `minimal`:**
+  - لا preload لغير صورة الـLCP.
+  - الـvideo modal يعرض صورة الغلاف + زر "تشغيل على YouTube" بدل تحميل iframe تلقائياً.
+  - الـloader يُتخطى.
+- **الـpipeline في R3** يولّد عرض 320 أصلاً، والمتصفح يختاره على الشاشات الصغيرة.
+
+#### R11.11 — الاختبار على أجهزة حقيقية (إلزامي قبل الإطلاق)
+
+**الأدوات (بالترتيب المفضل):**
+1. **أجهزة المالك والفريق الفعلية:** Chrome على الكمبيوتر، ثم `chrome://inspect`، ثم USB debugging لـSamsung و Xiaomi. يسمح بفحص DevTools كامل على الهاتف الحقيقي (ومنها Samsung Internet عبر `chrome://inspect` بعد تفعيل Web debugging).
+2. **Samsung Remote Test Lab:** خدمة **مجانية** من Samsung لتشغيل هواتف Galaxy حقيقية عن بعد من المتصفح. يغطي Galaxy S و A و Fold و Flip و Tab.
+3. **BrowserStack أو LambdaTest (Real Devices):** لأجهزة Xiaomi و Redmi و Poco و In-App browsers. تجربة مجانية محدودة، وإلا اشتراك.
+
+**قائمة الفحص لكل جهاز** (تُوثق في `docs/device-qa.md` بلقطة لكل بند):
+
+| # | الفحص |
+|---|---|
+| 1 | الرئيسية: الـloader، ثم الـhero، ثم التمرير حتى الـfooter، سلس بلا تقطيع واضح |
+| 2 | القائمة: فتح الـdrawer والتنقل، بلا scroll خلفه |
+| 3 | مقال طويل: قراءة و TOC والعنوان غير مغطى، والجداول والمراجع بلا overflow |
+| 4 | Reels: التمرير والأزرار فوق شريط الإيماءات، بلا pull-to-refresh |
+| 5 | About: الـWebGL يعمل أو يظهر الـfallback، ولا شاشة سوداء بعد الخروج إلى تطبيق آخر ثم العودة (يختبر context loss) |
+| 6 | تبديل الـtheme واللغة |
+| 7 | الوضع الداكن المفروض في المتصفح (R11.5) |
+| 8 | حقل البحث وفورم التواصل: لا تكبير عند التركيز، ولوحة المفاتيح لا تغطي الحقل |
+| 9 | الوضع الأفقي |
+| 10 | Font size كبير من إعدادات النظام |
+
+**المصفوفة الدنيا لأجهزة حقيقية:**
+
+| الجهاز | المتصفحات |
+|---|---|
+| Redmi اقتصادي (Redmi 12C و 13C، أو ما يماثله بذاكرة 3 إلى 4GB) | Chrome، و Mi Browser، و Instagram in-app |
+| Redmi Note أو Poco | Chrome، و Mi Browser |
+| Galaxy A (A15 إلى A55) | Samsung Internet، و Chrome، و WhatsApp in-app |
+| Galaxy S Ultra | Samsung Internet (مع Screen zoom مرتفع مرة)، و Chrome |
+| Galaxy Z Fold | الشاشة الخارجية والمفتوحة |
+| Galaxy Tab أو Xiaomi Pad | عمودي وأفقي |
+| iPhone (أي) | Safari، و Instagram in-app |
+
+**Definition of Done لـR11:**
+- الـsweep و font-scale خضراوان.
+- اختبارات context loss و no-WebGL2 خضراء.
+- `docs/device-qa.md` مكتمل للمصفوفة الدنيا، بلا مشاكل مفتوحة من مستوى "تكسر الاستخدام".
 
 ---
 
