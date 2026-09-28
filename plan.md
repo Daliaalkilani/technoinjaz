@@ -68,7 +68,7 @@
 - `src/registry/magicui/interactive-hover-button.jsx`، و `src/lib/utils.js`، و `src/data/driveProjectsData.ts`.
 - `src/assets/`: ‏`react.svg` و `vite.svg` و `hero.png` و `cinematic-engineering.jpg`.
 - `src/assets/articles/*` (نسخ مكررة من `public/articles/`).
-- `src/assets/projects/techno-projects/*`.
+- ~~`src/assets/projects/techno-projects/*`~~ **(تحديث: أصبحت مستخدمة في الرئيسية منذ commit `3c92b59`، فلا تحذفها. انظر `responsive-plan.md` القسم 0)**.
 - `src/content/articles/*-seo.md`: غير مستوردة **عمداً**. هي حزم SEO داخلية كُتب عليها "DO NOT PUBLISH". **تبقى في الـrepo.**
 
 ---
@@ -1216,6 +1216,8 @@ src/components/account/AccountClient.tsx
 
 ### P8 — Loader + Performance
 
+> **تحديث:** خطوات الصور هنا (P8.2 و P8.3 و P8.4) **يحل محلها** القسمان R2 (الشعار كـSVG) و R3 (AVIF/WebP + SSIM) في `responsive-plan.md`. نفّذهما بدلاً منها.
+
 **Goal:** تقليل JS والصور، وتأجيل WebGL.
 **Actions:**
 1. **WebGL و Canvas:**
@@ -1282,6 +1284,8 @@ src/components/account/AccountClient.tsx
 **Validation:** ‏`@axe-core/playwright` على كل صفحة indexable، بدون violations من مستوى serious أو critical. اختبار keyboard: ‏Tab (skip link)، ثم Enter، ثم Tab إلى أول بطاقة، ثم Enter يفتح الصفحة.
 
 ### P10 — Favicon & Manifest
+
+> **تحديث:** المالك أضاف الأيقونات و `manifest.webmanifest` في `public/` (commit `68db100`). استخدمها كما هي، واتبع `responsive-plan.md` القسم 0 البند 2. ‏`favicon.svg` يُستبدل في R2.
 
 **Actions:**
 1. افحص المجلد المحلي `C:\Users\PC\Downloads\favicons` مباشرة: اسرد الملفات وأبعادها (`sharp(file).metadata()`) وسجّلها في `docs/favicons.md`.
