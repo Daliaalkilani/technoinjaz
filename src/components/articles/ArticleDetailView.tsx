@@ -187,28 +187,45 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   const excerpt = isEn ? article.excerptEn : article.excerpt;
 
   return (
-    <article className="article-fullscreen-root" dir={isEn ? 'ltr' : 'rtl'}>
+    <article className="article-fullscreen-view" dir={isEn ? 'ltr' : 'rtl'}>
       {/* 1. Top Breadcrumb & Control Bar */}
-      <div className="article-fullscreen-topbar">
-        <nav className="article-fullscreen-breadcrumbs" aria-label="Breadcrumb">
-          <Link href="/" className="article-breadcrumb-link">
-            <Home size={13} />
-            <span>{isEn ? "Home" : "الرئيسية"}</span>
-          </Link>
-          <span className="article-breadcrumb-sep">/</span>
-          <Link href="/articles" className="article-breadcrumb-link">
-            <BookOpen size={13} />
-            <span>{isEn ? "Articles" : "المقالات"}</span>
-          </Link>
-          <span className="article-breadcrumb-sep">/</span>
-          <span className="article-breadcrumb-cat">{category}</span>
-          <span className="article-breadcrumb-sep">/</span>
-          <span className="article-breadcrumb-active" aria-current="page" title={title}>
-            {title}
-          </span>
+      <div className="article-view-top-bar">
+        <nav className="article-breadcrumbs" aria-label="Breadcrumb">
+          <ol className="breadcrumb-list">
+            <li className="breadcrumb-item">
+              <Link href="/" className="breadcrumb-link-btn">
+                <Home size={14} />
+                <span>{isEn ? "Home" : "الرئيسية"}</span>
+              </Link>
+              <span className="breadcrumb-sep">/</span>
+            </li>
+            <li className="breadcrumb-item">
+              <Link href="/articles" className="breadcrumb-link-btn">
+                <BookOpen size={14} />
+                <span>{isEn ? "Articles" : "المقالات"}</span>
+              </Link>
+              <span className="breadcrumb-sep">/</span>
+            </li>
+            <li className="breadcrumb-item">
+              <span 
+                className="breadcrumb-category-pill" 
+                style={{ 
+                  borderColor: `${article.categoryColor}40`, 
+                  color: article.categoryColor,
+                  backgroundColor: `${article.categoryColor}15`
+                }}
+              >
+                {category}
+              </span>
+              <span className="breadcrumb-sep">/</span>
+            </li>
+            <li className="breadcrumb-item breadcrumb-current" aria-current="page">
+              <span>{title}</span>
+            </li>
+          </ol>
         </nav>
 
-        <div className="article-fullscreen-topbar-actions">
+        <div className="article-top-bar-actions">
           <Link
             href="/articles"
             className="article-back-nav-btn"
@@ -279,7 +296,13 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
 
           {/* High-Definition Featured Banner */}
           <div className="article-fullscreen-banner-wrap">
-            <ResponsiveImage src={article.image} alt={title} className="article-fullscreen-banner" priority />
+            <ResponsiveImage 
+              src={article.image} 
+              alt={title} 
+              className="article-fullscreen-banner-img" 
+              priority 
+            />
+            <div className="article-banner-ambient-glow" style={{ backgroundColor: article.categoryColor }} />
           </div>
 
           {/* Mobile TOC Drawer */}

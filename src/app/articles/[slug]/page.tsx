@@ -59,9 +59,11 @@ export default async function ArticlePage({
   return (
     <>
       <JsonLd data={[blogPosting(article), breadcrumb(breadcrumbItems)]} />
-      <ArticleDetailView article={article} toc={toc} related={related}>
-        <ArticleBody html={html} />
-      </ArticleDetailView>
+      <div className="tab-page-container tab-page-article-detail" style={{ padding: 0, maxWidth: '100%' }}>
+        <ArticleDetailView article={article} toc={toc} related={related}>
+          <ArticleBody html={html} />
+        </ArticleDetailView>
+      </div>
     </>
   );
 }
