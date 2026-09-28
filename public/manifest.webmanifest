@@ -1,0 +1,26 @@
+{
+  "name": "تكنو إنجاز | Techno Enjaz",
+  "short_name": "Techno Enjaz",
+  "description": "صرح هندسي رائد في تطوير الأنظمة البرمجية المتكاملة والحلول السحابية",
+  "dir": "rtl",
+  "lang": "ar",
+  "display": "standalone",
+  "orientation": "any",
+  "start_url": "/",
+  "background_color": "#030712",
+  "theme_color": "#030712",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

@@ -97,7 +97,7 @@ export const projectReelsData: ProjectReel[] = [
     categoryColor: '#f59e0b',
     categoryIcon: 'cpu',
     coverImage: '/projects-live/arduino-lab.jpg',
-    liveUrl: 'https://arduino-lab.pages.dev/',
+    liveUrl: 'https://circuit-lab-7jr.pages.dev/',
     engineer: {
       name: 'أحمد سامي',
       nameEn: 'Ahmed Sami',
