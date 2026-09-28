@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import ScrollExpand from '../ui/ScrollExpand';
 import ProjectsSection from '../projects/ProjectsSection';
@@ -113,35 +114,18 @@ export const HomeHero: React.FC<HomeHeroProps> = ({
           </div>
           <h2 className="expanded-hero-title">{t.hero.title}</h2>
           <div className="cta-group">
-            <button
-              type="button"
+            <Link
+              href="/projects"
               className="cta-button cta-primary"
-              onClick={() => {
-                if (onNavigateToProjects) {
-                  onNavigateToProjects();
-                } else {
-                  window.location.hash = '#projects';
-                }
-              }}
             >
               {t.hero.exploreProjects}
-            </button>
-            <button
-              type="button"
+            </Link>
+            <Link
+              href="/contact"
               className="cta-button cta-secondary"
-              onClick={() => {
-                if (onOpenContact) {
-                  onOpenContact();
-                } else {
-                  const contactEl = document.getElementById('about');
-                  if (contactEl) {
-                    contactEl.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }
-              }}
             >
               {lang === 'ar' ? 'تقديم طلب مشروع' : 'Request a Project'}
-            </button>
+            </Link>
           </div>
         </div>
       </ScrollExpand>

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight, Bookmark, BookmarkCheck, Play } from 'lucide-react';
 import CardSwap, { Card } from './CardSwap';
@@ -54,14 +55,13 @@ const VideosSection: React.FC<VideosSectionProps> = ({
             {t.videos.subtitle}
           </p>
           {showNavigateButton && (
-            <button
-              type="button"
+            <Link
+              href="/videos"
               className="projects-view-all-btn"
-              onClick={onNavigateToVideos || (() => { window.location.hash = '#videos'; })}
             >
               <span>{t.hero.exploreVideos}</span>
               {lang === 'ar' ? <ArrowLeft size={18} /> : <ArrowRight size={18} />}
-            </button>
+            </Link>
           )}
         </div>
 

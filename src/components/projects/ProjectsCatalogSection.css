@@ -439,3 +439,15 @@
   gap: 10px;
   color: #00d2ff;
 }
+
+/* Stretched link for card navigation */
+.card-title-link {
+  color: inherit;
+  text-decoration: none;
+}
+.card-title-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}

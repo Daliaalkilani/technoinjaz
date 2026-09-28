@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import React from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import MagicBento from './MagicBento';
@@ -46,14 +48,13 @@ const ArticlesSection: React.FC<ArticlesSectionProps> = ({
             {t.articles.subtitle}
           </p>
           {showNavigateButton && (
-            <button
-              type="button"
+            <Link
+              href="/articles"
               className="projects-view-all-btn"
-              onClick={onNavigateToArticles || (() => { window.location.hash = '#articles'; })}
             >
               <span>{t.articles.readArticles}</span>
               {lang === 'ar' ? <ArrowLeft size={18} /> : <ArrowRight size={18} />}
-            </button>
+            </Link>
           )}
         </div>
 

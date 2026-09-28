@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import InfiniteSpiral, { type InfiniteSpiralItem } from '../ui/InfiniteSpiral';
@@ -127,14 +129,13 @@ const ProjectsSection = ({
             {t.hero.projectsStatement}
           </p>
           {showNavigateButton && (
-            <button
-              type="button"
+            <Link
+              href="/projects"
               className="projects-view-all-btn"
-              onClick={onNavigateToProjects || (() => { window.location.hash = '#projects'; })}
             >
               <span>{t.hero.exploreProjects}</span>
               {lang === 'ar' ? <ArrowLeft size={18} /> : <ArrowRight size={18} />}
-            </button>
+            </Link>
           )}
         </div>
 

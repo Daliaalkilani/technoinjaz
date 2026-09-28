@@ -630,3 +630,15 @@
     font-size: 0.8rem;
   }
 }
+
+/* Stretched link for article card navigation */
+.card-main-title-link {
+  color: inherit;
+  text-decoration: none;
+}
+.card-main-title-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}

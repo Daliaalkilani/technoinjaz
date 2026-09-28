@@ -1,6 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { 
   ArrowRight, 
   ArrowLeft, 
@@ -11,15 +13,14 @@ import {
   Share2, 
   Check, 
   MessageSquare, 
-  Send,
-  User,
-  Home,
-  BookOpen,
-  ListOrdered,
-  ChevronDown,
-  ChevronUp
+  Send, 
+  User, 
+  Home, 
+  BookOpen, 
+  ListOrdered, 
+  ChevronDown, 
+  ChevronUp 
 } from 'lucide-react';
-import { marked } from 'marked';
 import type { BlogArticle, BlogComment } from '../../data/blogArticlesData';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import { useSavedProjects } from '../../hooks/useSavedProjects';
@@ -35,27 +36,18 @@ export interface TocHeading {
 
 interface ArticleDetailViewProps {
   article: BlogArticle;
-  onBack: () => void;
-  onSelectArticle: (article: BlogArticle) => void;
-  likes: number;
-  isLiked: boolean;
-  onToggleLike: () => void;
-  comments: BlogComment[];
-  onAddComment: (comment: BlogComment) => void;
-  allArticles: BlogArticle[];
+  toc?: TocHeading[];
+  related?: BlogArticle[];
+  children?: React.ReactNode;
 }
 
 export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   article,
-  onBack,
-  onSelectArticle,
-  likes,
-  isLiked,
-  onToggleLike,
-  comments,
-  onAddComment,
-  allArticles
+  toc = [],
+  related = [],
+  children
 }) => {
+  const router = useRouter();
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
   const { isSaved, toggleSave } = useSavedProjects();
@@ -64,187 +56,42 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   const [copied, setCopied] = useState(false);
   const [activeHeadingId, setActiveHeadingId] = useState<string>('');
   const [isMobileTocOpen, setIsMobileTocOpen] = useState(false);
-  const loggedUser = getLoggedInUser();
+  const [likes, setLikes] = useState<number>(article.initialLikes);
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [comments, setComments] = useState<BlogComment[]>(article.initialComments || []);
 
-  // Scroll to top on article change and update SEO & Schema
+  // Sync likes and comments with localStorage
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    // Dynamic Title
-    document.title = `${article.seoTitle || article.title} | تكنو إنجاز`;
-
-    // Meta Description
-    let metaDesc = document.querySelector('meta[name="description"]');
-    if (!metaDesc) {
-      metaDesc = document.createElement('meta');
-      metaDesc.setAttribute('name', 'description');
-      document.head.appendChild(metaDesc);
-    }
-    metaDesc.setAttribute('content', article.metaDescription || article.excerpt);
-
-    const canonicalUrl = `${SITE_URL}/articles/${article.slug}`;
-
-    // Canonical link
-    let canonicalEl = document.querySelector('link[rel="canonical"]');
-    if (!canonicalEl) {
-      canonicalEl = document.createElement('link');
-      canonicalEl.setAttribute('rel', 'canonical');
-      document.head.appendChild(canonicalEl);
-    }
-    canonicalEl.setAttribute('href', canonicalUrl);
-
-    // Inject Schema.org JSON-LD (BlogPosting & Breadcrumbs)
-    const scriptId = 'schema-article-jsonld';
-    let scriptTag = document.getElementById(scriptId) as HTMLScriptElement | null;
-    if (!scriptTag) {
-      scriptTag = document.createElement('script');
-      scriptTag.id = scriptId;
-      scriptTag.type = 'application/ld+json';
-      document.head.appendChild(scriptTag);
-    }
-
-    const schemaData = {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "BlogPosting",
-          "@id": `${canonicalUrl}#article`,
-          "isPartOf": {
-            "@type": "WebPage",
-            "@id": canonicalUrl
-          },
-          "headline": article.title,
-          "name": article.seoTitle,
-          "description": article.metaDescription,
-          "image": `${SITE_URL}${article.image}`,
-          "datePublished": `${article.publishedAt || "2026-09-20"}T00:00:00+03:00`,
-          "dateModified": `${article.publishedAt || "2026-09-20"}T00:00:00+03:00`,
-          "mainEntityOfPage": canonicalUrl,
-          "author": {
-            "@type": "Organization",
-            "name": article.author.name,
-            "url": SITE_URL
-          },
-          "publisher": {
-            "@type": "Organization",
-            "name": "مكتب تكنو إنجاز",
-            "url": SITE_URL,
-            "logo": {
-              "@type": "ImageObject",
-              "url": `${SITE_URL}/techno-logo.png`
-            }
-          },
-          "inLanguage": "ar"
-        },
-        {
-          "@type": "BreadcrumbList",
-          "@id": `${canonicalUrl}#breadcrumb`,
-          "itemListElement": [
-            {
-              "@type": "ListItem",
-              "position": 1,
-              "name": "الرئيسية",
-              "item": `${SITE_URL}/`
-            },
-            {
-              "@type": "ListItem",
-              "position": 2,
-              "name": "المقالات",
-              "item": `${SITE_URL}/articles`
-            },
-            {
-              "@type": "ListItem",
-              "position": 3,
-              "name": article.category,
-              "item": canonicalUrl
-            },
-            {
-              "@type": "ListItem",
-              "position": 4,
-              "name": article.title
-            }
-          ]
+    try {
+      const storedLikes = localStorage.getItem('techno_blog_likes');
+      if (storedLikes) {
+        const parsed = JSON.parse(storedLikes);
+        if (parsed[article.id]) {
+          setLikes(parsed[article.id].count);
+          setIsLiked(parsed[article.id].userLiked);
         }
-      ]
-    };
-
-    scriptTag.text = JSON.stringify(schemaData);
-
-    // Update URL hash for clean deep linking
-    if (window.location.hash !== `#article/${article.slug}`) {
-      window.history.replaceState(null, '', `#article/${article.slug}`);
-    }
-
-    return () => {
-      const el = document.getElementById(scriptId);
-      if (el) el.remove();
-    };
-  }, [article]);
-
-  const isItemSaved = isSaved(article.id);
-  const title = isEn ? article.titleEn : article.title;
-  const category = isEn ? article.categoryEn : article.category;
-  const publishDate = isEn ? article.publishDateEn : article.publishDate;
-  const readTime = isEn ? article.readTimeEn : article.readTime;
-  const authorName = isEn ? article.author.nameEn : article.author.name;
-  const excerpt = isEn ? article.excerptEn : article.excerpt;
-
-  // Process raw markdown to HTML and extract TOC headings
-  const { parsedMarkdownHtml, tocHeadings } = useMemo(() => {
-    const contentMd = (article as any).contentMarkdown || (article as any).markdown || '';
-    if (!contentMd) return { parsedMarkdownHtml: '', tocHeadings: [] as TocHeading[] };
-
-    // Strip front matter comments <!-- ... -->
-    let cleanMd = contentMd.replace(/^\s*<!--[\s\S]*?-->\s*/, '');
-    // Strip SEO Title, Meta Description, Suggested Slug lines
-    cleanMd = cleanMd.replace(/^(SEO Title|Meta Description|Suggested Slug):.*$/gim, '');
-    // Strip leading H1 title `# Title` because H1 is rendered prominently by component
-    cleanMd = cleanMd.replace(/^\s*#\s+[^\r\n]+[\r\n]*/, '');
-
-    // Configure marked options
-    marked.setOptions({
-      gfm: true,
-      breaks: true
-    });
+      }
+    } catch (e) {}
 
     try {
-      const rawHtml = marked.parse(cleanMd.trim());
-      if (typeof rawHtml !== 'string') return { parsedMarkdownHtml: '', tocHeadings: [] as TocHeading[] };
-
-      const headings: TocHeading[] = [];
-      let index = 0;
-
-      // Match <h2> and <h3> headings, extract title, and inject clean ID and class
-      const processedHtml = rawHtml.replace(/<h([2-3])>(.*?)<\/h\1>/gi, (_match, levelStr, innerHtml) => {
-        const level = parseInt(levelStr, 10);
-        const text = innerHtml.replace(/<[^>]+>/g, '').trim();
-        if (!text) return _match;
-
-        const slug = text
-          .toLowerCase()
-          .replace(/[^\w\u0621-\u064A0-9]+/g, '-')
-          .replace(/^-+|-+$/g, '');
-        const id = `sec-${index++}-${slug || 'heading'}`;
-
-        headings.push({ id, text, level });
-        return `<h${level} id="${id}" class="article-content-heading scroll-mt-offset">${innerHtml}</h${level}>`;
-      });
-
-      return { parsedMarkdownHtml: processedHtml, tocHeadings: headings };
-    } catch (e) {
-      console.error('Error parsing article markdown:', e);
-      return { parsedMarkdownHtml: '', tocHeadings: [] as TocHeading[] };
-    }
-  }, [article.slug]);
+      const storedComments = localStorage.getItem('techno_blog_comments');
+      if (storedComments) {
+        const parsed = JSON.parse(storedComments);
+        if (parsed[article.id]) {
+          setComments(parsed[article.id]);
+        }
+      }
+    } catch (e) {}
+  }, [article.id]);
 
   // Active section scroll spy
   useEffect(() => {
-    if (tocHeadings.length === 0) return;
+    if (toc.length === 0) return;
 
     const handleScroll = () => {
       const scrollPos = window.scrollY + 130;
-      let currentActive = tocHeadings[0]?.id || '';
-      for (const h of tocHeadings) {
+      let currentActive = toc[0]?.id || '';
+      for (const h of toc) {
         const el = document.getElementById(h.id);
         if (el && el.offsetTop <= scrollPos) {
           currentActive = h.id;
@@ -256,132 +103,118 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [tocHeadings]);
+  }, [toc]);
 
   const handleHeadingClick = (id: string, e?: React.MouseEvent) => {
     if (e) e.preventDefault();
-    const el = document.getElementById(id);
-    if (el) {
-      const topOffset = 95;
-      const elementPosition = el.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({
-        top: elementPosition - topOffset,
-        behavior: 'smooth'
-      });
-      setActiveHeadingId(id);
+    setActiveHeadingId(id);
+    const target = document.getElementById(id);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.history.replaceState(null, '', `#${id}`);
     }
   };
 
+  const handleToggleLike = () => {
+    if (!requireAuth()) return;
+    const nextLiked = !isLiked;
+    const nextCount = nextLiked ? likes + 1 : Math.max(0, likes - 1);
+    setIsLiked(nextLiked);
+    setLikes(nextCount);
 
-  const handleShare = (e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2200);
-    }
+    try {
+      const stored = localStorage.getItem('techno_blog_likes');
+      const map = stored ? JSON.parse(stored) : {};
+      map[article.id] = { count: nextCount, userLiked: nextLiked };
+      localStorage.setItem('techno_blog_likes', JSON.stringify(map));
+    } catch (e) {}
   };
 
-  const handleCommentSubmit = (e: React.FormEvent) => {
+  const handleAddComment = (e: React.FormEvent) => {
     e.preventDefault();
     if (!requireAuth()) return;
     if (!commentText.trim()) return;
 
-    const currentUser = getLoggedInUser();
-    const commentAuthor = currentUser?.name || (isEn ? 'Techno User' : 'مستخدم تكنو');
-
+    const loggedUser = getLoggedInUser();
     const newComment: BlogComment = {
-      id: 'c-' + Date.now(),
-      author: commentAuthor,
-      date: isEn ? 'Just now' : 'الآن',
-      text: commentText.trim()
+      id: `comm-${Date.now()}`,
+      author: loggedUser?.name || (isEn ? 'Techno Engineer' : 'مهندس زائر'),
+      avatar: '/abdulghani.jpg',
+      text: commentText.trim(),
+      date: isEn ? 'Just now' : 'الآن'
     };
 
-    onAddComment(newComment);
+    const nextComments = [newComment, ...comments];
+    setComments(nextComments);
     setCommentText('');
+
+    try {
+      const stored = localStorage.getItem('techno_blog_comments');
+      const map = stored ? JSON.parse(stored) : {};
+      map[article.id] = nextComments;
+      localStorage.setItem('techno_blog_comments', JSON.stringify(map));
+    } catch (err) {}
   };
 
-  // Intercept link clicks inside markdown for seamless SPA navigation
+  const handleShare = () => {
+    const url = `${SITE_URL}/articles/${article.slug}`;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2500);
+      });
+    }
+  };
+
+  // Intercept markdown clicks on internal links
   const handleContentClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = (e.target as HTMLElement).closest('a');
     if (!target) return;
-
     const href = target.getAttribute('href');
-    if (!href) return;
-
-    // Handle internal article links like `#article/slug` or `/articles/slug`
-    if (href.startsWith('#article/') || href.startsWith('/articles/')) {
+    if (href && href.startsWith('/') && !href.startsWith('//')) {
       e.preventDefault();
-      const slug = href.replace(/^#article\//, '').replace(/^\/articles\//, '').replace(/\/$/, '');
-      const found = allArticles.find(a => a.slug === slug || a.id === slug);
-      if (found) {
-        onSelectArticle(found);
-      }
-      return;
-    }
-
-    // External links open safely in a new tab
-    if (href.startsWith('http://') || href.startsWith('https://')) {
-      target.setAttribute('target', '_blank');
-      target.setAttribute('rel', 'noopener noreferrer');
+      router.push(href);
     }
   };
 
-  // Related articles (excluding current article)
-  const relatedArticles = allArticles
-    .filter(a => a.id !== article.id)
-    .slice(0, 3);
+  const isItemSaved = isSaved(article.id);
+  const title = isEn ? article.titleEn : article.title;
+  const category = isEn ? article.categoryEn : article.category;
+  const publishDate = isEn ? article.publishDateEn : article.publishDate;
+  const readTime = isEn ? article.readTimeEn : article.readTime;
+  const authorName = isEn ? article.author.nameEn : article.author.name;
+  const excerpt = isEn ? article.excerptEn : article.excerpt;
 
   return (
-    <article className="article-fullscreen-view" dir={isEn ? 'ltr' : 'rtl'}>
-      {/* Top Breadcrumb & Actions Bar */}
-      <div className="article-view-top-bar">
-        {/* Semantic Breadcrumbs */}
-        <nav className="article-breadcrumbs" aria-label="مسار التصفح">
-          <ol className="breadcrumb-list">
-            <li className="breadcrumb-item">
-              <button 
-                type="button" 
-                className="breadcrumb-link-btn"
-                onClick={() => { window.location.hash = ''; onBack(); }}
-              >
-                <Home size={14} />
-                <span>{isEn ? 'Home' : 'الرئيسية'}</span>
-              </button>
-              <span className="breadcrumb-sep">/</span>
-            </li>
-            <li className="breadcrumb-item">
-              <button 
-                type="button" 
-                className="breadcrumb-link-btn"
-                onClick={onBack}
-              >
-                <BookOpen size={14} />
-                <span>{isEn ? 'Articles' : 'المقالات'}</span>
-              </button>
-              <span className="breadcrumb-sep">/</span>
-            </li>
-            <li className="breadcrumb-item">
-              <span className="breadcrumb-category-pill" style={{ borderColor: `${article.categoryColor}40`, color: article.categoryColor }}>
-                {category}
-              </span>
-              <span className="breadcrumb-sep">/</span>
-            </li>
-            <li className="breadcrumb-item breadcrumb-current" aria-current="page">
-              <span>{title}</span>
-            </li>
-          </ol>
+    <article className="article-fullscreen-root" dir={isEn ? 'ltr' : 'rtl'}>
+      {/* 1. Top Breadcrumb & Control Bar */}
+      <div className="article-fullscreen-topbar">
+        <nav className="article-fullscreen-breadcrumbs" aria-label="Breadcrumb">
+          <Link href="/" className="article-breadcrumb-link">
+            <Home size={13} />
+            <span>{isEn ? "Home" : "الرئيسية"}</span>
+          </Link>
+          <span className="article-breadcrumb-sep">/</span>
+          <Link href="/articles" className="article-breadcrumb-link">
+            <BookOpen size={13} />
+            <span>{isEn ? "Articles" : "المقالات"}</span>
+          </Link>
+          <span className="article-breadcrumb-sep">/</span>
+          <span className="article-breadcrumb-cat">{category}</span>
+          <span className="article-breadcrumb-sep">/</span>
+          <span className="article-breadcrumb-active" aria-current="page" title={title}>
+            {title}
+          </span>
         </nav>
 
-        <div className="article-top-actions">
-          <button 
-            type="button" 
+        <div className="article-fullscreen-topbar-actions">
+          <Link
+            href="/articles"
             className="article-back-nav-btn"
-            onClick={onBack}
           >
             {isEn ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
             <span>{isEn ? "Back to Articles" : "العودة للمقالات"}</span>
-          </button>
+          </Link>
 
           <button
             type="button"
@@ -398,7 +231,6 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
       <div className="article-fullscreen-layout">
         {/* Main Reading Column */}
         <div className="article-main-container">
-          {/* Category Pill Tag & Read Time */}
           <div className="article-lead-category-wrap">
             <span 
               className="article-lead-category-pill"
@@ -416,12 +248,10 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             </span>
           </div>
 
-          {/* Single H1 Headline */}
           <h1 className="article-fullscreen-title">
             {title}
           </h1>
 
-          {/* Lead Excerpt */}
           <p className="article-fullscreen-excerpt">
             {excerpt}
           </p>
@@ -439,7 +269,9 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                 <span className="author-capsule-divider">|</span>
                 <span className="author-capsule-role">{article.author.role}</span>
                 <span className="author-capsule-divider">|</span>
-                <span className="author-capsule-date" style={{ whiteSpace: 'nowrap' }}>{publishDate}</span>
+                <time dateTime={article.publishedAt} className="author-capsule-date" style={{ whiteSpace: 'nowrap' }}>
+                  {publishDate}
+                </time>
               </div>
             </div>
           </div>
@@ -449,29 +281,24 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             <img 
               src={article.image} 
               alt={title} 
-              className="article-fullscreen-banner-img" 
+              className="article-fullscreen-banner" 
               loading="eager"
             />
-            <div className="article-banner-ambient-glow" style={{ backgroundColor: article.categoryColor }} />
           </div>
 
-          {/* Mobile / Inline Table of Contents */}
-          {tocHeadings.length > 0 && (
-            <div className="article-mobile-toc-box">
+          {/* Mobile TOC Drawer */}
+          {toc.length > 0 && (
+            <div className="article-mobile-toc-accordion">
               <button
                 type="button"
-                className="mobile-toc-toggle-btn"
+                className="mobile-toc-header-toggle"
                 onClick={() => setIsMobileTocOpen(!isMobileTocOpen)}
                 aria-expanded={isMobileTocOpen}
               >
-                <div className="mobile-toc-btn-left">
-                  <ListOrdered size={18} className="toc-accent-icon" />
-                  <span className="mobile-toc-btn-text">
-                    {isEn ? "Table of Contents" : "فهرس محتويات المقال"}
-                  </span>
-                  <span className="mobile-toc-count-pill">
-                    {tocHeadings.length}
-                  </span>
+                <div className="mobile-toc-toggle-title">
+                  <ListOrdered size={17} />
+                  <span>{isEn ? "Table of Contents" : "فهرس محتويات المقال"}</span>
+                  <span className="mobile-toc-count-pill">{toc.length}</span>
                 </div>
                 {isMobileTocOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
               </button>
@@ -479,7 +306,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               {isMobileTocOpen && (
                 <div className="mobile-toc-dropdown">
                   <ul className="article-toc-list">
-                    {tocHeadings.map((heading) => {
+                    {toc.map((heading) => {
                       const isActive = activeHeadingId === heading.id;
                       return (
                         <li 
@@ -506,21 +333,21 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             </div>
           )}
 
-          {/* Rich Rendered Article Markdown Body */}
-          <div 
-            className="article-fullscreen-markdown-body"
-            dangerouslySetInnerHTML={{ __html: parsedMarkdownHtml }}
-            onClick={handleContentClick}
-          />
+          {/* Server-Rendered Markdown Body passed as children */}
+          <div onClick={handleContentClick}>
+            {children}
+          </div>
 
           {/* Tags Row */}
-          <div className="article-tags-wrap">
-            {article.tags.map((tag, idx) => (
-              <span key={idx} className="article-tag-chip">
-                #{tag}
-              </span>
-            ))}
-          </div>
+          {article.tags && article.tags.length > 0 && (
+            <div className="article-tags-wrap">
+              {article.tags.map((tag, idx) => (
+                <span key={idx} className="article-tag-chip">
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          )}
 
           {/* Interactive Engagement Bar */}
           <div className="article-engagement-bar">
@@ -528,7 +355,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               <button
                 type="button"
                 className={`article-action-btn like-btn ${isLiked ? 'active' : ''}`}
-                onClick={onToggleLike}
+                onClick={handleToggleLike}
               >
                 <Heart size={18} fill={isLiked ? '#ef4444' : 'none'} color={isLiked ? '#ef4444' : 'currentColor'} />
                 <span>{likes}</span>
@@ -550,53 +377,60 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                   tags: article.tags
                 })}
               >
-                {isItemSaved ? <BookmarkCheck size={18} color="#0aeec3" /> : <Bookmark size={18} />}
+                {isItemSaved ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
                 <span>{isItemSaved ? (isEn ? "Saved" : "محفوظ") : (isEn ? "Save" : "حفظ")}</span>
               </button>
             </div>
 
             <button
               type="button"
-              className="article-action-btn share-btn"
+              className="article-action-btn share-action-btn"
               onClick={handleShare}
             >
-              {copied ? <Check size={18} color="#10b981" /> : <Share2 size={18} />}
-              <span>{copied ? (isEn ? "Copied" : "تم النسخ") : (isEn ? "Share" : "مشاركة")}</span>
+              {copied ? <Check size={17} color="#10b981" /> : <Share2 size={17} />}
+              <span>{copied ? (isEn ? "Link Copied" : "تم نسخ الرابط") : (isEn ? "Share" : "مشاركة")}</span>
             </button>
           </div>
 
-          {/* Comments Section */}
-          <section className="article-comments-section">
-            <div className="comments-header">
-              <MessageSquare size={20} color="#38bdf8" />
-              <h3>{isEn ? `Comments (${comments.length})` : `التعليقات (${comments.length})`}</h3>
+          {/* Interactive Discussion Section */}
+          <section className="article-discussion-section">
+            <div className="discussion-header">
+              <div className="discussion-title-wrap">
+                <MessageSquare size={20} className="discussion-icon" />
+                <h3 className="discussion-title">
+                  {isEn ? `Technical Discussion (${comments.length})` : `النقاش الهندسي والملاحظات (${comments.length})`}
+                </h3>
+              </div>
             </div>
 
-            <form onSubmit={handleCommentSubmit} className="comment-input-form">
-              <div className="comment-avatar-stub">
-                {loggedUser?.avatar ? (
-                  <img src={loggedUser.avatar} alt="User" className="user-avatar-mini" />
-                ) : (
-                  <User size={20} />
-                )}
+            <form onSubmit={handleAddComment} className="comment-input-form">
+              <div className="comment-form-inner">
+                <textarea
+                  className="comment-textarea"
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  placeholder={isEn ? "Add your engineering insight or technical query..." : "أضف تعليقك أو استفسارك الهندسي حول محتوى المقال..."}
+                  rows={3}
+                />
+                <div className="comment-form-actions">
+                  <button
+                    type="submit"
+                    className="comment-submit-btn"
+                    disabled={!commentText.trim()}
+                  >
+                    <Send size={15} />
+                    <span>{isEn ? "Post Comment" : "نشر التعليق"}</span>
+                  </button>
+                </div>
               </div>
-              <input
-                type="text"
-                placeholder={isEn ? "Add a constructive comment..." : "أضف تعليقاً أو استفساراً تقنياً..."}
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                className="comment-text-input"
-              />
-              <button type="submit" className="comment-submit-btn" disabled={!commentText.trim()}>
-                <Send size={16} />
-              </button>
             </form>
 
-            <div className="comments-feed-list">
+            <div className="comments-stream-list">
               {comments.length === 0 ? (
-                <p className="no-comments-yet">
-                  {isEn ? "No comments yet. Be the first to start the discussion!" : "لا توجد تعليقات بعد. كن أول من يشارك رأيه الهندسي!"}
-                </p>
+                <div className="no-comments-box">
+                  <User size={32} className="no-comments-icon" />
+                  <p>{isEn ? "Be the first to share an engineering perspective on this topic." : "كن أول من يشارك برأي أو استفسار هندسي حول هذا الموضوع."}</p>
+                </div>
               ) : (
                 comments.map((comm) => (
                   <div key={comm.id} className="comment-item-card">
@@ -623,8 +457,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
 
         {/* Sidebar: Table of Contents & Related Articles */}
         <aside className="article-related-sidebar">
-          {/* 1. Desktop Sticky Table of Contents (فهرس محتويات المقال) */}
-          {tocHeadings.length > 0 && (
+          {toc.length > 0 && (
             <div className="article-desktop-toc-card">
               <div className="article-toc-card-header">
                 <div className="toc-card-title-wrap">
@@ -632,13 +465,13 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                   <h3 className="toc-card-title">{isEn ? "Table of Contents" : "فهرس المقال"}</h3>
                 </div>
                 <span className="toc-card-badge">
-                  {tocHeadings.length} {isEn ? "sections" : "فقرة"}
+                  {toc.length} {isEn ? "sections" : "فقرة"}
                 </span>
               </div>
 
               <div className="article-toc-card-scroll">
                 <ul className="article-toc-list">
-                  {tocHeadings.map((heading) => {
+                  {toc.map((heading) => {
                     const isActive = activeHeadingId === heading.id;
                     return (
                       <li 
@@ -662,48 +495,47 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             </div>
           )}
 
-          {/* 2. Related Articles */}
-          <div className="article-related-card">
-            <div className="related-sidebar-header">
-              <h3 className="related-sidebar-title">{isEn ? "Related Articles" : "مقالات ذات صلة"}</h3>
-            </div>
-
-
-          <div className="related-sidebar-list">
-            {relatedArticles.map((relArt) => (
-              <div
-                key={relArt.id}
-                className="related-sidebar-card"
-                onClick={() => onSelectArticle(relArt)}
-              >
-                <div className="related-sidebar-media">
-                  <img src={relArt.image} alt={relArt.title} className="related-sidebar-img" loading="lazy" />
-                  <div className="related-sidebar-overlay" />
-                </div>
-                <div className="related-sidebar-body">
-                  <span 
-                    className="related-sidebar-category"
-                    style={{ color: relArt.categoryColor }}
-                  >
-                    {isEn ? relArt.categoryEn : relArt.category}
-                  </span>
-                  <h4 className="related-sidebar-item-title">
-                    {isEn ? relArt.titleEn : relArt.title}
-                  </h4>
-                  <div className="related-sidebar-author-row">
-                    <span className="related-sidebar-author-name">{isEn ? relArt.author.nameEn : relArt.author.name}</span>
-                    <span className="related-sidebar-time">
-                      <Clock size={11} />
-                      <span>{isEn ? relArt.readTimeEn : relArt.readTime}</span>
-                    </span>
-                  </div>
-                </div>
+          {related.length > 0 && (
+            <div className="article-related-card">
+              <div className="related-sidebar-header">
+                <h3 className="related-sidebar-title">{isEn ? "Related Articles" : "مقالات ذات صلة"}</h3>
               </div>
-            ))}
-          </div>
-        </div>
-      </aside>
 
+              <div className="related-sidebar-list">
+                {related.map((relArt) => (
+                  <Link
+                    key={relArt.id}
+                    href={`/articles/${relArt.slug}`}
+                    className="related-sidebar-card"
+                  >
+                    <div className="related-sidebar-media">
+                      <img src={relArt.image} alt={relArt.title} className="related-sidebar-img" loading="lazy" />
+                      <div className="related-sidebar-overlay" />
+                    </div>
+                    <div className="related-sidebar-body">
+                      <span 
+                        className="related-sidebar-category"
+                        style={{ color: relArt.categoryColor }}
+                      >
+                        {isEn ? relArt.categoryEn : relArt.category}
+                      </span>
+                      <h4 className="related-sidebar-item-title">
+                        {isEn ? relArt.titleEn : relArt.title}
+                      </h4>
+                      <div className="related-sidebar-author-row">
+                        <span className="related-sidebar-author-name">{isEn ? relArt.author.nameEn : relArt.author.name}</span>
+                        <span className="related-sidebar-time">
+                          <Clock size={11} />
+                          <span>{isEn ? relArt.readTimeEn : relArt.readTime}</span>
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </aside>
       </div>
     </article>
   );

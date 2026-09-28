@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
+import Link from 'next/link';
 import { 
   Search, 
   Layers, 
@@ -8,63 +9,32 @@ import {
   Eye, 
   Bot, 
   Globe, 
-  Smartphone,
-  Bookmark,
-  BookmarkCheck,
-  ArrowRight,
-  ArrowLeft,
-  Sparkles,
-  CheckCircle2,
-  X
+  Smartphone, 
+  Bookmark, 
+  BookmarkCheck, 
+  ArrowRight, 
+  ArrowLeft, 
+  Sparkles, 
+  CheckCircle2, 
+  X 
 } from 'lucide-react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import { useSavedProjects } from '../../hooks/useSavedProjects';
-import { PROJECTS_DATA, getProjectBySlug, type ProjectItem, type ProjectCategory } from '../../data/projectsData';
-import ProjectDetailView from './ProjectDetailView';
+import { PROJECTS_DATA, type ProjectItem, type ProjectCategory } from '../../data/projectsData';
+import { plainExcerpt, projectTags } from '@/lib/text';
 import './ProjectsCatalogSection.css';
 
 interface ProjectsCatalogSectionProps {
-  initialSlug?: string;
+  projects?: ProjectItem[];
 }
 
-export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ initialSlug }) => {
+export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ projects = PROJECTS_DATA }) => {
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
   const { isSaved, toggleSave } = useSavedProjects();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<ProjectCategory>('all');
-  const [activeProject, setActiveProject] = useState<ProjectItem | null>(() => {
-    if (initialSlug) {
-      return getProjectBySlug(initialSlug) || null;
-    }
-    if (typeof window !== 'undefined' && window.location.hash.startsWith('#project/')) {
-      const slug = window.location.hash.replace('#project/', '');
-      return getProjectBySlug(slug) || null;
-    }
-    return null;
-  });
-
-  // Listen to hash changes for deep linking to #project/:slug
-  useEffect(() => {
-    const handleHash = () => {
-      const hash = window.location.hash;
-      if (hash.startsWith('#project/')) {
-        const slug = hash.replace('#project/', '');
-        const found = getProjectBySlug(slug);
-        if (found) {
-          setActiveProject(found);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-      } else if (hash === '#projects') {
-        setActiveProject(null);
-      }
-    };
-
-    handleHash();
-    window.addEventListener('hashchange', handleHash);
-    return () => window.removeEventListener('hashchange', handleHash);
-  }, []);
 
   const categories = useMemo(() => [
     { key: 'all' as ProjectCategory, labelAr: 'الكل', labelEn: 'All Projects', icon: <Layers size={16} /> },
@@ -75,9 +45,8 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
     { key: 'mobile' as ProjectCategory, labelAr: 'تطبيقات موبايل', labelEn: 'Mobile Apps', icon: <Smartphone size={16} /> },
   ], []);
 
-  // Filter projects by category and search term
   const filteredProjects = useMemo(() => {
-    return PROJECTS_DATA.filter((p) => {
+    return projects.filter((p) => {
       const matchesCategory = selectedCategory === 'all' || p.category === selectedCategory;
       const term = searchTerm.trim().toLowerCase();
       if (!term) return matchesCategory;
@@ -90,30 +59,7 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
 
       return matchesCategory && matchesSearch;
     });
-  }, [selectedCategory, searchTerm]);
-
-  const handleSelectProject = (project: ProjectItem) => {
-    setActiveProject(project);
-    window.location.hash = `#project/${project.slug}`;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleBackToCatalog = () => {
-    setActiveProject(null);
-    window.location.hash = '#projects';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  // If a specific project is selected, render the dedicated Detail View
-  if (activeProject) {
-    return (
-      <ProjectDetailView
-        project={activeProject}
-        onBack={handleBackToCatalog}
-        onSelectProject={handleSelectProject}
-      />
-    );
-  }
+  }, [projects, selectedCategory, searchTerm]);
 
   return (
     <section className="catalog-section" id="projects-catalog" dir={isEn ? 'ltr' : 'rtl'}>
@@ -161,8 +107,8 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
       <div className="catalog-categories-bar">
         {categories.map((cat) => {
           const count = cat.key === 'all' 
-            ? PROJECTS_DATA.length 
-            : PROJECTS_DATA.filter(p => p.category === cat.key).length;
+            ? projects.length 
+            : projects.filter(p => p.category === cat.key).length;
 
           return (
             <button
@@ -206,12 +152,13 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
         <div className="catalog-grid">
           {filteredProjects.map((project) => {
             const saved = isSaved(project.slug);
+            const cleanExcerpt = plainExcerpt(project.excerpt, project.metaDesc);
+            const cleanTags = projectTags(project.tags);
 
             return (
               <article 
                 key={project.slug} 
                 className="project-card"
-                onClick={() => handleSelectProject(project)}
               >
                 {/* Card Thumbnail */}
                 <div className="card-thumb-wrap">
@@ -227,16 +174,17 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
                     type="button"
                     className={`card-bookmark-btn ${saved ? 'active' : ''}`}
                     onClick={(e) => {
+                      e.preventDefault();
                       e.stopPropagation();
                       toggleSave({
                         id: project.slug,
                         title: project.title,
                         category: project.category,
                         categoryLabel: project.categoryNameAr,
-                        description: project.excerpt,
+                        description: cleanExcerpt,
                         type: 'project',
                         image: project.image,
-                        tags: project.tags
+                        tags: cleanTags
                       });
                     }}
                     title={saved ? (isEn ? "Saved" : "محفوظ بالمفضلة") : (isEn ? "Save Project" : "حفظ المشروع")}
@@ -248,11 +196,13 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
                 {/* Card Content */}
                 <div className="card-body">
                   <h3 className="card-title" title={project.title}>
-                    {project.title}
+                    <Link href={`/projects/${project.slug}`} className="card-title-link">
+                      {project.title}
+                    </Link>
                   </h3>
 
                   <p className="card-excerpt">
-                    {project.excerpt}
+                    {cleanExcerpt}
                   </p>
 
                   {/* Verified Role Qualifier Badge */}
@@ -262,9 +212,9 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
                   </div>
 
                   {/* Tags */}
-                  {project.tags && project.tags.length > 0 && (
+                  {cleanTags.length > 0 && (
                     <div className="card-tags">
-                      {project.tags.slice(0, 3).map((tag, idx) => (
+                      {cleanTags.slice(0, 3).map((tag, idx) => (
                         <span key={idx} className="card-tag-item">#{tag}</span>
                       ))}
                     </div>

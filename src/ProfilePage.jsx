@@ -10,6 +10,12 @@ import './ProfilePage.css';
  * Team Member Profile Page Component
  * Fully bilingual with dark/light theme integration
  */
+/**
+ * @param {{
+ *   member: any,
+ *   onBack?: (() => void) | null
+ * }} props
+ */
 export default function ProfilePage({ member, onBack }) {
   const router = useRouter();
   if (!member) return null;

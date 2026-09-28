@@ -7,7 +7,14 @@ import AuthSwitch from './components/ui/auth-switch';
 import { useThemeLanguage } from './context/ThemeLanguageContext';
 import './AuthPage.css';
 
-export default function AuthPage({ initialMode = 'login', onBack, onSuccess }) {
+/**
+ * @param {{
+ *   initialMode?: 'login' | 'register',
+ *   onBack?: (() => void) | null,
+ *   onSuccess?: ((user?: any) => void) | null
+ * }} [props]
+ */
+export default function AuthPage({ initialMode = 'login', onBack, onSuccess } = {}) {
   const router = useRouter();
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';

@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { 
   ArrowRight, 
   ArrowLeft, 
@@ -19,11 +20,10 @@ import {
   PhoneCall,
   Sparkles
 } from 'lucide-react';
-import { marked } from 'marked';
 import type { ProjectItem } from '../../data/projectsData';
-import { getRelatedProjects } from '../../data/projectsData';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import { useSavedProjects } from '../../hooks/useSavedProjects';
+import { plainExcerpt, projectTags } from '@/lib/text';
 import { SITE_URL } from '@/config/site';
 import './ProjectDetailView.css';
 
@@ -35,14 +35,16 @@ export interface TocHeading {
 
 interface ProjectDetailViewProps {
   project: ProjectItem;
-  onBack: () => void;
-  onSelectProject: (project: ProjectItem) => void;
+  toc?: TocHeading[];
+  related?: ProjectItem[];
+  children?: React.ReactNode;
 }
 
 export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
   project,
-  onBack,
-  onSelectProject
+  toc = [],
+  related = [],
+  children
 }) => {
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
@@ -52,144 +54,9 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
   const [activeHeadingId, setActiveHeadingId] = useState<string>('');
   const [isMobileTocOpen, setIsMobileTocOpen] = useState(false);
 
-  const relatedProjects = useMemo(() => {
-    return getRelatedProjects(project.slug, 3);
-  }, [project.slug]);
-
-  // Update Page Title, Meta Description, Canonical, and Schema.org
+  // Active heading spy with IntersectionObserver
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    // Dynamic Title
-    document.title = `${project.seoTitle || project.title} | تكنو إنجاز`;
-
-    // Meta Description
-    let metaDesc = document.querySelector('meta[name="description"]');
-    if (!metaDesc) {
-      metaDesc = document.createElement('meta');
-      metaDesc.setAttribute('name', 'description');
-      document.head.appendChild(metaDesc);
-    }
-    metaDesc.setAttribute('content', project.metaDesc || project.excerpt);
-
-    // Canonical link
-    let canonicalEl = document.querySelector('link[rel="canonical"]');
-    if (!canonicalEl) {
-      canonicalEl = document.createElement('link');
-      canonicalEl.setAttribute('rel', 'canonical');
-      document.head.appendChild(canonicalEl);
-    }
-    const projectUrl = `${SITE_URL}/projects/${project.slug}`;
-    canonicalEl.setAttribute('href', projectUrl);
-
-    // Inject Schema.org JSON-LD (CreativeWork & BreadcrumbList)
-    const scriptId = 'schema-project-jsonld';
-    let scriptTag = document.getElementById(scriptId) as HTMLScriptElement | null;
-    if (!scriptTag) {
-      scriptTag = document.createElement('script');
-      scriptTag.id = scriptId;
-      scriptTag.type = 'application/ld+json';
-      document.head.appendChild(scriptTag);
-    }
-
-    const schemaData = {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "CreativeWork",
-          "@id": `${projectUrl}#project`,
-          "name": project.title,
-          "headline": project.seoTitle || project.title,
-          "description": project.metaDesc || project.excerpt,
-          "image": `${SITE_URL}${project.image}`,
-          "url": projectUrl,
-          "inLanguage": "ar",
-          "genre": project.categoryNameAr,
-          "keywords": project.tags.join(', '),
-          "publisher": {
-            "@type": "Organization",
-            "name": "تكنو إنجاز — Techno Enjaz",
-            "url": SITE_URL,
-            "logo": {
-              "@type": "ImageObject",
-              "url": `${SITE_URL}/techno-logo.png`
-            }
-          }
-        },
-        {
-          "@type": "BreadcrumbList",
-          "@id": `${projectUrl}#breadcrumb`,
-          "itemListElement": [
-            {
-              "@type": "ListItem",
-              "position": 1,
-              "name": isEn ? "Home" : "الرئيسية",
-              "item": `${SITE_URL}/`
-            },
-            {
-              "@type": "ListItem",
-              "position": 2,
-              "name": isEn ? "Projects" : "المشاريع",
-              "item": `${SITE_URL}/projects`
-            },
-            {
-              "@type": "ListItem",
-              "position": 3,
-              "name": project.title,
-              "item": projectUrl
-            }
-          ]
-        }
-      ]
-    };
-
-    scriptTag.textContent = JSON.stringify(schemaData);
-
-    return () => {
-      // Clean up injected schema on unmount
-      const el = document.getElementById(scriptId);
-      if (el) el.remove();
-    };
-  }, [project, isEn]);
-
-  // Parse markdown and extract Headings for Table of Contents
-  const { renderedHtml, tocHeadings } = useMemo(() => {
-    const contentMd = (project as any).contentMarkdown || (project as any).markdown || '';
-    const headings: TocHeading[] = [];
-    let headingCounter = 0;
-
-    // Custom renderer for marked
-    const renderer = new marked.Renderer();
-
-    renderer.heading = ({ tokens, depth }) => {
-      const text = tokens.map((t: any) => t.raw || t.text || '').join('');
-      if (depth === 2 || depth === 3) {
-        headingCounter++;
-        const safeSlug = text
-          .toLowerCase()
-          .replace(/[^\u0621-\u064Aa-z0-9]+/g, '-')
-          .replace(/^-+|-+$/g, '') || `section-${headingCounter}`;
-        const id = `sec-${headingCounter}-${safeSlug}`;
-        
-        headings.push({ id, text, level: depth });
-        return `<h${depth} id="${id}" class="project-heading-${depth} scroll-mt-offset">${text}</h${depth}>`;
-      }
-      return `<h${depth}>${text}</h${depth}>`;
-    };
-
-    marked.setOptions({
-      renderer,
-      gfm: true,
-      breaks: true
-    });
-
-    const parsed = marked.parse(contentMd) as string;
-    return { renderedHtml: parsed, tocHeadings: headings };
-  }, [project.slug]);
-
-  // IntersectionObserver to highlight current active heading
-  useEffect(() => {
-    if (tocHeadings.length === 0) return;
+    if (toc.length === 0) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -205,27 +72,21 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
       }
     );
 
-    tocHeadings.forEach((h) => {
+    toc.forEach((h) => {
       const el = document.getElementById(h.id);
       if (el) observer.observe(el);
     });
 
     return () => observer.disconnect();
-  }, [tocHeadings]);
+  }, [toc]);
 
   const handleHeadingClick = (e: React.MouseEvent, id: string) => {
     e.preventDefault();
     setActiveHeadingId(id);
     const target = document.getElementById(id);
     if (target) {
-      const navbarOffset = 90;
-      const elementPosition = target.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - navbarOffset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.history.replaceState(null, '', `#${id}`);
     }
   };
 
@@ -234,10 +95,14 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url).then(() => {
         setCopied(true);
-        setTimeout(() => setCopied(false), 2200);
+        setTimeout(() => setCopied(false), 2500);
       });
     }
   };
+
+  const isProjectSaved = isSaved(project.slug);
+  const cleanExcerpt = plainExcerpt(project.excerpt, project.metaDesc);
+  const cleanTags = projectTags(project.tags);
 
   const handleToggleBookmark = () => {
     toggleSave({
@@ -245,28 +110,31 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
       title: project.title,
       category: project.category,
       categoryLabel: project.categoryNameAr,
-      description: project.excerpt,
+      description: cleanExcerpt,
       type: 'project',
       image: project.image,
-      tags: project.tags
+      tags: cleanTags
     });
   };
 
-  const isProjectSaved = isSaved(project.slug);
-
   return (
     <div className="project-detail-container" dir={isEn ? 'ltr' : 'rtl'}>
-      {/* Top Breadcrumb Navigation */}
-      <nav className="project-breadcrumb-nav" aria-label="Breadcrumb">
-        <button type="button" className="breadcrumb-btn" onClick={onBack}>
-          <Home size={15} />
+      {/* 1. Breadcrumbs */}
+      <nav className="project-breadcrumbs" aria-label={isEn ? "Breadcrumb navigation" : "مسار التصفح"}>
+        <Link href="/" className="breadcrumb-link">
+          <Home size={14} />
+          <span>{isEn ? "Home" : "الرئيسية"}</span>
+        </Link>
+        <span className="breadcrumb-separator">/</span>
+        <Link href="/projects" className="breadcrumb-link">
+          <Layers size={14} />
           <span>{isEn ? "Projects" : "المشاريع"}</span>
-        </button>
-        <span className="breadcrumb-sep">{isEn ? "/" : "/"}</span>
+        </Link>
+        <span className="breadcrumb-separator">/</span>
         <span className="breadcrumb-category">{project.categoryNameAr}</span>
-        <span className="breadcrumb-sep">{isEn ? "/" : "/"}</span>
-        <span className="breadcrumb-current" title={project.title}>
-          {project.title.length > 45 ? `${project.title.slice(0, 45)}...` : project.title}
+        <span className="breadcrumb-separator">/</span>
+        <span className="breadcrumb-current" aria-current="page" title={project.title}>
+          {project.title}
         </span>
       </nav>
 
@@ -279,7 +147,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
 
         <h1 className="project-detail-title">{project.title}</h1>
 
-        <p className="project-detail-lead">{project.excerpt}</p>
+        <p className="project-detail-lead">{cleanExcerpt}</p>
 
         {/* Verified Role Qualifier Badge */}
         <div className="project-role-qualifier-card">
@@ -330,14 +198,13 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
               <span className="btn-text-responsive">{copied ? (isEn ? "Copied" : "تم النسخ!") : (isEn ? "Share" : "مشاركة")}</span>
             </button>
 
-            <button
-              type="button"
+            <Link
+              href="/projects"
               className="project-icon-btn back-btn"
-              onClick={onBack}
             >
               {isEn ? <ArrowLeft size={18} /> : <ArrowRight size={18} />}
               <span>{isEn ? "All Projects" : "كل المشاريع"}</span>
-            </button>
+            </Link>
           </div>
         </div>
       </header>
@@ -350,13 +217,15 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
           className="project-featured-image"
           loading="eager"
         />
-        <div className="project-image-caption">
-          <span>{project.altText}</span>
-        </div>
+        {project.altText && (
+          <div className="project-image-caption">
+            <span>{project.altText}</span>
+          </div>
+        )}
       </div>
 
       {/* Mobile Collapsible TOC Drawer */}
-      {tocHeadings.length > 0 && (
+      {toc.length > 0 && (
         <div className="mobile-toc-accordion">
           <button
             type="button"
@@ -364,19 +233,22 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
             onClick={() => setIsMobileTocOpen(!isMobileTocOpen)}
             aria-expanded={isMobileTocOpen}
           >
-            <div className="mobile-toc-title-wrap">
+            <div className="mobile-toc-label">
               <ListOrdered size={16} />
-              <span>{isEn ? "Table of Contents" : "فهرس محتوى المشروع"}</span>
-              <span className="mobile-toc-count">({tocHeadings.length})</span>
+              <span>{isEn ? "Project Index" : "فهرس محتويات المشروع"}</span>
+              <span className="mobile-toc-count">{toc.length}</span>
             </div>
-            {isMobileTocOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+            {isMobileTocOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           </button>
 
           {isMobileTocOpen && (
-            <nav className="mobile-toc-drawer" aria-label="Mobile Table of Contents">
+            <nav className="mobile-toc-content" aria-label={isEn ? "Mobile Table of Contents" : "فهرس المحتويات للجوال"}>
               <ul className="mobile-toc-list">
-                {tocHeadings.map((heading) => (
-                  <li key={heading.id} className={`mobile-toc-item level-${heading.level}`}>
+                {toc.map((heading) => (
+                  <li 
+                    key={heading.id} 
+                    className={`mobile-toc-item level-${heading.level}`}
+                  >
                     <a
                       href={`#${heading.id}`}
                       className={`mobile-toc-link ${activeHeadingId === heading.id ? 'active' : ''}`}
@@ -398,19 +270,15 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
 
       {/* Main Content Layout: Markdown Body + Sidebar TOC */}
       <div className="project-content-grid">
-        {/* Rendered Markdown Body */}
         <article className="project-markdown-body">
-          <div 
-            className="markdown-prose"
-            dangerouslySetInnerHTML={{ __html: renderedHtml }}
-          />
+          {children}
 
-          {/* Tags Footer */}
-          {project.tags && project.tags.length > 0 && (
+          {/* Tags Footer (only if tags exist) */}
+          {cleanTags.length > 0 && (
             <div className="project-tags-section">
               <span className="tags-label">{isEn ? "Tags:" : "الوسوم والكلمات المفتاحية:"}</span>
               <div className="project-tags-list">
-                {project.tags.map((tag, idx) => (
+                {cleanTags.map((tag, idx) => (
                   <span key={idx} className="project-tag-pill">
                     #{tag}
                   </span>
@@ -434,114 +302,115 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
                   : "تواصل مع فريق تكنو إنجاز الهندسي لمناقشة قابلية التنفيذ العملي، اختيار القطع، وتطوير النموذج الأولي."}
               </p>
             </div>
-            <a href="#contact" className="project-cta-btn">
+            <Link href="/contact" className="project-cta-btn">
               <Send size={16} />
               <span>{isEn ? "Contact Bureau" : "تواصل مع المكتب"}</span>
-            </a>
+            </Link>
           </div>
         </article>
 
         {/* Desktop Sticky Sidebar (TOC + Related Projects) */}
         <aside className="project-sidebar">
-          {/* Desktop Table of Contents */}
-          {tocHeadings.length > 0 && (
+          {toc.length > 0 && (
             <div className="desktop-toc-card">
               <div className="toc-card-header">
                 <ListOrdered size={17} />
-                <h3 className="toc-card-title">{isEn ? "Table of Contents" : "فهرس المشروع"}</h3>
+                <h3 className="toc-title">{isEn ? "Table of Contents" : "فهرس المحتويات"}</h3>
               </div>
-              <nav className="desktop-toc-nav" aria-label="Table of Contents">
-                <ul className="desktop-toc-list">
-                  {tocHeadings.map((heading) => (
-                    <li key={heading.id} className={`desktop-toc-item level-${heading.level}`}>
-                      <a
-                        href={`#${heading.id}`}
-                        className={`desktop-toc-link ${activeHeadingId === heading.id ? 'active' : ''}`}
-                        onClick={(e) => handleHeadingClick(e, heading.id)}
-                      >
-                        <span className="toc-indicator" />
-                        <span className="toc-text">{heading.text}</span>
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
+              <ul className="toc-list">
+                {toc.map((heading) => (
+                  <li 
+                    key={heading.id} 
+                    className={`toc-item level-${heading.level} ${activeHeadingId === heading.id ? 'active' : ''}`}
+                  >
+                    <a
+                      href={`#${heading.id}`}
+                      className="toc-link"
+                      onClick={(e) => handleHeadingClick(e, heading.id)}
+                    >
+                      <span className="toc-dot" />
+                      <span className="toc-link-text">{heading.text}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 
-          {/* Related Projects Card */}
-          <div className="sidebar-related-card">
-            <div className="related-card-header">
-              <Sparkles size={17} />
-              <h3 className="related-card-title">{isEn ? "Related Projects" : "مشاريع ذات صلة"}</h3>
+          {/* Sidebar Related Projects */}
+          {related.length > 0 && (
+            <div className="sidebar-related-card">
+              <h3 className="related-title">{isEn ? "Related Projects" : "مشاريع ذات صلة"}</h3>
+              <div className="related-list">
+                {related.map((rel) => (
+                  <Link
+                    key={rel.slug}
+                    href={`/projects/${rel.slug}`}
+                    className="related-project-item"
+                  >
+                    <img
+                      src={rel.image}
+                      alt={rel.altText || rel.title}
+                      className="related-project-img"
+                      loading="lazy"
+                    />
+                    <div className="related-project-info">
+                      <span className="related-project-cat">{rel.categoryNameAr}</span>
+                      <h4 className="related-project-name">{rel.title}</h4>
+                    </div>
+                  </Link>
+                ))}
+              </div>
             </div>
-            <div className="related-projects-list">
-              {relatedProjects.map((rel) => (
-                <div
-                  key={rel.slug}
-                  className="related-project-item"
-                  onClick={() => onSelectProject(rel)}
-                >
-                  <img
-                    src={rel.image}
-                    alt={rel.altText || rel.title}
-                    className="related-project-img"
-                    loading="lazy"
-                  />
-                  <div className="related-project-info">
-                    <span className="related-project-cat">{rel.categoryNameAr}</span>
-                    <h4 className="related-project-name">{rel.title}</h4>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          )}
         </aside>
       </div>
 
       {/* Bottom Related Projects Grid */}
-      <section className="bottom-related-section">
-        <div className="section-header">
-          <h2 className="section-title">
-            {isEn ? "Explore More Projects" : "استكشف المزيد من مشاريع تكنو إنجاز"}
-          </h2>
-          <p className="section-subtitle">
-            {isEn 
-              ? "Discover more engineering prototypes and academic implementations"
-              : "نماذج تطبيقية ومنظومات برمجية وهندسية منجزة بدعم المكتب"}
-          </p>
-        </div>
+      {related.length > 0 && (
+        <section className="bottom-related-section">
+          <div className="section-header">
+            <h2 className="section-title">
+              {isEn ? "Explore More Projects" : "استكشف المزيد من مشاريع تكنو إنجاز"}
+            </h2>
+            <p className="section-subtitle">
+              {isEn 
+                ? "Discover more engineering prototypes and academic implementations"
+                : "نماذج تطبيقية ومنظومات برمجية وهندسية منجزة بدعم المكتب"}
+            </p>
+          </div>
 
-        <div className="bottom-related-grid">
-          {relatedProjects.map((rel) => (
-            <div 
-              key={rel.slug} 
-              className="bottom-related-card"
-              onClick={() => onSelectProject(rel)}
-            >
-              <div className="related-card-img-wrap">
-                <img
-                  src={rel.image}
-                  alt={rel.altText || rel.title}
-                  className="bottom-card-img"
-                  loading="lazy"
-                />
-                <span className="bottom-card-badge">{rel.categoryNameAr}</span>
-              </div>
-              <div className="bottom-card-body">
-                <h3 className="bottom-card-title">{rel.title}</h3>
-                <p className="bottom-card-desc">{rel.excerpt}</p>
-                <div className="bottom-card-footer">
-                  <span className="bottom-card-link">
-                    <span>{isEn ? "View Case Study" : "استعراض المشروع"}</span>
-                    {isEn ? <ArrowRight size={14} /> : <ArrowLeft size={14} />}
-                  </span>
+          <div className="bottom-related-grid">
+            {related.map((rel) => (
+              <Link 
+                key={rel.slug} 
+                href={`/projects/${rel.slug}`}
+                className="bottom-related-card"
+              >
+                <div className="related-card-img-wrap">
+                  <img
+                    src={rel.image}
+                    alt={rel.altText || rel.title}
+                    className="bottom-card-img"
+                    loading="lazy"
+                  />
+                  <span className="bottom-card-badge">{rel.categoryNameAr}</span>
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+                <div className="bottom-card-body">
+                  <h3 className="bottom-card-title">{rel.title}</h3>
+                  <p className="bottom-card-desc">{plainExcerpt(rel.excerpt, rel.metaDesc)}</p>
+                  <div className="bottom-card-footer">
+                    <span className="bottom-card-link">
+                      <span>{isEn ? "View Case Study" : "استعراض المشروع"}</span>
+                      {isEn ? <ArrowRight size={14} /> : <ArrowLeft size={14} />}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 };

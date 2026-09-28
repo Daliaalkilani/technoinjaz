@@ -24,7 +24,15 @@ import { Button } from './components/ui/button';
 import VideoPlayerModal from './components/videos/VideoPlayerModal';
 import './UserProfilePage.css';
 
-export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExploreProjects }) {
+/**
+ * @param {{
+ *   onBack?: (() => void) | null,
+ *   onLogout?: (() => void) | null,
+ *   onOpenReader?: ((project?: any) => void) | null,
+ *   onExploreProjects?: (() => void) | null
+ * }} [props]
+ */
+export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExploreProjects } = {}) {
   const router = useRouter();
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';

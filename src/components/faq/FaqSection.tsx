@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import Link from 'next/link';
 import { 
   HelpCircle, 
   Search, 
@@ -10,15 +11,15 @@ import {
   ArrowRight, 
   Home, 
   Sparkles, 
-  ExternalLink,
-  MessageCircle,
-  FolderGit2,
-  FileText,
-  MapPin,
-  Send,
-  Code2,
-  DollarSign,
-  PhoneCall
+  ExternalLink, 
+  MessageCircle, 
+  FolderGit2, 
+  FileText, 
+  MapPin, 
+  Send, 
+  Code2, 
+  DollarSign, 
+  PhoneCall 
 } from 'lucide-react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import { faqData, faqCategories, type FaqItem, type FaqActionIconKey } from '../../data/faqData';
@@ -39,11 +40,15 @@ const ICON_MAP: Record<FaqActionIconKey, React.ReactNode> = {
   phoneCall: <PhoneCall size={14} />
 };
 
-interface FaqSectionProps {
-  onNavigateTab: (target: string) => void;
-}
+const ACTION_ROUTE_MAP: Record<string, string> = {
+  '#contact': '/contact',
+  '#projects': '/projects',
+  '#articles': '/articles',
+  '#about': '/about',
+  '#videos': '/videos'
+};
 
-export const FaqSection: React.FC<FaqSectionProps> = ({ onNavigateTab }) => {
+export const FaqSection: React.FC = () => {
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
 
@@ -73,7 +78,7 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onNavigateTab }) => {
       const answer = (isEn ? item.answerEn : item.answer).toLowerCase();
       return question.includes(q) || answer.includes(q);
     });
-  }, [faqData, activeCategory, searchQuery, isEn]);
+  }, [activeCategory, searchQuery, isEn]);
 
   return (
     <section className="faq-section-container" dir={isEn ? 'ltr' : 'rtl'}>
@@ -81,14 +86,13 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onNavigateTab }) => {
       <nav className="faq-breadcrumbs-nav" aria-label="Breadcrumb">
         <ol className="faq-breadcrumbs-list">
           <li className="faq-breadcrumb-item">
-            <button 
-              type="button" 
+            <Link 
+              href="/" 
               className="faq-breadcrumb-btn"
-              onClick={() => onNavigateTab('#top')}
             >
               <Home size={14} />
               <span>{isEn ? "Home" : "الرئيسية"}</span>
-            </button>
+            </Link>
           </li>
           <li className="faq-breadcrumb-separator">
             {isEn ? <ArrowRight size={13} /> : <ArrowLeft size={13} />}
@@ -99,79 +103,75 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onNavigateTab }) => {
         </ol>
       </nav>
 
-      {/* 2. Page Header */}
-      <div className="faq-header-wrapper">
-        <div className="faq-header-badge">
+      {/* 2. Hero Header */}
+      <div className="faq-hero-header">
+        <div className="faq-badge-capsule">
           <HelpCircle size={15} />
-          <span>{isEn ? "Knowledge Base & Inquiries" : "مركز الإجابات والاستفسارات"}</span>
+          <span>{isEn ? "Knowledge Base & Answers" : "مركز الاستفسارات والدعم المعرفي"}</span>
         </div>
-        <h1 className="faq-page-main-title">
+        <h1 className="faq-main-title">
           {isEn ? "Frequently Asked Questions" : "الأسئلة الشائعة"}
         </h1>
-        <p className="faq-page-lead-desc">
+        <p className="faq-sub-desc">
           {isEn
-            ? "Short, direct answers to common questions asked by students, researchers, and partners. Didn't find your answer? Contact us directly."
-            : "إجابات قصيرة ومباشرة عن أكثر ما يسألنا عنه الطلاب والعملاء. لم تجد إجابتك؟ راسلنا وسنجيبك مباشرة."}
+            ? "Comprehensive answers regarding our engineering services, prototype hardware, software systems, and collaboration models."
+            : "إجابات هندسية دقيقة حول خدماتنا، النماذج التطبيقية، آلية العمل، والدعم التقني المقدم في تكنو إنجاز."}
         </p>
-      </div>
 
-      {/* 3. Search Bar */}
-      <div className="faq-search-box-wrap">
-        <div className="faq-search-inner">
+        {/* 3. Search Bar */}
+        <div className="faq-search-wrapper">
           <Search size={18} className="faq-search-icon" />
           <input
             type="text"
             className="faq-search-input"
-            placeholder={isEn ? "Search in questions and answers..." : "ابحث في الأسئلة الشائعة والإجابات..."}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={isEn ? "Search questions or keywords..." : "ابحث في الأسئلة أو الكلمات المفتاحية..."}
           />
           {searchQuery && (
-            <button 
-              type="button" 
-              className="faq-search-clear-btn"
+            <button
+              type="button"
+              className="faq-search-clear"
               onClick={() => setSearchQuery('')}
             >
-              ×
+              ✕
             </button>
           )}
         </div>
       </div>
 
-      {/* 4. Category Filter Chips */}
-      <div className="faq-categories-chips-wrap">
-        <div className="faq-categories-scroll">
-          {categories.map((cat) => {
-            const count = cat.id === 'all' 
-              ? faqData.length 
-              : faqData.filter(i => i.category === cat.id).length;
-            const isActive = activeCategory === cat.id;
+      {/* 4. Category Tabs */}
+      <div className="faq-category-pills-row">
+        {categories.map((cat) => {
+          const count = cat.id === 'all'
+            ? faqData.length
+            : faqData.filter(i => i.category === cat.id).length;
+          const isActive = activeCategory === cat.id;
 
-            return (
-              <button
-                key={cat.id}
-                type="button"
-                className={`faq-category-chip ${isActive ? 'active' : ''}`}
-                onClick={() => setActiveCategory(cat.id)}
-              >
-                <span>{isEn ? cat.nameEn : cat.name}</span>
-                <span className="faq-chip-count">({count})</span>
-              </button>
-            );
-          })}
-        </div>
+          return (
+            <button
+              key={cat.id}
+              type="button"
+              className={`faq-category-chip ${isActive ? 'active' : ''}`}
+              onClick={() => setActiveCategory(cat.id)}
+            >
+              <span>{isEn ? cat.nameEn : cat.name}</span>
+              <span className="chip-counter">{count}</span>
+            </button>
+          );
+        })}
       </div>
 
-      {/* 5. Accordion Items List */}
-      <div className="faq-accordion-container">
+      {/* 5. Accordion List */}
+      <div className="faq-content-area">
         {filteredItems.length === 0 ? (
           <div className="faq-empty-state">
-            <HelpCircle size={44} className="faq-empty-icon" />
-            <h3>{isEn ? "No Matching Questions Found" : "لم يتم العثور على نتائج تطابق بحثك"}</h3>
-            <p>{isEn ? "Try changing your search terms or contact us directly." : "جرّب البحث بكلمات أخرى أو راسلنا مباشرة للإجابة على استفسارك."}</p>
+            <HelpCircle size={44} className="empty-ico" />
+            <h3>{isEn ? "No matching questions found" : "لم يتم العثور على نتائج مطابقة"}</h3>
+            <p>{isEn ? "Try different keywords or view all categories." : "جرب كلمات بحث أخرى أو استعرض كافة التصنيفات."}</p>
             <button
               type="button"
-              className="faq-reset-btn"
+              className="faq-reset-filter-btn"
               onClick={() => {
                 setSearchQuery('');
                 setActiveCategory('all');
@@ -187,6 +187,7 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onNavigateTab }) => {
               const qText = isEn ? item.questionEn : item.question;
               const aText = isEn ? item.answerEn : item.answer;
               const actionText = isEn ? item.actionLabelEn : item.actionLabel;
+              const targetRoute = item.actionTarget ? (ACTION_ROUTE_MAP[item.actionTarget] || item.actionTarget) : '/';
 
               return (
                 <article 
@@ -198,6 +199,7 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onNavigateTab }) => {
                     className="faq-question-btn"
                     onClick={() => toggleItem(item.id)}
                     aria-expanded={isOpen}
+                    aria-controls={`faq-a-${item.id}`}
                   >
                     <span className="faq-question-text">{qText}</span>
                     <span className="faq-toggle-icon-wrap">
@@ -205,27 +207,29 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onNavigateTab }) => {
                     </span>
                   </button>
 
-                  {isOpen && (
-                    <div className="faq-answer-drawer">
-                      <div className="faq-answer-inner">
-                        <p className="faq-answer-text">{aText}</p>
+                  <div 
+                    id={`faq-a-${item.id}`}
+                    role="region"
+                    hidden={!isOpen}
+                    className={`faq-answer-drawer ${isOpen ? 'is-open' : ''}`}
+                  >
+                    <div className="faq-answer-inner">
+                      <p className="faq-answer-text">{aText}</p>
 
-                        {actionText && item.actionTarget && (
-                          <div className="faq-action-row">
-                            <button
-                              type="button"
-                              className="faq-action-link-btn"
-                              onClick={() => onNavigateTab(item.actionTarget!)}
-                            >
-                              {item.actionIconKey ? ICON_MAP[item.actionIconKey] : null}
-                              <span>{actionText}</span>
-                              {isEn ? <ArrowRight size={13} /> : <ArrowLeft size={13} />}
-                            </button>
-                          </div>
-                        )}
-                      </div>
+                      {actionText && item.actionTarget && (
+                        <div className="faq-action-row">
+                          <Link
+                            href={targetRoute}
+                            className="faq-action-link-btn"
+                          >
+                            {item.actionIconKey ? ICON_MAP[item.actionIconKey] : null}
+                            <span>{actionText}</span>
+                            {isEn ? <ArrowRight size={13} /> : <ArrowLeft size={13} />}
+                          </Link>
+                        </div>
+                      )}
                     </div>
-                  )}
+                  </div>
                 </article>
               );
             })}
@@ -250,14 +254,13 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onNavigateTab }) => {
             </p>
           </div>
         </div>
-        <button
-          type="button"
+        <Link
+          href="/contact"
           className="faq-cta-action-btn"
-          onClick={() => onNavigateTab('#contact')}
         >
           <PhoneCall size={16} />
           <span>{isEn ? "Contact Us" : "تواصل معنا مباشرة"}</span>
-        </button>
+        </Link>
       </div>
     </section>
   );

@@ -31,7 +31,12 @@ const FacebookIcon = ({ size = 22, ...props }) => (
   </svg>
 );
 
-export default function ContactPage({ onBack }) {
+/**
+ * @param {{
+ *   onBack?: (() => void) | null
+ * }} [props]
+ */
+export default function ContactPage({ onBack } = {}) {
   const { lang, t } = useThemeLanguage();
   const isEn = lang === 'en';
 
