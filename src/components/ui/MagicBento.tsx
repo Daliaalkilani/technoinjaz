@@ -82,7 +82,7 @@ const defaultCardData: BentoCardItem[] = [
     descriptionEn: 'Engineering validation, uncertainty quantification, and operational trust in predictive systems.',
     label: 'هندسة الموثوقية',
     labelEn: 'Reliability Engineering',
-    image: ch6
+    image: (ch6 as any).src || ch6
   }
 ];
 

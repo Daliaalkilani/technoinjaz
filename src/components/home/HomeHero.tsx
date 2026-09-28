@@ -1,13 +1,15 @@
-import { useState, useEffect } from 'react';
-import ScrollExpand from '../components/ui/ScrollExpand';
-import ProjectsSection from '../components/projects/ProjectsSection';
-import VideosSection from '../components/videos/VideosSection';
-import ArticlesSection from '../components/articles/ArticlesSection';
-import im3Img from '../assets/im3.png';
-import im2Img from '../assets/im2.png';
-import technoEnjazLogo from '../assets/Asset-1@4x.png';
-import { useThemeLanguage } from '../context/ThemeLanguageContext';
-import './ScrollExpandPrototype.css';
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import ScrollExpand from '../ui/ScrollExpand';
+import ProjectsSection from '../projects/ProjectsSection';
+import VideosSection from '../videos/VideosSection';
+import ArticlesSection from '../articles/ArticlesSection';
+import im3Img from '../../assets/im3.png';
+import im2Img from '../../assets/im2.png';
+import technoEnjazLogo from '../../assets/Asset-1@4x.png';
+import { useThemeLanguage } from '../../context/ThemeLanguageContext';
+import './HomeHero.css';
 
 interface ResponsiveConfig {
   startWidth: number;
@@ -19,7 +21,6 @@ interface ResponsiveConfig {
 
 const getResponsiveConfig = (width: number): ResponsiveConfig => {
   if (width < 640) {
-    // Mobile: ~180vh total track (1 + 0.60 + 0.20 = 1.80)
     return {
       startWidth: 84,
       startHeight: 54,
@@ -28,7 +29,6 @@ const getResponsiveConfig = (width: number): ResponsiveConfig => {
       mediaZoom: 1.25,
     };
   } else if (width < 1024) {
-    // Tablet: ~210vh total track (1 + 0.85 + 0.25 = 2.10)
     return {
       startWidth: 80,
       startHeight: 58,
@@ -37,7 +37,6 @@ const getResponsiveConfig = (width: number): ResponsiveConfig => {
       mediaZoom: 1.30,
     };
   } else {
-    // Desktop: ~245vh total track (1 + 1.10 + 0.35 = 2.45)
     return {
       startWidth: 76,
       startHeight: 64,
@@ -48,14 +47,14 @@ const getResponsiveConfig = (width: number): ResponsiveConfig => {
   }
 };
 
-interface ScrollExpandPrototypeProps {
+export interface HomeHeroProps {
   onOpenContact?: () => void;
   onNavigateToProjects?: () => void;
   onNavigateToVideos?: () => void;
   onNavigateToArticles?: () => void;
 }
 
-const ScrollExpandPrototype: React.FC<ScrollExpandPrototypeProps> = ({
+export const HomeHero: React.FC<HomeHeroProps> = ({
   onOpenContact,
   onNavigateToProjects,
   onNavigateToVideos,
@@ -78,7 +77,7 @@ const ScrollExpandPrototype: React.FC<ScrollExpandPrototypeProps> = ({
     <div id="top" className="prototype-root">
       <ScrollExpand
         key={`scroll-expand-${config.startWidth}`}
-        src={theme === 'light' ? im2Img : im3Img}
+        src={((theme === 'light' ? im2Img : im3Img) as any)?.src || (theme === 'light' ? im2Img : im3Img)}
         mediaType="image"
         alt={lang === 'ar' ? "محطة العمل الهندسية" : "Engineering Workstation"}
         startWidth={config.startWidth}
@@ -100,7 +99,7 @@ const ScrollExpandPrototype: React.FC<ScrollExpandPrototypeProps> = ({
         <div className="expanded-overlay-wrapper" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
           <div className="expanded-logo-wrapper">
             <img
-              src={technoEnjazLogo}
+              src={(technoEnjazLogo as any)?.src || technoEnjazLogo}
               alt={t.nav.brand}
               className="expanded-logo"
             />
@@ -156,4 +155,4 @@ const ScrollExpandPrototype: React.FC<ScrollExpandPrototypeProps> = ({
   );
 };
 
-export default ScrollExpandPrototype;
+export default HomeHero;

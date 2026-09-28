@@ -10,6 +10,11 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+.next/
+.open-next/
+.wrangler/
+public/_img/
+next-env.d.ts
 *.local
 test-screenshots*
 verify-*.js
@@ -17,6 +22,7 @@ verify-*.js
 *.doc
 test-results/
 playwright-report/
+*.tsbuildinfo
 
 # Editor directories and files
 .vscode/*

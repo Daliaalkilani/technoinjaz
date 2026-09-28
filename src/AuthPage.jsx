@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import AuthSwitch from './components/ui/auth-switch.tsx';
+import AuthSwitch from './components/ui/auth-switch';
 import { useThemeLanguage } from './context/ThemeLanguageContext';
 import './AuthPage.css';
 

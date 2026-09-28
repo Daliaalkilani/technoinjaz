@@ -25,7 +25,7 @@ const videosList = [
     tag: 'أنظمة طيران مسيّر',
     tagEn: 'Smart Drone',
     duration: '01:07',
-    cover: droneNanoImg,
+    cover: (droneNanoImg as any)?.src || droneNanoImg,
     youtubeUrl: 'https://www.youtube.com/watch?v=4Sew-i8sB2s',
     description: 'استعراض هندسي متكامل لطائرة درون تعتمد على معالجة استقرار الجايروسكوب، والاتصال اللاسلكي RF433، والبث المرئي الحي عبر ESP-CAM بدقة واحترافية.',
     descriptionEn: 'An integrated quadcopter engineering design combining gyro flight stabilization, RF433 wireless control, and real-time ESP-CAM video streaming.'
@@ -37,7 +37,7 @@ const videosList = [
     tag: 'ميكاترونيكس وروبوتات',
     tagEn: 'Industrial Robotics',
     duration: '01:12',
-    cover: armWeldingImg,
+    cover: (armWeldingImg as any)?.src || armWeldingImg,
     youtubeUrl: 'https://www.youtube.com/watch?v=L2ya6z4tZhg',
     description: 'تطوير ذراع روبوتية متعددة المحاور مبرمجة للأتمتة الصناعية ولحام المعادن فائق الدقة باستخدام غاز الأرجون مع تحكم ميكاترونيكي سلس وموثوق.',
     descriptionEn: 'Development of a multi-axis robotic arm engineered for industrial automation and high-precision argon welding with seamless mechatronic control.'
@@ -49,7 +49,7 @@ const videosList = [
     tag: 'رؤية حاسوبية',
     tagEn: 'Computer Vision',
     duration: '00:16',
-    cover: armVisionImg,
+    cover: (armVisionImg as any)?.src || armVisionImg,
     youtubeUrl: 'https://www.youtube.com/watch?v=poKdf5HdaAM',
     description: 'ربط خوارزميات الرؤية الحاسوبية في بايثون مع متحكمات الأردوينو لتتبع الأجسام بالزمن الحقيقي وتوجيه الذراع الروبوتية لمناولتها ذاتياً بدقة فائقة.',
     descriptionEn: 'Real-time integration of computer vision algorithms in Python with Arduino microcontrollers for autonomous object tracking and manipulation.'
@@ -70,7 +70,7 @@ const VideosSection: React.FC<VideosSectionProps> = ({
       <div className="projects-grid-distortion-wrapper" style={{ pointerEvents: 'none' }}>
         <div className="projects-grid-distortion-inner">
           <img
-            src={theme === 'light' ? im1Bg : heroBgDistortion}
+            src={((theme === 'light' ? im1Bg : heroBgDistortion) as any)?.src || (theme === 'light' ? im1Bg : heroBgDistortion)}
             alt=""
             aria-hidden="true"
             className="projects-bg-static-img"

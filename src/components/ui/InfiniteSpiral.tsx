@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react';
+import type { StaticImageData } from 'next/image';
 import './InfiniteSpiral.css';
 
 export interface InfiniteSpiralItem {
   id?: string | number;
-  src: string;
+  src: string | StaticImageData | { src: string };
   alt?: string;
   href?: string;
   target?: '_blank' | '_self' | '_parent' | '_top';
@@ -33,7 +34,7 @@ export interface InfiniteSpiralProps {
   className?: string;
 }
 
-type NormalizedItem = InfiniteSpiralItem & { alt: string };
+type NormalizedItem = Omit<InfiniteSpiralItem, 'src'> & { src: string; alt: string };
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 const modulo = (value: number, divisor: number) => ((value % divisor) + divisor) % divisor;
@@ -77,11 +78,14 @@ const InfiniteSpiral = ({
 
   const normalizedItems = useMemo<NormalizedItem[]>(
     () =>
-      items.map((item, index) =>
-        typeof item === 'string'
-          ? { src: item, alt: `Spiral image ${index + 1}` }
-          : { alt: `Spiral image ${index + 1}`, ...item }
-      ),
+      items.map((item, index) => {
+        if (typeof item === 'string') {
+          return { src: item, alt: `Spiral image ${index + 1}` };
+        }
+        const rawSrc = item.src;
+        const srcStr = typeof rawSrc === 'string' ? rawSrc : (rawSrc as any)?.src || '';
+        return { alt: `Spiral image ${index + 1}`, ...item, src: srcStr };
+      }),
     [items]
   );
 

@@ -2,7 +2,7 @@ import { useState, useEffect, lazy, Suspense, useRef } from 'react';
 import ScrollProgress from '@/registry/magicui/scroll-progress';
 import { Skiper19 } from '@/components/ui/svg-follow-scroll';
 import GooeyNav from './GooeyNav';
-import ScrollExpandPrototype from './pages/ScrollExpandPrototype';
+import ScrollExpandPrototype from './components/home/HomeHero';
 import TeamMomentsRing from './components/TeamMomentsRing';
 import InfiniteMenu from './InfiniteMenu';
 import Orb from './Orb';

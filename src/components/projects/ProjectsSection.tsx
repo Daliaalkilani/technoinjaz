@@ -106,7 +106,7 @@ const ProjectsSection = ({
       <div className="projects-grid-distortion-wrapper" style={{ pointerEvents: 'none' }}>
         <div className="projects-grid-distortion-inner">
           <img
-            src={theme === 'light' ? im1Bg : heroBgDistortion}
+            src={((theme === 'light' ? im1Bg : heroBgDistortion) as any)?.src || ''}
             alt=""
             aria-hidden="true"
             className="projects-bg-static-img"
