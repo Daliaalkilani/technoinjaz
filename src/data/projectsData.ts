@@ -47,7 +47,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "slug": "interactive-children-ai-learning-system",
     "folderName": "تصميم نظام تعليمي تفاعلي للأطفال باستخدام الذكاء الاصطناعي والرؤية الحاسوبية",
     "title": "نظام تعليمي تفاعلي للأطفال باستخدام الذكاء الاصطناعي والرؤية الحاسوبية",
-    "excerpt": "<!-- FEATURED IMAGE الأولوية: الشكل (5-4) الواجهة الرئيسية أو الشكل (5-6) تجربة التعرف على الحيوانات من ملف المشروع. Filename: interactive-children-ai-learning-system.webp Alt: واج...",
+    "excerpt": "مشروع أكاديمي نفذه الطلاب بمساعدة تكنو إنجاز لتطوير نظام تعليمي تفاعلي يتعرف على الحيوانات والألوان والأرقام باستخدام YOLO11 وHSV وOCR والرؤية الحاسوبية.",
     "category": "ai",
     "categoryNameAr": "أنظمة تعليمية وذكاء اصطناعي",
     "categoryNameEn": "Educational AI & Vision",

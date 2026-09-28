@@ -17,8 +17,16 @@ export function renderMarkdown(
   opts: RenderMarkdownOptions = {}
 ): { html: string; toc: TocHeading[] } {
   const variant = opts.variant ?? 'article';
-  let src = md.replace(/<!--[\s\S]*?-->/g, '');
-  src = src.replace(/^(SEO Title|Meta Description|Suggested Slug):.*$/gim, '');
+  
+  // Strip all comments (closed and unclosed)
+  let src = md.replace(/<!--[\s\S]*?(?:-->|$)/g, '');
+  
+  // Strip draft metadata lines
+  src = src.replace(/^(SEO Title|Meta Description|Suggested Slug|Filename|IMAGE SLOT|FEATURED IMAGE|GALLERY ITEM|Suggested Internal Link):.*$/gim, '');
+  
+  // Strip lines referencing docs.google.com draft URLs
+  src = src.replace(/^.*https?:\/\/docs\.google\.com.*$/gim, '');
+  
   if (opts.stripLeadingH1 !== false) {
     src = src.replace(/^\s*#\s+[^\r\n]+[\r\n]*/, '');
   }
@@ -29,8 +37,11 @@ export function renderMarkdown(
 
   renderer.heading = function ({ tokens, depth }) {
     const inner = this.parser.parseInline(tokens);
-    if (depth !== 2 && depth !== 3) {
-      return `<h${depth}>${inner}</h${depth}>`;
+    // Demote any H1 in markdown content to H2 so the page only has exactly 1 H1 (the page title)
+    const effectiveDepth = depth === 1 ? 2 : depth;
+    
+    if (effectiveDepth !== 2 && effectiveDepth !== 3) {
+      return `<h${effectiveDepth}>${inner}</h${effectiveDepth}>`;
     }
     const text = inner.replace(/<[^>]+>/g, '').trim();
     const slug = text
@@ -42,21 +53,32 @@ export function renderMarkdown(
       ? `sec-${i++}-${slug || `section-${i}`}`
       : `sec-${i++}-${slug || 'heading'}`;
 
-    toc.push({ id, text, level: depth });
+    toc.push({ id, text, level: effectiveDepth });
 
     const className = variant === 'project'
-      ? `project-heading-${depth} scroll-mt-offset`
+      ? `project-heading-${effectiveDepth} scroll-mt-offset`
       : 'article-content-heading scroll-mt-offset';
 
-    return `<h${depth} id="${id}" class="${className}">${inner}</h${depth}>`;
+    return `<h${effectiveDepth} id="${id}" class="${className}">${inner}</h${effectiveDepth}>`;
   };
 
   renderer.link = function ({ href, title, tokens }) {
     const text = this.parser.parseInline(tokens);
+    if (href.includes('docs.google.com')) {
+      return text;
+    }
     let h = href.replace(/^#article\//, '/articles/').replace(/^#project\//, '/projects/');
     const ext = /^https?:\/\//.test(h);
     const t = title ? ` title="${title}"` : '';
     return `<a href="${h}"${t}${ext ? ' target="_blank" rel="noopener noreferrer"' : ''}>${text}</a>`;
+  };
+
+  renderer.image = function ({ href, title, text }) {
+    if (href.includes('docs.google.com')) {
+      return '';
+    }
+    const t = title ? ` title="${title}"` : '';
+    return `<img src="${href}" alt="${text || ''}"${t} loading="lazy" />`;
   };
 
   const markedInstance = new Marked({ gfm: true, breaks: true, renderer });

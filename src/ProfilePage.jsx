@@ -18,10 +18,10 @@ import './ProfilePage.css';
  */
 export default function ProfilePage({ member, onBack }) {
   const router = useRouter();
+  const { lang } = useThemeLanguage();
   if (!member) return null;
 
   const handleBack = onBack || (() => router.push('/about#team-showcase'));
-  const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
 
   const memberName = isEn ? (member.nameEn || member.name) : member.name;
