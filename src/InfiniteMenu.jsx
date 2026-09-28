@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { mat4, quat, vec2, vec3 } from 'gl-matrix';
 import SocialButtons from './components/SocialButtons';
-import { InteractiveHoverButton } from "@/registry/magicui/interactive-hover-button";
 import { useThemeLanguage } from './context/ThemeLanguageContext';
 import './InfiniteMenu.css';
 
@@ -958,11 +957,19 @@ const defaultItems = [
   }
 ];
 
+/**
+ * @param {{
+ *   items?: any[],
+ *   scale?: number,
+ *   backgroundColor?: string,
+ *   onSelectMember?: (member: any) => void
+ * }} props
+ */
 export default function InfiniteMenu({
   items = [],
   scale = 1.0,
   backgroundColor = '#000000',
-  onSelectMember
+  onSelectMember = undefined
 }) {
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
@@ -1050,28 +1057,44 @@ export default function InfiniteMenu({
         <div className={`active-member-card ${isMoving ? 'inactive' : 'active'}`} dir={isEn ? 'ltr' : 'rtl'}>
           <div className="active-member-content">
             <span className="member-label">
-              {activeItem.id === 'abdulghani'
-                ? (isEn ? 'Team Founder & Leader' : 'قائد ومؤسس الفريق')
+              {activeItem.isPlaceholder
+                ? (isEn ? 'Reserved Engineering Seat' : 'مقعد هندسي شاغر')
+                : activeItem.id === 'abdulghani'
+                ? (isEn ? 'Team Founder & Director' : 'قائد ومؤسس الفريق')
+                : activeItem.id === 'abdulhady-alkilani'
+                ? (isEn ? 'Full-Stack Developer & AI Integration' : 'مهندس برمجيات وتكامل الذكاء الاصطناعي')
                 : (isEn ? 'Team Member' : 'عضو الفريق')}
             </span>
-            <h2 className="member-name">{isEn ? (activeItem.nameEn || activeItem.titleEn || activeItem.title || activeItem.name) : (activeItem.title || activeItem.name)}</h2>
-            <p className="member-role">{isEn ? (activeItem.roleEn || activeItem.descriptionEn || activeItem.description || activeItem.role) : (activeItem.description || activeItem.role)}</p>
 
-            {/* أيقونات السوشل ميديا: لينكد إن، إيميل، وغيت هاب تحت المسمى الوظيفي */}
+            <h2 className="member-name">
+              {isEn ? (activeItem.nameEn || activeItem.titleEn || activeItem.name || activeItem.title) : (activeItem.name || activeItem.title)}
+            </h2>
+
+            <p className="member-role">
+              {isEn ? (activeItem.roleEn || activeItem.descriptionEn || activeItem.role || activeItem.description) : (activeItem.role || activeItem.description)}
+            </p>
+
+            {/* Specialization tag (الاختصاص) */}
+            {(activeItem.specialization || activeItem.specializationEn) && (
+              <div className="member-spec-badge">
+                <span>⚡ {isEn ? (activeItem.specializationEn || activeItem.specialization) : activeItem.specialization}</span>
+              </div>
+            )}
+
+            {/* Brief bio snippet (نبذة عنه) */}
+            {(activeItem.bio || activeItem.bioEn) && (
+              <p className="member-bio-text">
+                {isEn ? (activeItem.bioEn || activeItem.bio) : activeItem.bio}
+              </p>
+            )}
+
+            {/* أيقونات التواصل الاجتماعي: لينكد إن، غيت هاب، فيسبوك، إيميل */}
             {activeItem.socials && (
-              <SocialButtons socials={activeItem.socials} size="medium" />
+              <div className="member-socials-container">
+                <SocialButtons socials={activeItem.socials} size="medium" />
+              </div>
             )}
           </div>
-
-          <InteractiveHoverButton
-            type="button"
-            onClick={handleButtonClick}
-            className="member-profile-btn"
-            title={isEn ? `View profile for ${activeItem.nameEn || activeItem.title || activeItem.name}` : `عرض الملف التعريفي لـ ${activeItem.title || activeItem.name}`}
-            aria-label={isEn ? "View Profile" : "عرض الملف التعريفي"}
-          >
-            {isEn ? 'View Profile' : 'عرض الملف'}
-          </InteractiveHoverButton>
         </div>
       )}
     </div>

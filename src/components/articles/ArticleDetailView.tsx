@@ -375,6 +375,8 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                 type="button"
                 className={`article-action-btn like-btn ${isLiked ? 'active' : ''}`}
                 onClick={handleToggleLike}
+                title={isLiked ? (isEn ? "Unlike" : "إلغاء الإعجاب") : (isEn ? "Like" : "إعجاب")}
+                aria-label={isLiked ? (isEn ? "Unlike" : "إلغاء الإعجاب") : (isEn ? "Like" : "إعجاب")}
               >
                 <Heart size={18} fill={isLiked ? '#ef4444' : 'none'} color={isLiked ? '#ef4444' : 'currentColor'} />
                 <span>{likes}</span>
@@ -395,6 +397,8 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                   image: article.image,
                   tags: article.tags
                 })}
+                title={isItemSaved ? (isEn ? "Remove from Saved" : "إزالة من المحفوظات") : (isEn ? "Save Article" : "حفظ المقال")}
+                aria-label={isItemSaved ? (isEn ? "Remove from Saved" : "إزالة من المحفوظات") : (isEn ? "Save Article" : "حفظ المقال")}
               >
                 {isItemSaved ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
                 <span>{isItemSaved ? (isEn ? "Saved" : "محفوظ") : (isEn ? "Save" : "حفظ")}</span>
@@ -405,6 +409,8 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               type="button"
               className="article-action-btn share-action-btn"
               onClick={handleShare}
+              title={isEn ? "Share Article" : "مشاركة المقال"}
+              aria-label={isEn ? "Share Article" : "مشاركة المقال"}
             >
               {copied ? <Check size={17} color="#10b981" /> : <Share2 size={17} />}
               <span>{copied ? (isEn ? "Link Copied" : "تم نسخ الرابط") : (isEn ? "Share" : "مشاركة")}</span>
@@ -429,6 +435,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
                   placeholder={isEn ? "Add your engineering insight or technical query..." : "أضف تعليقك أو استفسارك الهندسي حول محتوى المقال..."}
+                  aria-label={isEn ? "Technical comment" : "تعليقك الهندسي"}
                   rows={3}
                 />
                 <div className="comment-form-actions">

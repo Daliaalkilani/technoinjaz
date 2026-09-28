@@ -3,10 +3,9 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { useLoader } from '@/context/LoaderContext';
-import { teamMembers } from '@/data/teamData';
+import { teamMembers, teamCircleSlots } from '@/data/teamData';
 import { Skiper19 } from '@/components/ui/svg-follow-scroll';
 
 const Orb = dynamic(() => import('@/Orb'), { ssr: false });
@@ -20,15 +19,15 @@ export interface AboutTeamSectionProps {
 export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps) {
   const { lang, theme, t } = useThemeLanguage();
   const { isLoaderDone } = useLoader();
-  const router = useRouter();
 
-  const localizedTeamMembers = teamMembers.map((m: any) => ({
+  const localizedCircleSlots = teamCircleSlots.map((m: any) => ({
     ...m,
     name: lang === 'en' ? (m.nameEn || m.name) : m.name,
     title: lang === 'en' ? (m.titleEn || m.title || m.nameEn || m.name) : (m.title || m.name),
     role: lang === 'en' ? (m.roleEn || m.role) : m.role,
     description: lang === 'en' ? (m.descriptionEn || m.description) : m.description,
     department: lang === 'en' ? (m.departmentEn || m.department) : m.department,
+    specialization: lang === 'en' ? (m.specializationEn || m.specialization) : m.specialization,
     bio: lang === 'en' ? (m.bioEn || m.bio) : m.bio,
     skills: lang === 'en' ? (m.skillsEn || m.skills) : m.skills,
     location: lang === 'en' ? (m.locationEn || m.location) : m.location,
@@ -39,12 +38,6 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
     const el = document.getElementById('team-showcase');
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const handleSelectMember = (member: any) => {
-    if (member?.id) {
-      router.push('/team/' + member.id);
     }
   };
 
@@ -215,7 +208,7 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
               backdropFilter: 'blur(10px)'
             }}
           >
-            {teamMembers.length} {lang === 'ar' ? 'أعضاء متاحين' : 'Available Members'}
+            {teamMembers.length} {lang === 'ar' ? 'مهندسين أساسيين' : 'Core Engineers'}
           </div>
         </header>
 
@@ -236,7 +229,7 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
         >
           {teamMembers.map(m => (
             <li key={m.id}>
-              <Link href={'/team/' + m.id}>{m.name} — {m.role}</Link>
+              <span>{m.name} — {m.role} ({m.specialization}): {m.bio}</span>
             </li>
           ))}
         </ul>
@@ -244,10 +237,9 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
         {/* 3D Circular Team Carousel */}
         <div style={{ position: 'relative', width: '100%', height: '100%', flex: 1, zIndex: 1 }}>
           <InfiniteMenu
-            items={localizedTeamMembers as any}
+            items={localizedCircleSlots as any}
             scale={1.4}
             backgroundColor="transparent"
-            onSelectMember={handleSelectMember}
           />
         </div>
       </div>

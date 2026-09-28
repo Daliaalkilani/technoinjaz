@@ -12,6 +12,8 @@ const TARGET_PATTERNS = [
   'projects-live',
   'moments',
   'abdulghani.jpg',
+  'abdulhady.jpg',
+  'team-placeholder.png',
   'techno-logo.png'
 ];
 

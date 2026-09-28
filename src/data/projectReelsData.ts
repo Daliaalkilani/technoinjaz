@@ -99,11 +99,11 @@ export const projectReelsData: ProjectReel[] = [
     coverImage: '/projects-live/arduino-lab.jpg',
     liveUrl: 'https://circuit-lab-7jr.pages.dev/',
     engineer: {
-      name: 'أحمد سامي',
-      nameEn: 'Ahmed Sami',
-      role: 'مهندس ذكاء اصطناعي ونظم',
-      roleEn: 'AI & Systems Engineer',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80'
+      name: 'عبد الهادي الكيلاني',
+      nameEn: 'Abdulhady Alkilani',
+      role: 'مهندس برمجيات وتكامل الذكاء الاصطناعي',
+      roleEn: 'Full-Stack Developer & AI Integration',
+      avatar: '/abdulhady.jpg'
     },
     description: 'بيئة برمجية تفاعلية ثلاثية الأبعاد لمحاكاة المتحكمات الصغرية وأجهزة إنترنت الأشياء، واختبار قراءات الحساسات وتدفق الإشارات دون الحاجة للعتاد الفيزيائي.',
     descriptionEn: 'Interactive 3D simulation environment for microcontrollers and IoT sensors, testing logic circuits in real time right in the browser.',
@@ -175,11 +175,11 @@ export const projectReelsData: ProjectReel[] = [
     coverImage: '/projects-live/interactive-cv.jpg',
     liveUrl: 'https://cv.abdalgani.com/',
     engineer: {
-      name: 'تيماء علواني',
-      nameEn: 'Taima Alwani',
-      role: 'مهندسة واجهات وتجربة مستخدم',
-      roleEn: 'Senior UI/UX Engineer',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80'
+      name: 'عبد الغنى',
+      nameEn: 'Abdulghani',
+      role: 'مدير الفريق وقائد التطوير',
+      roleEn: 'Team Director & Lead Architect',
+      avatar: '/abdulghani.jpg'
     },
     description: 'تجربة بصرية مبتكرة تحول السيرة المهنية إلى بيئة سينمائية ثلاثية الأبعاد تفاعلية، مستخدمة تقنيات WebGL وجسيمات الضوء التفاعلية لتقديم محتوى فريد.',
     descriptionEn: 'Cutting-edge digital presence transforming classical resumes into immersive 3D spatial showcases utilizing WebGL physics and custom shaders.',
@@ -240,11 +240,11 @@ export const projectReelsData: ProjectReel[] = [
     coverImage: '/projects-live/cablexperts.jpg',
     liveUrl: 'https://cablexperts.pages.dev/',
     engineer: {
-      name: 'أحمد سامي',
-      nameEn: 'Ahmed Sami',
-      role: 'مهندس ذكاء اصطناعي ونظم',
-      roleEn: 'AI & Systems Engineer',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80'
+      name: 'عبد الهادي الكيلاني',
+      nameEn: 'Abdulhady Alkilani',
+      role: 'مهندس برمجيات وتكامل الذكاء الاصطناعي',
+      roleEn: 'Full-Stack Developer & AI Integration',
+      avatar: '/abdulhady.jpg'
     },
     description: 'بوابة متخصصة لحساب أحمال كابلات الطاقة والجهد العالي، وتصفح المواصفات الفنية المعتمدة للمشاريع الإنشائية والصناعية الضخمة.',
     descriptionEn: 'Engineering calculator and specification portal for high-voltage power networks and infrastructure procurement.',

@@ -41,6 +41,10 @@
   background: linear-gradient(135deg, #24292e 0%, #833ab4 50%, #fcb045 100%);
 }
 
+.social-btn.facebook {
+  background: linear-gradient(135deg, #1877f2 0%, #0056b3 100%);
+}
+
 .social-btn.email {
   background: linear-gradient(135deg, #ea4335 0%, #ff5252 100%);
 }
@@ -86,6 +90,10 @@
   box-shadow: 0 6px 20px rgba(131, 58, 180, 0.55);
 }
 
+.social-btn.facebook:hover {
+  box-shadow: 0 6px 20px rgba(24, 119, 242, 0.55);
+}
+
 .social-btn.email:hover {
   box-shadow: 0 6px 20px rgba(234, 67, 53, 0.55);
 }
@@ -126,6 +134,10 @@
   color: #24292e;
 }
 
+[data-theme="light"] .social-btn.facebook svg {
+  color: #1877f2;
+}
+
 [data-theme="light"] .social-btn.email svg {
   color: #ea4335;
 }
@@ -140,6 +152,10 @@
 
 [data-theme="light"] .social-btn.github:hover {
   box-shadow: 0 6px 20px rgba(36, 41, 46, 0.25);
+}
+
+[data-theme="light"] .social-btn.facebook:hover {
+  box-shadow: 0 6px 20px rgba(24, 119, 242, 0.35);
 }
 
 [data-theme="light"] .social-btn.email:hover {

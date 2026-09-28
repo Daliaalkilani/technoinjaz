@@ -36,15 +36,15 @@
   z-index: 20;
 
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
 
-  min-width: 320px;
-  max-width: 440px;
-  padding: 22px 24px;
+  width: 380px;
+  max-width: 90vw;
+  padding: 24px 26px;
 
-  background: rgba(14, 14, 26, 0.82);
+  background: rgba(14, 14, 26, 0.88);
   border: 1px solid rgba(139, 92, 246, 0.35);
   border-radius: 20px;
   backdrop-filter: blur(16px);
@@ -79,17 +79,20 @@
 }
 
 .active-member-content {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 [dir="rtl"] .active-member-content {
   text-align: right;
+  align-items: flex-start;
 }
 
 [dir="ltr"] .active-member-content {
   text-align: left;
+  align-items: flex-start;
 }
 
 .member-label {
@@ -106,15 +109,45 @@
   font-size: 24px;
   font-weight: 800;
   color: #ffffff;
-  line-height: 1.2;
+  line-height: 1.25;
 }
 
 .member-role {
   margin: 0;
-  font-size: 15px;
+  font-size: 14.5px;
   font-weight: 600;
   color: #c4b5fd;
   line-height: 1.4;
+}
+
+.member-spec-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  margin: 4px 0 2px;
+  background: rgba(0, 210, 255, 0.12);
+  border: 1px solid rgba(0, 210, 255, 0.35);
+  border-radius: 999px;
+  color: #38bdf8;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.member-bio-text {
+  margin: 6px 0 2px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: rgba(226, 232, 240, 0.88);
+}
+
+.member-socials-container {
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+  display: flex;
+  align-items: center;
 }
 
 /* زر إشارة السهم للانتقال للملف التعريفي */
@@ -229,6 +262,20 @@
 
 [data-theme="light"] .member-role {
   color: #6d28d9;
+}
+
+[data-theme="light"] .member-spec-badge {
+  background: rgba(14, 165, 233, 0.12);
+  border-color: rgba(14, 165, 233, 0.35);
+  color: #0284c7;
+}
+
+[data-theme="light"] .member-bio-text {
+  color: #334155;
+}
+
+[data-theme="light"] .member-socials-container {
+  border-top-color: rgba(0, 0, 0, 0.08);
 }
 
 [data-theme="light"] .menu-hint {
