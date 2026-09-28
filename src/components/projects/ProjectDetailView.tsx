@@ -22,6 +22,7 @@ import type { ProjectItem } from '../../data/projectsData';
 import { getRelatedProjects } from '../../data/projectsData';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import { useSavedProjects } from '../../hooks/useSavedProjects';
+import { SITE_URL } from '@/config/site';
 import './ProjectDetailView.css';
 
 export interface TocHeading {
@@ -76,7 +77,8 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
       canonicalEl.setAttribute('rel', 'canonical');
       document.head.appendChild(canonicalEl);
     }
-    canonicalEl.setAttribute('href', `https://techno-enjaz.com/#project/${project.slug}`);
+    const projectUrl = `${SITE_URL}/projects/${project.slug}`;
+    canonicalEl.setAttribute('href', projectUrl);
 
     // Inject Schema.org JSON-LD (CreativeWork & BreadcrumbList)
     const scriptId = 'schema-project-jsonld';
@@ -93,46 +95,46 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
       "@graph": [
         {
           "@type": "CreativeWork",
-          "@id": `https://techno-enjaz.com/#project/${project.slug}#project`,
+          "@id": `${projectUrl}#project`,
           "name": project.title,
           "headline": project.seoTitle || project.title,
           "description": project.metaDesc || project.excerpt,
-          "image": `https://techno-enjaz.com${project.image}`,
-          "url": `https://techno-enjaz.com/#project/${project.slug}`,
+          "image": `${SITE_URL}${project.image}`,
+          "url": projectUrl,
           "inLanguage": "ar",
           "genre": project.categoryNameAr,
           "keywords": project.tags.join(', '),
           "publisher": {
             "@type": "Organization",
             "name": "تكنو إنجاز — Techno Enjaz",
-            "url": "https://techno-enjaz.com",
+            "url": SITE_URL,
             "logo": {
               "@type": "ImageObject",
-              "url": "https://techno-enjaz.com/techno-logo.png"
+              "url": `${SITE_URL}/techno-logo.png`
             }
           }
         },
         {
           "@type": "BreadcrumbList",
-          "@id": `https://techno-enjaz.com/#project/${project.slug}#breadcrumb`,
+          "@id": `${projectUrl}#breadcrumb`,
           "itemListElement": [
             {
               "@type": "ListItem",
               "position": 1,
               "name": isEn ? "Home" : "الرئيسية",
-              "item": "https://techno-enjaz.com/#top"
+              "item": `${SITE_URL}/`
             },
             {
               "@type": "ListItem",
               "position": 2,
               "name": isEn ? "Projects" : "المشاريع",
-              "item": "https://techno-enjaz.com/#projects"
+              "item": `${SITE_URL}/projects`
             },
             {
               "@type": "ListItem",
               "position": 3,
               "name": project.title,
-              "item": `https://techno-enjaz.com/#project/${project.slug}`
+              "item": projectUrl
             }
           ]
         }
@@ -150,7 +152,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
 
   // Parse markdown and extract Headings for Table of Contents
   const { renderedHtml, tocHeadings } = useMemo(() => {
-    const rawMarkdown = project.markdownContent || '';
+    const contentMd = (project as any).contentMarkdown || (project as any).markdown || '';
     const headings: TocHeading[] = [];
     let headingCounter = 0;
 
@@ -179,9 +181,9 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
       breaks: true
     });
 
-    const parsed = marked.parse(rawMarkdown) as string;
+    const parsed = marked.parse(contentMd) as string;
     return { renderedHtml: parsed, tocHeadings: headings };
-  }, [project.markdownContent]);
+  }, [project.slug]);
 
   // IntersectionObserver to highlight current active heading
   useEffect(() => {
@@ -226,7 +228,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
   };
 
   const handleShare = () => {
-    const url = `https://techno-enjaz.com/#project/${project.slug}`;
+    const url = `${SITE_URL}/projects/${project.slug}`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url).then(() => {
         setCopied(true);

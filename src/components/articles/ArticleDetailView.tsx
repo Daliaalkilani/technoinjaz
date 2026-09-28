@@ -22,6 +22,7 @@ import type { BlogArticle, BlogComment } from '../../data/blogArticlesData';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import { useSavedProjects } from '../../hooks/useSavedProjects';
 import { getLoggedInUser, requireAuth } from '../../utils/authUtils';
+import { SITE_URL } from '@/config/site';
 import './ArticleDetailView.css';
 
 export interface TocHeading {
@@ -79,6 +80,8 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
     }
     metaDesc.setAttribute('content', article.metaDescription || article.excerpt);
 
+    const canonicalUrl = `${SITE_URL}/articles/${article.slug}`;
+
     // Canonical link
     let canonicalEl = document.querySelector('link[rel="canonical"]');
     if (!canonicalEl) {
@@ -86,7 +89,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
       canonicalEl.setAttribute('rel', 'canonical');
       document.head.appendChild(canonicalEl);
     }
-    canonicalEl.setAttribute('href', article.canonical);
+    canonicalEl.setAttribute('href', canonicalUrl);
 
     // Inject Schema.org JSON-LD (BlogPosting & Breadcrumbs)
     const scriptId = 'schema-article-jsonld';
@@ -103,55 +106,55 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
       "@graph": [
         {
           "@type": "BlogPosting",
-          "@id": `${article.canonical}#article`,
+          "@id": `${canonicalUrl}#article`,
           "isPartOf": {
             "@type": "WebPage",
-            "@id": article.canonical
+            "@id": canonicalUrl
           },
           "headline": article.title,
           "name": article.seoTitle,
           "description": article.metaDescription,
-          "image": `https://techno-enjaz.com${article.image}`,
-          "datePublished": "2026-09-20T00:00:00+03:00",
-          "dateModified": "2026-09-20T00:00:00+03:00",
-          "mainEntityOfPage": article.canonical,
+          "image": `${SITE_URL}${article.image}`,
+          "datePublished": `${article.publishedAt || "2026-09-20"}T00:00:00+03:00`,
+          "dateModified": `${article.publishedAt || "2026-09-20"}T00:00:00+03:00`,
+          "mainEntityOfPage": canonicalUrl,
           "author": {
             "@type": "Organization",
             "name": article.author.name,
-            "url": "https://techno-enjaz.com"
+            "url": SITE_URL
           },
           "publisher": {
             "@type": "Organization",
             "name": "مكتب تكنو إنجاز",
-            "url": "https://techno-enjaz.com",
+            "url": SITE_URL,
             "logo": {
               "@type": "ImageObject",
-              "url": "https://techno-enjaz.com/techno-logo.png"
+              "url": `${SITE_URL}/techno-logo.png`
             }
           },
           "inLanguage": "ar"
         },
         {
           "@type": "BreadcrumbList",
-          "@id": `${article.canonical}#breadcrumb`,
+          "@id": `${canonicalUrl}#breadcrumb`,
           "itemListElement": [
             {
               "@type": "ListItem",
               "position": 1,
               "name": "الرئيسية",
-              "item": "https://techno-enjaz.com/"
+              "item": `${SITE_URL}/`
             },
             {
               "@type": "ListItem",
               "position": 2,
               "name": "المقالات",
-              "item": "https://techno-enjaz.com/#articles"
+              "item": `${SITE_URL}/articles`
             },
             {
               "@type": "ListItem",
               "position": 3,
               "name": article.category,
-              "item": `${article.canonical}`
+              "item": canonicalUrl
             },
             {
               "@type": "ListItem",
@@ -186,10 +189,11 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
 
   // Process raw markdown to HTML and extract TOC headings
   const { parsedMarkdownHtml, tocHeadings } = useMemo(() => {
-    if (!article.rawMarkdown) return { parsedMarkdownHtml: '', tocHeadings: [] as TocHeading[] };
+    const contentMd = (article as any).contentMarkdown || (article as any).markdown || '';
+    if (!contentMd) return { parsedMarkdownHtml: '', tocHeadings: [] as TocHeading[] };
 
     // Strip front matter comments <!-- ... -->
-    let cleanMd = article.rawMarkdown.replace(/^\s*<!--[\s\S]*?-->\s*/, '');
+    let cleanMd = contentMd.replace(/^\s*<!--[\s\S]*?-->\s*/, '');
     // Strip SEO Title, Meta Description, Suggested Slug lines
     cleanMd = cleanMd.replace(/^(SEO Title|Meta Description|Suggested Slug):.*$/gim, '');
     // Strip leading H1 title `# Title` because H1 is rendered prominently by component
@@ -229,7 +233,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
       console.error('Error parsing article markdown:', e);
       return { parsedMarkdownHtml: '', tocHeadings: [] as TocHeading[] };
     }
-  }, [article.rawMarkdown]);
+  }, [article.slug]);
 
   // Active section scroll spy
   useEffect(() => {
