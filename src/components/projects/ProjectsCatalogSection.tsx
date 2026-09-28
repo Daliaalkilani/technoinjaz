@@ -15,7 +15,6 @@ import {
   BookmarkCheck, 
   ArrowRight, 
   ArrowLeft, 
-  Sparkles, 
   CheckCircle2, 
   X 
 } from 'lucide-react';
@@ -66,11 +65,6 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
     <section className="catalog-section" id="projects-catalog" dir={isEn ? 'ltr' : 'rtl'}>
       {/* Catalog Hero Banner */}
       <div className="catalog-hero-wrapper">
-        <div className="catalog-hero-badge">
-          <Sparkles size={15} />
-          <span>{isEn ? "Approved Portfolio" : "معرض النماذج والمشاريع الهندسية المعتمدة"}</span>
-        </div>
-
         <h1 className="catalog-hero-title">
           {isEn ? "Techno Enjaz Engineering Projects" : "مشاريع ومنظومات تكنو إنجاز"}
         </h1>

@@ -520,6 +520,39 @@
   border-color: #0090ff;
 }
 
+[data-theme="light"] .filter-category-chip {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  color: #334155;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .filter-category-chip:hover {
+  background: #f0f9ff;
+  border-color: #0284c7;
+  color: #0369a1;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.12);
+}
+
+[data-theme="light"] .filter-category-chip.active {
+  background: #0284c7;
+  border-color: #0284c7;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25);
+}
+
+[data-theme="light"] .category-chip-count {
+  color: #64748b;
+}
+
+[data-theme="light"] .filter-category-chip:hover .category-chip-count {
+  color: #0369a1;
+}
+
+[data-theme="light"] .filter-category-chip.active .category-chip-count {
+  color: rgba(255, 255, 255, 0.85);
+}
+
 [data-theme="light"] .categories-dropdown-toggle {
   background: #f1f5f9;
   border-color: #e2e8f0;
