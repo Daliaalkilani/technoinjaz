@@ -1,17 +1,22 @@
 import type { Metadata } from 'next';
 import AboutTeamSection from '@/components/about/AboutTeamSection';
-import { SITE_URL } from '@/config/site';
+import { pageMetadata } from '@/seo/metadata';
+import { JsonLd } from '@/seo/JsonLd';
+import { webPage } from '@/seo/schemas';
 
 export const dynamic = 'force-static';
 
-export const metadata: Metadata = {
-  title: 'من نحن وفريق العمل الهندسي | تكنو إنجاز',
+export const metadata: Metadata = pageMetadata({
+  title: 'من نحن وفريق العمل الهندسي',
   description: 'تعرف على رؤية تكنو إنجاز، بنيتنا الهندسية المتكاملة، وفريق المهندسين المتخصصين في الذكاء الاصطناعي والأنظمة المدمجة.',
-  alternates: {
-    canonical: `${SITE_URL}/about`
-  }
-};
+  path: '/about'
+});
 
 export default function AboutPage() {
-  return <AboutTeamSection headingLevel="h1" />;
+  return (
+    <>
+      <JsonLd data={[webPage({ path: '/about', name: 'من نحن وفريق العمل', type: 'AboutPage' })]} />
+      <AboutTeamSection headingLevel="h1" />
+    </>
+  );
 }

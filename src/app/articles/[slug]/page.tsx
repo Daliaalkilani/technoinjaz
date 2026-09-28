@@ -4,7 +4,9 @@ import { getAllArticles, getArticleMeta, getArticleMarkdown, getRelatedArticles 
 import { renderMarkdown } from '@/lib/markdown';
 import ArticleDetailView from '@/components/articles/ArticleDetailView';
 import ArticleBody from '@/components/articles/ArticleBody';
-import { SITE_URL } from '@/config/site';
+import { pageMetadata } from '@/seo/metadata';
+import { JsonLd } from '@/seo/JsonLd';
+import { blogPosting, breadcrumb } from '@/seo/schemas';
 
 export const dynamic = 'force-static';
 export const dynamicParams = false;
@@ -24,31 +26,15 @@ export async function generateMetadata({
   const article = getArticleMeta(slug);
   if (!article) return { title: 'المقال غير موجود' };
 
-  const title = `${article.seoTitle || article.title} | تكنو إنجاز`;
-  const description = article.metaDescription || article.excerpt;
-  const canonicalUrl = `${SITE_URL}/articles/${article.slug}`;
-
-  return {
-    title,
-    description,
-    alternates: {
-      canonical: canonicalUrl
-    },
-    openGraph: {
-      title,
-      description,
-      url: canonicalUrl,
-      type: 'article',
-      publishedTime: article.publishedAt,
-      modifiedTime: article.modifiedAt || article.publishedAt,
-      images: [
-        {
-          url: article.image.startsWith('http') ? article.image : `${SITE_URL}${article.image}`,
-          alt: article.title
-        }
-      ]
-    }
-  };
+  return pageMetadata({
+    title: article.seoTitle || article.title,
+    description: article.metaDescription || article.excerpt,
+    path: `/articles/${article.slug}`,
+    image: article.image,
+    type: 'article',
+    publishedTime: `${article.publishedAt}T00:00:00+03:00`,
+    modifiedTime: article.modifiedAt ? `${article.modifiedAt}T00:00:00+03:00` : undefined
+  });
 }
 
 export default async function ArticlePage({
@@ -64,9 +50,18 @@ export default async function ArticlePage({
   const { html, toc } = renderMarkdown(md, { stripLeadingH1: true, variant: 'article' });
   const related = getRelatedArticles(slug, 3);
 
+  const breadcrumbItems = [
+    { name: 'الرئيسية', path: '/' },
+    { name: 'المقالات', path: '/articles' },
+    { name: article.title, path: `/articles/${article.slug}` }
+  ];
+
   return (
-    <ArticleDetailView article={article} toc={toc} related={related}>
-      <ArticleBody html={html} />
-    </ArticleDetailView>
+    <>
+      <JsonLd data={[blogPosting(article), breadcrumb(breadcrumbItems)]} />
+      <ArticleDetailView article={article} toc={toc} related={related}>
+        <ArticleBody html={html} />
+      </ArticleDetailView>
+    </>
   );
 }

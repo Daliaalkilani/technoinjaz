@@ -1,17 +1,22 @@
 import type { Metadata } from 'next';
 import ContactPage from '@/ContactPage';
-import { SITE_URL } from '@/config/site';
+import { pageMetadata } from '@/seo/metadata';
+import { JsonLd } from '@/seo/JsonLd';
+import { webPage } from '@/seo/schemas';
 
 export const dynamic = 'force-static';
 
-export const metadata: Metadata = {
-  title: 'اتصل بنا واستشر فريقنا الهندسي | تكنو إنجاز',
+export const metadata: Metadata = pageMetadata({
+  title: 'اتصل بنا واستشر فريقنا الهندسي',
   description: 'تواصل مباشرة مع مهندسي تكنو إنجاز لمناقشة متطلبات مشروعك، استشارات الذكاء الاصطناعي، والنماذج التطبيقية في حماة، سوريا.',
-  alternates: {
-    canonical: `${SITE_URL}/contact`
-  }
-};
+  path: '/contact'
+});
 
 export default function ContactRoutePage() {
-  return <ContactPage />;
+  return (
+    <>
+      <JsonLd data={[webPage({ path: '/contact', name: 'اتصل بنا', type: 'ContactPage' })]} />
+      <ContactPage />
+    </>
+  );
 }

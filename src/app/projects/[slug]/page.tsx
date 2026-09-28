@@ -5,7 +5,9 @@ import { renderMarkdown } from '@/lib/markdown';
 import { plainExcerpt } from '@/lib/text';
 import ProjectDetailView from '@/components/projects/ProjectDetailView';
 import ProjectBody from '@/components/projects/ProjectBody';
-import { SITE_URL } from '@/config/site';
+import { pageMetadata } from '@/seo/metadata';
+import { JsonLd } from '@/seo/JsonLd';
+import { projectWork, breadcrumb } from '@/seo/schemas';
 
 export const dynamic = 'force-static';
 export const dynamicParams = false;
@@ -25,28 +27,13 @@ export async function generateMetadata({
   const project = getProjectMeta(slug);
   if (!project) return { title: 'المشروع غير موجود' };
 
-  const title = `${project.seoTitle || project.title} | تكنو إنجاز`;
-  const description = plainExcerpt(project.metaDesc || project.excerpt);
-  const canonicalUrl = `${SITE_URL}/projects/${project.slug}`;
-
-  return {
-    title,
-    description,
-    alternates: {
-      canonical: canonicalUrl
-    },
-    openGraph: {
-      title,
-      description,
-      url: canonicalUrl,
-      images: [
-        {
-          url: project.image.startsWith('http') ? project.image : `${SITE_URL}${project.image}`,
-          alt: project.altText || project.title
-        }
-      ]
-    }
-  };
+  return pageMetadata({
+    title: project.seoTitle || project.title,
+    description: plainExcerpt(project.metaDesc || project.excerpt),
+    path: `/projects/${project.slug}`,
+    image: project.image,
+    absoluteTitle: true
+  });
 }
 
 export default async function ProjectPage({
@@ -62,11 +49,20 @@ export default async function ProjectPage({
   const { html, toc } = renderMarkdown(md, { stripLeadingH1: true, variant: 'project' });
   const related = getRelatedProjects(slug, 3);
 
+  const breadcrumbItems = [
+    { name: 'الرئيسية', path: '/' },
+    { name: 'المشاريع', path: '/projects' },
+    { name: project.title, path: `/projects/${project.slug}` }
+  ];
+
   return (
-    <div className="tab-page-container" style={{ padding: 0, maxWidth: '100%' }}>
-      <ProjectDetailView project={project} toc={toc} related={related}>
-        <ProjectBody html={html} />
-      </ProjectDetailView>
-    </div>
+    <>
+      <JsonLd data={[projectWork(project), breadcrumb(breadcrumbItems)]} />
+      <div className="tab-page-container" style={{ padding: 0, maxWidth: '100%' }}>
+        <ProjectDetailView project={project} toc={toc} related={related}>
+          <ProjectBody html={html} />
+        </ProjectDetailView>
+      </div>
+    </>
   );
 }

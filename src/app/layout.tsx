@@ -5,6 +5,9 @@ import { ThemeLanguageProvider } from '@/context/ThemeLanguageContext';
 import { LoaderProvider } from '@/context/LoaderContext';
 import { AppShell } from '@/components/shell/AppShell';
 import { LEGACY_HASH_REDIRECT, THEME_LANG_BOOT } from '@/lib/inline-scripts';
+import { buildRootMetadata } from '@/seo/metadata';
+import { JsonLd } from '@/seo/JsonLd';
+import { organization, website } from '@/seo/schemas';
 
 const readex = Readex_Pro({
   subsets: ['arabic', 'latin'],
@@ -20,10 +23,7 @@ export const viewport: Viewport = {
   maximumScale: 5
 };
 
-export const metadata: Metadata = {
-  title: 'تكنو إنجاز | هندسة برمجية متقدمة وحلول سحابية | Techno Enjaz',
-  description: 'تكنو إنجاز - صرح هندسي رائد في تطوير الأنظمة البرمجية المتكاملة، الحلول السحابية فائقة الأداء، الأتمتة وإنترنت الأشياء، وتطبيقات الذكاء الاصطناعي في حماة، سوريا.',
-};
+export const metadata: Metadata = buildRootMetadata();
 
 export default function RootLayout({
   children,
@@ -44,6 +44,7 @@ export default function RootLayout({
             <AppShell>{children}</AppShell>
           </LoaderProvider>
         </ThemeLanguageProvider>
+        <JsonLd data={[organization(), website()]} />
       </body>
     </html>
   );
