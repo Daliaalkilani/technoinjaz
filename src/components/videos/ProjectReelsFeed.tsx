@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { 
   Play, 
@@ -65,39 +67,49 @@ export const ProjectReelsFeed: React.FC = () => {
   const feedContainerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Map<string, HTMLElement>>(new Map());
 
-  // Likes state with localStorage persistence
-  const [likesState, setLikesState] = useState<Record<string, { count: number; isLiked: boolean }>>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const stored = localStorage.getItem('techno_reels_likes');
-        if (stored) return JSON.parse(stored);
-      } catch (e) {
-        console.error('Error loading reels likes:', e);
-      }
-    }
+  // Helper to build initial likes from data
+  const getInitialLikes = () => {
     const initial: Record<string, { count: number; isLiked: boolean }> = {};
     projectReelsData.forEach(r => {
       initial[r.id] = { count: r.initialLikes, isLiked: false };
     });
     return initial;
-  });
+  };
 
-  // Comments state with localStorage persistence
-  const [commentsState, setCommentsState] = useState<Record<string, ReelComment[]>>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const stored = localStorage.getItem('techno_reels_comments');
-        if (stored) return JSON.parse(stored);
-      } catch (e) {
-        console.error('Error loading reels comments:', e);
-      }
-    }
+  // Helper to build initial comments from data
+  const getInitialComments = () => {
     const initial: Record<string, ReelComment[]> = {};
     projectReelsData.forEach(r => {
       initial[r.id] = r.initialComments;
     });
     return initial;
-  });
+  };
+
+  // Likes state: initial from data, sync with localStorage on mount
+  const [likesState, setLikesState] = useState<Record<string, { count: number; isLiked: boolean }>>(getInitialLikes);
+
+  // Comments state: initial from data, sync with localStorage on mount
+  const [commentsState, setCommentsState] = useState<Record<string, ReelComment[]>>(getInitialComments);
+
+  useEffect(() => {
+    try {
+      const storedLikes = localStorage.getItem('techno_reels_likes');
+      if (storedLikes) {
+        setLikesState(JSON.parse(storedLikes));
+      }
+    } catch (e) {
+      console.error('Error loading reels likes:', e);
+    }
+
+    try {
+      const storedComments = localStorage.getItem('techno_reels_comments');
+      if (storedComments) {
+        setCommentsState(JSON.parse(storedComments));
+      }
+    } catch (e) {
+      console.error('Error loading reels comments:', e);
+    }
+  }, []);
 
   // Reset active reel when category changes
   useEffect(() => {

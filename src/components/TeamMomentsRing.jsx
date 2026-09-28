@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useRef } from 'react';
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
 import './TeamMomentsRing.css';

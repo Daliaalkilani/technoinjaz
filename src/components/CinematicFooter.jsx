@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from "react";
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
@@ -7,10 +9,6 @@ import CurvedInput from "./CurvedInput";
 import { useThemeLanguage } from "../context/ThemeLanguageContext";
 import "./CinematicFooter.css";
 
-// Register ScrollTrigger safely for React
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 // -------------------------------------------------------------------------
 // 1. MAGNETIC BUTTON PRIMITIVE
@@ -121,6 +119,7 @@ export function CinematicFooter() {
     if (typeof window === "undefined") return;
     if (!wrapperRef.current) return;
 
+    gsap.registerPlugin(ScrollTrigger);
     ScrollTrigger.refresh();
 
     const ctx = gsap.context(() => {
@@ -225,8 +224,8 @@ export function CinematicFooter() {
               textAnchor="middle"
               dominantBaseline="middle"
               className="footer-giant-svg-text"
-              fill={theme === 'light' ? "url(#footerGiantGradLight)" : "url(#footerGiantGradDark)"}
-              stroke={theme === 'light' ? "rgba(2, 132, 199, 0.22)" : "rgba(255, 255, 255, 0.12)"}
+              fill="var(--footer-giant-fill)"
+              stroke="var(--footer-giant-stroke)"
               strokeWidth="1.5"
             >
               {t.footer?.giantText || (lang === 'ar' ? 'تكنو إنجاز' : 'TECHNO ENJAZ')}
@@ -262,17 +261,17 @@ export function CinematicFooter() {
               <CurvedInput
                 placeholder={t.footer?.inputPlaceholder || 'أدخل بريدك الإلكتروني'}
                 buttonText={t.footer?.subscribeBtn || 'اشتراك'}
-                theme={theme === 'light' ? 'light' : 'dark'}
+                theme={theme}
                 bend={28}
                 height={64}
                 width={450}
                 cornerRadius={18}
                 borderWidth={1.5}
                 fontSize={15}
-                backgroundColor={theme === 'light' ? '#ffffff' : '#1B1722'}
-                textColor={theme === 'light' ? '#0f172a' : '#f5f5f5'}
-                borderColor={theme === 'light' ? '#0284c7' : '#5013c6'}
-                buttonColor={theme === 'light' ? '#0284c7' : '#2b1ed5'}
+                backgroundColor="var(--curved-input-bg)"
+                textColor="var(--curved-input-text)"
+                borderColor="var(--curved-input-border)"
+                buttonColor="var(--curved-input-btn)"
                 buttonTextColor="#ffffff"
                 shadowSize="md"
                 onSubmit={value => {

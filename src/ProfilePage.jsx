@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import SocialButtons from './components/SocialButtons';
 import { useThemeLanguage } from './context/ThemeLanguageContext';

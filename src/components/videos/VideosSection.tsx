@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight, Bookmark, BookmarkCheck, Play } from 'lucide-react';
 import CardSwap, { Card } from './CardSwap';
@@ -9,6 +11,8 @@ import { useSavedProjects } from '../../hooks/useSavedProjects';
 import { videosList, type VideoItem } from '../../data/videosData';
 import '../projects/ProjectsSection.css';
 import './VideosSection.css';
+
+import ThemedImage from '../ThemedImage';
 
 export type { VideoItem };
 export { videosList };
@@ -22,7 +26,7 @@ const VideosSection: React.FC<VideosSectionProps> = ({
   onNavigateToVideos,
   showNavigateButton = true
 }) => {
-  const { theme, lang, t } = useThemeLanguage();
+  const { lang, t } = useThemeLanguage();
   const { isSaved, toggleSave } = useSavedProjects();
   const [activeModalVideo, setActiveModalVideo] = useState<VideoModalData | null>(null);
 
@@ -31,10 +35,10 @@ const VideosSection: React.FC<VideosSectionProps> = ({
       {/* Static Background Image with Gradient Blend (No Mouse Interaction) */}
       <div className="projects-grid-distortion-wrapper" style={{ pointerEvents: 'none' }}>
         <div className="projects-grid-distortion-inner">
-          <img
-            src={((theme === 'light' ? im1Bg : heroBgDistortion) as any)?.src || (theme === 'light' ? im1Bg : heroBgDistortion)}
+          <ThemedImage
+            dark={heroBgDistortion}
+            light={im1Bg}
             alt=""
-            aria-hidden="true"
             className="projects-bg-static-img"
           />
         </div>

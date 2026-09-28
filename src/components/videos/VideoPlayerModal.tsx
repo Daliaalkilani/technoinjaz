@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useId } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Play, Clock, Sparkles } from 'lucide-react';

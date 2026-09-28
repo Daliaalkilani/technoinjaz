@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { gsap } from 'gsap';
 import { Bookmark, BookmarkCheck } from 'lucide-react';

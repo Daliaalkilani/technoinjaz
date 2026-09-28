@@ -43,11 +43,10 @@ export default function App() {
   const [isPastHero, setIsPastHero] = useState(false);
   const [navHeight, setNavHeight] = useState(78);
   const navbarRef = useRef<HTMLElement | null>(null);
-  const [currentUser, setCurrentUser] = useState<any>(() => {
-    return getLoggedInUser();
-  });
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   useEffect(() => {
+    setCurrentUser(getLoggedInUser());
     const handleAuthSync = () => {
       setCurrentUser(getLoggedInUser());
     };
@@ -334,7 +333,7 @@ export default function App() {
   // If a team member is selected, show their full profile page
   if (selectedMember) {
     return (
-      <Suspense fallback={<div style={{ minHeight: '100vh', backgroundColor: theme === 'light' ? '#f8fafc' : '#050508' }} />}>
+      <Suspense fallback={<div style={{ minHeight: '100vh', backgroundColor: 'var(--about-bg)' }} />}>
         <ProfilePage member={selectedMember} onBack={handleBackToMenu} />
       </Suspense>
     );
@@ -343,7 +342,7 @@ export default function App() {
   // If the user's personal profile & favorites page is opened
   if (isUserProfileOpen) {
     return (
-      <Suspense fallback={<div style={{ minHeight: '100vh', backgroundColor: theme === 'light' ? '#f8fafc' : '#050508' }} />}>
+      <Suspense fallback={<div style={{ minHeight: '100vh', backgroundColor: 'var(--about-bg)' }} />}>
         <UserProfilePage
           onBack={() => {
             setIsUserProfileOpen(false);
@@ -575,7 +574,7 @@ export default function App() {
           style={{
             position: 'relative',
             width: '100%',
-            backgroundColor: theme === 'light' ? '#f8fafc' : '#050508'
+            backgroundColor: 'var(--about-bg)'
           }}
         >
           {/* Header for About Us Section */}
@@ -620,7 +619,7 @@ export default function App() {
               height: '100vh',
               minHeight: '700px',
               overflow: 'hidden',
-              backgroundColor: theme === 'light' ? '#f8fafc' : '#050508'
+              backgroundColor: 'var(--about-bg)'
             }}
           >
             <TeamMomentsRing onScrollDown={scrollToTeam} />
@@ -633,7 +632,7 @@ export default function App() {
                 left: 0,
                 right: 0,
                 height: '110px',
-                background: theme === 'light' ? 'linear-gradient(to bottom, transparent 0%, rgba(248, 250, 252, 0.65) 60%, #f8fafc 100%)' : 'linear-gradient(to bottom, transparent 0%, rgba(5, 5, 8, 0.6) 60%, #000000 100%)',
+                background: 'var(--about-fade-bottom)',
                 pointerEvents: 'none',
                 zIndex: 10
               }}
@@ -646,7 +645,7 @@ export default function App() {
             style={{
               position: 'relative',
               width: '100%',
-              backgroundColor: theme === 'light' ? '#f8fafc' : '#000000',
+              backgroundColor: 'var(--team-showcase-bg)',
               overflow: 'hidden',
               zIndex: 15
             }}
@@ -662,7 +661,7 @@ export default function App() {
               width: '100%',
               height: '100vh',
               minHeight: '700px',
-              backgroundColor: theme === 'light' ? '#f8fafc' : '#000000',
+              backgroundColor: 'var(--team-showcase-bg)',
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column'
@@ -676,7 +675,7 @@ export default function App() {
                 left: 0,
                 right: 0,
                 height: '240px',
-                background: theme === 'light' ? 'linear-gradient(to bottom, #f8fafc 0%, rgba(248, 250, 252, 0.85) 45%, rgba(248, 250, 252, 0.25) 75%, transparent 100%)' : 'linear-gradient(to bottom, #000000 0%, rgba(0, 0, 0, 0.8) 45%, rgba(0, 0, 0, 0.25) 75%, transparent 100%)',
+                background: 'var(--team-showcase-fade-top)',
                 pointerEvents: 'none',
                 zIndex: 20
               }}
@@ -724,7 +723,8 @@ export default function App() {
               <div
                 style={{
                   padding: '6px 14px',
-                  background: theme === 'light' ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.06)', border: theme === 'light' ? '1px solid rgba(0, 0, 0, 0.1)' : '1px solid rgba(255, 255, 255, 0.12)',
+                  background: 'var(--members-badge-bg)',
+                  border: 'var(--members-badge-border)',
                   borderRadius: '999px',
                   color: '#c4b5fd',
                   fontSize: '12px',
@@ -764,7 +764,7 @@ export default function App() {
             style={{
               position: 'relative',
               width: '100%',
-              backgroundColor: theme === 'light' ? '#f8fafc' : '#050508'
+              backgroundColor: 'var(--about-bg)'
             }}
           >
             {/* Header for About Us Section */}
@@ -809,7 +809,7 @@ export default function App() {
                 height: '100vh',
                 minHeight: '700px',
                 overflow: 'hidden',
-                backgroundColor: theme === 'light' ? '#f8fafc' : '#050508'
+                backgroundColor: 'var(--about-bg)'
               }}
             >
               <TeamMomentsRing onScrollDown={scrollToTeam} />
@@ -822,7 +822,7 @@ export default function App() {
                   left: 0,
                   right: 0,
                   height: '110px',
-                  background: theme === 'light' ? 'linear-gradient(to bottom, transparent 0%, rgba(248, 250, 252, 0.65) 60%, #f8fafc 100%)' : 'linear-gradient(to bottom, transparent 0%, rgba(5, 5, 8, 0.6) 60%, #000000 100%)',
+                  background: 'var(--about-fade-bottom)',
                   pointerEvents: 'none',
                   zIndex: 10
                 }}
@@ -835,7 +835,7 @@ export default function App() {
               style={{
                 position: 'relative',
                 width: '100%',
-                backgroundColor: theme === 'light' ? '#f8fafc' : '#000000',
+                backgroundColor: 'var(--team-showcase-bg)',
                 overflow: 'hidden',
                 zIndex: 15
               }}
@@ -851,7 +851,7 @@ export default function App() {
                 width: '100%',
                 height: '100vh',
                 minHeight: '700px',
-                backgroundColor: theme === 'light' ? '#f8fafc' : '#000000',
+                backgroundColor: 'var(--team-showcase-bg)',
                 overflow: 'hidden',
                 display: 'flex',
                 flexDirection: 'column'
@@ -865,7 +865,7 @@ export default function App() {
                   left: 0,
                   right: 0,
                   height: '240px',
-                  background: theme === 'light' ? 'linear-gradient(to bottom, #f8fafc 0%, rgba(248, 250, 252, 0.85) 45%, rgba(248, 250, 252, 0.25) 75%, transparent 100%)' : 'linear-gradient(to bottom, #000000 0%, rgba(0, 0, 0, 0.8) 45%, rgba(0, 0, 0, 0.25) 75%, transparent 100%)',
+                  background: 'var(--team-showcase-fade-top)',
                   pointerEvents: 'none',
                   zIndex: 20
                 }}
@@ -913,7 +913,8 @@ export default function App() {
                 <div
                   style={{
                     padding: '6px 14px',
-                    background: theme === 'light' ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.06)', border: theme === 'light' ? '1px solid rgba(0, 0, 0, 0.1)' : '1px solid rgba(255, 255, 255, 0.12)',
+                    background: 'var(--members-badge-bg)',
+                    border: 'var(--members-badge-border)',
                     borderRadius: '999px',
                     color: '#c4b5fd',
                     fontSize: '12px',

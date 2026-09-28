@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect, useCallback } from 'react';
 import { getLoggedInUser, requireAuth } from '../utils/authUtils';
 
@@ -62,13 +64,14 @@ function getStoredProjects(): SavedProject[] {
 }
 
 export function useSavedProjects() {
-  const [savedProjects, setSavedProjects] = useState<SavedProject[]>(getStoredProjects);
+  const [savedProjects, setSavedProjects] = useState<SavedProject[]>([]);
 
   const sync = useCallback(() => {
     setSavedProjects(getStoredProjects());
   }, []);
 
   useEffect(() => {
+    setSavedProjects(getStoredProjects());
     window.addEventListener(EVENT_NAME, sync);
     window.addEventListener('techno_auth_updated', sync);
     window.addEventListener('storage', sync);

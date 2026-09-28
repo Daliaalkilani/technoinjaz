@@ -1,3 +1,5 @@
+'use client';
+
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import { useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
@@ -70,10 +72,10 @@ export const LinePath = ({ className = '', scrollYProgress }: { className?: stri
 
 export function Skiper19({ strokeColor = '#00d2ff', className = '' }: { strokeColor?: string; className?: string }) {
   const containerRef = useRef<HTMLElement | null>(null);
-  const { lang, theme } = useThemeLanguage();
+  const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
-  const textColor = theme === 'light' ? '#0f172a' : '#ffffff';
-  const sectionBg = theme === 'light' ? '#f8fafc' : '#000000';
+  const textColor = 'var(--svg-follow-text)';
+  const sectionBg = 'var(--svg-follow-bg)';
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start end', 'end start']

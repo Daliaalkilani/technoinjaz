@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import AuthSwitch from './components/ui/auth-switch';

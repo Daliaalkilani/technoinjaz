@@ -68,8 +68,8 @@ export function Skiper19({ strokeColor = '#00d2ff', className = '' }) {
   const containerRef = useRef(null);
   const { lang, theme } = useThemeLanguage();
   const isEn = lang === 'en';
-  const textColor = theme === 'light' ? '#0f172a' : '#ffffff';
-  const sectionBg = theme === 'light' ? '#f8fafc' : '#000000';
+  const textColor = 'var(--svg-follow-text)';
+  const sectionBg = 'var(--svg-follow-bg)';
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start end', 'end start']

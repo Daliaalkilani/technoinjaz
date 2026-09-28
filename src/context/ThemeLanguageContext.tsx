@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+'use client';
+
+import React, { createContext, useContext, useState, useEffect, useLayoutEffect } from 'react';
 import { translations, type Translations } from '../locales/translations';
 
 export type Theme = 'dark' | 'light';
@@ -14,39 +16,26 @@ interface ThemeLanguageContextType {
 
 const ThemeLanguageContext = createContext<ThemeLanguageContextType | undefined>(undefined);
 
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
 export const ThemeLanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window !== 'undefined') {
-      const isManual = localStorage.getItem('techno_theme_manual');
-      const saved = (localStorage.getItem('theme') || localStorage.getItem('techno_theme')) as Theme;
-      
-      // If user previously made an explicit manual choice, respect it
-      if (isManual && (saved === 'light' || saved === 'dark')) {
-        return saved;
-      }
+  const [theme, setTheme] = useState<Theme>('dark');
+  const [lang, setLangState] = useState<Language>('ar');
 
-      // Automatically adapt to the user's browser/OS theme settings
-      if (window.matchMedia) {
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-          return 'dark';
-        }
-        if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-          return 'light';
-        }
-      }
-
-      if (saved === 'light' || saved === 'dark') return saved;
+  // Synchronize with document attributes on initial mount
+  useIsomorphicLayoutEffect(() => {
+    const attr = document.documentElement.getAttribute('data-theme');
+    if (attr === 'light' || attr === 'dark') {
+      setTheme(attr);
     }
-    return 'dark';
-  });
-
-  const [lang, setLangState] = useState<Language>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('techno_lang') as Language;
-      if (saved === 'ar' || saved === 'en') return saved;
-    }
-    return 'ar';
-  });
+    try {
+      const l = localStorage.getItem('techno_lang');
+      if (l === 'en' || l === 'ar') {
+        setLangState(l);
+      }
+    } catch {}
+    document.documentElement.removeAttribute('data-lang-pending');
+  }, []);
 
   // Listen for browser/system color scheme changes in real time
   useEffect(() => {
@@ -55,7 +44,6 @@ export const ThemeLanguageProvider: React.FC<{ children: React.ReactNode }> = ({
 
     const handleSystemThemeChange = (e: MediaQueryListEvent) => {
       const isManual = localStorage.getItem('techno_theme_manual');
-      // If user hasn't explicitly clicked a manual override, follow the browser system mode
       if (!isManual) {
         setTheme(e.matches ? 'dark' : 'light');
       }

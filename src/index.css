@@ -1,6 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700;800&display=swap');
-
 :root {
+  --font-readex: 'Readex Pro', -apple-system, BlinkMacSystemFont, sans-serif;
   --bg-main: #030508;
   --bg-surface: #0a0e1a;
   --bg-card: rgba(13, 16, 26, 0.65);
@@ -12,6 +11,22 @@
   --accent-cyan: #00d2ff;
   --accent-teal: #0aeec3;
   --text-color-primary: #ffffff;
+
+  /* Theme tokens for SSR/Hydration safety */
+  --about-bg: #050508;
+  --about-fade-bottom: linear-gradient(to bottom, transparent 0%, rgba(5, 5, 8, 0.6) 60%, #000000 100%);
+  --team-showcase-bg: #000000;
+  --team-showcase-fade-top: linear-gradient(to bottom, #000000 0%, rgba(0, 0, 0, 0.8) 45%, rgba(0, 0, 0, 0.25) 75%, transparent 100%);
+  --members-badge-bg: rgba(255, 255, 255, 0.06);
+  --members-badge-border: 1px solid rgba(255, 255, 255, 0.12);
+  --footer-giant-fill: url(#footerGiantGradDark);
+  --footer-giant-stroke: rgba(255, 255, 255, 0.12);
+  --curved-input-bg: #1B1722;
+  --curved-input-text: #f5f5f5;
+  --curved-input-border: #5013c6;
+  --curved-input-btn: #2b1ed5;
+  --svg-follow-text: #ffffff;
+  --svg-follow-bg: #000000;
 
   /* Shadcn UI tokens for Dark Mode */
   --background: #030508;
@@ -43,6 +58,22 @@
   --accent-teal: #0d9488;
   --text-color-primary: #0f172a;
 
+  /* Theme tokens for SSR/Hydration safety */
+  --about-bg: #f8fafc;
+  --about-fade-bottom: linear-gradient(to bottom, transparent 0%, rgba(248, 250, 252, 0.65) 60%, #f8fafc 100%);
+  --team-showcase-bg: #f8fafc;
+  --team-showcase-fade-top: linear-gradient(to bottom, #f8fafc 0%, rgba(248, 250, 252, 0.85) 45%, rgba(248, 250, 252, 0.25) 75%, transparent 100%);
+  --members-badge-bg: rgba(0, 0, 0, 0.05);
+  --members-badge-border: 1px solid rgba(0, 0, 0, 0.1);
+  --footer-giant-fill: url(#footerGiantGradLight);
+  --footer-giant-stroke: rgba(2, 132, 199, 0.22);
+  --curved-input-bg: #ffffff;
+  --curved-input-text: #0f172a;
+  --curved-input-border: #0284c7;
+  --curved-input-btn: #0284c7;
+  --svg-follow-text: #0f172a;
+  --svg-follow-bg: #f8fafc;
+
   /* Shadcn UI tokens for Light Mode */
   --background: #ffffff;
   --foreground: #0f172a;
@@ -58,6 +89,11 @@
   --accent-foreground: #0f172a;
   --input: #e2e8f0;
   --ring: #0284c7;
+}
+
+[data-theme='light'] .themed--dark,
+:root:not([data-theme='light']) .themed--light {
+  display: none !important;
 }
 
 *,

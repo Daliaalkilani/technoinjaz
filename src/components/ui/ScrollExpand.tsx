@@ -1,3 +1,5 @@
+'use client';
+
 import { useCallback, useEffect, useRef } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 
@@ -25,6 +27,7 @@ type ConfigKey =
 
 export interface ScrollExpandProps {
   src?: string;
+  media?: ReactNode;
   mediaType?: 'image' | 'video';
   poster?: string;
   alt?: string;
@@ -50,6 +53,7 @@ export interface ScrollExpandProps {
 
 const ScrollExpand: React.FC<ScrollExpandProps> = ({
   src = '',
+  media = null,
   mediaType = 'image',
   poster = '',
   alt = '',
@@ -107,8 +111,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
 
   const applyProgress = useCallback((p: number) => {
     const frame = frameRef.current;
-    const media = mediaType === 'video' ? videoRef.current : imgRef.current;
-    if (!frame || !media) return;
+    if (!frame) return;
     const c = propsRef.current;
 
     const e = smoothstep(0, 1, p);
@@ -120,7 +123,16 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
     const r = c.startRadius + (c.endRadius - c.startRadius) * e;
     frame.style.clipPath = `inset(${iy}% ${ix}% ${iy}% ${ix}% round ${r}px)`;
 
-    media.style.transform = `scale(${c.mediaZoom + (1 - c.mediaZoom) * e})`;
+    const mediaEls = frame.querySelectorAll<HTMLElement>('.scroll-expand__media');
+    const scale = `scale(${c.mediaZoom + (1 - c.mediaZoom) * e})`;
+    if (mediaEls.length > 0) {
+      mediaEls.forEach(el => {
+        el.style.transform = scale;
+      });
+    } else {
+      const fallbackMedia = mediaType === 'video' ? videoRef.current : imgRef.current;
+      if (fallbackMedia) fallbackMedia.style.transform = scale;
+    }
 
     if (scrimRef.current) {
       scrimRef.current.style.opacity = `${c.overlayScrim * e}`;
@@ -249,7 +261,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
     };
   }, [applyProgress, useWindowScroll, isReducedMotion]);
 
-  const media =
+  const mediaContent = media ? media : (
     mediaType === 'video' ? (
       <video
         ref={videoRef}
@@ -271,7 +283,8 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
         fetchPriority="high"
         decoding="async"
       />
-    );
+    )
+  );
 
   return (
     <div
@@ -283,7 +296,7 @@ const ScrollExpand: React.FC<ScrollExpandProps> = ({
       <div ref={trackRef} className="scroll-expand__track">
         <div ref={stageRef} className="scroll-expand__stage">
           <div ref={frameRef} className="scroll-expand__frame">
-            {media}
+            {mediaContent}
             <div ref={scrimRef} className="scroll-expand__scrim" />
             {children ? (
               <div ref={overlayRef} className="scroll-expand__overlay">

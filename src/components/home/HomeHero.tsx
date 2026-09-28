@@ -9,6 +9,7 @@ import im3Img from '../../assets/im3.png';
 import im2Img from '../../assets/im2.png';
 import technoEnjazLogo from '../../assets/Asset-1@4x.png';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
+import ThemedImage from '../ThemedImage';
 import './HomeHero.css';
 
 interface ResponsiveConfig {
@@ -60,12 +61,11 @@ export const HomeHero: React.FC<HomeHeroProps> = ({
   onNavigateToVideos,
   onNavigateToArticles
 }) => {
-  const { theme, lang, t } = useThemeLanguage();
-  const [config, setConfig] = useState<ResponsiveConfig>(() =>
-    getResponsiveConfig(typeof window !== 'undefined' ? window.innerWidth : 1200)
-  );
+  const { lang, t } = useThemeLanguage();
+  const [config, setConfig] = useState<ResponsiveConfig>(() => getResponsiveConfig(1200));
 
   useEffect(() => {
+    setConfig(getResponsiveConfig(window.innerWidth));
     const handleResize = () => {
       setConfig(getResponsiveConfig(window.innerWidth));
     };
@@ -77,9 +77,16 @@ export const HomeHero: React.FC<HomeHeroProps> = ({
     <div id="top" className="prototype-root">
       <ScrollExpand
         key={`scroll-expand-${config.startWidth}`}
-        src={((theme === 'light' ? im2Img : im3Img) as any)?.src || (theme === 'light' ? im2Img : im3Img)}
+        media={
+          <ThemedImage
+            dark={im3Img}
+            light={im2Img}
+            alt={lang === 'ar' ? "محطة العمل الهندسية" : "Engineering Workstation"}
+            className="scroll-expand__media"
+            priority={true}
+          />
+        }
         mediaType="image"
-        alt={lang === 'ar' ? "محطة العمل الهندسية" : "Engineering Workstation"}
         startWidth={config.startWidth}
         startHeight={config.startHeight}
         startRadius={24}

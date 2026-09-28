@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useMemo, useEffect } from 'react';
 import { 
   Search, 
@@ -41,39 +43,49 @@ export const OfficeBlogSection: React.FC<OfficeBlogSectionProps> = ({
   // Dedicated Full-Screen Article View
   const [selectedArticle, setSelectedArticle] = useState<BlogArticle | null>(null);
 
-  // Likes state: stored in localStorage
-  const [likesState, setLikesState] = useState<Record<string, { count: number; userLiked: boolean }>>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const stored = localStorage.getItem('techno_blog_likes');
-        if (stored) return JSON.parse(stored);
-      } catch (e) {
-        console.error('Error loading blog likes:', e);
-      }
-    }
+  // Helper to build initial likes from data
+  const getInitialLikes = () => {
     const initial: Record<string, { count: number; userLiked: boolean }> = {};
     blogArticlesData.forEach(art => {
       initial[art.id] = { count: art.initialLikes, userLiked: false };
     });
     return initial;
-  });
+  };
 
-  // Comments state: stored in localStorage
-  const [commentsState, setCommentsState] = useState<Record<string, BlogComment[]>>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const stored = localStorage.getItem('techno_blog_comments');
-        if (stored) return JSON.parse(stored);
-      } catch (e) {
-        console.error('Error loading blog comments:', e);
-      }
-    }
+  // Helper to build initial comments from data
+  const getInitialComments = () => {
     const initial: Record<string, BlogComment[]> = {};
     blogArticlesData.forEach(art => {
       initial[art.id] = art.initialComments || [];
     });
     return initial;
-  });
+  };
+
+  // Likes state: initial from data, sync with localStorage on mount
+  const [likesState, setLikesState] = useState<Record<string, { count: number; userLiked: boolean }>>(getInitialLikes);
+
+  // Comments state: initial from data, sync with localStorage on mount
+  const [commentsState, setCommentsState] = useState<Record<string, BlogComment[]>>(getInitialComments);
+
+  useEffect(() => {
+    try {
+      const storedLikes = localStorage.getItem('techno_blog_likes');
+      if (storedLikes) {
+        setLikesState(JSON.parse(storedLikes));
+      }
+    } catch (e) {
+      console.error('Error loading blog likes:', e);
+    }
+
+    try {
+      const storedComments = localStorage.getItem('techno_blog_comments');
+      if (storedComments) {
+        setCommentsState(JSON.parse(storedComments));
+      }
+    } catch (e) {
+      console.error('Error loading blog comments:', e);
+    }
+  }, []);
 
   // Handle Like Toggle
   const handleToggleLike = (articleId: string, e?: React.MouseEvent) => {

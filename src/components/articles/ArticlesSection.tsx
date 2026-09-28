@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import MagicBento from './MagicBento';
@@ -6,6 +8,8 @@ import im1Bg from '../../assets/im1.png';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import '../projects/ProjectsSection.css';
 import './ArticlesSection.css';
+
+import ThemedImage from '../ThemedImage';
 
 export interface ArticlesSectionProps {
   showNavigateButton?: boolean;
@@ -16,17 +20,17 @@ const ArticlesSection: React.FC<ArticlesSectionProps> = ({
   showNavigateButton = true,
   onNavigateToArticles
 }) => {
-  const { theme, lang, t } = useThemeLanguage();
+  const { lang, t } = useThemeLanguage();
 
   return (
     <section id="articles" className="articles-section" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
       {/* Static Background Image with Gradient Blend (No Mouse Interaction) */}
       <div className="projects-grid-distortion-wrapper" style={{ pointerEvents: 'none' }}>
         <div className="projects-grid-distortion-inner">
-          <img
-            src={((theme === 'light' ? im1Bg : heroBgDistortion) as any)?.src || (theme === 'light' ? (im1Bg as any)?.src : (heroBgDistortion as any)?.src)}
+          <ThemedImage
+            dark={heroBgDistortion}
+            light={im1Bg}
             alt=""
-            aria-hidden="true"
             className="projects-bg-static-img"
           />
         </div>
