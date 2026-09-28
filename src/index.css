@@ -1,10 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700;800&display=swap');
+
 /* Prevent flash of untranslated content when English is restored from localStorage */
 html[data-lang-pending] #app-root {
   visibility: hidden;
 }
 
 :root {
-  --font-readex: var(--font-readex), -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-readex: 'Readex Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-arabic: 'Readex Pro', -apple-system, BlinkMacSystemFont, sans-serif;
   --bg-main: #030508;
   --bg-surface: #0a0e1a;
   --bg-card: rgba(13, 16, 26, 0.65);
@@ -117,10 +120,30 @@ body {
   padding: 0;
   background-color: var(--bg-main);
   color: var(--text-main);
-  font-family: var(--font-readex), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Readex Pro', var(--font-readex), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+input,
+button,
+textarea,
+select {
+  font-family: 'Readex Pro', var(--font-readex), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Screen reader only utility (A11y & Crawlability) */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
 }
 
 #root {

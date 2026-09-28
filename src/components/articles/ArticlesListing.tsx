@@ -3,6 +3,7 @@ import ResponsiveImage from '@/components/ui/ResponsiveImage';
 
 import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { 
   Search, 
   Heart, 
@@ -33,6 +34,7 @@ export function ArticlesListing({
   const { lang, t } = useThemeLanguage();
   const isEn = lang === 'en';
   const { isSaved, toggleSave } = useSavedProjects();
+  const router = useRouter();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -58,7 +60,7 @@ export function ArticlesListing({
   };
 
   const [likesState, setLikesState] = useState<Record<string, { count: number; userLiked: boolean }>>(getInitialLikes);
-  const [commentsState, setCommentsState] = useState<Record<string, BlogComment[]>>(getInitialComments);
+  const [_commentsState, setCommentsState] = useState<Record<string, BlogComment[]>>(getInitialComments);
 
   useEffect(() => {
     try {
@@ -147,47 +149,46 @@ export function ArticlesListing({
   }, [filteredArticles, sortOrder, likesState]);
 
   return (
-    <div className="blog-section-wrapper" dir={isEn ? 'ltr' : 'rtl'}>
+    <div className="office-blog-section" dir={isEn ? 'ltr' : 'rtl'}>
       {showHeroBanner && (
-        <div className="blog-hero-banner">
-          <div className="blog-hero-badge">
-            <BookOpen size={16} />
-            <span>{isEn ? "Engineering Knowledge Base" : "منصة المعرفة الهندسية المتقدمة"}</span>
-          </div>
-          <h1 className="blog-hero-title">
-            {isEn ? (t.articles?.pageTitle || "Engineering Articles & Insights") : (t.articles?.pageTitle || "مدونة تكنو إنجاز الهندسية")}
+        <div className="office-blog-header">
+          <h1 className="blog-main-title">
+            {isEn ? (t.articles?.pageTitle || "Engineering Insights & Breakthroughs") : (t.articles?.pageTitle || "المقالات والأبحاث الهندسية والتقنية")}
           </h1>
-          <p className="blog-hero-subtitle">
+          <p className="blog-main-desc">
             {isEn 
-              ? (t.articles?.pageSubtitle || "Explore specialized engineering research, modern software architectures, and AI system implementations.")
-              : (t.articles?.pageSubtitle || "استكشف أحدث المقالات الهندسية المتخصصة في الذكاء الاصطناعي، إنترنت الأشياء، وبناء الأنظمة البرمجية الحديثة.")}
+              ? (t.articles?.pageSubtitle || "Deep technical explorations, system architectures, and interface methodologies authored by our elite engineering team.")
+              : (t.articles?.pageSubtitle || "مقالات معمارية تخصصية، حلول برمجية متطورة، وتحليلات تقنية ينشرها نخبة مهندسينا لإثراء المحتوى الهندسي العربي.")}
           </p>
-
-          <div className="blog-search-bar-wrap">
-            <Search size={18} className="search-icon-inside" />
-            <input 
-              type="text"
-              className="blog-search-input"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={isEn ? "Search articles by title, keywords, or topics..." : "ابحث في المقالات بالاسم، التقنية، أو الكلمات المفتاحية..."}
-            />
-            {searchQuery && (
-              <button 
-                type="button" 
-                className="blog-search-clear"
-                onClick={() => setSearchQuery('')}
-                title={isEn ? "Clear" : "مسح"}
-              >
-                <X size={16} />
-              </button>
-            )}
-          </div>
         </div>
       )}
 
-      {/* Filter and Category row */}
-      <div className="blog-filters-row">
+      {/* 2. Search Bar */}
+      <div className="blog-search-bar-wrap">
+        <div className="blog-search-inner-box">
+          <input 
+            type="text"
+            className="blog-search-pill-input"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={isEn ? "Search in articles..." : "ابحث في المقالات..."}
+          />
+          <Search size={18} className="blog-search-pill-icon" />
+          {searchQuery && (
+            <button 
+              type="button" 
+              className="blog-search-clear-pill-btn"
+              onClick={() => setSearchQuery('')}
+              title={isEn ? "Clear search" : "مسح"}
+            >
+              <X size={14} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* 3. Filter Buttons Row: Sort + Category Chips */}
+      <div className="blog-filters-capsule-row">
         <button
           type="button"
           className={`filter-capsule-btn ${sortOrder === 'latest' ? 'active' : ''}`}
@@ -227,7 +228,7 @@ export function ArticlesListing({
         </div>
       </div>
 
-      {/* Articles Grid */}
+      {/* 4. Articles Grid */}
       {displayedArticles.length === 0 ? (
         <div className="blog-empty-state">
           <BookOpen size={48} className="blog-empty-icon" />
@@ -260,6 +261,7 @@ export function ArticlesListing({
               <article 
                 key={article.id} 
                 className="blog-modern-card"
+                onClick={() => router.push(`/articles/${article.slug}`)}
               >
                 {/* 1. Image Media Container */}
                 <div className="card-media-banner">
@@ -287,11 +289,11 @@ export function ArticlesListing({
                     </span>
                   </div>
 
-                  <h2 className="card-main-title">
+                  <h3 className="card-main-title">
                     <Link href={`/articles/${article.slug}`} className="card-main-title-link">
                       {title}
                     </Link>
-                  </h2>
+                  </h3>
 
                   <p className="card-main-excerpt">{excerpt}</p>
 

@@ -28,7 +28,9 @@ export default function ArticlesPage() {
           itemList(listItems)
         ]}
       />
-      <ArticlesListing articles={articles} />
+      <div className="tab-page-container tab-page-articles" style={{ padding: 0, maxWidth: '100%' }}>
+        <ArticlesListing articles={articles} />
+      </div>
     </>
   );
 }

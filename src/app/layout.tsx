@@ -35,10 +35,12 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: LEGACY_HASH_REDIRECT }} />
         <script dangerouslySetInnerHTML={{ __html: THEME_LANG_BOOT }} />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="stylesheet" href="/loader/loader.css" />
         <script src="/loader/loader.js" defer />
       </head>
-      <body>
+      <body className={readex.className}>
         <ThemeLanguageProvider>
           <LoaderProvider>
             <AppShell>{children}</AppShell>

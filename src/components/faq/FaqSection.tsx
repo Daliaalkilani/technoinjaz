@@ -103,75 +103,79 @@ export const FaqSection: React.FC = () => {
         </ol>
       </nav>
 
-      {/* 2. Hero Header */}
-      <div className="faq-hero-header">
-        <div className="faq-badge-capsule">
+      {/* 2. Page Header */}
+      <div className="faq-header-wrapper">
+        <div className="faq-header-badge">
           <HelpCircle size={15} />
-          <span>{isEn ? "Knowledge Base & Answers" : "مركز الاستفسارات والدعم المعرفي"}</span>
+          <span>{isEn ? "Knowledge Base & Inquiries" : "مركز الإجابات والاستفسارات"}</span>
         </div>
-        <h1 className="faq-main-title">
+        <h1 className="faq-page-main-title">
           {isEn ? "Frequently Asked Questions" : "الأسئلة الشائعة"}
         </h1>
-        <p className="faq-sub-desc">
+        <p className="faq-page-lead-desc">
           {isEn
-            ? "Comprehensive answers regarding our engineering services, prototype hardware, software systems, and collaboration models."
-            : "إجابات هندسية دقيقة حول خدماتنا، النماذج التطبيقية، آلية العمل، والدعم التقني المقدم في تكنو إنجاز."}
+            ? "Short, direct answers to common questions asked by students, researchers, and partners. Didn't find your answer? Contact us directly."
+            : "إجابات قصيرة ومباشرة عن أكثر ما يسألنا عنه الطلاب والعملاء. لم تجد إجابتك؟ راسلنا وسنجيبك مباشرة."}
         </p>
+      </div>
 
-        {/* 3. Search Bar */}
-        <div className="faq-search-wrapper">
+      {/* 3. Search Bar */}
+      <div className="faq-search-box-wrap">
+        <div className="faq-search-inner">
           <Search size={18} className="faq-search-icon" />
           <input
             type="text"
             className="faq-search-input"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={isEn ? "Search questions or keywords..." : "ابحث في الأسئلة أو الكلمات المفتاحية..."}
+            placeholder={isEn ? "Search in questions and answers..." : "ابحث في الأسئلة الشائعة والإجابات..."}
           />
           {searchQuery && (
             <button
               type="button"
-              className="faq-search-clear"
+              className="faq-search-clear-btn"
               onClick={() => setSearchQuery('')}
             >
-              ✕
+              ×
             </button>
           )}
         </div>
       </div>
 
-      {/* 4. Category Tabs */}
-      <div className="faq-category-pills-row">
-        {categories.map((cat) => {
-          const count = cat.id === 'all'
-            ? faqData.length
-            : faqData.filter(i => i.category === cat.id).length;
-          const isActive = activeCategory === cat.id;
+      {/* 4. Category Filter Chips */}
+      <div className="faq-categories-chips-wrap">
+        <div className="faq-categories-scroll">
+          {categories.map((cat) => {
+            const count = cat.id === 'all'
+              ? faqData.length
+              : faqData.filter(i => i.category === cat.id).length;
+            const isActive = activeCategory === cat.id;
 
-          return (
-            <button
-              key={cat.id}
-              type="button"
-              className={`faq-category-chip ${isActive ? 'active' : ''}`}
-              onClick={() => setActiveCategory(cat.id)}
-            >
-              <span>{isEn ? cat.nameEn : cat.name}</span>
-              <span className="chip-counter">{count}</span>
-            </button>
-          );
-        })}
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                className={`faq-category-chip ${isActive ? 'active' : ''}`}
+                onClick={() => setActiveCategory(cat.id)}
+              >
+                <span>{isEn ? cat.nameEn : cat.name}</span>
+                <span className="faq-chip-count">({count})</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      {/* 5. Accordion List */}
-      <div className="faq-content-area">
+      {/* 5. Accordion Items List */}
+      <div className="faq-accordion-container">
         {filteredItems.length === 0 ? (
           <div className="faq-empty-state">
-            <HelpCircle size={44} className="empty-ico" />
-            <h3>{isEn ? "No matching questions found" : "لم يتم العثور على نتائج مطابقة"}</h3>
-            <p>{isEn ? "Try different keywords or view all categories." : "جرب كلمات بحث أخرى أو استعرض كافة التصنيفات."}</p>
+            <HelpCircle size={44} className="faq-empty-icon" />
+            <h3>{isEn ? "No Matching Questions Found" : "لم يتم العثور على نتائج تطابق بحثك"}</h3>
+            <p>{isEn ? "Try changing your search terms or contact us directly." : "جرّب البحث بكلمات أخرى أو راسلنا مباشرة للإجابة على استفسارك."}</p>
             <button
               type="button"
-              className="faq-reset-filter-btn"
+              className="faq-reset-btn"
               onClick={() => {
                 setSearchQuery('');
                 setActiveCategory('all');

@@ -58,6 +58,15 @@ export function AppShell({ children }: AppShellProps) {
     { label: t.nav.contact, href: '/contact' },
   ];
 
+  // Prefetch primary navigation routes for instant transitions
+  useEffect(() => {
+    navItems.forEach((item) => {
+      if (item.href && item.href !== pathname) {
+        router.prefetch(item.href);
+      }
+    });
+  }, [router, pathname]);
+
   // Auth sync
   useEffect(() => {
     setCurrentUser(getLoggedInUser());

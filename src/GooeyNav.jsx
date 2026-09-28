@@ -186,7 +186,12 @@ const GooeyNav = ({
         <ul ref={navRef}>
           {items.map((item, index) => (
             <li key={index} className={activeIndex === index ? 'active' : ''}>
-              <a href={item.href} onClick={e => handleClick(e, index)} onKeyDown={e => handleKeyDown(e, index)}>
+              <a 
+                href={item.href} 
+                onClick={e => handleClick(e, index)} 
+                onKeyDown={e => handleKeyDown(e, index)}
+                onMouseEnter={() => { if (item?.href) router.prefetch(item.href); }}
+              >
                 {item.label}
               </a>
             </li>

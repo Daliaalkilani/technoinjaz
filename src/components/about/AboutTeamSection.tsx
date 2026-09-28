@@ -220,7 +220,20 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
         </header>
 
         {/* SEO & Accessibility: crawlable team list */}
-        <ul className="sr-only">
+        <ul
+          className="sr-only"
+          style={{
+            position: 'absolute',
+            width: '1px',
+            height: '1px',
+            padding: 0,
+            margin: '-1px',
+            overflow: 'hidden',
+            clip: 'rect(0, 0, 0, 0)',
+            whiteSpace: 'nowrap',
+            border: 0
+          }}
+        >
           {teamMembers.map(m => (
             <li key={m.id}>
               <Link href={'/team/' + m.id}>{m.name} — {m.role}</Link>
