@@ -116,7 +116,7 @@
   line-height: 1.15;
   letter-spacing: -0.02em;
   color: #ffffff;
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8);
 }
 
@@ -126,7 +126,7 @@
   font-weight: 400;
   line-height: 1.65;
   color: rgba(255, 255, 255, 0.72);
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   max-width: 500px;
 }
 
@@ -144,7 +144,7 @@
   border: 1px solid rgba(56, 189, 248, 0.4);
   border-radius: 999px;
   color: #ffffff;
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;

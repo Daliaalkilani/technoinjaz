@@ -70,7 +70,7 @@
   padding: 0.55em 1em;
   text-decoration: none;
   color: inherit;
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   font-weight: 600;
   font-size: clamp(13px, 1.1vw, 15px);
   white-space: nowrap;

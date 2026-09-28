@@ -116,14 +116,14 @@
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.25);
   margin-bottom: 20px;
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   font-size: 13px;
   font-weight: 600;
   color: #ffffff;
 }
 
 .auth-switch-overlay-title {
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   font-size: 28px;
   font-weight: 800;
   margin-bottom: 14px;
@@ -133,7 +133,7 @@
 }
 
 .auth-switch-overlay-desc {
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   font-size: 14px;
   color: rgba(255, 255, 255, 0.9);
   line-height: 1.7;
@@ -150,7 +150,7 @@
   background: #ffffff;
   color: #002244;
   border: none;
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   font-size: 14.5px;
   font-weight: 700;
   cursor: pointer;
@@ -166,7 +166,7 @@
 
 /* Form Headings */
 .auth-switch-form-title {
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   font-size: 24px;
   font-weight: 800;
   color: #ffffff;
@@ -175,7 +175,7 @@
 }
 
 .auth-switch-form-subtitle {
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   font-size: 13.5px;
   color: rgba(255, 255, 255, 0.6);
   margin-bottom: 22px;
@@ -200,7 +200,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   color: rgba(255, 255, 255, 0.85);
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -229,7 +229,7 @@
 }
 
 .auth-switch-divider-text {
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   font-size: 12px;
   color: rgba(255, 255, 255, 0.4);
   white-space: nowrap;
@@ -244,7 +244,7 @@
 }
 
 .auth-switch-label {
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   font-size: 13px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.82);
@@ -273,7 +273,7 @@
   border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 12px;
   color: #ffffff;
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   font-size: 13.5px;
   outline: none;
   transition: all 0.25s ease;
@@ -313,7 +313,7 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   font-size: 12.5px;
 }
 
@@ -349,7 +349,7 @@
   border: none;
   border-radius: 12px;
   color: #ffffff;
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   font-size: 14.5px;
   font-weight: 700;
   cursor: pointer;
@@ -381,7 +381,7 @@
   align-items: center;
   gap: 10px;
   color: #34d399;
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   font-size: 13.5px;
   font-weight: 600;
   margin-bottom: 16px;
@@ -446,7 +446,7 @@
     background: transparent;
     border-radius: 10px;
     color: rgba(255, 255, 255, 0.65);
-    font-family: 'Readex Pro', sans-serif;
+    font-family: var(--font-readex), sans-serif;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
@@ -487,7 +487,7 @@
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 210, 255, 0.25);
   backdrop-filter: blur(16px);
   color: #ffffff;
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   font-size: 15px;
   font-weight: 600;
   text-align: center;

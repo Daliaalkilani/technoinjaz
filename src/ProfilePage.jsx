@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import SocialButtons from './components/SocialButtons';
 import { useThemeLanguage } from './context/ThemeLanguageContext';
 import './ProfilePage.css';
@@ -10,8 +11,10 @@ import './ProfilePage.css';
  * Fully bilingual with dark/light theme integration
  */
 export default function ProfilePage({ member, onBack }) {
+  const router = useRouter();
   if (!member) return null;
 
+  const handleBack = onBack || (() => router.push('/about#team-showcase'));
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
 
@@ -31,7 +34,7 @@ export default function ProfilePage({ member, onBack }) {
       <div className="profile-container">
         {/* Top return bar */}
         <header className="profile-top-bar">
-          <button onClick={onBack} className="back-btn" title={isEn ? 'Back to Team' : 'العودة إلى الفريق'}>
+          <button onClick={handleBack} className="back-btn" title={isEn ? 'Back to Team' : 'العودة إلى الفريق'}>
             <span className="back-arrow">{isEn ? '←' : '→'}</span>
             <span>{isEn ? 'Back to Team' : 'العودة إلى الفريق'}</span>
           </button>

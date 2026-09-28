@@ -12,11 +12,11 @@
 
 .text-loop-text {
   user-select: none;
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
 }
 
 .text-loop-measure {
   visibility: hidden;
   pointer-events: none;
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
 }

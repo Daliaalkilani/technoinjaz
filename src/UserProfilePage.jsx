@@ -17,6 +17,7 @@ import {
   Video,
   Play 
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useThemeLanguage } from './context/ThemeLanguageContext';
 import { useSavedProjects } from './hooks/useSavedProjects';
 import { Button } from './components/ui/button';
@@ -24,6 +25,7 @@ import VideoPlayerModal from './components/videos/VideoPlayerModal';
 import './UserProfilePage.css';
 
 export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExploreProjects }) {
+  const router = useRouter();
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
   const { savedProjects, removeSaved, clearAll } = useSavedProjects();
@@ -33,21 +35,27 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
   const fileInputRef = useRef(null);
   const [avatarFeedback, setAvatarFeedback] = useState(null);
 
-  // Retrieve user info from localStorage if available
-  const [user, setUser] = useState(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const isLoggedOut = localStorage.getItem('techno_logged_out');
-        if (isLoggedOut === 'true') return null;
+  const handleBackNav = onBack || (() => router.push('/'));
+  const handleLogoutNav = onLogout || (() => router.push('/'));
+  const handleReaderNav = onOpenReader || ((project) => router.push(project?.slug ? `/projects/${project.slug}` : '/projects'));
+  const handleExploreNav = onExploreProjects || (() => router.push('/projects'));
 
-        const stored = localStorage.getItem('techno_user');
-        if (stored) return JSON.parse(stored);
-      } catch (e) {
-        console.error('Error reading techno_user:', e);
+  // Retrieve user info from localStorage if available
+  const [user, setUser] = useState(null);
+
+  React.useEffect(() => {
+    try {
+      const isLoggedOut = localStorage.getItem('techno_logged_out');
+      if (isLoggedOut === 'true') {
+        setUser(null);
+        return;
       }
+      const stored = localStorage.getItem('techno_user');
+      if (stored) setUser(JSON.parse(stored));
+    } catch (e) {
+      console.error('Error reading techno_user:', e);
     }
-    return null;
-  });
+  }, []);
 
   const handleAvatarUpload = (e) => {
     const file = e.target.files?.[0];
@@ -241,7 +249,7 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
         <div className="user-profile-back-nav">
           <button 
             type="button" 
-            onClick={onBack} 
+            onClick={handleBackNav} 
             className="user-profile-back-btn"
             title={isEn ? "Back to Home" : "العودة إلى الرئيسية"}
           >
@@ -435,13 +443,7 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
               <button
                 type="button"
                 className="btn-explore-live-projects"
-                onClick={() => {
-                  onBack();
-                  setTimeout(() => {
-                    const el = document.getElementById('projects');
-                    if (el) el.scrollIntoView({ behavior: 'smooth' });
-                  }, 150);
-                }}
+                onClick={() => router.push('/projects')}
                 title={isEn ? "Explore Live Projects" : "اكتشف المشاريع الحية"}
               >
                 <Sparkles size={16} />
@@ -451,13 +453,7 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
               <button
                 type="button"
                 className="btn-explore-academic"
-                onClick={() => {
-                  onBack();
-                  setTimeout(() => {
-                    const el = document.getElementById('academic-projects');
-                    if (el) el.scrollIntoView({ behavior: 'smooth' });
-                  }, 150);
-                }}
+                onClick={() => router.push('/projects')}
                 title={isEn ? "Explore Academic Catalog" : "استكشف الكتالوج الأكاديمي"}
               >
                 <BookOpen size={16} />
@@ -467,13 +463,7 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
               <button
                 type="button"
                 className="btn-explore-articles"
-                onClick={() => {
-                  onBack();
-                  setTimeout(() => {
-                    const el = document.getElementById('articles');
-                    if (el) el.scrollIntoView({ behavior: 'smooth' });
-                  }, 150);
-                }}
+                onClick={() => router.push('/articles')}
                 title={isEn ? "Explore Articles" : "استكشف المقالات"}
               >
                 <FileText size={16} />
@@ -483,13 +473,7 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
               <button
                 type="button"
                 className="btn-explore-videos"
-                onClick={() => {
-                  onBack();
-                  setTimeout(() => {
-                    const el = document.getElementById('videos');
-                    if (el) el.scrollIntoView({ behavior: 'smooth' });
-                  }, 150);
-                }}
+                onClick={() => router.push('/videos')}
                 title={isEn ? "Explore Videos" : "استكشف الفيديوهات"}
               >
                 <Video size={16} />
@@ -546,7 +530,7 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
                         <Button
                           variant="default"
                           size="sm"
-                          onClick={() => onOpenReader && onOpenReader(project)}
+                          onClick={() => handleReaderNav(project)}
                           title={isEn ? "Read Document" : "قراءة المستند"}
                         >
                           <BookOpen size={14} style={{ [isEn ? 'marginRight' : 'marginLeft']: '6px' }} />
@@ -574,13 +558,7 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
                         <Button
                           variant="default"
                           size="sm"
-                          onClick={() => {
-                            onBack();
-                            setTimeout(() => {
-                              const el = document.getElementById('articles');
-                              if (el) el.scrollIntoView({ behavior: 'smooth' });
-                            }, 150);
-                          }}
+                          onClick={() => router.push(project.slug ? `/articles/${project.slug}` : '/articles')}
                         >
                           <FileText size={14} style={{ [isEn ? 'marginRight' : 'marginLeft']: '6px' }} />
                           <span>{isEn ? "Read Article" : "قراءة المقال"}</span>

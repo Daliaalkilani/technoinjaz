@@ -8,7 +8,7 @@
   margin: 0 auto;
   padding: 0.5rem 0.5rem 2rem;
   box-sizing: border-box;
-  font-family: var(--font-arabic, 'Readex Pro', sans-serif);
+  font-family: var(--font-arabic, var(--font-readex), sans-serif);
   display: flex;
   flex-direction: column;
   align-items: center;

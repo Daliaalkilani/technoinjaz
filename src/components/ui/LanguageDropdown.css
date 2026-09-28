@@ -5,7 +5,7 @@
 .lang-dropdown-wrapper {
   position: relative;
   display: inline-block;
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   user-select: none;
 }
 

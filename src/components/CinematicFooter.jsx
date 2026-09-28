@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { cn } from "@/lib/utils";
@@ -291,8 +292,8 @@ export function CinematicFooter() {
             {/* Primary Action Buttons */}
             <div className="footer-primary-pills">
               <MagneticButton
-                as="a"
-                href="#projects"
+                as={Link}
+                href="/projects"
                 className="footer-glass-pill footer-pill-btn group"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#00d2ff' }}>
@@ -304,8 +305,8 @@ export function CinematicFooter() {
               </MagneticButton>
 
               <MagneticButton
-                as="a"
-                href="#about"
+                as={Link}
+                href="/about"
                 className="footer-glass-pill footer-pill-btn group"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#a855f7' }}>
@@ -318,8 +319,8 @@ export function CinematicFooter() {
               </MagneticButton>
 
               <MagneticButton
-                as="a"
-                href="#contact"
+                as={Link}
+                href="/contact"
                 className="footer-glass-pill footer-pill-btn group"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#38bdf8' }}>
@@ -332,16 +333,16 @@ export function CinematicFooter() {
 
             {/* Secondary Text Links */}
             <div className="footer-secondary-pills">
-              <MagneticButton as="a" href="#top" className="footer-glass-pill footer-pill-secondary">
+              <MagneticButton as={Link} href="/" className="footer-glass-pill footer-pill-secondary">
                 {t.footer?.home || t.nav.home}
               </MagneticButton>
-              <MagneticButton as="a" href="#articles" className="footer-glass-pill footer-pill-secondary">
+              <MagneticButton as={Link} href="/articles" className="footer-glass-pill footer-pill-secondary">
                 {t.footer?.articles || t.nav.articles}
               </MagneticButton>
-              <MagneticButton as="a" href="#videos" className="footer-glass-pill footer-pill-secondary">
+              <MagneticButton as={Link} href="/videos" className="footer-glass-pill footer-pill-secondary">
                 {t.footer?.videos || t.nav.videos}
               </MagneticButton>
-              <MagneticButton as="a" href="#faq" className="footer-glass-pill footer-pill-secondary">
+              <MagneticButton as={Link} href="/faq" className="footer-glass-pill footer-pill-secondary">
                 {t.nav?.faq || (lang === 'en' ? 'FAQ' : 'الأسئلة الشائعة')}
               </MagneticButton>
             </div>

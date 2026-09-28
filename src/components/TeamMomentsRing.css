@@ -36,7 +36,7 @@
   -webkit-backdrop-filter: blur(12px);
 
   color: #e2e8f0;
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;

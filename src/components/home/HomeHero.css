@@ -5,7 +5,7 @@
   --bg-dark: #030508;
   --text-pure: #ffffff;
   --text-subtle: rgba(255, 255, 255, 0.72);
-  --font-arabic: 'Readex Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-arabic: var(--font-readex), -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .prototype-root {

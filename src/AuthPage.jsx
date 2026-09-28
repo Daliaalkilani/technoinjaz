@@ -1,14 +1,26 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import AuthSwitch from './components/ui/auth-switch';
 import { useThemeLanguage } from './context/ThemeLanguageContext';
 import './AuthPage.css';
 
 export default function AuthPage({ initialMode = 'login', onBack, onSuccess }) {
+  const router = useRouter();
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
+
+  const defaultBack = () => {
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push('/');
+    }
+  };
+
+  const handleBackAction = onBack || defaultBack;
 
   const handleAuthComplete = (data, defaultName) => {
     try {
@@ -26,12 +38,23 @@ export default function AuthPage({ initialMode = 'login', onBack, onSuccess }) {
       }
       if (onSuccess) {
         onSuccess(user);
-      } else if (onBack) {
-        onBack();
+      } else {
+        let returnPath = null;
+        try {
+          returnPath = sessionStorage.getItem('techno_auth_return_path') || sessionStorage.getItem('techno_auth_return_hash');
+          sessionStorage.removeItem('techno_auth_return_path');
+          sessionStorage.removeItem('techno_auth_return_hash');
+        } catch (e) {}
+
+        if (returnPath && !returnPath.startsWith('/login') && !returnPath.startsWith('/register') && !returnPath.startsWith('#login') && !returnPath.startsWith('#register')) {
+          router.push(returnPath);
+        } else {
+          router.push('/account');
+        }
       }
     } catch (e) {
       console.error('Error during auth handling:', e);
-      if (onBack) onBack();
+      handleBackAction();
     }
   };
 
@@ -43,12 +66,12 @@ export default function AuthPage({ initialMode = 'login', onBack, onSuccess }) {
 
       <main className="auth-main-content">
         {/* Back navigation button */}
-        {onBack && (
+        {handleBackAction && (
           <div
             className="auth-back-nav"
             style={{ maxWidth: '860px', width: '100%', marginBottom: '16px', display: 'flex', justifyContent: 'flex-start' }}
           >
-            <button onClick={onBack} className="auth-back-btn" title={isEn ? "Back to Home" : "العودة إلى الرئيسية"}>
+            <button onClick={handleBackAction} className="auth-back-btn" title={isEn ? "Back to Home" : "العودة إلى الرئيسية"}>
               {isEn ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
               <span>{isEn ? "Back to Home" : "العودة إلى الرئيسية"}</span>
             </button>

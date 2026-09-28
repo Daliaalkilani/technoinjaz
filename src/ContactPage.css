@@ -8,7 +8,7 @@
   min-height: 100vh;
   background-color: #050508;
   color: #ffffff;
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   overflow-x: hidden;
 }
 
@@ -78,7 +78,7 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 999px;
   color: #c4b5fd;
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -221,7 +221,7 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
   color: #ffffff;
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   font-size: 14px;
   outline: none;
   box-sizing: border-box;
@@ -259,7 +259,7 @@
   border: none;
   border-radius: 14px;
   color: #ffffff;
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;

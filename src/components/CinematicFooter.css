@@ -4,7 +4,7 @@
 
 :root,
 .cinematic-footer-wrapper {
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
   -webkit-font-smoothing: antialiased;
 
   /* Theme Tokens */
@@ -105,7 +105,7 @@
   -webkit-backdrop-filter: blur(16px);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   text-decoration: none;
-  font-family: 'Readex Pro', sans-serif;
+  font-family: var(--font-readex), sans-serif;
 }
 
 .footer-glass-pill:hover {
@@ -148,7 +148,7 @@
 }
 
 .footer-giant-svg-text {
-  font-family: var(--font-arabic, 'Readex Pro', sans-serif);
+  font-family: var(--font-arabic, var(--font-readex), sans-serif);
   font-weight: 900;
   letter-spacing: 0;
 }

@@ -36,24 +36,23 @@ export function getLoggedInUser(): TechnoUser | null {
  * If not logged in, redirects to the login view (#login), fires 'techno_require_login',
  * records the current/intended return hash in sessionStorage, and returns false.
  */
-export function requireAuth(returnHash?: string): boolean {
+export function requireAuth(returnPath?: string): boolean {
   const user = getLoggedInUser();
   if (!user) {
     if (typeof window !== 'undefined') {
-      const currentTargetHash = returnHash || window.location.hash || '#top';
+      const currentTarget = returnPath || (window.location.pathname + window.location.search + window.location.hash);
       try {
-        sessionStorage.setItem('techno_auth_return_hash', currentTargetHash);
+        sessionStorage.setItem('techno_auth_return_path', currentTarget);
+        sessionStorage.setItem('techno_auth_return_hash', currentTarget);
       } catch (err) {
-        console.error('Error setting return hash:', err);
+        console.error('Error setting return path:', err);
       }
 
       window.dispatchEvent(
         new CustomEvent('techno_require_login', {
-          detail: { returnHash: currentTargetHash }
+          detail: { returnPath: currentTarget }
         })
       );
-      window.location.hash = '#login';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     return false;
   }
