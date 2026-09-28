@@ -1,4 +1,5 @@
 'use client';
+import ResponsiveImage from '@/components/ui/ResponsiveImage';
 
 import React, { useState, useEffect } from 'react';
 import { 
@@ -383,11 +384,7 @@ export const LiveProjectsShowcase: React.FC = () => {
                   </div>
                 </div>
                 <div className="preview-window-body preview-image-container">
-                  <img
-                    src={activeProject.image}
-                    alt={activeTitle}
-                    className="preview-project-image"
-                  />
+                  <ResponsiveImage src={activeProject.image} alt={activeTitle} className="preview-project-image" />
                   <a
                     href={activeProject.url}
                     target="_blank"
@@ -439,7 +436,7 @@ export const LiveProjectsShowcase: React.FC = () => {
                   >
                     <div className="marquee-card-top">
                       <div className="marquee-card-thumb-wrap">
-                        <img src={project.image} alt={pTitle} className="marquee-card-thumb-img" loading="lazy" />
+                        <ResponsiveImage src={project.image} alt={pTitle} className="marquee-card-thumb-img" />
                       </div>
                     </div>
                     <h4 className="marquee-card-title">{pTitle}</h4>

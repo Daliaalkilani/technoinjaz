@@ -1,4 +1,5 @@
 'use client';
+import ResponsiveImage from '@/components/ui/ResponsiveImage';
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -278,12 +279,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
 
           {/* High-Definition Featured Banner */}
           <div className="article-fullscreen-banner-wrap">
-            <img 
-              src={article.image} 
-              alt={title} 
-              className="article-fullscreen-banner" 
-              loading="eager"
-            />
+            <ResponsiveImage src={article.image} alt={title} className="article-fullscreen-banner" priority />
           </div>
 
           {/* Mobile TOC Drawer */}
@@ -509,7 +505,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                     className="related-sidebar-card"
                   >
                     <div className="related-sidebar-media">
-                      <img src={relArt.image} alt={relArt.title} className="related-sidebar-img" loading="lazy" />
+                      <ResponsiveImage src={relArt.image} alt={relArt.title} className="related-sidebar-img" />
                       <div className="related-sidebar-overlay" />
                     </div>
                     <div className="related-sidebar-body">

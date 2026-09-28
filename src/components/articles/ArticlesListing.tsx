@@ -1,4 +1,5 @@
 'use client';
+import ResponsiveImage from '@/components/ui/ResponsiveImage';
 
 import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
@@ -262,7 +263,7 @@ export function ArticlesListing({
               >
                 {/* 1. Image Media Container */}
                 <div className="card-media-banner">
-                  <img src={article.image} alt={title} className="card-media-img" loading="lazy" />
+                  <ResponsiveImage src={article.image} alt={title} className="card-media-img" />
                   <div className="card-media-gradient-overlay" />
                 </div>
 

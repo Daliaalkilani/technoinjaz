@@ -1,4 +1,5 @@
 'use client';
+import ResponsiveImage from '@/components/ui/ResponsiveImage';
 
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
@@ -162,12 +163,7 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
               >
                 {/* Card Thumbnail */}
                 <div className="card-thumb-wrap">
-                  <img
-                    src={project.image}
-                    alt={project.altText || project.title}
-                    className="card-thumb-img"
-                    loading="lazy"
-                  />
+                  <ResponsiveImage src={project.image} alt={project.altText || project.title} className="card-thumb-img" />
                   <span className="card-cat-badge">{project.categoryNameAr}</span>
 
                   <button

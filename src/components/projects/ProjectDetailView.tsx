@@ -1,4 +1,5 @@
 'use client';
+import ResponsiveImage from '@/components/ui/ResponsiveImage';
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -211,12 +212,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
 
       {/* Featured Cover Image */}
       <div className="project-featured-image-wrapper">
-        <img
-          src={project.image}
-          alt={project.altText || project.title}
-          className="project-featured-image"
-          loading="eager"
-        />
+        <ResponsiveImage src={project.image} alt={project.altText || project.title} className="project-featured-image" priority />
         {project.altText && (
           <div className="project-image-caption">
             <span>{project.altText}</span>
@@ -388,12 +384,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
                 className="bottom-related-card"
               >
                 <div className="related-card-img-wrap">
-                  <img
-                    src={rel.image}
-                    alt={rel.altText || rel.title}
-                    className="bottom-card-img"
-                    loading="lazy"
-                  />
+                  <ResponsiveImage src={rel.image} alt={rel.altText || rel.title} className="bottom-card-img" />
                   <span className="bottom-card-badge">{rel.categoryNameAr}</span>
                 </div>
                 <div className="bottom-card-body">
