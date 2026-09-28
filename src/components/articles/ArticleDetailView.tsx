@@ -12,7 +12,10 @@ import {
   Send,
   User,
   Home,
-  BookOpen
+  BookOpen,
+  ListOrdered,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { marked } from 'marked';
 import type { BlogArticle, BlogComment } from '../../data/blogArticlesData';
@@ -20,6 +23,12 @@ import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import { useSavedProjects } from '../../hooks/useSavedProjects';
 import { getLoggedInUser, requireAuth } from '../../utils/authUtils';
 import './ArticleDetailView.css';
+
+export interface TocHeading {
+  id: string;
+  text: string;
+  level: number;
+}
 
 interface ArticleDetailViewProps {
   article: BlogArticle;
@@ -50,6 +59,8 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
 
   const [commentText, setCommentText] = useState('');
   const [copied, setCopied] = useState(false);
+  const [activeHeadingId, setActiveHeadingId] = useState<string>('');
+  const [isMobileTocOpen, setIsMobileTocOpen] = useState(false);
   const loggedUser = getLoggedInUser();
 
   // Scroll to top on article change and update SEO & Schema
@@ -173,9 +184,9 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   const authorName = isEn ? article.author.nameEn : article.author.name;
   const excerpt = isEn ? article.excerptEn : article.excerpt;
 
-  // Process raw markdown to HTML
-  const parsedMarkdownHtml = useMemo(() => {
-    if (!article.rawMarkdown) return '';
+  // Process raw markdown to HTML and extract TOC headings
+  const { parsedMarkdownHtml, tocHeadings } = useMemo(() => {
+    if (!article.rawMarkdown) return { parsedMarkdownHtml: '', tocHeadings: [] as TocHeading[] };
 
     // Strip front matter comments <!-- ... -->
     let cleanMd = article.rawMarkdown.replace(/^\s*<!--[\s\S]*?-->\s*/, '');
@@ -191,14 +202,70 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
     });
 
     try {
-      const parsed = marked.parse(cleanMd.trim());
-      if (typeof parsed === 'string') return parsed;
-      return '';
+      const rawHtml = marked.parse(cleanMd.trim());
+      if (typeof rawHtml !== 'string') return { parsedMarkdownHtml: '', tocHeadings: [] as TocHeading[] };
+
+      const headings: TocHeading[] = [];
+      let index = 0;
+
+      // Match <h2> and <h3> headings, extract title, and inject clean ID and class
+      const processedHtml = rawHtml.replace(/<h([2-3])>(.*?)<\/h\1>/gi, (_match, levelStr, innerHtml) => {
+        const level = parseInt(levelStr, 10);
+        const text = innerHtml.replace(/<[^>]+>/g, '').trim();
+        if (!text) return _match;
+
+        const slug = text
+          .toLowerCase()
+          .replace(/[^\w\u0621-\u064A0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '');
+        const id = `sec-${index++}-${slug || 'heading'}`;
+
+        headings.push({ id, text, level });
+        return `<h${level} id="${id}" class="article-content-heading scroll-mt-offset">${innerHtml}</h${level}>`;
+      });
+
+      return { parsedMarkdownHtml: processedHtml, tocHeadings: headings };
     } catch (e) {
       console.error('Error parsing article markdown:', e);
-      return '';
+      return { parsedMarkdownHtml: '', tocHeadings: [] as TocHeading[] };
     }
   }, [article.rawMarkdown]);
+
+  // Active section scroll spy
+  useEffect(() => {
+    if (tocHeadings.length === 0) return;
+
+    const handleScroll = () => {
+      const scrollPos = window.scrollY + 130;
+      let currentActive = tocHeadings[0]?.id || '';
+      for (const h of tocHeadings) {
+        const el = document.getElementById(h.id);
+        if (el && el.offsetTop <= scrollPos) {
+          currentActive = h.id;
+        }
+      }
+      setActiveHeadingId(currentActive);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [tocHeadings]);
+
+  const handleHeadingClick = (id: string, e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
+    const el = document.getElementById(id);
+    if (el) {
+      const topOffset = 95;
+      const elementPosition = el.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({
+        top: elementPosition - topOffset,
+        behavior: 'smooth'
+      });
+      setActiveHeadingId(id);
+    }
+  };
+
 
   const handleShare = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
@@ -362,11 +429,11 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                 className="author-capsule-avatar" 
               />
               <div className="author-capsule-text">
-                <span className="author-capsule-name">{authorName}</span>
+                <span className="author-capsule-name" style={{ whiteSpace: 'nowrap' }}>{authorName}</span>
                 <span className="author-capsule-divider">|</span>
                 <span className="author-capsule-role">{article.author.role}</span>
                 <span className="author-capsule-divider">|</span>
-                <span className="author-capsule-date">{publishDate}</span>
+                <span className="author-capsule-date" style={{ whiteSpace: 'nowrap' }}>{publishDate}</span>
               </div>
             </div>
           </div>
@@ -381,6 +448,57 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             />
             <div className="article-banner-ambient-glow" style={{ backgroundColor: article.categoryColor }} />
           </div>
+
+          {/* Mobile / Inline Table of Contents */}
+          {tocHeadings.length > 0 && (
+            <div className="article-mobile-toc-box">
+              <button
+                type="button"
+                className="mobile-toc-toggle-btn"
+                onClick={() => setIsMobileTocOpen(!isMobileTocOpen)}
+                aria-expanded={isMobileTocOpen}
+              >
+                <div className="mobile-toc-btn-left">
+                  <ListOrdered size={18} className="toc-accent-icon" />
+                  <span className="mobile-toc-btn-text">
+                    {isEn ? "Table of Contents" : "فهرس محتويات المقال"}
+                  </span>
+                  <span className="mobile-toc-count-pill">
+                    {tocHeadings.length}
+                  </span>
+                </div>
+                {isMobileTocOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              </button>
+
+              {isMobileTocOpen && (
+                <div className="mobile-toc-dropdown">
+                  <ul className="article-toc-list">
+                    {tocHeadings.map((heading) => {
+                      const isActive = activeHeadingId === heading.id;
+                      return (
+                        <li 
+                          key={heading.id} 
+                          className={`article-toc-item level-${heading.level} ${isActive ? 'active' : ''}`}
+                        >
+                          <a
+                            href={`#${heading.id}`}
+                            onClick={(e) => {
+                              handleHeadingClick(heading.id, e);
+                              setIsMobileTocOpen(false);
+                            }}
+                            className="article-toc-link"
+                          >
+                            <span className="toc-item-indicator" />
+                            <span className="toc-item-text">{heading.text}</span>
+                          </a>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Rich Rendered Article Markdown Body */}
           <div 
@@ -497,11 +615,53 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
           </section>
         </div>
 
-        {/* Sidebar: Related Articles */}
+        {/* Sidebar: Table of Contents & Related Articles */}
         <aside className="article-related-sidebar">
-          <div className="related-sidebar-header">
-            <h3 className="related-sidebar-title">{isEn ? "Related Articles" : "مقالات ذات صلة"}</h3>
-          </div>
+          {/* 1. Desktop Sticky Table of Contents (فهرس محتويات المقال) */}
+          {tocHeadings.length > 0 && (
+            <div className="article-desktop-toc-card">
+              <div className="article-toc-card-header">
+                <div className="toc-card-title-wrap">
+                  <ListOrdered size={18} className="toc-card-icon" />
+                  <h3 className="toc-card-title">{isEn ? "Table of Contents" : "فهرس المقال"}</h3>
+                </div>
+                <span className="toc-card-badge">
+                  {tocHeadings.length} {isEn ? "sections" : "فقرة"}
+                </span>
+              </div>
+
+              <div className="article-toc-card-scroll">
+                <ul className="article-toc-list">
+                  {tocHeadings.map((heading) => {
+                    const isActive = activeHeadingId === heading.id;
+                    return (
+                      <li 
+                        key={heading.id} 
+                        className={`article-toc-item level-${heading.level} ${isActive ? 'active' : ''}`}
+                      >
+                        <a
+                          href={`#${heading.id}`}
+                          onClick={(e) => handleHeadingClick(heading.id, e)}
+                          className="article-toc-link"
+                          title={heading.text}
+                        >
+                          <span className="toc-item-indicator" />
+                          <span className="toc-item-text">{heading.text}</span>
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            </div>
+          )}
+
+          {/* 2. Related Articles */}
+          <div className="article-related-card">
+            <div className="related-sidebar-header">
+              <h3 className="related-sidebar-title">{isEn ? "Related Articles" : "مقالات ذات صلة"}</h3>
+            </div>
+
 
           <div className="related-sidebar-list">
             {relatedArticles.map((relArt) => (
@@ -535,7 +695,9 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               </div>
             ))}
           </div>
-        </aside>
+        </div>
+      </aside>
+
       </div>
     </article>
   );

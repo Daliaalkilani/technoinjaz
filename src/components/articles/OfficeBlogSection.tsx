@@ -367,15 +367,15 @@ export const OfficeBlogSection: React.FC<OfficeBlogSectionProps> = ({
                   {/* 3. Card Footer: Author Capsule & Share / Engagement (matching screenshot 1) */}
                   <div className="card-footer-capsule-row" onClick={(e) => e.stopPropagation()}>
                     {/* Author Pill Capsule */}
-                    <div className="card-author-pill">
+                    <div className="card-author-pill" style={{ whiteSpace: 'nowrap' }}>
                       <img 
                         src={article.author.avatar} 
                         alt={authorName} 
                         className="author-pill-avatar" 
                       />
-                      <span className="author-pill-name">{authorName}</span>
+                      <span className="author-pill-name" style={{ whiteSpace: 'nowrap' }}>{authorName}</span>
                       <span className="author-pill-divider">|</span>
-                      <span className="author-pill-date">{publishDate}</span>
+                      <span className="author-pill-date" style={{ whiteSpace: 'nowrap' }}>{publishDate}</span>
                     </div>
 
                     {/* Action Group: Share, Likes, Bookmark */}

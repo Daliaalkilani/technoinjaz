@@ -342,6 +342,9 @@ export function CinematicFooter() {
               <MagneticButton as="a" href="#videos" className="footer-glass-pill footer-pill-secondary">
                 {t.footer?.videos || t.nav.videos}
               </MagneticButton>
+              <MagneticButton as="a" href="#faq" className="footer-glass-pill footer-pill-secondary">
+                {t.nav?.faq || (lang === 'en' ? 'FAQ' : 'الأسئلة الشائعة')}
+              </MagneticButton>
             </div>
           </div>
         </div>

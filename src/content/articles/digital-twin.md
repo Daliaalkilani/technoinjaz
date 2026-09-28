@@ -623,3 +623,10 @@ Digital Twin قد يربط البيانات الرقمية بأصول تشغيل
 
 16. Engineering, Technology & Applied Science Research (2025) — Cloud-based Digital Twin Framework and IoT for Smart Emergency Departments in Hospitals  
     https://etasr.com/index.php/ETASR/article/view/10290
+
+## مقالات ودراسات ذات صلة في منصة تكنو إنجاز
+
+- [ما هو إنترنت الأشياء (IoT)؟ البنية والبروتوكولات والتطبيقات والأمان](/articles/internet-of-things-iot)
+- [كيف تؤثر شبكات 5G في إنترنت الأشياء؟ السرعة والزمن والتوسع و5G-Advanced](/articles/5g-iot)
+- [UART أم I2C أم SPI أم RS-232؟ دليل اختيار بروتوكول الاتصال للنظم المدمجة](/articles/embedded-serial-protocols)
+

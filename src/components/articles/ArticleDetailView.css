@@ -176,6 +176,7 @@
 .author-capsule-text {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   font-size: 0.825rem;
   color: #cbd5e1;
@@ -184,14 +185,17 @@
 .author-capsule-name {
   font-weight: 700;
   color: #ffffff;
+  white-space: nowrap;
 }
 
 .author-capsule-divider {
   color: rgba(255, 255, 255, 0.3);
+  white-space: nowrap;
 }
 
 .author-capsule-date {
   color: #94a3b8;
+  white-space: nowrap;
 }
 
 .article-inline-share-btn {
@@ -220,18 +224,23 @@
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
-  max-height: 560px;
   border-radius: 24px;
   overflow: hidden;
   margin-bottom: 3rem;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #090d16;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .article-fullscreen-banner-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center top;
+  display: block;
 }
 
 .article-banner-ambient-glow {
@@ -539,9 +548,267 @@
 }
 
 /* ==========================================================================
+   TABLE OF CONTENTS (TOC) & HEADING SCROLL
+   ========================================================================== */
+.article-content-heading.scroll-mt-offset {
+  scroll-margin-top: 110px;
+}
+
+/* Desktop Table of Contents Card */
+.article-desktop-toc-card {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 16px;
+  gap: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  margin-bottom: 6px;
+}
+
+.article-toc-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.toc-card-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toc-card-icon {
+  color: #00d2ff;
+}
+
+.toc-card-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.toc-card-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #00d2ff;
+  background: rgba(0, 210, 255, 0.12);
+  border: 1px solid rgba(0, 210, 255, 0.25);
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.article-toc-card-scroll {
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 210, 255, 0.3) transparent;
+}
+
+.article-toc-card-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.article-toc-card-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 210, 255, 0.3);
+  border-radius: 4px;
+}
+
+.article-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.article-toc-item {
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.article-toc-item.level-2 {
+  font-weight: 600;
+}
+
+.article-toc-item.level-3 {
+  padding-right: 14px;
+  font-weight: 400;
+  font-size: 0.82rem;
+  opacity: 0.85;
+}
+
+[dir="ltr"] .article-toc-item.level-3 {
+  padding-right: 0;
+  padding-left: 14px;
+}
+
+.article-toc-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.825rem;
+  line-height: 1.45;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.toc-item-indicator {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.25);
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.toc-item-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.article-toc-link:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.article-toc-link:hover .toc-item-indicator {
+  background-color: #00d2ff;
+  transform: scale(1.4);
+}
+
+.article-toc-item.active .article-toc-link {
+  color: #00d2ff;
+  background: rgba(0, 210, 255, 0.1);
+  font-weight: 700;
+}
+
+.article-toc-item.active .toc-item-indicator {
+  background-color: #00d2ff;
+  box-shadow: 0 0 8px #00d2ff;
+  transform: scale(1.6);
+}
+
+/* Mobile / Inline Collapsible Table of Contents */
+.article-mobile-toc-box {
+  display: none;
+  margin: 1.5rem 0 2rem;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+@media (max-width: 1024px) {
+  .article-mobile-toc-box {
+    display: block;
+  }
+}
+
+.mobile-toc-toggle-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  transition: background 0.2s ease;
+}
+
+.mobile-toc-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.mobile-toc-btn-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toc-accent-icon {
+  color: #00d2ff;
+}
+
+.mobile-toc-count-pill {
+  font-size: 0.72rem;
+  background: rgba(0, 210, 255, 0.15);
+  color: #00d2ff;
+  border: 1px solid rgba(0, 210, 255, 0.3);
+  padding: 1px 8px;
+  border-radius: 999px;
+}
+
+.mobile-toc-dropdown {
+  padding: 10px 14px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+/* Light Theme Overrides */
+[data-theme="light"] .article-desktop-toc-card {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .article-toc-card-header {
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .toc-card-title {
+  color: #0f172a;
+}
+
+[data-theme="light"] .article-toc-link {
+  color: #475569;
+}
+
+[data-theme="light"] .article-toc-link:hover {
+  color: #0f172a;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .article-toc-item.active .article-toc-link {
+  color: #0284c7;
+  background: rgba(2, 132, 199, 0.1);
+}
+
+[data-theme="light"] .article-mobile-toc-box {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(0, 0, 0, 0.09);
+}
+
+[data-theme="light"] .mobile-toc-toggle-btn {
+  color: #0f172a;
+}
+
+/* ==========================================================================
    RELATED ARTICLES SIDEBAR (Vertical layout on the left)
    ========================================================================== */
 .article-related-sidebar {
+
   width: 320px;
   flex-shrink: 0;
   position: sticky;

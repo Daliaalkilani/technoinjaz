@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, lazy, Suspense, useRef } from 'react';
 import ScrollProgress from '@/registry/magicui/scroll-progress';
 import { Skiper19 } from '@/components/ui/svg-follow-scroll';
 import GooeyNav from './GooeyNav';
@@ -18,8 +18,8 @@ const ProfilePage = lazy(() => import('./ProfilePage'));
 const ContactPage = lazy(() => import('./ContactPage'));
 const AuthPage = lazy(() => import('./AuthPage'));
 const UserProfilePage = lazy(() => import('./UserProfilePage'));
-const LiveProjectsShowcase = lazy(() => import('./components/projects/LiveProjectsShowcase'));
 const ProjectsCatalogSection = lazy(() => import('./components/projects/ProjectsCatalogSection'));
+const FaqSection = lazy(() => import('./components/faq/FaqSection'));
 import OfficeBlogSection from './components/articles/OfficeBlogSection';
 import ProjectReelsFeed from './components/videos/ProjectReelsFeed';
 
@@ -31,13 +31,16 @@ interface NavItem {
 export default function App() {
   const { theme, lang, t } = useThemeLanguage();
   const [isLoaderDone, setIsLoaderDone] = useState(false);
-  const [currentTab, setCurrentTab] = useState<'home' | 'projects' | 'videos' | 'articles' | 'about'>('home');
+  const [currentTab, setCurrentTab] = useState<'home' | 'projects' | 'videos' | 'articles' | 'faq' | 'about'>('home');
   const [selectedMember, setSelectedMember] = useState<any>(null);
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [isUserProfileOpen, setIsUserProfileOpen] = useState(false);
   const [activeNavIndex, setActiveNavIndex] = useState(0);
+  const [isPastHero, setIsPastHero] = useState(false);
+  const [navHeight, setNavHeight] = useState(78);
+  const navbarRef = useRef<HTMLElement | null>(null);
   const [currentUser, setCurrentUser] = useState<any>(() => {
     return getLoggedInUser();
   });
@@ -101,11 +104,42 @@ export default function App() {
     };
   }, []);
 
+  useEffect(() => {
+    if (navbarRef.current) {
+      setNavHeight(navbarRef.current.offsetHeight || 78);
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (currentTab === 'home' && !isContactOpen && !isAuthOpen && !isUserProfileOpen && !selectedMember) {
+        const projectsEl = document.getElementById('projects');
+        if (projectsEl) {
+          const rect = projectsEl.getBoundingClientRect();
+          setIsPastHero(rect.top <= 80);
+        } else {
+          setIsPastHero(window.scrollY > window.innerHeight * 1.5);
+        }
+      } else {
+        setIsPastHero(false);
+      }
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [currentTab, isContactOpen, isAuthOpen, isUserProfileOpen, selectedMember]);
+
   const navItems: NavItem[] = [
     { label: t.nav.home, href: '#top' },
     { label: t.nav.projects, href: '#projects' },
     { label: t.nav.videos, href: '#videos' },
     { label: t.nav.articles, href: '#articles' },
+    { label: t.nav.faq, href: '#faq' },
     { label: t.nav.about, href: '#about' },
     { label: t.nav.contact, href: '#contact' },
   ];
@@ -128,7 +162,7 @@ export default function App() {
         setSelectedMember(null);
         setIsAuthOpen(false);
         setIsContactOpen(true);
-        setActiveNavIndex(5);
+        setActiveNavIndex(6);
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
       }
@@ -166,7 +200,7 @@ export default function App() {
       setIsAuthOpen(false);
       setIsUserProfileOpen(false);
 
-      if (hash === '#projects') {
+      if (hash === '#projects' || hash.startsWith('#project/')) {
         setCurrentTab('projects');
         setActiveNavIndex(1);
       } else if (hash === '#videos') {
@@ -175,9 +209,12 @@ export default function App() {
       } else if (hash === '#articles' || hash.startsWith('#article/')) {
         setCurrentTab('articles');
         setActiveNavIndex(3);
+      } else if (hash === '#faq') {
+        setCurrentTab('faq');
+        setActiveNavIndex(4);
       } else if (hash === '#about') {
         setCurrentTab('about');
-        setActiveNavIndex(4);
+        setActiveNavIndex(5);
       } else {
         setCurrentTab('home');
         setActiveNavIndex(0);
@@ -210,6 +247,10 @@ export default function App() {
       setIsContactOpen(false);
       setCurrentTab('articles');
       window.location.hash = '#articles';
+    } else if (item.href === '#faq') {
+      setIsContactOpen(false);
+      setCurrentTab('faq');
+      window.location.hash = '#faq';
     } else if (item.href === '#about') {
       setIsContactOpen(false);
       setCurrentTab('about');
@@ -340,95 +381,110 @@ export default function App() {
     );
   }
 
+  const isDedicatedTabOrView = currentTab !== 'home' || isContactOpen || isAuthOpen || isUserProfileOpen;
+
   return (
     <main style={{ width: '100%', minHeight: '100vh', backgroundColor: 'var(--bg-main)' }} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
       {/* Scroll indicator */}
       <ScrollProgress className="top-0" />
 
       {/* Top Navbar with GooeyNav */}
-      <nav id="navbar" className="top-navbar-container">
-        {/* Brand identity */}
-        <a
-          href="#top"
-          className="navbar-brand-link"
-          onClick={(e) => {
-            e.preventDefault();
-            handleNavItemSelect(navItems[0], 0);
-          }}
-          title={`${t.nav.brand} | ${t.nav.home}`}
+      <div 
+        className="top-navbar-wrapper"
+        style={{
+          height: (!isDedicatedTabOrView && isPastHero) ? `${navHeight}px` : undefined
+        }}
+      >
+        <nav 
+          ref={navbarRef}
+          id="navbar" 
+          className={`top-navbar-container ${
+            isDedicatedTabOrView ? 'is-tab-sticky' : (isPastHero ? 'is-home-sticky' : '')
+          }`}
         >
-          <img
-            src="/techno-logo.png"
-            alt={t.nav.brand}
-            className="navbar-brand-logo"
-          />
-          <span className="navbar-brand-text">{t.nav.brand}</span>
-        </a>
-
-        {/* Center Interactive GooeyNav Menu */}
-        <div className="navbar-center-menu">
-          <GooeyNav
-            items={navItems}
-            particleCount={15}
-            particleDistances={[90, 10]}
-            particleR={100}
-            initialActiveIndex={0}
-            activeIndex={isAuthOpen ? -1 : (isContactOpen ? 5 : activeNavIndex)}
-            onItemSelect={handleNavItemSelect}
-            animationTime={600}
-            timeVariance={300}
-            colors={[1, 2, 3, 1, 2, 3, 1, 4]}
-          />
-        </div>
-
-        {/* End Actions: Language Switcher, Theme Toggle, Login / User Profile */}
-        <div className="navbar-end-actions">
-          {/* Language Dropdown Selector */}
-          <LanguageDropdown />
-
-          {/* Animated Sun / Moon Theme Switch Component */}
-          <ThemeSwitch />
-
-          {/* User Profile / Saved Projects / Auth Button */}
-          <button
-            type="button"
-            className={`navbar-auth-btn ${isUserProfileOpen || isAuthOpen ? 'active' : ''}`}
-            onClick={() => {
-              if (currentUser) {
-                setIsContactOpen(false);
-                setSelectedMember(null);
-                setIsAuthOpen(false);
-                setIsUserProfileOpen(true);
-                window.location.hash = '#my-profile';
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              } else {
-                handleOpenAuth('login');
-              }
+          {/* Brand identity */}
+          <a
+            href="#top"
+            className="navbar-brand-link"
+            onClick={(e) => {
+              e.preventDefault();
+              handleNavItemSelect(navItems[0], 0);
             }}
-            title={currentUser 
-              ? (currentUser.name || (lang === 'en' ? 'My Profile' : 'حسابي')) 
-              : t.nav.login}
-            style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+            title={`${t.nav.brand} | ${t.nav.home}`}
           >
-            <span className="navbar-auth-btn-icon">
-              {currentUser?.avatar ? (
-                <img
-                  src={currentUser.avatar}
-                  alt=""
-                  style={{ width: '18px', height: '18px', borderRadius: '50%', objectFit: 'cover', display: 'block' }}
-                />
-              ) : (
-                <User size={15} />
-              )}
-            </span>
-            <span className="navbar-auth-btn-label">
-              {currentUser 
+            <img
+              src="/techno-logo.png"
+              alt={t.nav.brand}
+              className="navbar-brand-logo"
+            />
+            <span className="navbar-brand-text">{t.nav.brand}</span>
+          </a>
+
+          {/* Center Interactive GooeyNav Menu */}
+          <div className="navbar-center-menu">
+            <GooeyNav
+              items={navItems}
+              particleCount={15}
+              particleDistances={[90, 10]}
+              particleR={100}
+              initialActiveIndex={0}
+              activeIndex={isAuthOpen ? -1 : (isContactOpen ? 6 : activeNavIndex)}
+              onItemSelect={handleNavItemSelect}
+              animationTime={600}
+              timeVariance={300}
+              colors={[1, 2, 3, 1, 2, 3, 1, 4]}
+            />
+          </div>
+
+          {/* End Actions: Language Switcher, Theme Toggle, Login / User Profile */}
+          <div className="navbar-end-actions">
+            {/* Language Dropdown Selector */}
+            <LanguageDropdown />
+
+            {/* Animated Sun / Moon Theme Switch Component */}
+            <ThemeSwitch />
+
+            {/* User Profile / Saved Projects / Auth Button */}
+            <button
+              type="button"
+              className={`navbar-auth-btn ${isUserProfileOpen || isAuthOpen ? 'active' : ''}`}
+              onClick={() => {
+                if (currentUser) {
+                  setIsContactOpen(false);
+                  setSelectedMember(null);
+                  setIsAuthOpen(false);
+                  setIsUserProfileOpen(true);
+                  window.location.hash = '#my-profile';
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                  handleOpenAuth('login');
+                }
+              }}
+              title={currentUser 
                 ? (currentUser.name || (lang === 'en' ? 'My Profile' : 'حسابي')) 
                 : t.nav.login}
-            </span>
-          </button>
-        </div>
-      </nav>
+              style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+            >
+              <span className="navbar-auth-btn-icon">
+                {currentUser?.avatar ? (
+                  <img
+                    src={currentUser.avatar}
+                    alt=""
+                    style={{ width: '18px', height: '18px', borderRadius: '50%', objectFit: 'cover', display: 'block' }}
+                  />
+                ) : (
+                  <User size={15} />
+                )}
+              </span>
+              <span className="navbar-auth-btn-label">
+                {currentUser 
+                  ? (currentUser.name || (lang === 'en' ? 'My Profile' : 'حسابي')) 
+                  : t.nav.login}
+              </span>
+            </button>
+          </div>
+        </nav>
+      </div>
 
       {/* Page Content: AuthPage, ContactPage, Dedicated Tabs, or Homepage */}
       {isAuthOpen ? (
@@ -461,17 +517,8 @@ export default function App() {
           <ContactPage onBack={handleBackFromContact} />
         </Suspense>
       ) : currentTab === 'projects' ? (
-        <div className="tab-page-container">
-          <div className="tab-page-header">
-            <h1 className="tab-page-title">{t.liveProjects.pageTitle}</h1>
-            <p className="tab-page-subtitle">{t.liveProjects.pageSubtitle}</p>
-          </div>
-
+        <div className="tab-page-container" style={{ padding: '0', maxWidth: '100%' }}>
           <Suspense fallback={<div style={{ minHeight: '60vh', backgroundColor: 'var(--bg-main)' }} />}>
-            <LiveProjectsShowcase />
-          </Suspense>
-
-          <Suspense fallback={<div style={{ minHeight: '40vh', backgroundColor: 'var(--bg-main)' }} />}>
             <ProjectsCatalogSection />
           </Suspense>
         </div>
@@ -487,6 +534,24 @@ export default function App() {
         <div className="tab-page-container" style={{ padding: '0', maxWidth: '100%' }}>
           <OfficeBlogSection showHeroBanner={true} />
         </div>
+      ) : currentTab === 'faq' ? (
+        <Suspense fallback={<div style={{ minHeight: '60vh', backgroundColor: 'var(--bg-main)' }} />}>
+          <FaqSection
+            onNavigateTab={(tabTarget) => {
+              if (tabTarget === '#contact') {
+                handleNavItemSelect(navItems[6], 6);
+              } else if (tabTarget === '#projects') {
+                handleNavItemSelect(navItems[1], 1);
+              } else if (tabTarget === '#articles') {
+                handleNavItemSelect(navItems[3], 3);
+              } else if (tabTarget === '#about') {
+                handleNavItemSelect(navItems[5], 5);
+              } else {
+                handleNavItemSelect(navItems[0], 0);
+              }
+            }}
+          />
+        </Suspense>
       ) : currentTab === 'about' ? (
         <section
           id="about"
@@ -670,7 +735,7 @@ export default function App() {
         <>
           {/* 1. ScrollExpand Cinematic Hero + Projects + Videos + Articles */}
           <ScrollExpandPrototype 
-            onOpenContact={() => handleNavItemSelect(navItems[5], 5)}
+            onOpenContact={() => handleNavItemSelect(navItems[6], 6)}
             onNavigateToProjects={() => handleNavItemSelect(navItems[1], 1)} 
             onNavigateToVideos={() => handleNavItemSelect(navItems[2], 2)}
             onNavigateToArticles={() => handleNavItemSelect(navItems[3], 3)}

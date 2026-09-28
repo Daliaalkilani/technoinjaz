@@ -1,409 +1,286 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   Search, 
-  BookOpen, 
-  Download, 
-  FileText, 
-  Presentation, 
-  FileCode, 
   Layers, 
   Cpu, 
   Eye, 
-  Radio, 
+  Bot, 
   Globe, 
   Smartphone,
-  SlidersHorizontal,
   Bookmark,
-  BookmarkCheck
+  BookmarkCheck,
+  ArrowRight,
+  ArrowLeft,
+  Sparkles,
+  CheckCircle2,
+  X
 } from 'lucide-react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import { useSavedProjects } from '../../hooks/useSavedProjects';
-import { DRIVE_PROJECTS, type DriveProject, type ProjectCategory } from '../../data/driveProjectsData';
-import DocumentReaderModal from './DocumentReaderModal';
+import { PROJECTS_DATA, getProjectBySlug, type ProjectItem, type ProjectCategory } from '../../data/projectsData';
+import ProjectDetailView from './ProjectDetailView';
 import './ProjectsCatalogSection.css';
 
-const TAG_TRANSLATIONS: Record<string, string> = {
-  "تعلم عميق": "Deep Learning",
-  "رؤية حاسوبية": "Computer Vision",
-  "أمن المراقبة": "Surveillance Security",
-  "شبكات عصبية": "Neural Networks",
-  "ذكاء اصطناعي طبي": "Medical AI",
-  "تعلم آلة": "Machine Learning",
-  "تشخيص أورام": "Tumor Diagnosis",
-  "معالجة صور": "Image Processing",
-  "تسجيل حضور": "Attendance Tracking",
-  "كشف التلاعب": "Anti-Spoofing",
-  "بيومترية": "Biometrics",
-  "روبوتات": "Robotics",
-  "أتمتة صناعية": "Industrial Automation",
-  "تحكم ميكاترونيكس": "Mechatronics Control",
-  "أمن سيبراني": "Cybersecurity",
-  "أنظمة تحكم": "Control Systems",
-  "أمن بنكي": "Banking Security",
-  "بصمة وجه": "Facial Biometrics",
-  "ذكاء اصطناعي": "Artificial Intelligence",
-  "معالجة لغات طبيعية": "NLP",
-  "روبوت محادثة": "Chatbot",
-  "مساعد صوتي": "Voice Assistant",
-  "SCADA": "SCADA",
-  "مستشعرات": "Sensors",
-  "هوية بيومترية": "Biometric Identity",
-  "قواعد بيانات": "Databases",
-  "أنظمة ذكية": "Smart Systems",
-  "كشف كائنات": "Object Detection",
-  "أمن وسلامة": "Safety & Security",
-  "تنبيه فوري": "Instant Alerts",
-  "حماية بيانات": "Data Protection",
-  "كشف تهديدات": "Threat Detection",
-  "تطبيقات ويب": "Web Applications",
-  "إدارة مشاريع": "Project Management",
-  "منصات سحابية": "Cloud Platforms",
-  "فرق عمل": "Collaboration",
-  "واجهة دماغ وحاسوب": "BCI Interface",
-  "إشارات عصبية": "Neural Signals",
-  "اتصالات ونظم": "Telecom & Systems",
-  "ميكاترونيكس": "Mechatronics",
-  "تتبع حركة": "Motion Tracking",
-  "طب أسنان": "Dentistry",
-  "تصوير إشعاعي": "Radiology",
-  "تشخيص آلي": "Automated Diagnostics",
-  "تطبيقات موبايل": "Mobile Apps",
-  "سياحة ذكية": "Smart Tourism",
-  "خرائط تفاعلية": "Interactive Maps",
-  "فلاتر": "Filters",
-  "إنتاجية": "Productivity",
-  "تنظيم وقت": "Time Management",
-  "تغذية ذكية": "Smart Nutrition",
-  "تعرف على أطعمة": "Food Recognition",
-  "أمن ومراقبة": "Security & Surveillance",
-  "حماية محيطية": "Perimeter Defense",
-  "تنبيهات": "Alerts",
-  "مساعد كود": "Code Assistant",
-  "فحص أمان": "Security Audit",
-  "استكشاف ميداني": "Field Exploration",
-  "اتصالات لاسلكية": "Wireless Comms",
-  "روبوتات تعليمية": "Educational Robots",
-  "تفاعل إنساني آلي": "Human-Robot Interaction",
-  "تعليم ذكي": "Smart Education"
-};
+interface ProjectsCatalogSectionProps {
+  initialSlug?: string;
+}
 
-export const ProjectsCatalogSection: React.FC = () => {
+export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ initialSlug }) => {
   const { lang } = useThemeLanguage();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategoryIdx, setSelectedCategoryIdx] = useState(0);
-  const [activeReadingProject, setActiveReadingProject] = useState<DriveProject | null>(null);
+  const isEn = lang === 'en';
   const { isSaved, toggleSave } = useSavedProjects();
 
-  const categories: { key: ProjectCategory; labelAr: string; labelEn: string; icon: React.ReactNode }[] = useMemo(() => [
-    { key: 'all', labelAr: 'الكل', labelEn: 'All Projects', icon: <Layers size={16} /> },
-    { key: 'ai', labelAr: 'ذكاء اصطناعي', labelEn: 'Artificial Intelligence', icon: <Cpu size={16} /> },
-    { key: 'vision', labelAr: 'رؤية حاسوبية', labelEn: 'Computer Vision', icon: <Eye size={16} /> },
-    { key: 'systems', labelAr: 'اتصالات ونظم', labelEn: 'Telecom & Systems', icon: <Radio size={16} /> },
-    { key: 'web', labelAr: 'تطبيقات ويب', labelEn: 'Web Applications', icon: <Globe size={16} /> },
-    { key: 'mobile', labelAr: 'تطبيقات موبايل', labelEn: 'Mobile Applications', icon: <Smartphone size={16} /> },
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<ProjectCategory>('all');
+  const [activeProject, setActiveProject] = useState<ProjectItem | null>(() => {
+    if (initialSlug) {
+      return getProjectBySlug(initialSlug) || null;
+    }
+    if (typeof window !== 'undefined' && window.location.hash.startsWith('#project/')) {
+      const slug = window.location.hash.replace('#project/', '');
+      return getProjectBySlug(slug) || null;
+    }
+    return null;
+  });
+
+  // Listen to hash changes for deep linking to #project/:slug
+  useEffect(() => {
+    const handleHash = () => {
+      const hash = window.location.hash;
+      if (hash.startsWith('#project/')) {
+        const slug = hash.replace('#project/', '');
+        const found = getProjectBySlug(slug);
+        if (found) {
+          setActiveProject(found);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      } else if (hash === '#projects') {
+        setActiveProject(null);
+      }
+    };
+
+    handleHash();
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
+
+  const categories = useMemo(() => [
+    { key: 'all' as ProjectCategory, labelAr: 'الكل', labelEn: 'All Projects', icon: <Layers size={16} /> },
+    { key: 'vision' as ProjectCategory, labelAr: 'رؤية حاسوبية', labelEn: 'Computer Vision', icon: <Eye size={16} /> },
+    { key: 'ai' as ProjectCategory, labelAr: 'ذكاء اصطناعي', labelEn: 'Artificial Intelligence', icon: <Cpu size={16} /> },
+    { key: 'systems' as ProjectCategory, labelAr: 'روبوتات وأنظمة مدمجة', labelEn: 'Robotics & Systems', icon: <Bot size={16} /> },
+    { key: 'web' as ProjectCategory, labelAr: 'منصات ويب وسحابية', labelEn: 'Web & Cloud', icon: <Globe size={16} /> },
+    { key: 'mobile' as ProjectCategory, labelAr: 'تطبيقات موبايل', labelEn: 'Mobile Apps', icon: <Smartphone size={16} /> },
   ], []);
 
-  const activeCategoryKey = categories[selectedCategoryIdx]?.key || 'all';
-
+  // Filter projects by category and search term
   const filteredProjects = useMemo(() => {
-    const term = searchTerm.toLowerCase().trim();
-    return DRIVE_PROJECTS.filter(project => {
-      // Category filter
-      if (activeCategoryKey !== 'all' && project.category !== activeCategoryKey) {
-        return false;
-      }
-      // Search term filter
-      if (!term) return true;
-      const titleMatch = project.title.toLowerCase().includes(term) || project.titleEn.toLowerCase().includes(term);
-      const descMatch = project.description.toLowerCase().includes(term) || project.descriptionEn.toLowerCase().includes(term);
-      const tagsMatch = project.tags.some(tag => tag.toLowerCase().includes(term));
-      return titleMatch || descMatch || tagsMatch;
-    });
-  }, [activeCategoryKey, searchTerm]);
+    return PROJECTS_DATA.filter((p) => {
+      const matchesCategory = selectedCategory === 'all' || p.category === selectedCategory;
+      const term = searchTerm.trim().toLowerCase();
+      if (!term) return matchesCategory;
 
-  const getCategoryBadgeLabel = (catKey: string) => {
-    const found = categories.find(c => c.key === catKey);
-    return found ? (lang === 'ar' ? found.labelAr : found.labelEn) : catKey;
+      const matchesSearch = 
+        p.title.toLowerCase().includes(term) ||
+        p.excerpt.toLowerCase().includes(term) ||
+        p.tags.some(t => t.toLowerCase().includes(term)) ||
+        p.categoryNameAr.toLowerCase().includes(term);
+
+      return matchesCategory && matchesSearch;
+    });
+  }, [selectedCategory, searchTerm]);
+
+  const handleSelectProject = (project: ProjectItem) => {
+    setActiveProject(project);
+    window.location.hash = `#project/${project.slug}`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleBackToCatalog = () => {
+    setActiveProject(null);
+    window.location.hash = '#projects';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // If a specific project is selected, render the dedicated Detail View
+  if (activeProject) {
+    return (
+      <ProjectDetailView
+        project={activeProject}
+        onBack={handleBackToCatalog}
+        onSelectProject={handleSelectProject}
+      />
+    );
+  }
+
   return (
-    <section className="catalog-section" id="academic-projects" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
-      <div className="catalog-container">
-        {/* Section Header */}
-        <div className="catalog-header-wrap">
-          <h2 className="catalog-title">
-            {lang === 'ar' ? 'مكتبة مشاريع التخرج والبحوث الهندسية' : 'Graduation Projects & Research Library'}
-          </h2>
-          <p className="catalog-subtitle">
-            {lang === 'ar' 
-              ? 'استكشف وحمّل أو تصفح ورقياً وثائق مشاريع التخرج المعتمدة وعروض البوربوينت وملفات التوثيق الشاملة.' 
-              : 'Explore, download, or flip through documented graduation projects, presentations, and technical documentation.'}
-          </p>
+    <section className="catalog-section" id="projects-catalog" dir={isEn ? 'ltr' : 'rtl'}>
+      {/* Catalog Hero Banner */}
+      <div className="catalog-hero-wrapper">
+        <div className="catalog-hero-badge">
+          <Sparkles size={15} />
+          <span>{isEn ? "Approved Portfolio" : "معرض النماذج والمشاريع الهندسية المعتمدة"}</span>
         </div>
 
-        {/* Modern Filter Card & Interactive Category Chips */}
-        <div className="catalog-filter-card">
-          {/* Header Row: Label & Search Input */}
-          <div className="catalog-filter-header-row">
-            <div className="catalog-filter-label-wrap">
-              <div className="catalog-filter-icon-badge">
-                <SlidersHorizontal size={17} />
-              </div>
-              <div className="catalog-filter-text-group">
-                <span className="catalog-filter-main-label">
-                  {lang === 'ar' ? 'فلترة حسب نوع المشروع:' : 'Filter by Category:'}
-                </span>
-                <span className="catalog-filter-sub-label">
-                  {lang === 'ar' ? 'اختر تصنيفاً لعرض المشاريع المتخصصة' : 'Select a category to view specialized projects'}
-                </span>
-              </div>
-            </div>
+        <h1 className="catalog-hero-title">
+          {isEn ? "Techno Enjaz Engineering Projects" : "مشاريع ومنظومات تكنو إنجاز"}
+        </h1>
 
-            {/* Live Search Input */}
-            <div className="catalog-search-box">
-              <Search size={18} className="catalog-search-icon" />
-              <input
-                type="text"
-                className="catalog-search-input"
-                placeholder={lang === 'ar' ? 'ابحث بالاسم أو التقنية (مثل: شبكات، تعرّف، أمن)...' : 'Search by title or keyword (e.g. AI, vision, security)...'}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              {searchTerm && (
-                <button 
-                  type="button" 
-                  className="catalog-search-clear"
-                  onClick={() => setSearchTerm('')}
-                  title={lang === 'ar' ? 'مسح البحث' : 'Clear search'}
-                >
-                  ✕
-                </button>
-              )}
-            </div>
-          </div>
+        <p className="catalog-hero-subtitle">
+          {isEn 
+            ? "Explore practical engineering prototypes, AI vision architectures, and embedded solutions built with technical guidance and support from Techno Enjaz."
+            : "استعراض النماذج التطبيقية والمنظومات الهندسية في الذكاء الاصطناعي والرؤية الحاسوبية والروبوتات والأنظمة السحابية المنجزة بدعم ومساندة المكتب."}
+        </p>
 
-          {/* Interactive Category Chips */}
-          <div className="catalog-category-chips" role="tablist">
-            {categories.map((cat, idx) => {
-              const isActive = activeCategoryKey === cat.key;
-              const count = cat.key === 'all' 
-                ? DRIVE_PROJECTS.length 
-                : DRIVE_PROJECTS.filter(p => p.category === cat.key).length;
-
-              return (
-                <button
-                  key={cat.key}
-                  type="button"
-                  role="tab"
-                  aria-selected={isActive}
-                  className={`catalog-category-chip ${isActive ? 'active' : ''}`}
-                  onClick={() => setSelectedCategoryIdx(idx)}
-                >
-                  <span className="chip-icon-wrap">{cat.icon}</span>
-                  <span className="chip-label-text">
-                    {lang === 'ar' ? cat.labelAr : cat.labelEn}
-                  </span>
-                  <span className="chip-count-pill">{count}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Results Counter Bar */}
-        <div className="catalog-counter-bar">
-          <span className="catalog-counter-text">
-            {lang === 'ar' 
-              ? `تم العثور على ${filteredProjects.length} مشروعاً موثقاً` 
-              : `Found ${filteredProjects.length} documented projects`}
-          </span>
-          {activeCategoryKey !== 'all' && (
-            <span className="catalog-active-filter-badge">
-              {getCategoryBadgeLabel(activeCategoryKey)}
-              <button 
-                type="button" 
-                onClick={() => setSelectedCategoryIdx(0)}
-                className="clear-cat-btn"
-                title={lang === 'ar' ? 'إلغاء الفلتر' : 'Clear filter'}
-              >
-                ✕
-              </button>
-            </span>
+        {/* Search Bar */}
+        <div className="catalog-search-bar">
+          <Search size={18} className="search-icon" />
+          <input
+            type="text"
+            className="search-input"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder={isEn ? "Search projects by title, technology, or keywords..." : "ابحث في المشاريع بالاسم، التقنية، أو الكلمات المفتاحية..."}
+          />
+          {searchTerm && (
+            <button 
+              type="button" 
+              className="search-clear-btn" 
+              onClick={() => setSearchTerm('')}
+              title={isEn ? "Clear search" : "مسح البحث"}
+            >
+              <X size={16} />
+            </button>
           )}
         </div>
-
-        {/* Projects Cards Grid */}
-        {filteredProjects.length === 0 ? (
-          <div className="catalog-empty-state">
-            <BookOpen size={48} className="empty-state-icon" />
-            <h3>{lang === 'ar' ? 'لا توجد نتائج مطابقة' : 'No Matching Projects Found'}</h3>
-            <p>{lang === 'ar' ? 'جرب البحث بكلمات أخرى أو اختر فئة مختلفة من عجلة الفلترة' : 'Try searching with different keywords or select another category from the wheel.'}</p>
-          </div>
-        ) : (
-          <div className="catalog-grid">
-            {filteredProjects.map((project) => {
-              const projectTitle = lang === 'ar' ? project.title : project.titleEn;
-              const projectDesc = lang === 'ar' ? project.description : project.descriptionEn;
-              const pdfId = project.pdfId || '1edEWYRLqtgSVRw0Eq7NmCldb_fxzi5OW';
-              const pdfDownloadUrl = `https://drive.google.com/uc?export=download&id=${pdfId}`;
-              const pptxDownloadUrl = project.pptxId ? `https://drive.google.com/uc?export=download&id=${project.pptxId}` : null;
-              const docxDownloadUrl = project.docxId ? `https://drive.google.com/uc?export=download&id=${project.docxId}` : null;
-
-              return (
-                <article key={project.id} className="catalog-card">
-                  {/* Card Top: Category & File Availability Badges + Save Project Button */}
-                  <div className="catalog-card-header">
-                    <span className={`catalog-cat-badge cat-${project.category}`}>
-                      {getCategoryBadgeLabel(project.category)}
-                    </span>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <div className="catalog-file-badges">
-                        {project.docxId && (
-                          <span className="file-badge docx" title="Word Document (DOCX)">
-                            <FileCode size={12} />
-                            <span>DOCX</span>
-                          </span>
-                        )}
-                        {project.pptxId && (
-                          <span className="file-badge pptx" title="PowerPoint Presentation (PPTX)">
-                            <Presentation size={12} />
-                            <span>PPTX</span>
-                          </span>
-                        )}
-                        <span className="file-badge pdf" title="PDF Document">
-                          <FileText size={12} />
-                          <span>PDF</span>
-                        </span>
-                      </div>
-
-                      {/* Save Project to Favorites Button */}
-                      <button
-                        type="button"
-                        className={`project-save-btn catalog-save-btn ${isSaved(project.id) ? 'is-saved' : ''}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleSave({
-                            id: project.id,
-                            title: project.title,
-                            titleEn: project.titleEn,
-                            category: project.category,
-                            categoryLabel: getCategoryBadgeLabel(project.category),
-                            description: project.description,
-                            descriptionEn: project.descriptionEn,
-                            type: 'academic',
-                            image: project.image,
-                            pdfId: project.pdfId,
-                            pptxId: project.pptxId,
-                            docxId: project.docxId,
-                            tags: project.tags
-                          });
-                        }}
-                        title={isSaved(project.id) 
-                          ? (lang === 'ar' ? 'تم الحفظ في المفضلة' : 'Saved to Favorites') 
-                          : (lang === 'ar' ? 'حفظ المشروع في المفضلة' : 'Save Project to Favorites')}
-                      >
-                        {isSaved(project.id) ? (
-                          <>
-                            <BookmarkCheck size={13} />
-                            <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>{lang === 'ar' ? 'محفوظ' : 'Saved'}</span>
-                          </>
-                        ) : (
-                          <>
-                            <Bookmark size={13} />
-                            <span style={{ fontSize: '0.75rem', fontWeight: 500 }}>{lang === 'ar' ? 'حفظ' : 'Save'}</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Project Image Slot (White placeholder canvas ready for project images) */}
-                  <div className="catalog-card-image-wrap">
-                    <img 
-                      src={project.image || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='340' viewBox='0 0 600 340'%3E%3Crect width='600' height='340' fill='%23ffffff'/%3E%3C/svg%3E"} 
-                      alt={projectTitle}
-                      className="catalog-card-img"
-                      loading="lazy"
-                    />
-                  </div>
-
-                  {/* Card Title & Description */}
-                  <h3 className="catalog-card-title">{projectTitle}</h3>
-                  <p className="catalog-card-desc">{projectDesc}</p>
-
-                  {/* Tags */}
-                  <div className="catalog-card-tags">
-                    {project.tags.map((tag) => (
-                      <span key={tag} className="catalog-tag">
-                        #{lang === 'ar' ? tag : (TAG_TRANSLATIONS[tag] || tag)}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Card Actions: Flipbook Reader + Downloads */}
-                  <div className="catalog-card-actions">
-                    {/* Primary Button: Read as Flipbook */}
-                    <button
-                      type="button"
-                      className="catalog-btn-read-flipbook"
-                      onClick={() => setActiveReadingProject(project)}
-                      title={lang === 'ar' ? 'تصفح وقراءة المستند ورقياً' : 'Read Document as Flipbook'}
-                    >
-                      <BookOpen size={16} />
-                      <span>{lang === 'ar' ? 'قراءة المستند (تصفح ورقي)' : 'Read Document (Flipbook)'}</span>
-                    </button>
-
-                    {/* Secondary Direct Download Buttons */}
-                    <div className="catalog-btn-downloads-row">
-                      {docxDownloadUrl && (
-                        <a
-                          href={docxDownloadUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="catalog-btn-download docx"
-                          title={lang === 'ar' ? 'تحميل ملف الوورد DOCX' : 'Download Word Document DOCX'}
-                        >
-                          <Download size={13} />
-                          <span>{lang === 'ar' ? 'تحميل DOCX' : 'Download DOCX'}</span>
-                        </a>
-                      )}
-                      {pptxDownloadUrl && (
-                        <a
-                          href={pptxDownloadUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="catalog-btn-download pptx"
-                          title={lang === 'ar' ? 'تحميل العرض التقديمي PPTX' : 'Download Presentation PPTX'}
-                        >
-                          <Download size={13} />
-                          <span>{lang === 'ar' ? 'تحميل PPTX' : 'Download PPTX'}</span>
-                        </a>
-                      )}
-                      <a
-                        href={pdfDownloadUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="catalog-btn-download pdf"
-                        title={lang === 'ar' ? 'تحميل ملف المستند PDF' : 'Download Document PDF'}
-                      >
-                        <Download size={13} />
-                        <span>{lang === 'ar' ? 'تحميل PDF' : 'Download PDF'}</span>
-                      </a>
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        )}
       </div>
 
-      {/* Realistic Paper Flipbook Reader Modal */}
-      <DocumentReaderModal
-        isOpen={Boolean(activeReadingProject)}
-        project={activeReadingProject}
-        onClose={() => setActiveReadingProject(null)}
-      />
+      {/* Category Filter Tabs */}
+      <div className="catalog-categories-bar">
+        {categories.map((cat) => {
+          const count = cat.key === 'all' 
+            ? PROJECTS_DATA.length 
+            : PROJECTS_DATA.filter(p => p.category === cat.key).length;
+
+          return (
+            <button
+              key={cat.key}
+              type="button"
+              className={`category-pill-btn ${selectedCategory === cat.key ? 'active' : ''}`}
+              onClick={() => setSelectedCategory(cat.key)}
+            >
+              <span className="cat-icon">{cat.icon}</span>
+              <span className="cat-label">{isEn ? cat.labelEn : cat.labelAr}</span>
+              <span className="cat-count">{count}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Projects Grid */}
+      {filteredProjects.length === 0 ? (
+        <div className="catalog-empty-state">
+          <Layers size={48} className="empty-icon" />
+          <h3 className="empty-title">
+            {isEn ? "No Projects Found" : "لم يتم العثور على مشاريع مطابقة"}
+          </h3>
+          <p className="empty-desc">
+            {isEn 
+              ? "Try adjusting your search query or switching to another category."
+              : "جرّب تغيير كلمات البحث أو اختيار تصنيف آخر من القائمة أعلاه."}
+          </p>
+          <button 
+            type="button" 
+            className="empty-reset-btn"
+            onClick={() => {
+              setSearchTerm('');
+              setSelectedCategory('all');
+            }}
+          >
+            {isEn ? "Reset Filters" : "إعادة ضبط التصفية"}
+          </button>
+        </div>
+      ) : (
+        <div className="catalog-grid">
+          {filteredProjects.map((project) => {
+            const saved = isSaved(project.slug);
+
+            return (
+              <article 
+                key={project.slug} 
+                className="project-card"
+                onClick={() => handleSelectProject(project)}
+              >
+                {/* Card Thumbnail */}
+                <div className="card-thumb-wrap">
+                  <img
+                    src={project.image}
+                    alt={project.altText || project.title}
+                    className="card-thumb-img"
+                    loading="lazy"
+                  />
+                  <span className="card-cat-badge">{project.categoryNameAr}</span>
+
+                  <button
+                    type="button"
+                    className={`card-bookmark-btn ${saved ? 'active' : ''}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleSave({
+                        id: project.slug,
+                        title: project.title,
+                        category: project.category,
+                        categoryLabel: project.categoryNameAr,
+                        description: project.excerpt,
+                        type: 'project',
+                        image: project.image,
+                        tags: project.tags
+                      });
+                    }}
+                    title={saved ? (isEn ? "Saved" : "محفوظ بالمفضلة") : (isEn ? "Save Project" : "حفظ المشروع")}
+                  >
+                    {saved ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
+                  </button>
+                </div>
+
+                {/* Card Content */}
+                <div className="card-body">
+                  <h3 className="card-title" title={project.title}>
+                    {project.title}
+                  </h3>
+
+                  <p className="card-excerpt">
+                    {project.excerpt}
+                  </p>
+
+                  {/* Verified Role Qualifier Badge */}
+                  <div className="card-role-badge">
+                    <CheckCircle2 size={13} />
+                    <span>{isEn ? "Student Project with Tech Support" : "مشروع طلابي بدعم تقني"}</span>
+                  </div>
+
+                  {/* Tags */}
+                  {project.tags && project.tags.length > 0 && (
+                    <div className="card-tags">
+                      {project.tags.slice(0, 3).map((tag, idx) => (
+                        <span key={idx} className="card-tag-item">#{tag}</span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Card Action Link */}
+                  <div className="card-footer">
+                    <span className="card-view-link">
+                      <span>{isEn ? "View Details" : "استعراض التفاصيل"}</span>
+                      {isEn ? <ArrowRight size={15} /> : <ArrowLeft size={15} />}
+                    </span>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 };

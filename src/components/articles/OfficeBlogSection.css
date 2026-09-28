@@ -278,6 +278,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center top;
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -362,7 +363,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 10px 12px;
   padding-top: 14px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -371,12 +373,15 @@
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 4px 12px 4px 5px;
+  padding: 4px 12px 4px 6px;
   border-radius: 9999px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.09);
   font-size: 0.75rem;
   color: #cbd5e1;
+  white-space: nowrap;
+  max-width: 100%;
+  flex-shrink: 0;
 }
 
 .author-pill-avatar {
@@ -384,19 +389,27 @@
   height: 22px;
   border-radius: 50%;
   object-fit: cover;
+  flex-shrink: 0;
 }
 
 .author-pill-name {
   font-weight: 700;
   color: #ffffff;
+  white-space: nowrap !important;
+  display: inline-block;
+  flex-shrink: 0;
 }
 
 .author-pill-divider {
   opacity: 0.4;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .author-pill-date {
   color: #94a3b8;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .card-action-icons-group {

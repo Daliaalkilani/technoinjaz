@@ -12,6 +12,7 @@ export interface Translations {
     projects: string;
     videos: string;
     articles: string;
+    faq: string;
     about: string;
     contact: string;
     login: string;
@@ -136,6 +137,7 @@ export const translations: Record<'ar' | 'en', Translations> = {
       projects: 'المشاريع',
       videos: 'الفيديوهات',
       articles: 'المقالات',
+      faq: 'الأسئلة الشائعة',
       about: 'من نحن',
       contact: 'تواصل معنا',
       login: 'تسجيل الدخول',
@@ -358,6 +360,7 @@ export const translations: Record<'ar' | 'en', Translations> = {
       projects: 'Projects',
       videos: 'Videos',
       articles: 'Articles',
+      faq: 'FAQ',
       about: 'About Us',
       contact: 'Contact Us',
       login: 'Sign In',

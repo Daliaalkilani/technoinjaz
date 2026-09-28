@@ -94,6 +94,11 @@ body {
 /* ==========================================================================
    TOP NAVIGATION BAR & BRAND IDENTITY
    ========================================================================== */
+.top-navbar-wrapper {
+  position: relative;
+  width: 100%;
+}
+
 .top-navbar-container {
   width: 100%;
   position: relative;
@@ -105,7 +110,46 @@ body {
   align-items: center;
   padding: 18px clamp(16px, 4vw, 48px);
   box-sizing: border-box;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Sticky on dedicated tabs / non-home views */
+.top-navbar-container.is-tab-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: rgba(3, 5, 8, 0.92);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+/* Fixed when scrolled past hero on homepage (smooth slide-down entrance) */
+.top-navbar-container.is-home-sticky {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: rgba(3, 5, 8, 0.92);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  animation: navbarSlideIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes navbarSlideIn {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .navbar-brand-link {
@@ -487,6 +531,13 @@ body {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .top-navbar-container.is-tab-sticky,
+[data-theme="light"] .top-navbar-container.is-home-sticky {
+  background-color: rgba(255, 255, 255, 0.94);
+  border-bottom-color: rgba(0, 0, 0, 0.09);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.07);
 }
 
 [data-theme="light"] .navbar-brand-text {

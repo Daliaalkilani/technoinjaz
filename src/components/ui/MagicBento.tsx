@@ -5,11 +5,6 @@ import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import { useSavedProjects } from '../../hooks/useSavedProjects';
 import './MagicBento.css';
 
-import ch1 from '../../assets/projects/techno-projects/chapter4-01.webp';
-import ch2 from '../../assets/projects/techno-projects/chapter4-02.webp';
-import ch3 from '../../assets/projects/techno-projects/chapter4-03.webp';
-import ch4 from '../../assets/projects/techno-projects/chapter4-04.webp';
-import ch5 from '../../assets/projects/techno-projects/chapter4-05.webp';
 import ch6 from '../../assets/projects/techno-projects/chapter4-06.webp';
 
 export interface BentoCardItem {
@@ -31,53 +26,53 @@ const MOBILE_BREAKPOINT = 768;
 const defaultCardData: BentoCardItem[] = [
   {
     color: '#0d1629',
-    title: 'التوأم الرقمي: آليات العمل والتطبيقات',
+    title: 'التوأم الرقمي: ما هو وكيف يعمل وما أهم تطبيقاته؟',
     titleEn: 'Digital Twin: Architecture & Applications',
     description: 'تمثيل رقمي قائم على البيانات للأصول والعمليات، للمراقبة واختبار السيناريوهات ودعم القرار.',
     descriptionEn: 'Data-driven virtual synchronization of physical assets for simulation and decision support.',
     label: 'التحول الرقمي',
     labelEn: 'Digital Transformation',
-    image: ch1
+    image: '/articles/digital-twin.jpg'
   },
   {
     color: '#0d1629',
-    title: 'الحوسبة العاطفية والتفاعل البشري',
+    title: 'الحوسبة العاطفية: كيف يحلل الذكاء الاصطناعي التعبير العاطفي؟',
     titleEn: 'Affective Computing & Human Interaction',
     description: 'كيف تحلل الأنظمة تعابير الوجه والصوت والإشارات الحيوية ضمن حدود عدم اليقين والسياق.',
     descriptionEn: 'Multimodal AI analysis of facial, vocal, and physiological expressions within contextual bounds.',
     label: 'ذكاء اصطناعي',
     labelEn: 'Artificial Intelligence',
-    image: ch4
+    image: '/articles/affective-computing.jpg'
   },
   {
     color: '#0d1629',
-    title: 'تحليل تعابير الوجه وأنظمة التوصية',
+    title: 'تحليل تعابير الوجه وتخصيص المحتوى في أنظمة التوصية',
     titleEn: 'Facial Expressions in Recommender Systems',
     description: 'دمج الرؤية الحاسوبية كإشارة احتمالية سياقية لتخصيص المحتوى مع مراعاة الخصوصية.',
     descriptionEn: 'Computer vision landmarks as probabilistic contextual signals for ethical content recommendation.',
     label: 'أنظمة التوصية',
     labelEn: 'Recommender Systems',
-    image: ch3
+    image: '/articles/emotion-aware-recommendation.jpg'
   },
   {
     color: '#0d1629',
-    title: 'بروتوكول MCP لربط الذكاء الاصطناعي',
+    title: 'ما هو بروتوكول MCP؟ ربط الذكاء الاصطناعي بالأدوات والبيانات',
     titleEn: 'Model Context Protocol (MCP) Standard',
     description: 'المعيار المفتوح لربط تطبيقات AI بالأدوات وقواعد البيانات والأنظمة دون كود ربط معقد.',
     descriptionEn: 'The open standard unifying how LLMs securely interface with external tools and enterprise data.',
     label: 'معمارية النظم',
     labelEn: 'Systems Architecture',
-    image: ch2
+    image: '/articles/model-context-protocol-mcp.jpg'
   },
   {
     color: '#0d1629',
-    title: 'التنبؤ بالرمز التالي في النماذج اللغوية',
+    title: 'كيف تتنبأ نماذج الذكاء الاصطناعي بالكلمة التالية؟',
     titleEn: 'Next Token Prediction in Language Models',
     description: 'من N-gram وRNN إلى Transformers وتحديات الصرف واللهجات والرمزنة في اللغة العربية.',
     descriptionEn: 'From N-grams to causal Transformers: decoding heuristics and Arabic morphology tokenization.',
     label: 'معالجة اللغات',
     labelEn: 'NLP & LLMs',
-    image: ch5
+    image: '/articles/next-token-prediction.jpg'
   },
   {
     color: '#0d1629',

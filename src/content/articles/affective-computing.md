@@ -670,3 +670,10 @@ Sentiment Analysis يركز عادةً على اتجاه أو موقف النص�
 
 13. Otsimo — Learn Feelings  
     https://otsimo.com/en/game/learn-emotions/
+
+## مقالات ودراسات ذات صلة في منصة تكنو إنجاز
+
+- [كيف يتعرف الذكاء الاصطناعي على تعابير الوجه؟ شرح FER وFACS وCNN](/articles/facial-expression-recognition-ai)
+- [أنظمة التوصية المستجيبة للعواطف والمشاعر](/articles/emotion-aware-recommendation)
+- [كيف يعمل تصنيف الصور بالذكاء الاصطناعي؟ من CNN إلى Vision Transformers](/articles/ai-image-classification)
+
