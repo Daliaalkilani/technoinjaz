@@ -180,12 +180,13 @@ export function AuthSwitch({
 
             <form onSubmit={handleSignInSubmit}>
               <div className="auth-switch-input-group">
-                <label className="auth-switch-label">{isEn ? "Email Address" : "البريد الإلكتروني"}</label>
+                <label htmlFor="signin-email" className="auth-switch-label">{isEn ? "Email Address" : "البريد الإلكتروني"}</label>
                 <div className="auth-switch-input-wrapper">
                   <span className="auth-switch-input-icon">
                     <Mail size={16} />
                   </span>
                   <input
+                    id="signin-email"
                     type="email"
                     required
                     placeholder="name@example.com"
@@ -199,12 +200,13 @@ export function AuthSwitch({
               </div>
 
               <div className="auth-switch-input-group">
-                <label className="auth-switch-label">{isEn ? "Password" : "كلمة المرور"}</label>
+                <label htmlFor="signin-password" className="auth-switch-label">{isEn ? "Password" : "كلمة المرور"}</label>
                 <div className="auth-switch-input-wrapper">
                   <span className="auth-switch-input-icon">
                     <Lock size={16} />
                   </span>
                   <input
+                    id="signin-password"
                     type={showPassword ? "text" : "password"}
                     required
                     placeholder="••••••••"
@@ -299,12 +301,13 @@ export function AuthSwitch({
 
             <form onSubmit={handleSignUpSubmit}>
               <div className="auth-switch-input-group">
-                <label className="auth-switch-label">{isEn ? "Full Name" : "الاسم الكامل"}</label>
+                <label htmlFor="signup-name" className="auth-switch-label">{isEn ? "Full Name" : "الاسم الكامل"}</label>
                 <div className="auth-switch-input-wrapper">
                   <span className="auth-switch-input-icon">
                     <User size={16} />
                   </span>
                   <input
+                    id="signup-name"
                     type="text"
                     required
                     placeholder={isEn ? "John Smith" : "محمد أحمد"}

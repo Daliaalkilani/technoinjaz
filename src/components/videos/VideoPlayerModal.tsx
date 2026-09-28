@@ -61,8 +61,12 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
   const isEn = lang === 'en';
   const titleId = useId();
 
+  const prevFocusedElement = React.useRef<HTMLElement | null>(null);
+
   useEffect(() => {
     if (!isOpen) return;
+
+    prevFocusedElement.current = document.activeElement as HTMLElement | null;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -77,6 +81,9 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
     return () => {
       document.body.style.overflow = originalOverflow;
       window.removeEventListener('keydown', handleKeyDown);
+      if (prevFocusedElement.current && typeof prevFocusedElement.current.focus === 'function') {
+        prevFocusedElement.current.focus();
+      }
     };
   }, [isOpen, onClose]);
 

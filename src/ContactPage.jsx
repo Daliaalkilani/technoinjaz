@@ -199,13 +199,13 @@ export default function ContactPage({ onBack } = {}) {
               <form onSubmit={handleSubmit} className="contact-form">
                 {/* Full Name */}
                 <div className="form-group">
-                  <label className="form-label">
+                  <label htmlFor="contact-name" className="form-label">
                     <User size={15} />
                     <span>{t.contact.fullName} <span style={{ color: '#ef4444' }}>*</span></span>
                   </label>
                   <input
                     type="text"
-                    name="name"
+                    id="contact-name" name="name"
                     value={formData.name}
                     onChange={handleChange}
                     required
@@ -223,7 +223,7 @@ export default function ContactPage({ onBack } = {}) {
                     </label>
                     <input
                       type="text"
-                      name="specialization"
+                      id="contact-specialization" name="specialization"
                       value={formData.specialization}
                       onChange={handleChange}
                       placeholder={t.contact.specializationPlaceholder}
@@ -238,7 +238,7 @@ export default function ContactPage({ onBack } = {}) {
                     </label>
                     <input
                       type="text"
-                      name="university"
+                      id="contact-university" name="university"
                       value={formData.university}
                       onChange={handleChange}
                       placeholder={t.contact.universityPlaceholder}
@@ -256,7 +256,7 @@ export default function ContactPage({ onBack } = {}) {
                     </label>
                     <input
                       type="email"
-                      name="email"
+                      id="contact-email" name="email"
                       value={formData.email}
                       onChange={handleChange}
                       placeholder={t.contact.emailPlaceholder}
@@ -271,7 +271,7 @@ export default function ContactPage({ onBack } = {}) {
                     </label>
                     <input
                       type="tel"
-                      name="phone"
+                      id="contact-phone" name="phone"
                       value={formData.phone}
                       onChange={handleChange}
                       placeholder={t.contact.phonePlaceholder}
@@ -287,7 +287,7 @@ export default function ContactPage({ onBack } = {}) {
                     <span>{t.contact.inquiry} <span style={{ color: '#ef4444' }}>*</span></span>
                   </label>
                   <textarea
-                    name="inquiry"
+                    id="contact-inquiry" name="inquiry"
                     value={formData.inquiry}
                     onChange={handleChange}
                     required

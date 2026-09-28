@@ -71,7 +71,7 @@ export default function AuthPage({ initialMode = 'login', onBack, onSuccess } = 
       <div className="auth-ambient-bg" />
       <div className="auth-grid-overlay" />
 
-      <main className="auth-main-content">
+      <div className="auth-main-content">
         {/* Back navigation button */}
         {handleBackAction && (
           <div
@@ -91,7 +91,7 @@ export default function AuthPage({ initialMode = 'login', onBack, onSuccess } = 
           onSignIn={(data) => handleAuthComplete(data, isEn ? 'Techno User' : 'مستخدم تكنو')}
           onSignUp={(data) => handleAuthComplete(data, isEn ? 'New Member' : 'عضو جديد')}
         />
-      </main>
+      </div>
     </div>
   );
 }

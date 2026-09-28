@@ -54,6 +54,7 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = 
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         title={isRtl ? 'تغيير لغة الموقع' : 'Change Website Language'}
+        aria-label={isRtl ? 'تغيير لغة الموقع' : 'Change Website Language'}
       >
         <Globe size={15} className="lang-globe-icon" />
         <span className="lang-current-label">

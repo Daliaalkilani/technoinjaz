@@ -122,6 +122,9 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <div id="app-root" style={{ width: '100%', minHeight: '100vh', backgroundColor: 'var(--bg-main)' }} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+      <a href="#main-content" className="skip-link">
+        {lang === 'en' ? 'Skip to content' : 'تخطَّ إلى المحتوى'}
+      </a>
       <ScrollToTop />
       <ScrollProgress className="top-0" />
 

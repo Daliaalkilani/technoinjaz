@@ -780,3 +780,27 @@ body {
 
 
 
+
+/* P9 Accessibility */
+.skip-link {
+  position: absolute;
+  inset-inline-start: 8px;
+  top: -60px;
+  z-index: 100000;
+  padding: 10px 14px;
+  background: var(--bg-main, #030712);
+  color: var(--text-main, #f8fafc);
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  border: 1px solid rgba(0, 210, 255, 0.4);
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 8px;
+}
+
+:where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid #00d2ff;
+  outline-offset: 2px;
+}
