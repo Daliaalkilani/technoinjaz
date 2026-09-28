@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react';
+import Link from 'next/link';
 import type { StaticImageData } from 'next/image';
 import './InfiniteSpiral.css';
 
@@ -302,9 +303,9 @@ const InfiniteSpiral = ({
           );
 
           return item.href ? (
-            <a
+            <Link
               key={item.id ?? `${item.src}-${index}`}
-              ref={setCardRef(index)}
+              ref={setCardRef(index) as any}
               className="infinite-spiral__item"
               style={cardStyle}
               href={item.href}
@@ -314,7 +315,7 @@ const InfiniteSpiral = ({
               aria-label={item.label ?? item.alt}
             >
               {content}
-            </a>
+            </Link>
           ) : (
             <div
               key={item.id ?? `${item.src}-${index}`}

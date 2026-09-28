@@ -151,6 +151,9 @@ const VideosSection: React.FC<VideosSectionProps> = ({
                             <Play size={13} fill="currentColor" />
                             <span>{lang === 'ar' ? 'مشاهدة الفيديو' : 'Watch Video'}</span>
                           </span>
+                          <a href={vid.youtubeUrl} target="_blank" rel="noopener noreferrer" className="sr-only">
+                            {title} - {lang === 'ar' ? 'مشاهدة على يوتيوب' : 'Watch on YouTube'}
+                          </a>
                         </div>
                       </div>
                     </div>

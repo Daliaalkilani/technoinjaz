@@ -1044,7 +1044,7 @@ export default function InfiniteMenu({
         '--infinite-menu-background': backgroundColor
       }}
     >
-      <canvas id="infinite-grid-menu-canvas" ref={canvasRef} />
+      <canvas id="infinite-grid-menu-canvas" ref={canvasRef} aria-hidden="true" />
 
       {activeItem && (
         <div className={`active-member-card ${isMoving ? 'inactive' : 'active'}`} dir={isEn ? 'ltr' : 'rtl'}>

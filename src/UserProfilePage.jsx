@@ -149,7 +149,7 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
         window.history.pushState(null, '', window.location.pathname);
       }
     } catch (err) {}
-    window.location.hash = '';
+    handleLogoutNav();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -227,7 +227,7 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
               type="button"
               onClick={() => {
                 if (onBack) onBack();
-                window.location.hash = '#login';
+                router.push('/login');
               }}
               className="btn-explore-live"
               style={{
@@ -286,7 +286,7 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
                   fileInputRef.current?.click();
                 } else {
                   if (onBack) onBack();
-                  window.location.hash = '#login';
+                  router.push('/login');
                 }
               }}
               title={user?.avatar ? (isEn ? "Click to change photo" : "انقر لتغيير الصورة") : user ? (isEn ? "Click to add photo" : "انقر لإضافة صورة شخصية") : (isEn ? "Sign In" : "تسجيل الدخول")}
@@ -362,7 +362,7 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
                     className="avatar-action-btn upload"
                     onClick={() => {
                       if (onBack) onBack();
-                      window.location.hash = '#login';
+                      router.push('/login');
                     }}
                     title={isEn ? "Sign In / Register" : "تسجيل الدخول / إنشاء حساب"}
                   >
@@ -619,7 +619,7 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
               type="button"
               onClick={() => {
                 if (onBack) onBack();
-                window.location.hash = '#login';
+                router.push('/login');
               }}
               className="user-login-bottom-btn"
               title={isEn ? "Sign In" : "تسجيل الدخول"}

@@ -397,3 +397,20 @@
 [data-theme="light"] .global-spotlight {
   opacity: 0.25;
 }
+
+/* P6 Crawlability: Stretched Link for MagicBento Card */
+.magic-bento-card__link {
+  color: inherit;
+  text-decoration: none;
+}
+.magic-bento-card__link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.magic-bento-card__header button,
+.magic-bento-card__header .article-save-btn {
+  position: relative;
+  z-index: 2;
+}

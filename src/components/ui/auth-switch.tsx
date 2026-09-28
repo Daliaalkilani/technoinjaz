@@ -239,16 +239,16 @@ export function AuthSwitch({
                   />
                   <span>{isEn ? "Remember me" : "تذكرني"}</span>
                 </label>
-                <a
-                  href="#forgot"
-                  onClick={(e) => {
-                    e.preventDefault();
+                <button
+                  type="button"
+                  onClick={() => {
                     alert(isEn ? "You can reset your password by contacting our support team." : "يمكنك استعادة كلمة المرور عبر التواصل معنا.");
                   }}
                   className="auth-switch-forgot"
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                 >
                   {isEn ? "Forgot password?" : "نسيت كلمة المرور؟"}
-                </a>
+                </button>
               </div>
 
               <button type="submit" className="auth-switch-submit-btn">

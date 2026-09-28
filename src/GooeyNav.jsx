@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import './GooeyNav.css';
 
 
@@ -8,6 +9,7 @@ import './GooeyNav.css';
 
 
 const GooeyNav = ({
+
   items,
   animationTime = 600,
   particleCount = 15,
@@ -19,6 +21,7 @@ const GooeyNav = ({
   activeIndex: controlledActiveIndex,
   onItemSelect
 }) => {
+  const router = useRouter();
   const containerRef = useRef(null);
   const navRef = useRef(null);
   const filterRef = useRef(null);
@@ -116,7 +119,7 @@ const GooeyNav = ({
     if (onItemSelect) {
       onItemSelect(item, index);
     } else if (item?.href) {
-      window.location.hash = item.href;
+      router.push(item.href);
     }
 
     const liEl = e?.currentTarget?.closest('li') || navRef.current?.querySelectorAll('li')?.[index];

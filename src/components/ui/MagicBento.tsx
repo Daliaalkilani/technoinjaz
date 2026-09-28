@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { gsap } from 'gsap';
 import { Bookmark, BookmarkCheck } from 'lucide-react';
@@ -641,10 +642,7 @@ const MagicBento: React.FC<MagicBentoProps> = ({
 
           const baseClassName = `magic-bento-card ${textAutoHide ? 'magic-bento-card--text-autohide' : ''} ${enableBorderGlow ? 'magic-bento-card--border-glow' : ''}`;
           const cardProps = {
-            className: `${baseClassName} cursor-pointer`,
-            onClick: () => {
-              window.location.hash = `#article/${targetSlug}`;
-            },
+            className: baseClassName,
             style: {
               backgroundColor: isLight ? '#ffffff' : (card.color || '#0d1629'),
               '--glow-color': isLight ? '2, 132, 199' : glowColor,
@@ -691,7 +689,11 @@ const MagicBento: React.FC<MagicBentoProps> = ({
               )}
 
               <div className="magic-bento-card__content">
-                <h3 className="magic-bento-card__title">{cardTitle}</h3>
+                <h3 className="magic-bento-card__title">
+                  <Link href={`/articles/${targetSlug}`} className="magic-bento-card__link">
+                    {cardTitle}
+                  </Link>
+                </h3>
                 <p className="magic-bento-card__description">{cardDesc}</p>
               </div>
             </>

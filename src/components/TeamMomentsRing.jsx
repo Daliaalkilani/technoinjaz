@@ -502,7 +502,7 @@ export default function TeamMomentsRing({ onScrollDown }) {
 
   return (
     <div className="team-moments-wrapper">
-      <canvas ref={canvasRef} className="team-moments-canvas" />
+      <canvas ref={canvasRef} className="team-moments-canvas" aria-hidden="true" />
     </div>
   );
 }
