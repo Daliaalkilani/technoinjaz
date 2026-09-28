@@ -11,58 +11,6 @@
   color: var(--text-main, #ffffff);
 }
 
-/* 1. Breadcrumbs */
-.faq-breadcrumbs-nav {
-  margin-bottom: 24px;
-}
-
-.faq-breadcrumbs-list {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  font-size: 0.825rem;
-}
-
-.faq-breadcrumb-item {
-  display: flex;
-  align-items: center;
-}
-
-.faq-breadcrumb-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: transparent;
-  border: none;
-  color: #94a3b8;
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-  font-family: inherit;
-  font-size: inherit;
-}
-
-.faq-breadcrumb-btn:hover {
-  color: #00d2ff;
-  background: rgba(0, 210, 255, 0.08);
-}
-
-.faq-breadcrumb-separator {
-  color: #64748b;
-  display: flex;
-  align-items: center;
-}
-
-.faq-breadcrumb-item.current {
-  color: #00d2ff;
-  font-weight: 600;
-  padding: 4px 8px;
-}
-
 /* 2. Header */
 .faq-header-wrapper {
   text-align: center;
@@ -99,79 +47,6 @@
   font-size: clamp(0.95rem, 1.3vw, 1.05rem);
   color: #94a3b8;
   line-height: 1.7;
-}
-
-/* 3. Search Box */
-.faq-search-box-wrap {
-  margin-bottom: 24px;
-}
-
-.faq-search-inner {
-  position: relative;
-  max-width: 600px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-}
-
-.faq-search-icon {
-  position: absolute;
-  right: 18px;
-  color: #94a3b8;
-  pointer-events: none;
-}
-
-[dir="ltr"] .faq-search-icon {
-  right: auto;
-  left: 18px;
-}
-
-.faq-search-input {
-  width: 100%;
-  padding: 14px 48px 14px 20px;
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
-  color: #ffffff;
-  font-family: inherit;
-  font-size: 0.95rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(12px);
-  outline: none;
-  transition: all 0.25s ease;
-  box-sizing: border-box;
-}
-
-[dir="ltr"] .faq-search-input {
-  padding: 14px 20px 14px 48px;
-}
-
-.faq-search-input:focus {
-  border-color: #00d2ff;
-  box-shadow: 0 0 20px rgba(0, 210, 255, 0.25);
-  background: rgba(15, 23, 42, 0.85);
-}
-
-.faq-search-clear-btn {
-  position: absolute;
-  left: 16px;
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: #cbd5e1;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 14px;
-  line-height: 1;
-}
-
-[dir="ltr"] .faq-search-clear-btn {
-  left: auto;
-  right: 16px;
 }
 
 /* 4. Categories Filter */
@@ -372,48 +247,6 @@
   box-shadow: 0 4px 18px rgba(0, 210, 255, 0.4);
 }
 
-/* Empty State */
-.faq-empty-state {
-  text-align: center;
-  padding: 48px 20px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px dashed rgba(255, 255, 255, 0.12);
-  border-radius: 20px;
-}
-
-.faq-empty-icon {
-  color: #64748b;
-  margin-bottom: 14px;
-}
-
-.faq-empty-state h3 {
-  margin: 0 0 8px;
-  font-size: 1.2rem;
-  color: #ffffff;
-}
-
-.faq-empty-state p {
-  color: #94a3b8;
-  margin: 0 0 20px;
-}
-
-.faq-reset-btn {
-  padding: 8px 20px;
-  background: rgba(0, 210, 255, 0.12);
-  border: 1px solid #00d2ff;
-  color: #00d2ff;
-  border-radius: 999px;
-  font-family: inherit;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.faq-reset-btn:hover {
-  background: #00d2ff;
-  color: #030508;
-}
-
 /* 6. Contact CTA Banner */
 .faq-contact-cta-banner {
   display: flex;
@@ -511,19 +344,6 @@
 
 [data-theme="light"] .faq-page-lead-desc {
   color: #475569;
-}
-
-[data-theme="light"] .faq-search-input {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(0, 0, 0, 0.12);
-  color: #0f172a;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-}
-
-[data-theme="light"] .faq-search-input:focus {
-  background: #ffffff;
-  border-color: #0284c7;
-  box-shadow: 0 0 20px rgba(2, 132, 199, 0.2);
 }
 
 [data-theme="light"] .faq-category-chip {

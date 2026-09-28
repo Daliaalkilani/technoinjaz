@@ -172,8 +172,8 @@ select {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  column-gap: clamp(20px, 3.5vw, 56px);
-  padding: 18px clamp(16px, 4vw, 48px);
+  column-gap: clamp(12px, 1.6vw, 32px);
+  padding: 18px clamp(16px, 3vw, 48px);
   box-sizing: border-box;
   transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -226,7 +226,6 @@ select {
   text-decoration: none;
   cursor: pointer;
   user-select: none;
-  margin-inline-end: clamp(20px, 3vw, 48px);
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -267,6 +266,7 @@ select {
 .navbar-center-menu {
   grid-column: 2;
   justify-self: center;
+  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -453,7 +453,26 @@ select {
   left: auto;
 }
 
-@media (max-width: 960px) {
+/* Keep the single-row navbar inside the viewport on laptop widths:
+   the action buttons collapse to icons before anything can overflow. */
+@media (max-width: 1535.98px) {
+  .navbar-auth-btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    justify-content: center;
+  }
+  .navbar-auth-btn-label,
+  .lang-current-label {
+    display: none;
+  }
+  .navbar-end-actions {
+    gap: 8px;
+  }
+}
+
+/* Two-row navbar (brand + actions, then links) below laptop widths */
+@media (max-width: 1199.98px) {
   .top-navbar-container {
     display: flex;
     flex-wrap: wrap;

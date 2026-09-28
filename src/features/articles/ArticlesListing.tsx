@@ -204,8 +204,6 @@ export function ArticlesListing({
           {isEn ? "Most Read" : "الأكثر قراءة"}
         </button>
 
-        <span className="blog-filters-divider" />
-
         <div className="blog-category-chips-list">
           {blogCategories.map(cat => {
             const count = cat.id === 'all' 

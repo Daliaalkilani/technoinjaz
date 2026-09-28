@@ -228,8 +228,9 @@ export function AppShell({ children }: AppShellProps) {
                   router.push('/login');
                 }}
                 title={t.nav.login}
+                aria-label={t.nav.login}
               >
-                <span className="navbar-auth-btn-icon">
+                <span className="navbar-auth-btn-icon" aria-hidden="true">
                   <User size={15} />
                 </span>
                 <span className="navbar-auth-btn-label">

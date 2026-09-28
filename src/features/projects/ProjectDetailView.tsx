@@ -1,7 +1,8 @@
 'use client';
 import ResponsiveImage from '@/components/ui/ResponsiveImage';
+import TableOfContents from '@/components/ui/TableOfContents';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { 
   ArrowRight, 
@@ -13,9 +14,6 @@ import {
   Check, 
   Home, 
   Layers, 
-  ListOrdered, 
-  ChevronDown, 
-  ChevronUp,
   ShieldCheck,
   Send,
   PhoneCall,
@@ -52,44 +50,6 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
   const { isSaved, toggleSave } = useSavedProjects();
 
   const [copied, setCopied] = useState(false);
-  const [activeHeadingId, setActiveHeadingId] = useState<string>('');
-  const [isMobileTocOpen, setIsMobileTocOpen] = useState(false);
-
-  // Active heading spy with IntersectionObserver
-  useEffect(() => {
-    if (toc.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveHeadingId(entry.target.id);
-          }
-        });
-      },
-      {
-        rootMargin: '-100px 0px -65% 0px',
-        threshold: 0
-      }
-    );
-
-    toc.forEach((h) => {
-      const el = document.getElementById(h.id);
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, [toc]);
-
-  const handleHeadingClick = (e: React.MouseEvent, id: string) => {
-    e.preventDefault();
-    setActiveHeadingId(id);
-    const target = document.getElementById(id);
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      window.history.replaceState(null, '', `#${id}`);
-    }
-  };
 
   const handleShare = () => {
     const url = `${SITE_URL}/projects/${project.slug}`;
@@ -199,20 +159,13 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
               <span className="btn-text-responsive">{copied ? (isEn ? "Copied" : "تم النسخ!") : (isEn ? "Share" : "مشاركة")}</span>
             </button>
 
-            <Link
-              href="/projects"
-              className="project-icon-btn back-btn"
-            >
-              {isEn ? <ArrowLeft size={18} /> : <ArrowRight size={18} />}
-              <span>{isEn ? "All Projects" : "كل المشاريع"}</span>
-            </Link>
           </div>
         </div>
       </header>
 
       {/* Featured Cover Image */}
       <div className="project-featured-image-wrapper">
-        <ResponsiveImage src={project.image} alt={project.altText || project.title} className="project-featured-image" priority />
+        <ResponsiveImage src={project.image} alt={project.altText || project.title} className="project-featured-image" sizes="(max-width: 1279.98px) calc(100vw - 32px), 1200px" priority />
         {project.altText && (
           <div className="project-image-caption">
             <span>{project.altText}</span>
@@ -220,49 +173,13 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
         )}
       </div>
 
-      {/* Mobile Collapsible TOC Drawer */}
-      {toc.length > 0 && (
-        <div className="mobile-toc-accordion">
-          <button
-            type="button"
-            className="mobile-toc-toggle-btn"
-            onClick={() => setIsMobileTocOpen(!isMobileTocOpen)}
-            aria-expanded={isMobileTocOpen}
-          >
-            <div className="mobile-toc-label">
-              <ListOrdered size={16} />
-              <span>{isEn ? "Project Index" : "فهرس محتويات المشروع"}</span>
-              <span className="mobile-toc-count">{toc.length}</span>
-            </div>
-            {isMobileTocOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-          </button>
-
-          {isMobileTocOpen && (
-            <nav className="mobile-toc-content" aria-label={isEn ? "Mobile Table of Contents" : "فهرس المحتويات للجوال"}>
-              <ul className="mobile-toc-list">
-                {toc.map((heading) => (
-                  <li 
-                    key={heading.id} 
-                    className={`mobile-toc-item level-${heading.level}`}
-                  >
-                    <a
-                      href={`#${heading.id}`}
-                      className={`mobile-toc-link ${activeHeadingId === heading.id ? 'active' : ''}`}
-                      onClick={(e) => {
-                        handleHeadingClick(e, heading.id);
-                        setIsMobileTocOpen(false);
-                      }}
-                    >
-                      <span className="toc-bullet" />
-                      <span className="toc-text">{heading.text}</span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          )}
-        </div>
-      )}
+      {/* Table of contents (phones & tablets) */}
+      <TableOfContents
+        variant="accordion"
+        items={toc}
+        title={isEn ? "Project contents" : "فهرس محتويات المشروع"}
+        countLabel={isEn ? `${toc.length} sections` : `${toc.length} قسم`}
+      />
 
       {/* Main Content Layout: Markdown Body + Sidebar TOC */}
       <div className="project-content-grid">
@@ -303,35 +220,24 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
               <span>{isEn ? "Contact Bureau" : "تواصل مع المكتب"}</span>
             </Link>
           </div>
+
+          {/* End-of-project navigation */}
+          <nav className="project-end-nav" aria-label={isEn ? "Project navigation" : "التنقل بين المشاريع"}>
+            <Link href="/projects" className="project-back-link">
+              {isEn ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
+              <span>{isEn ? "Browse all projects" : "تصفّح كل المشاريع"}</span>
+            </Link>
+          </nav>
         </article>
 
         {/* Desktop Sticky Sidebar (TOC + Related Projects) */}
         <aside className="project-sidebar">
-          {toc.length > 0 && (
-            <div className="desktop-toc-card">
-              <div className="toc-card-header">
-                <ListOrdered size={17} />
-                <h3 className="toc-title">{isEn ? "Table of Contents" : "فهرس المحتويات"}</h3>
-              </div>
-              <ul className="toc-list">
-                {toc.map((heading) => (
-                  <li 
-                    key={heading.id} 
-                    className={`toc-item level-${heading.level} ${activeHeadingId === heading.id ? 'active' : ''}`}
-                  >
-                    <a
-                      href={`#${heading.id}`}
-                      className="toc-link"
-                      onClick={(e) => handleHeadingClick(e, heading.id)}
-                    >
-                      <span className="toc-dot" />
-                      <span className="toc-link-text">{heading.text}</span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          <TableOfContents
+            variant="card"
+            items={toc}
+            title={isEn ? "Project contents" : "فهرس المشروع"}
+            countLabel={isEn ? `${toc.length} sections` : `${toc.length} قسم`}
+          />
 
           {/* Sidebar Related Projects */}
           {related.length > 0 && (
@@ -384,7 +290,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
                 className="bottom-related-card"
               >
                 <div className="related-card-img-wrap">
-                  <ResponsiveImage src={rel.image} alt={rel.altText || rel.title} className="bottom-card-img" />
+                  <ResponsiveImage src={rel.image} alt={rel.altText || rel.title} className="bottom-card-img" sizes="(max-width: 639.98px) 100vw, (max-width: 1023.98px) 50vw, 400px" />
                   <span className="bottom-card-badge">{rel.categoryNameAr}</span>
                 </div>
                 <div className="bottom-card-body">

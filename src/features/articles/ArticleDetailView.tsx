@@ -1,5 +1,6 @@
 'use client';
 import ResponsiveImage from '@/components/ui/ResponsiveImage';
+import TableOfContents from '@/components/ui/TableOfContents';
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -17,10 +18,7 @@ import {
   Send, 
   User, 
   Home, 
-  BookOpen, 
-  ListOrdered, 
-  ChevronDown, 
-  ChevronUp 
+  BookOpen
 } from 'lucide-react';
 import type { BlogArticle, BlogComment } from '@/data/blogArticlesData';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
@@ -55,8 +53,6 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
 
   const [commentText, setCommentText] = useState('');
   const [copied, setCopied] = useState(false);
-  const [activeHeadingId, setActiveHeadingId] = useState<string>('');
-  const [isMobileTocOpen, setIsMobileTocOpen] = useState(false);
   const [likes, setLikes] = useState<number>(article.initialLikes);
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [comments, setComments] = useState<BlogComment[]>(article.initialComments || []);
@@ -84,37 +80,6 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
       }
     } catch (e) {}
   }, [article.id]);
-
-  // Active section scroll spy
-  useEffect(() => {
-    if (toc.length === 0) return;
-
-    const handleScroll = () => {
-      const scrollPos = window.scrollY + 130;
-      let currentActive = toc[0]?.id || '';
-      for (const h of toc) {
-        const el = document.getElementById(h.id);
-        if (el && el.offsetTop <= scrollPos) {
-          currentActive = h.id;
-        }
-      }
-      setActiveHeadingId(currentActive);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [toc]);
-
-  const handleHeadingClick = (id: string, e?: React.MouseEvent) => {
-    if (e) e.preventDefault();
-    setActiveHeadingId(id);
-    const target = document.getElementById(id);
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      window.history.replaceState(null, '', `#${id}`);
-    }
-  };
 
   const handleToggleLike = () => {
     if (!requireAuth()) return;
@@ -225,25 +190,6 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
           </ol>
         </nav>
 
-        <div className="article-top-bar-actions">
-          <Link
-            href="/articles"
-            className="article-back-nav-btn"
-          >
-            {isEn ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
-            <span>{isEn ? "Back to Articles" : "العودة للمقالات"}</span>
-          </Link>
-
-          <button
-            type="button"
-            className="article-top-share-btn"
-            onClick={handleShare}
-            title={isEn ? "Share link" : "مشاركة الرابط"}
-          >
-            {copied ? <Check size={15} color="#10b981" /> : <Share2 size={15} />}
-            <span>{copied ? (isEn ? "Copied!" : "تم النسخ!") : (isEn ? "Share" : "مشاركة")}</span>
-          </button>
-        </div>
       </div>
 
       <div className="article-fullscreen-layout">
@@ -300,57 +246,19 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               src={article.image} 
               alt={title} 
               className="article-fullscreen-banner-img" 
+              sizes="(max-width: 1023.98px) 100vw, (max-width: 1720px) calc(100vw - 420px), 1280px"
               priority 
             />
             <div className="article-banner-ambient-glow" style={{ backgroundColor: article.categoryColor }} />
           </div>
 
-          {/* Mobile TOC Drawer */}
-          {toc.length > 0 && (
-            <div className="article-mobile-toc-accordion">
-              <button
-                type="button"
-                className="mobile-toc-header-toggle"
-                onClick={() => setIsMobileTocOpen(!isMobileTocOpen)}
-                aria-expanded={isMobileTocOpen}
-              >
-                <div className="mobile-toc-toggle-title">
-                  <ListOrdered size={17} />
-                  <span>{isEn ? "Table of Contents" : "فهرس محتويات المقال"}</span>
-                  <span className="mobile-toc-count-pill">{toc.length}</span>
-                </div>
-                {isMobileTocOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-              </button>
-
-              {isMobileTocOpen && (
-                <div className="mobile-toc-dropdown">
-                  <ul className="article-toc-list">
-                    {toc.map((heading) => {
-                      const isActive = activeHeadingId === heading.id;
-                      return (
-                        <li 
-                          key={heading.id} 
-                          className={`article-toc-item level-${heading.level} ${isActive ? 'active' : ''}`}
-                        >
-                          <a
-                            href={`#${heading.id}`}
-                            onClick={(e) => {
-                              handleHeadingClick(heading.id, e);
-                              setIsMobileTocOpen(false);
-                            }}
-                            className="article-toc-link"
-                          >
-                            <span className="toc-item-indicator" />
-                            <span className="toc-item-text">{heading.text}</span>
-                          </a>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              )}
-            </div>
-          )}
+          {/* Table of contents (phones & tablets) */}
+          <TableOfContents
+            variant="accordion"
+            items={toc}
+            title={isEn ? "Table of Contents" : "فهرس محتويات المقال"}
+            countLabel={isEn ? `${toc.length} sections` : `${toc.length} فقرة`}
+          />
 
           {/* Server-Rendered Markdown Body passed as children */}
           <div onClick={handleContentClick}>
@@ -416,6 +324,14 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               <span>{copied ? (isEn ? "Link Copied" : "تم نسخ الرابط") : (isEn ? "Share" : "مشاركة")}</span>
             </button>
           </div>
+
+          {/* End-of-article navigation: where readers decide what to do next */}
+          <nav className="article-end-nav" aria-label={isEn ? "Article navigation" : "التنقل بين المقالات"}>
+            <Link href="/articles" className="article-back-nav-btn">
+              {isEn ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
+              <span>{isEn ? "Browse all articles" : "تصفّح كل المقالات"}</span>
+            </Link>
+          </nav>
 
           {/* Interactive Discussion Section */}
           <section className="article-discussion-section">
@@ -483,43 +399,12 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
 
         {/* Sidebar: Table of Contents & Related Articles */}
         <aside className="article-related-sidebar">
-          {toc.length > 0 && (
-            <div className="article-desktop-toc-card">
-              <div className="article-toc-card-header">
-                <div className="toc-card-title-wrap">
-                  <ListOrdered size={18} className="toc-card-icon" />
-                  <h3 className="toc-card-title">{isEn ? "Table of Contents" : "فهرس المقال"}</h3>
-                </div>
-                <span className="toc-card-badge">
-                  {toc.length} {isEn ? "sections" : "فقرة"}
-                </span>
-              </div>
-
-              <div className="article-toc-card-scroll">
-                <ul className="article-toc-list">
-                  {toc.map((heading) => {
-                    const isActive = activeHeadingId === heading.id;
-                    return (
-                      <li 
-                        key={heading.id} 
-                        className={`article-toc-item level-${heading.level} ${isActive ? 'active' : ''}`}
-                      >
-                        <a
-                          href={`#${heading.id}`}
-                          onClick={(e) => handleHeadingClick(heading.id, e)}
-                          className="article-toc-link"
-                          title={heading.text}
-                        >
-                          <span className="toc-item-indicator" />
-                          <span className="toc-item-text">{heading.text}</span>
-                        </a>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            </div>
-          )}
+          <TableOfContents
+            variant="card"
+            items={toc}
+            title={isEn ? "Table of Contents" : "فهرس المقال"}
+            countLabel={isEn ? `${toc.length} sections` : `${toc.length} فقرة`}
+          />
 
           {related.length > 0 && (
             <div className="article-related-card">
@@ -535,7 +420,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                     className="related-sidebar-card"
                   >
                     <div className="related-sidebar-media">
-                      <ResponsiveImage src={relArt.image} alt={relArt.title} className="related-sidebar-img" />
+                      <ResponsiveImage src={relArt.image} alt={relArt.title} className="related-sidebar-img" sizes="(max-width: 1023.98px) 50vw, 300px" />
                       <div className="related-sidebar-overlay" />
                     </div>
                     <div className="related-sidebar-body">

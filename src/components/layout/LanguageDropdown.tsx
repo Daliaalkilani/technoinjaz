@@ -18,12 +18,14 @@ export const SyriaFlag: React.FC<{ size?: number; className?: string }> = ({ siz
     aria-hidden="true"
     style={{ borderRadius: '2px', overflow: 'hidden', display: 'inline-block', flexShrink: 0, boxShadow: '0 0 2px rgba(0,0,0,0.4)' }}
   >
+    {/* Flag of the Syrian Arab Republic (current): green, white, black with three red stars */}
     <rect width="30" height="20" fill="#000000" />
-    <rect width="30" height="13.33" fill="#ffffff" />
-    <rect width="30" height="6.67" fill="#ce1126" />
-    <g fill="#007a3d">
-      <path transform="translate(10, 10)" d="M 0 -2.2 L 0.65 -0.65 L 2.2 -0.65 L 1.0 0.3 L 1.4 1.9 L 0 0.9 L -1.4 1.9 L -1.0 0.3 L -2.2 -0.65 L -0.65 -0.65 Z" />
-      <path transform="translate(20, 10)" d="M 0 -2.2 L 0.65 -0.65 L 2.2 -0.65 L 1.0 0.3 L 1.4 1.9 L 0 0.9 L -1.4 1.9 L -1.0 0.3 L -2.2 -0.65 L -0.65 -0.65 Z" />
+    <rect width="30" height="13.34" fill="#ffffff" />
+    <rect width="30" height="6.67" fill="#007a3d" />
+    <g fill="#ce1126">
+      <path transform="translate(8, 10)" d="M 0 -2.2 L 0.65 -0.65 L 2.2 -0.65 L 1.0 0.3 L 1.4 1.9 L 0 0.9 L -1.4 1.9 L -1.0 0.3 L -2.2 -0.65 L -0.65 -0.65 Z" />
+      <path transform="translate(15, 10)" d="M 0 -2.2 L 0.65 -0.65 L 2.2 -0.65 L 1.0 0.3 L 1.4 1.9 L 0 0.9 L -1.4 1.9 L -1.0 0.3 L -2.2 -0.65 L -0.65 -0.65 Z" />
+      <path transform="translate(22, 10)" d="M 0 -2.2 L 0.65 -0.65 L 2.2 -0.65 L 1.0 0.3 L 1.4 1.9 L 0 0.9 L -1.4 1.9 L -1.0 0.3 L -2.2 -0.65 L -0.65 -0.65 Z" />
     </g>
   </svg>
 );
@@ -31,6 +33,7 @@ export const SyriaFlag: React.FC<{ size?: number; className?: string }> = ({ siz
 export const UKFlag: React.FC<{ size?: number; className?: string }> = ({ size = 18, className = '' }) => (
   <svg 
     viewBox="0 0 60 30" 
+    preserveAspectRatio="xMidYMid slice"
     width={size} 
     height={Math.round(size * 0.67)} 
     className={`lang-flag-svg ${className}`} 

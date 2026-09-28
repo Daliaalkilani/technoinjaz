@@ -4,12 +4,10 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { 
   HelpCircle, 
-  Search, 
   ChevronDown, 
   ChevronUp, 
   ArrowLeft, 
   ArrowRight, 
-  Home, 
   Sparkles, 
   ExternalLink, 
   MessageCircle, 
@@ -53,7 +51,6 @@ export const FaqSection: React.FC = () => {
   const isEn = lang === 'en';
 
   const [activeCategory, setActiveCategory] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState<string>('');
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({
     'q-about-1': true, // Open first question by default
   });
@@ -71,38 +68,12 @@ export const FaqSection: React.FC = () => {
     return faqData.filter(item => {
       const matchesCategory = activeCategory === 'all' || item.category === activeCategory;
       if (!matchesCategory) return false;
-
-      if (!searchQuery.trim()) return true;
-      const q = searchQuery.toLowerCase();
-      const question = (isEn ? item.questionEn : item.question).toLowerCase();
-      const answer = (isEn ? item.answerEn : item.answer).toLowerCase();
-      return question.includes(q) || answer.includes(q);
+      return true;
     });
-  }, [activeCategory, searchQuery, isEn]);
+  }, [activeCategory]);
 
   return (
     <section className="faq-section-container" dir={isEn ? 'ltr' : 'rtl'}>
-      {/* 1. Breadcrumbs */}
-      <nav className="faq-breadcrumbs-nav" aria-label="Breadcrumb">
-        <ol className="faq-breadcrumbs-list">
-          <li className="faq-breadcrumb-item">
-            <Link 
-              href="/" 
-              className="faq-breadcrumb-btn"
-            >
-              <Home size={14} />
-              <span>{isEn ? "Home" : "الرئيسية"}</span>
-            </Link>
-          </li>
-          <li className="faq-breadcrumb-separator">
-            {isEn ? <ArrowRight size={13} /> : <ArrowLeft size={13} />}
-          </li>
-          <li className="faq-breadcrumb-item current" aria-current="page">
-            <span>{isEn ? "FAQ" : "الأسئلة الشائعة"}</span>
-          </li>
-        </ol>
-      </nav>
-
       {/* 2. Page Header */}
       <div className="faq-header-wrapper">
         <div className="faq-header-badge">
@@ -117,29 +88,6 @@ export const FaqSection: React.FC = () => {
             ? "Short, direct answers to common questions asked by students, researchers, and partners. Didn't find your answer? Contact us directly."
             : "إجابات قصيرة ومباشرة عن أكثر ما يسألنا عنه الطلاب والعملاء. لم تجد إجابتك؟ راسلنا وسنجيبك مباشرة."}
         </p>
-      </div>
-
-      {/* 3. Search Bar */}
-      <div className="faq-search-box-wrap">
-        <div className="faq-search-inner">
-          <Search size={18} className="faq-search-icon" />
-          <input
-            type="text"
-            className="faq-search-input"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={isEn ? "Search in questions and answers..." : "ابحث في الأسئلة الشائعة والإجابات..."}
-          />
-          {searchQuery && (
-            <button
-              type="button"
-              className="faq-search-clear-btn"
-              onClick={() => setSearchQuery('')}
-            >
-              ×
-            </button>
-          )}
-        </div>
       </div>
 
       {/* 4. Category Filter Chips */}
@@ -168,23 +116,6 @@ export const FaqSection: React.FC = () => {
 
       {/* 5. Accordion Items List */}
       <div className="faq-accordion-container">
-        {filteredItems.length === 0 ? (
-          <div className="faq-empty-state">
-            <HelpCircle size={44} className="faq-empty-icon" />
-            <h3>{isEn ? "No Matching Questions Found" : "لم يتم العثور على نتائج تطابق بحثك"}</h3>
-            <p>{isEn ? "Try changing your search terms or contact us directly." : "جرّب البحث بكلمات أخرى أو راسلنا مباشرة للإجابة على استفسارك."}</p>
-            <button
-              type="button"
-              className="faq-reset-btn"
-              onClick={() => {
-                setSearchQuery('');
-                setActiveCategory('all');
-              }}
-            >
-              {isEn ? "Show All Questions" : "عرض كافة الأسئلة"}
-            </button>
-          </div>
-        ) : (
           <div className="faq-accordion-list">
             {filteredItems.map((item) => {
               const isOpen = !!openItems[item.id];
@@ -238,7 +169,6 @@ export const FaqSection: React.FC = () => {
               );
             })}
           </div>
-        )}
       </div>
 
       {/* 6. Quick Help Banner Footer */}

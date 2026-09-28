@@ -31,7 +31,19 @@ export function ResponsiveImage({
   const normalizedSrc = src.startsWith('/') ? src : '/' + src;
   const info = (manifest as Record<string, { w: number; h: number; w640: string; w1280: string }>)[normalizedSrc];
 
-  const srcSet = info ? `${info.w640} 640w, ${info.w1280} 1280w` : undefined;
+  // Compressed variants for small/medium displays, plus the original file as the
+  // largest candidate so large high-density screens keep full source quality.
+  const srcSet = info
+    ? [
+        `${info.w640} 640w`,
+        // When the original is no wider than 1280px, serve the original itself at that width
+        // (a same-size compressed copy would only lose quality).
+        info.w > 1280 ? `${info.w1280} 1280w` : `${normalizedSrc} ${info.w}w`,
+        info.w > 1280 ? `${normalizedSrc} ${info.w}w` : null,
+      ]
+        .filter(Boolean)
+        .join(', ')
+    : undefined;
   const computedWidth = width || info?.w || undefined;
   const computedHeight = height || info?.h || undefined;
 

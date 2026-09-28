@@ -111,13 +111,13 @@ async function main() {
         if (needs640) {
           await sharp(file.fullPath)
             .resize({ width: 640, withoutEnlargement: true })
-            .webp({ quality: 78 })
+            .webp({ quality: 86 })
             .toFile(out640);
         }
         if (needs1280) {
           await sharp(file.fullPath)
             .resize({ width: 1280, withoutEnlargement: true })
-            .webp({ quality: 78 })
+            .webp({ quality: 86 })
             .toFile(out1280);
         }
         optimizedCount++;
