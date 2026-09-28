@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import VideosHeader from '@/components/videos/VideosHeader';
-import { ProjectReelsFeed } from '@/components/videos/ProjectReelsFeed';
+import VideosHeader from '@/features/videos/VideosHeader';
+import { ProjectReelsFeed } from '@/features/videos/ProjectReelsFeed';
 import { pageMetadata } from '@/seo/metadata';
 import { JsonLd } from '@/seo/JsonLd';
 import { webPage } from '@/seo/schemas';

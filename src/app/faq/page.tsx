@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import FaqSection from '@/components/faq/FaqSection';
+import FaqSection from '@/features/faq/FaqSection';
 import { faqData } from '@/data/faqData';
 import { pageMetadata } from '@/seo/metadata';
 import { JsonLd } from '@/seo/JsonLd';

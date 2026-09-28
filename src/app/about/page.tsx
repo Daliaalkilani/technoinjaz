@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import AboutTeamSection from '@/components/about/AboutTeamSection';
+import AboutTeamSection from '@/features/about/AboutTeamSection';
 import { pageMetadata } from '@/seo/metadata';
 import { JsonLd } from '@/seo/JsonLd';
 import { webPage } from '@/seo/schemas';

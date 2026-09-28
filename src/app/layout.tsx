@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from 'next';
 import { Readex_Pro } from 'next/font/google';
-import '@/index.css';
+import '@/styles/globals.css';
 import { ThemeLanguageProvider } from '@/context/ThemeLanguageContext';
 import { LoaderProvider } from '@/context/LoaderContext';
-import { AppShell } from '@/components/shell/AppShell';
+import { AppShell } from '@/components/layout/AppShell';
 import { LEGACY_HASH_REDIRECT, THEME_LANG_BOOT } from '@/lib/inline-scripts';
 import { buildRootMetadata } from '@/seo/metadata';
 import { JsonLd } from '@/seo/JsonLd';

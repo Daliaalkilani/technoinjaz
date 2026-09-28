@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { teamMembers } from '@/data/teamData';
-import ProfilePage from '@/ProfilePage';
+import ProfilePage from '@/features/team/ProfilePage';
 
 export const dynamic = 'force-static';
 export const dynamicParams = false;

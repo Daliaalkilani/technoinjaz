@@ -13,7 +13,7 @@ export const teamMembers = [
     departmentEn: 'Technical Leadership & Management',
     specialization: 'معمارية النظم والذكاء الاصطناعي',
     specializationEn: 'System Architecture & AI Leadership',
-    image: '/abdulghani.jpg',
+    image: '/images/team/abdulghani.jpg',
     link: '#team-showcase',
     bio: 'مدير الفريق، يتولى قيادة الاستراتيجية التقنية وإدارة المهام وتوجيه مهندسي الذكاء الاصطناعي والمطورين لضمان أعلى مستويات الابتكار والإتقان في المنتجات الرقمية.',
     bioEn: 'Team Director leading technical strategy, agile execution, and guiding AI engineers and developers to achieve excellence and innovation across digital products.',
@@ -50,7 +50,7 @@ export const teamMembers = [
     departmentEn: 'Software & Mobile Engineering Department',
     specialization: 'Laravel & Flutter',
     specializationEn: 'Laravel & Flutter',
-    image: '/abdulhady.jpg',
+    image: '/images/team/abdulhady.jpg',
     link: '#team-showcase',
     bio: 'مهندس برمجيات وتطوير شامل متخصص في بناء الأنظمة الخلفية والخدمات السحابية باستخدام Laravel وتطبيقات الموبايل الحديثة عبر Flutter، مع ربط وتكامل نماذج الذكاء الاصطناعي وواجهات API عالية الأداء.',
     bioEn: 'Full-Stack Software Engineer specialized in robust Laravel backends, cross-platform mobile apps with Flutter, and seamless AI model integrations with high-performance APIs.',
@@ -90,7 +90,7 @@ export const teamCircleSlots = [
     departmentEn: 'Innovation & Development Department',
     specialization: 'انضم إلى فريقنا',
     specializationEn: 'Join our team',
-    image: '/team-placeholder.png',
+    image: '/images/team/team-placeholder.png',
     link: '#team-showcase',
     bio: 'مقعد شاغر مخصص لنخبة المطورين والمهندسين للانضمام إلى فريق تكنو إنجاز قريباً.',
     bioEn: 'Reserved seat for elite software and AI engineers joining the Techno Enjaz core team soon.'
@@ -110,7 +110,7 @@ export const teamCircleSlots = [
     departmentEn: 'Innovation & Development Department',
     specialization: 'انضم إلى فريقنا',
     specializationEn: 'Join our team',
-    image: '/team-placeholder.png',
+    image: '/images/team/team-placeholder.png',
     link: '#team-showcase',
     bio: 'مقعد شاغر مخصص لنخبة المطورين والمهندسين للانضمام إلى فريق تكنو إنجاز قريباً.',
     bioEn: 'Reserved seat for elite software and AI engineers joining the Techno Enjaz core team soon.'
@@ -130,7 +130,7 @@ export const teamCircleSlots = [
     departmentEn: 'Innovation & Development Department',
     specialization: 'انضم إلى فريقنا',
     specializationEn: 'Join our team',
-    image: '/team-placeholder.png',
+    image: '/images/team/team-placeholder.png',
     link: '#team-showcase',
     bio: 'مقعد شاغر مخصص لنخبة المطورين والمهندسين للانضمام إلى فريق تكنو إنجاز قريباً.',
     bioEn: 'Reserved seat for elite software and AI engineers joining the Techno Enjaz core team soon.'
@@ -150,7 +150,7 @@ export const teamCircleSlots = [
     departmentEn: 'Innovation & Development Department',
     specialization: 'انضم إلى فريقنا',
     specializationEn: 'Join our team',
-    image: '/team-placeholder.png',
+    image: '/images/team/team-placeholder.png',
     link: '#team-showcase',
     bio: 'مقعد شاغر مخصص لنخبة المطورين والمهندسين للانضمام إلى فريق تكنو إنجاز قريباً.',
     bioEn: 'Reserved seat for elite software and AI engineers joining the Techno Enjaz core team soon.'
@@ -170,7 +170,7 @@ export const teamCircleSlots = [
     departmentEn: 'Innovation & Development Department',
     specialization: 'انضم إلى فريقنا',
     specializationEn: 'Join our team',
-    image: '/team-placeholder.png',
+    image: '/images/team/team-placeholder.png',
     link: '#team-showcase',
     bio: 'مقعد شاغر مخصص لنخبة المطورين والمهندسين للانضمام إلى فريق تكنو إنجاز قريباً.',
     bioEn: 'Reserved seat for elite software and AI engineers joining the Techno Enjaz core team soon.'

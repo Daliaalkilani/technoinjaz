@@ -6,7 +6,7 @@ export const LOADER_MODE: 'home-first-visit' | 'always' | 'off' = 'home-first-vi
 export const ORG = {
   nameAr: 'تكنو إنجاز',
   nameEn: 'Techno Enjaz',
-  logo: `${SITE_URL}/techno-logo.png`,
+  logo: `${SITE_URL}/images/brand/techno-logo.png`,
   telephone: '+963958794195',
   email: 'info@technoenjaz.com',
   instagram: 'https://instagram.com/TECHNO_ENJAZ',

@@ -48,14 +48,14 @@ export const projectReelsData: ProjectReel[] = [
     categoryEn: 'Cloud Systems',
     categoryColor: '#0aeec3',
     categoryIcon: 'database',
-    coverImage: '/projects-live/hisab-erp.jpg',
+    coverImage: '/images/platforms/hisab-erp.jpg',
     liveUrl: 'https://hisab-erp.pages.dev/login',
     engineer: {
       name: 'عبد الغنى',
       nameEn: 'Abdulghani',
       role: 'مدير الفريق التقني',
       roleEn: 'Lead Tech Director',
-      avatar: '/abdulghani.jpg'
+      avatar: '/images/team/abdulghani.jpg'
     },
     description: 'استعراض معماري متقدم لنظام حساب ERP السحابي لإدارة سلاسل الإمداد، الفوترة الإلكترونية المعتمدة، وإصدار التقارير المالية بدقة متناهية ولحظياً.',
     descriptionEn: 'Advanced architectural walkthrough of Hisab ERP: handling high-concurrency inventory, compliant electronic invoicing, and real-time financial reporting.',
@@ -96,14 +96,14 @@ export const projectReelsData: ProjectReel[] = [
     categoryEn: 'IoT & Embedded',
     categoryColor: '#f59e0b',
     categoryIcon: 'cpu',
-    coverImage: '/projects-live/arduino-lab.jpg',
+    coverImage: '/images/platforms/arduino-lab.jpg',
     liveUrl: 'https://circuit-lab-7jr.pages.dev/',
     engineer: {
       name: 'عبد الهادي الكيلاني',
       nameEn: 'Abdulhady Alkilani',
       role: 'مهندس برمجيات وتكامل الذكاء الاصطناعي',
       roleEn: 'Full-Stack Developer & AI Integration',
-      avatar: '/abdulhady.jpg'
+      avatar: '/images/team/abdulhady.jpg'
     },
     description: 'بيئة برمجية تفاعلية ثلاثية الأبعاد لمحاكاة المتحكمات الصغرية وأجهزة إنترنت الأشياء، واختبار قراءات الحساسات وتدفق الإشارات دون الحاجة للعتاد الفيزيائي.',
     descriptionEn: 'Interactive 3D simulation environment for microcontrollers and IoT sensors, testing logic circuits in real time right in the browser.',
@@ -134,14 +134,14 @@ export const projectReelsData: ProjectReel[] = [
     categoryEn: 'Cloud Systems',
     categoryColor: '#38bdf8',
     categoryIcon: 'layout',
-    coverImage: '/projects-live/projectforge.jpg',
+    coverImage: '/images/platforms/projectforge.jpg',
     liveUrl: 'https://projectforge-e3q.pages.dev/',
     engineer: {
       name: 'عبد الغنى',
       nameEn: 'Abdulghani',
       role: 'مدير الفريق التقني',
       roleEn: 'Lead Tech Director',
-      avatar: '/abdulghani.jpg'
+      avatar: '/images/team/abdulghani.jpg'
     },
     description: 'منظومة تنسيق متطورة تدير سير العمل الهندسي، تعتمد على WebSockets للتحديث اللحظي للمهام وتتبع مؤشرات الأداء (KPIs) لفرق التطوير المتوزعة.',
     descriptionEn: 'Distributed project orchestration tool powered by real-time WebSockets, automated sprints tracking, and interactive engineering telemetry.',
@@ -172,14 +172,14 @@ export const projectReelsData: ProjectReel[] = [
     categoryEn: 'Digital Identities',
     categoryColor: '#a855f7',
     categoryIcon: 'sparkles',
-    coverImage: '/projects-live/interactive-cv.jpg',
+    coverImage: '/images/platforms/interactive-cv.jpg',
     liveUrl: 'https://cv.abdalgani.com/',
     engineer: {
       name: 'عبد الغنى',
       nameEn: 'Abdulghani',
       role: 'مدير الفريق وقائد التطوير',
       roleEn: 'Team Director & Lead Architect',
-      avatar: '/abdulghani.jpg'
+      avatar: '/images/team/abdulghani.jpg'
     },
     description: 'تجربة بصرية مبتكرة تحول السيرة المهنية إلى بيئة سينمائية ثلاثية الأبعاد تفاعلية، مستخدمة تقنيات WebGL وجسيمات الضوء التفاعلية لتقديم محتوى فريد.',
     descriptionEn: 'Cutting-edge digital presence transforming classical resumes into immersive 3D spatial showcases utilizing WebGL physics and custom shaders.',
@@ -210,14 +210,14 @@ export const projectReelsData: ProjectReel[] = [
     categoryEn: 'Apps & Stores',
     categoryColor: '#ec4899',
     categoryIcon: 'shopping-bag',
-    coverImage: '/projects-live/khazama-store.jpg',
+    coverImage: '/images/platforms/khazama-store.jpg',
     liveUrl: 'https://khazama.pages.dev/',
     engineer: {
       name: 'عبد الغنى',
       nameEn: 'Abdulghani',
       role: 'مدير الفريق التقني',
       roleEn: 'Lead Tech Director',
-      avatar: '/abdulghani.jpg'
+      avatar: '/images/team/abdulghani.jpg'
     },
     description: 'متجر تجارة إلكترونية مبني بمعمارية Headless مع واجهة مستخدم فائقة الاستجابة، ونظام دفع متكامل يدعم المحافظ الإلكترونية المتعددة.',
     descriptionEn: 'Headless eCommerce storefront delivering sub-second page loads, real-time inventory validation, and seamless multi-currency checkout.',
@@ -237,14 +237,14 @@ export const projectReelsData: ProjectReel[] = [
     categoryEn: 'Cloud Systems',
     categoryColor: '#0ea5e9',
     categoryIcon: 'layers',
-    coverImage: '/projects-live/cablexperts.jpg',
+    coverImage: '/images/platforms/cablexperts.jpg',
     liveUrl: 'https://cablexperts.pages.dev/',
     engineer: {
       name: 'عبد الهادي الكيلاني',
       nameEn: 'Abdulhady Alkilani',
       role: 'مهندس برمجيات وتكامل الذكاء الاصطناعي',
       roleEn: 'Full-Stack Developer & AI Integration',
-      avatar: '/abdulhady.jpg'
+      avatar: '/images/team/abdulhady.jpg'
     },
     description: 'بوابة متخصصة لحساب أحمال كابلات الطاقة والجهد العالي، وتصفح المواصفات الفنية المعتمدة للمشاريع الإنشائية والصناعية الضخمة.',
     descriptionEn: 'Engineering calculator and specification portal for high-voltage power networks and infrastructure procurement.',
@@ -264,7 +264,7 @@ export const projectReelsData: ProjectReel[] = [
     categoryEn: 'Apps & Stores',
     categoryColor: '#10b981',
     categoryIcon: 'heart-pulse',
-    coverImage: '/projects-live/dermocean.jpg',
+    coverImage: '/images/platforms/dermocean.jpg',
     liveUrl: 'https://dermocean.pages.dev/',
     engineer: {
       name: 'تيماء علواني',

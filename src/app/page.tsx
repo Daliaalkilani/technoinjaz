@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import HomeHero from '@/components/home/HomeHero';
-import AboutTeamSection from '@/components/about/AboutTeamSection';
+import HomeHero from '@/features/home/HomeHero';
+import AboutTeamSection from '@/features/about/AboutTeamSection';
 import { pageMetadata } from '@/seo/metadata';
 import { JsonLd } from '@/seo/JsonLd';
 import { webPage } from '@/seo/schemas';

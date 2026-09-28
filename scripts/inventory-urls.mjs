@@ -52,5 +52,5 @@ const inventory = {
   }
 };
 
-fs.writeFileSync(path.join(rootDir, 'docs/url-inventory.json'), JSON.stringify(inventory, null, 2), 'utf8');
+fs.writeFileSync(path.join(rootDir, 'docs/reference/url-inventory.json'), JSON.stringify(inventory, null, 2), 'utf8');
 console.log(`URL inventory generated successfully: ${articles.length} articles, ${projects.length} projects, ${team.length} team members.`);

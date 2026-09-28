@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import AccountClient from '@/components/account/AccountClient';
+import AccountClient from '@/features/account/AccountClient';
 
 export const dynamic = 'force-static';
 

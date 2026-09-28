@@ -33,7 +33,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "seoTitle": "اللوح الافتراضي بتتبع حركة اليد | مشروع بمساعدة تكنو إنجاز",
     "metaDesc": "مشروع طلابي أُنجز بمساعدة تكنو إنجاز لتطوير لوح افتراضي يعتمد على تتبع حركة اليد، مع وظائف الرسم واختيار الألوان والمسح باستخدام MediaPipe وOpenCV.",
     "altText": "تجربة الرسم على اللوح الافتراضي باستخدام حركة اليد",
-    "image": "/projects/virtual-board-hand-tracking.png",
+    "image": "/images/projects/virtual-board-hand-tracking.png",
     "tags": [
       "WebPage",
       "BreadcrumbList",
@@ -54,7 +54,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "seoTitle": "نظام تعليمي تفاعلي للأطفال بالرؤية الحاسوبية | تكنو إنجاز",
     "metaDesc": "مشروع أكاديمي نفذه الطلاب بمساعدة تكنو إنجاز لتطوير نظام تعليمي تفاعلي يتعرف على الحيوانات والألوان والأرقام باستخدام YOLO11 وHSV وOCR والرؤية الحاسوبية.",
     "altText": "واجهة نظام تعليمي تفاعلي للأطفال باستخدام الذكاء الاصطناعي والرؤية الحاسوبية",
-    "image": "/projects/interactive-children-ai-learning-system.png",
+    "image": "/images/projects/interactive-children-ai-learning-system.png",
     "tags": [
       "أنظمة تعليمية وذكاء اصطناعي",
       "تكنو إنجاز",
@@ -74,7 +74,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "seoTitle": "نموذج روبوت أرضي للتحكم عن بُعد والرؤية الحاسوبية | تكنو إنجاز",
     "metaDesc": "مشروع نموذج روبوت أرضي يوضح تكامل التحكم الإلكتروني والاتصالات اللاسلكية ومعالجة الصور ضمن منصة روبوتية أولية بدعم تكنو إنجاز.",
     "altText": "نموذج روبوت أرضي أولي يتم التحكم به عن بعد",
-    "image": "/projects/remote-controlled-ground-robot.png",
+    "image": "/images/projects/remote-controlled-ground-robot.png",
     "tags": [
       "روبوتات وميكاترونيكس",
       "تكنو إنجاز",
@@ -94,7 +94,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "seoTitle": "كف روبوتية للتحكم بالإيماءات والرؤية الحاسوبية | تكنو إنجاز",
     "metaDesc": "نموذج كف روبوتية يدمج تتبع حركة اليد مع الأنظمة المضمنة لتحويل الإيماءات إلى أوامر تحكم لمحركات السيرفو، ضمن مشروع تطبيقي في الروبوتات والرؤية الحاسوبية.",
     "altText": "نموذج كف روبوتية يتم التحكم بها عبر تتبع حركة اليد.",
-    "image": "/projects/robotic-hand-gesture-control.png",
+    "image": "/images/projects/robotic-hand-gesture-control.png",
     "tags": [
       "روبوتات ورؤية حاسوبية",
       "تكنو إنجاز",
@@ -114,7 +114,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "seoTitle": "تطوير تطبيق سياحي رقمي باستخدام Flutter وLaravel | تكنو إنجاز",
     "metaDesc": "منصة سياحية رقمية تجمع الوجهات والفنادق والحجوزات والمنتجات الحرفية والمحتوى السياحي ضمن تطبيق Flutter مع Backend مبني على Laravel ولوحة إدارة.",
     "altText": "تطبيق سياحي ذكي لتعزيز السياحة في سوريا — نموذج تطبيقي بمساعدة تكنو إنجاز",
-    "image": "/projects/syrian-tourism-app.png",
+    "image": "/images/projects/syrian-tourism-app.png",
     "tags": [
       "تطبيقات موبايل وسياحة ذكية",
       "تكنو إنجاز",
@@ -134,7 +134,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "seoTitle": "تتبع الحضور داخل مناطق العمل باستخدام YOLOv8 وDeepSORT | تكنو إنجاز",
     "metaDesc": "مشروع أكاديمي نفذه الطلاب بمساعدة تكنو إنجاز لتطوير نموذج يستخدم YOLOv8 وDeepSORT في كشف الأشخاص وتتبعهم داخل مناطق عمل محددة واحتساب زمن التواجد وتصدير البيانات للتقارير.",
     "altText": "تتبع الأشخاص داخل مناطق عمل محددة باستخدام الرؤية الحاسوبية",
-    "image": "/projects/employee-presence-tracking.png",
+    "image": "/images/projects/employee-presence-tracking.png",
     "tags": [
       "datetime",
       "WebPage",
@@ -157,7 +157,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "seoTitle": "تطوير نظام لكشف المخالفات في قاعات الامتحانات باستخدام تقنيات الرؤية الحاسوبية | تكنو إنجاز",
     "metaDesc": "مشروع تطوير نموذج رؤية حاسوبية لتحليل مؤشرات سلوكية أثناء الامتحانات",
     "altText": "مخطط خوارزمية نظام تحليل السلوك باستخدام الرؤية الحاسوبية.",
-    "image": "/projects/exam-computer-vision-monitoring.png",
+    "image": "/images/projects/exam-computer-vision-monitoring.png",
     "tags": [
       "رؤية حاسوبية ومراقبة",
       "تكنو إنجاز",
@@ -177,7 +177,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "seoTitle": "تطوير دليل طالب جامعي باستخدام Flutter وLaravel | تكنو إنجاز",
     "metaDesc": "مشروع طلابي لتطوير دليل جامعي باستخدام Flutter وLaravel، نفذه الطلاب بمساعدة تقنية من تكنو إنجاز، ويضم محتوى أكاديميًا ولوحة إدارة ومساعدًا افتراضيًا للأسئلة الشائعة.",
     "altText": "الواجهة الرئيسية لتطبيق دليل الطالب الجامعي",
-    "image": "/projects/student-university-guide-app.png",
+    "image": "/images/projects/student-university-guide-app.png",
     "tags": [
       "تم تنفيذ المشروع من قبل الطلاب بمساعدة تكنو إنجاز.",
       "قدم تكنو إنجاز دعمًا تقنيًا خلال تنفيذ المشروع.",
@@ -200,7 +200,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "seoTitle": "نظام قياس مستوى الماء بحساس فوق صوتي | تكنو إنجاز",
     "metaDesc": "مشروع أكاديمي طُوّر بمساعدة تكنو إنجاز لنموذج يقيس نسبة مستوى الماء في الخزان باستخدام HC-SR04 وArduino Nano، مع شاشة LCD وإرسال القراءة إلى تطبيق هاتف عبر Bluetooth.",
     "altText": "نموذج قياس مستوى الماء باستخدام Arduino Nano ومستشعر فوق صوتي وشاشة LCD",
-    "image": "/projects/ultrasonic-water-level-monitoring-project.png",
+    "image": "/images/projects/ultrasonic-water-level-monitoring-project.png",
     "tags": [
       "WebPage",
       "BreadcrumbList",
@@ -223,7 +223,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "seoTitle": "تطوير منصة أخبار وبلاغات للتحقق من المحتوى | تكنو إنجاز",
     "metaDesc": "منصة رقمية لإدارة الأخبار والبلاغات وسير المراجعة التحريرية، مع لوحات تحكم متعددة الأدوار وبنية Laravel لإدارة المحتوى.",
     "altText": "واجهة منصة إدارة الأخبار والبلاغات",
-    "image": "/projects/news-fact-checking-platform.png",
+    "image": "/images/projects/news-fact-checking-platform.png",
     "tags": [
       "منصات ويب وتطبيقات سحابية",
       "تكنو إنجاز",
@@ -243,7 +243,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "seoTitle": "نظام تحكم في الدخول بالتعرف على الوجه | مشروع بدعم تكنو إنجاز",
     "metaDesc": "مشروع تخرج أكاديمي ساعد تكنو إنجاز الطلاب في إعداده وتطويره لبناء نموذج تحكم في الدخول يعتمد على OpenCV والتعرف على الوجوه وتسجيل الحالات والتنبيه الصوتي.",
     "altText": "text، والـ metadata.",
-    "image": "/projects/face-recognition-access-control-project.png",
+    "image": "/images/projects/face-recognition-access-control-project.png",
     "tags": [
       "face-recognition",
       "playsound",
@@ -266,7 +266,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "seoTitle": "نظام التصويت الإلكتروني — تطوير منصة ويب لإدارة عملية التصويت الرقمية | تكنو إنجاز",
     "metaDesc": "مشروع تطوير نظام تصويت إلكتروني يعتمد على Laravel وBootstrap لإدارة المستخدمين والمرشحين وطلبات الترشح والتصويت ضمن منصة ويب متعددة الأدوار.",
     "altText": "نظام التصويت الإلكتروني — تطوير منصة ويب لإدارة عملية التصويت الرقمية — نموذج تطبيقي بمساعدة تكنو إنجاز",
-    "image": "/projects/electronic-voting-system-laravel.png",
+    "image": "/images/projects/electronic-voting-system-laravel.png",
     "tags": [
       "منصات ويب وتطبيقات سحابية",
       "تكنو إنجاز",
@@ -286,7 +286,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "seoTitle": "نظام كشف الأسلحة باستخدام الذكاء الاصطناعي وYOLO | تكنو إنجاز",
     "metaDesc": "مشروع نظام كشف الأسلحة باستخدام الذكاء الاصطناعي والرؤية الحاسوبية، يوضح دور تكنو إنجاز في دعم تطوير نموذج يعتمد على YOLO وتحليل بث الكاميرا.",
     "altText": "وصفي.",
-    "image": "/projects/weapon-detection-yolo-ai.png",
+    "image": "/images/projects/weapon-detection-yolo-ai.png",
     "tags": [
       "ذكاء اصطناعي ورؤية حاسوبية",
       "تكنو إنجاز",
@@ -306,7 +306,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "seoTitle": "نظام تعليم الأطفال باستخدام الذكاء الاصطناعي والتعرف على الأشياء | تكنو إنجاز",
     "metaDesc": "مشروع تعليمي تفاعلي يستخدم الذكاء الاصطناعي ومعالجة الصور للتعرف على الأشياء والألوان وعرض النتائج بصريًا وصوتيًا، مع دعم تكنو إنجاز لتطوير النموذج.",
     "altText": "نظام تعليم الأطفال باستخدام الذكاء الاصطناعي — نموذج تطبيقي بمساعدة تكنو إنجاز",
-    "image": "/projects/ai-children-learning-system.png",
+    "image": "/images/projects/ai-children-learning-system.png",
     "tags": [
       "ذكاء اصطناعي وتعليم تفاعلي",
       "تكنو إنجاز",

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { getLoggedInUser, requireAuth } from '../utils/authUtils';
+import { getLoggedInUser, requireAuth } from '@/lib/auth';
 
 export interface SavedProject {
   id: string;

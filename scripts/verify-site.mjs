@@ -5,7 +5,7 @@ import { parseHTML } from 'linkedom';
 const ROOT_DIR = process.cwd();
 const SERVER_APP_DIR = path.join(ROOT_DIR, '.next', 'server', 'app');
 const DOCS_DIR = path.join(ROOT_DIR, 'docs');
-const REPORT_PATH = path.join(DOCS_DIR, 'verify-report.md');
+const REPORT_PATH = path.join(DOCS_DIR, 'reports', 'verify-report.md');
 
 const BASE_URL = process.env.BASE_URL;
 

@@ -14,7 +14,7 @@ export function buildRootMetadata(): Metadata {
       siteName: 'تكنو إنجاز | Techno Enjaz',
       locale: 'ar_SY',
       type: 'website',
-      images: [{ url: '/techno-logo.png' }]
+      images: [{ url: '/images/brand/techno-logo.png' }]
     },
     twitter: {
       card: 'summary_large_image'
@@ -51,7 +51,7 @@ export function pageMetadata(o: {
   absoluteTitle?: boolean;
 }): Metadata {
   const url = absoluteUrl(o.path);
-  const images = [{ url: o.image ? (o.image.startsWith('http') ? o.image : absoluteUrl(o.image)) : absoluteUrl('/techno-logo.png') }];
+  const images = [{ url: o.image ? (o.image.startsWith('http') ? o.image : absoluteUrl(o.image)) : absoluteUrl('/images/brand/techno-logo.png') }];
 
   return {
     title: o.absoluteTitle ? { absolute: o.title } : o.title,

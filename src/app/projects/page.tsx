@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getAllProjects } from '@/lib/content/projects';
-import ProjectsCatalogSection from '@/components/projects/ProjectsCatalogSection';
+import ProjectsCatalogSection from '@/features/projects/ProjectsCatalogSection';
 import { pageMetadata } from '@/seo/metadata';
 import { JsonLd } from '@/seo/JsonLd';
 import { webPage, itemList } from '@/seo/schemas';

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import ContactPage from '@/ContactPage';
+import ContactPage from '@/features/contact/ContactPage';
 import { pageMetadata } from '@/seo/metadata';
 import { JsonLd } from '@/seo/JsonLd';
 import { webPage } from '@/seo/schemas';

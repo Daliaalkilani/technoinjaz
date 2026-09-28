@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import AuthPage from '@/AuthPage';
+import AuthPage from '@/features/auth/AuthPage';
 
 export const dynamic = 'force-static';
 

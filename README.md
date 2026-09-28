@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/techno-logo.png" alt="Techno Enjaz logo" width="96" />
+  <img src="public/images/brand/techno-logo.png" alt="Techno Enjaz logo" width="96" />
   <h1>تكنو إنجاز · Techno Enjaz</h1>
   <p>الموقع الرسمي لمكتب تكنو إنجاز الهندسي في حماة، سوريا<br/>The official website of Techno Enjaz engineering office, Hama, Syria</p>
   <p><a href="#ar">العربية</a> · <a href="#en">English</a></p>
@@ -34,7 +34,7 @@
 | البند | الحالة |
 |---|---|
 | الترحيل من React/Vite SPA إلى Next.js (المراحل P0 إلى P11) | ✅ مكتمل ومُتحقق منه محلياً |
-| النشر على Cloudflare Workers (P12) | ⏸️ جاهز ولم يُنفذ بعد. انظر [`docs/pre-deployment-validation.md`](docs/pre-deployment-validation.md) |
+| النشر على Cloudflare Workers (P12) | ⏸️ جاهز ولم يُنفذ بعد. انظر [`docs/reports/pre-deployment-validation.md`](docs/reports/pre-deployment-validation.md) |
 | خطة الـResponsive والـAdaptive والأصول (R0 إلى R11 في [`plan.md`](plan.md)) | ⏳ لم تبدأ |
 
 ### التقنيات
@@ -95,35 +95,55 @@ Browser → React hydrates interactive parts only (nav, filters, likes, WebGL, a
 
 ```text
 src/
-  app/                  Routes (App Router): pages, sitemap, robots, manifest, llms.txt
-  components/           UI components (shell, home, articles, projects, videos, faq, about, account, ui)
-  config/site.ts        Single source of truth: domain, organization info, loader mode
-  content/
-    articles/<slug>.md          Published article body
-    articles/<slug>-seo.md      Internal SEO notes (never published)
-    projects/<slug>.md          Published project body
-  data/                 Metadata: articles, projects, reels, videos, FAQ, team
-  lib/                  markdown renderer, content loaders (server-only), text helpers, inline scripts
-  context/ hooks/       Theme/language context, loader context, hydration & in-view hooks
-  locales/              Arabic/English UI strings
-public/                 Images, favicons, loader assets
-scripts/                Image optimization, SEO verification, content extraction, URL inventory
-tests/                  Playwright: no-JS rendering, legacy redirects, visual baseline
-docs/                   Baseline, URL inventory, verification & pre-deployment reports
-plan.md                 Responsive / adaptive / assets plan (next phase)
+  app/                    Routes only (App Router): pages, sitemap, robots, manifest, llms.txt
+  features/               One folder per product area; each holds its components and their CSS
+    home/                   Hero + home sections (projects, videos, articles bento)
+    articles/               Listing, article view, server-rendered body
+    projects/               Catalog, project view, live platforms showcase
+    videos/                 Reels feed, video modal
+    faq/  about/  team/  contact/  auth/  account/
+  components/             Shared, feature-agnostic building blocks
+    layout/                 App shell, navbar (GooeyNav, language, theme), footer, scroll-to-top
+    effects/                Visual/animation primitives (WebGL Orb & InfiniteMenu, ScrollExpand, CardSwap, MagicBento...)
+    ui/                     Small UI primitives (Button, ResponsiveImage, ThemedImage, SocialButtons, ClientOnly)
+  content/                Published content only (Markdown)
+    articles/<slug>.md
+    projects/<slug>.md
+  data/                   Structured metadata: articles, projects, reels, videos, FAQ, team
+  lib/                    Server/content helpers: markdown, content loaders, text, auth, inline scripts
+  seo/                    Metadata builders, JSON-LD schemas
+  config/site.ts          Single source of truth: domain, organization info, loader mode
+  context/  hooks/        React context providers and hooks
+  locales/                Arabic/English UI strings
+  styles/globals.css      Global styles and design tokens
+  assets/                 Images imported by components (bundled): brand/, home/, showcase/, videos/
+  types/                  Ambient type declarations
+public/
+  images/                 Static images served by URL
+    articles/  projects/  platforms/  moments/  team/  brand/
+  loader/                 Rocket loader (standalone script + assets)
+  favicon-*.png, apple-touch-icon.png, manifest.webmanifest
+scripts/                  Build & maintenance: image optimization, SEO verification, URL inventory
+tests/                    Playwright: no-JS rendering, legacy redirects, visual baseline
+docs/
+  reports/                Baseline, verification and pre-deployment reports
+  reference/              URL inventory, legacy head, favicon notes, old→new path map
+  seo/articles/           Internal SEO research per article (never published)
+design/brand-theme/       Standalone brand typography kit + demo page (not part of the app)
+plan.md                   Responsive / adaptive / assets plan (next phase)
 ```
 
 ### إضافة محتوى
 
 **مقال جديد:**
 1. النص: `src/content/articles/<slug>.md`. أول سطر `# العنوان` يُحذف تلقائياً لأن العنوان يُعرض من البيانات. استخدم `##` للأقسام و `###` للفرعية.
-2. الصورة: `public/articles/<slug>.jpg`، ويفضّل 1600×900 أو 1280×720.
+2. الصورة: `public/images/articles/<slug>.jpg`، ويفضّل 1600×900 أو 1280×720.
 3. البيانات: أضف عنصراً في `src/data/blogArticlesData.ts`. الحقول: `slug`، و `title` و `titleEn`، و `seoTitle`، و `metaDescription`، و `category`، و `publishedAt` بصيغة `YYYY-MM-DD`، و `excerpt`، و `tags`، و `image`.
 4. `npm run build`. الصفحة والـsitemap و `llms.txt` تُحدَّث تلقائياً.
 
 **مشروع جديد:** نفس الخطوات:
 - النص في `src/content/projects/<slug>.md`.
-- الصورة في `public/projects/<slug>.png`.
+- الصورة في `public/images/projects/<slug>.png`.
 - البيانات في `src/data/projectsData.ts`.
 
 > ملاحظات التحرير الداخلية (أماكن الصور المقترحة، و Filename و Alt، والملاحظات للفريق) لا توضع في ملفات المحتوى المنشورة.
@@ -173,14 +193,14 @@ npm run dev          # http://localhost:3000
   - غياب مسودات التحرير والروابط الداخلية الخاطئة.
   - الروابط الداخلية، وصفحة 404.
 
-  التقرير في [`docs/verify-report.md`](docs/verify-report.md).
+  التقرير في [`docs/reports/verify-report.md`](docs/reports/verify-report.md).
 - `tests/no-js.spec.ts`: يتأكد أن المحتوى يظهر **بدون JavaScript**.
 - `tests/legacy-redirects.spec.ts`: يتأكد من تحويل روابط hash القديمة.
 - `tests/visual/`: لقطات مرجعية لمقارنة الشكل (3 مقاسات، ووضعان، ولغتان).
 
 ### النشر
 
-الخطوات الكاملة في [`docs/pre-deployment-validation.md`](docs/pre-deployment-validation.md). باختصار:
+الخطوات الكاملة في [`docs/reports/pre-deployment-validation.md`](docs/reports/pre-deployment-validation.md). باختصار:
 
 ```bash
 npx wrangler login
@@ -199,8 +219,8 @@ npm run deploy
 4. **الفريق:** 5 من 7 أعضاء في `src/data/teamData.js` بيانات مؤقتة ("Future Team Member"). صفحات الفريق noindex ولا تدخل البيانات المنظمة.
 5. **الحساب والإعجابات والتعليقات** محلية في المتصفح (localStorage)، ولا يوجد backend.
 6. **Responsive و Adaptive:** مشاكل مُقاسة على الموبايل والتابلت (القائمة على الموبايل، و overflow على iPad الأفقي، وأحجام الصور، وأهداف اللمس). الخطة كاملة في [`plan.md`](plan.md).
-7. **ملاحظات SEO الداخلية** (`*-seo.md`) موجودة بجانب المقالات المنشورة. يُفضّل نقلها إلى `docs/seo/articles/`.
-8. **ملفات قديمة مرشحة للحذف بعد التحقق من عدم استخدامها:** `demo/`، و `assets/`، و `Asset-1@4x.png` في الجذر، ومكونات تجريبية في `src/components/ui/` (`demo.*` و `interactive-hover-button.*` و `scroll-progress.jsx` و `svg-follow-scroll.jsx`)، و `src/lib/utils.js`.
+7. **صور ناقصة:** نص مشروع `virtual-board-hand-tracking` يشير إلى 4 صور غير موجودة في المستودع (`/images/projects/virtual-board/*`).
+8. **عرض المنصات الحية (`LiveProjectsShowcase`)** كان يظهر في صفحة المشاريع قبل الترحيل، ولم يعد مستخدماً في أي صفحة. الكود محفوظ في `src/features/projects/`، ويحتاج قراراً بإعادته.
 
 ### التواصل
 
@@ -237,7 +257,7 @@ The site is bilingual (Arabic first, with an English UI), has dark and light the
 | Item | Status |
 |---|---|
 | Migration from React/Vite SPA to Next.js (phases P0–P11) | ✅ Complete and verified locally |
-| Deployment to Cloudflare Workers (P12) | ⏸️ Ready, not yet executed. See [`docs/pre-deployment-validation.md`](docs/pre-deployment-validation.md) |
+| Deployment to Cloudflare Workers (P12) | ⏸️ Ready, not yet executed. See [`docs/reports/pre-deployment-validation.md`](docs/reports/pre-deployment-validation.md) |
 | Responsive / adaptive / assets plan (R0–R11 in [`plan.md`](plan.md)) | ⏳ Not started |
 
 ### Tech stack
@@ -296,19 +316,19 @@ Browser → React hydrates interactive parts only (nav, filters, likes, WebGL, a
 
 ### Project structure
 
-See the tree in the Arabic section above. It's the same for both languages.
+See the tree in the Arabic section above (it is written in English and applies to both).
 
 ### Adding content
 
 **New article:**
 1. Body: `src/content/articles/<slug>.md`. The first `# Title` line is removed automatically because the title comes from the data. Use `##` for sections and `###` for subsections.
-2. Image: `public/articles/<slug>.jpg`, preferably 1600×900 or 1280×720.
+2. Image: `public/images/articles/<slug>.jpg`, preferably 1600×900 or 1280×720.
 3. Data: add an entry to `src/data/blogArticlesData.ts`. Fields: `slug`, `title` and `titleEn`, `seoTitle`, `metaDescription`, `category`, `publishedAt` as `YYYY-MM-DD`, `excerpt`, `tags`, `image`.
 4. `npm run build`. The page, the sitemap and `llms.txt` update automatically.
 
 **New project:** the same steps:
 - Body in `src/content/projects/<slug>.md`.
-- Image in `public/projects/<slug>.png`.
+- Image in `public/images/projects/<slug>.png`.
 - Data in `src/data/projectsData.ts`.
 
 > Internal editorial notes (suggested image slots, Filename and Alt lines, notes to the team) must not go into published content files.
@@ -358,14 +378,14 @@ npm run dev          # http://localhost:3000
   - Absence of editorial drafts and wrong internal links.
   - Internal links and the 404 page.
 
-  Report: [`docs/verify-report.md`](docs/verify-report.md).
+  Report: [`docs/reports/verify-report.md`](docs/reports/verify-report.md).
 - `tests/no-js.spec.ts` confirms content is visible **with JavaScript disabled**.
 - `tests/legacy-redirects.spec.ts` confirms the old hash links redirect correctly.
 - `tests/visual/` holds reference screenshots for visual comparison (3 sizes, 2 themes, 2 languages).
 
 ### Deployment
 
-Full steps are in [`docs/pre-deployment-validation.md`](docs/pre-deployment-validation.md). In short:
+Full steps are in [`docs/reports/pre-deployment-validation.md`](docs/reports/pre-deployment-validation.md). In short:
 
 ```bash
 npx wrangler login
@@ -384,8 +404,8 @@ Then in the Cloudflare dashboard, go to **Workers → technoenjaz → Settings �
 4. **Team:** 5 of the 7 entries in `src/data/teamData.js` are placeholders ("Future Team Member"). Team pages are noindex and are excluded from the structured data.
 5. **Account, likes and comments** are local to the browser (localStorage). There is no backend.
 6. **Responsive and adaptive:** measured issues on phones and tablets (the mobile menu, horizontal overflow on landscape iPad, image weight, touch targets). The full plan is in [`plan.md`](plan.md).
-7. **Internal SEO notes** (`*-seo.md`) sit next to the published articles. Moving them to `docs/seo/articles/` is recommended.
-8. **Legacy files that are candidates for removal once confirmed unused:** `demo/`, `assets/`, the root `Asset-1@4x.png`, demo components in `src/components/ui/` (`demo.*`, `interactive-hover-button.*`, `scroll-progress.jsx`, `svg-follow-scroll.jsx`), and `src/lib/utils.js`.
+7. **Missing images:** the `virtual-board-hand-tracking` project text references 4 images that are not in the repo (`/images/projects/virtual-board/*`).
+8. **The live platforms showcase (`LiveProjectsShowcase`)** used to appear on the Projects page before the migration and is no longer used on any page. The code is kept in `src/features/projects/` and needs a decision on restoring it.
 
 ### Contact
 

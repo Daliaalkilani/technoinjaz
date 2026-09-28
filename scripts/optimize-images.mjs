@@ -7,14 +7,12 @@ const PUBLIC_DIR = path.join(ROOT_DIR, 'public');
 const OUTPUT_DIR = path.join(PUBLIC_DIR, '_img');
 
 const TARGET_PATTERNS = [
-  'articles',
-  'projects',
-  'projects-live',
-  'moments',
-  'abdulghani.jpg',
-  'abdulhady.jpg',
-  'team-placeholder.png',
-  'techno-logo.png'
+  'images/articles',
+  'images/projects',
+  'images/platforms',
+  'images/moments',
+  'images/team',
+  'images/brand'
 ];
 
 async function collectFiles() {

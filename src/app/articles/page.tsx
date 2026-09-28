@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getAllArticles } from '@/lib/content/articles';
-import ArticlesListing from '@/components/articles/ArticlesListing';
+import ArticlesListing from '@/features/articles/ArticlesListing';
 import { pageMetadata } from '@/seo/metadata';
 import { JsonLd } from '@/seo/JsonLd';
 import { webPage, itemList } from '@/seo/schemas';
