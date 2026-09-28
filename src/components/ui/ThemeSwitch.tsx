@@ -9,16 +9,9 @@ export interface ThemeSwitchProps {
 }
 
 export function ThemeSwitch({ className = '' }: ThemeSwitchProps) {
-  // Use global ThemeLanguageContext when available to sync with all website sections
-  let contextTheme: 'light' | 'dark' | undefined;
-  let contextToggle: (() => void) | undefined;
-  try {
-    const ctx = useThemeLanguage();
-    contextTheme = ctx.theme;
-    contextToggle = ctx.toggleTheme;
-  } catch {
-    // context not present in isolated render
-  }
+  const ctx = useThemeLanguage();
+  const contextTheme = ctx?.theme;
+  const contextToggle = ctx?.toggleTheme;
 
   const [localTheme, setLocalTheme] = React.useState<'light' | 'dark'>('light');
 

@@ -1,0 +1,105 @@
+{
+  "canonicalDomain": "https://technoenjaz.com",
+  "generatedAt": "2026-09-28T11:17:00.828Z",
+  "counts": {
+    "articles": 12,
+    "projects": 14,
+    "team": 7
+  },
+  "routes": {
+    "static": [
+      "/",
+      "/projects",
+      "/articles",
+      "/videos",
+      "/faq",
+      "/about",
+      "/contact"
+    ],
+    "private": [
+      "/login",
+      "/register",
+      "/account"
+    ],
+    "articles": [
+      "/articles/digital-twin",
+      "/articles/affective-computing",
+      "/articles/emotion-aware-recommendation",
+      "/articles/model-context-protocol-mcp",
+      "/articles/next-token-prediction",
+      "/articles/5g-iot",
+      "/articles/facial-expression-recognition-ai",
+      "/articles/internet-of-things-iot",
+      "/articles/embedded-serial-protocols",
+      "/articles/ai-image-classification",
+      "/articles/5g-nr-radio-architecture",
+      "/articles/smart-ai-ride-pooling"
+    ],
+    "projects": [
+      "/projects/virtual-board-hand-tracking",
+      "/projects/interactive-children-ai-learning-system",
+      "/projects/remote-controlled-ground-robot",
+      "/projects/robotic-hand-gesture-control",
+      "/projects/syrian-tourism-app",
+      "/projects/employee-presence-tracking",
+      "/projects/exam-computer-vision-monitoring",
+      "/projects/student-university-guide-app",
+      "/projects/ultrasonic-water-level-monitoring-project",
+      "/projects/news-fact-checking-platform",
+      "/projects/face-recognition-access-control-project",
+      "/projects/electronic-voting-system-laravel",
+      "/projects/weapon-detection-yolo-ai",
+      "/projects/ai-children-learning-system"
+    ],
+    "team": [
+      "/team/abdulghani",
+      "/team/ahmed-sami",
+      "/team/sarah-ali",
+      "/team/tariq-mahmoud",
+      "/team/nour-hassan",
+      "/team/omar-khaled",
+      "/team/lina-qasim"
+    ]
+  },
+  "slugs": {
+    "articles": [
+      "digital-twin",
+      "affective-computing",
+      "emotion-aware-recommendation",
+      "model-context-protocol-mcp",
+      "next-token-prediction",
+      "5g-iot",
+      "facial-expression-recognition-ai",
+      "internet-of-things-iot",
+      "embedded-serial-protocols",
+      "ai-image-classification",
+      "5g-nr-radio-architecture",
+      "smart-ai-ride-pooling"
+    ],
+    "projects": [
+      "virtual-board-hand-tracking",
+      "interactive-children-ai-learning-system",
+      "remote-controlled-ground-robot",
+      "robotic-hand-gesture-control",
+      "syrian-tourism-app",
+      "employee-presence-tracking",
+      "exam-computer-vision-monitoring",
+      "student-university-guide-app",
+      "ultrasonic-water-level-monitoring-project",
+      "news-fact-checking-platform",
+      "face-recognition-access-control-project",
+      "electronic-voting-system-laravel",
+      "weapon-detection-yolo-ai",
+      "ai-children-learning-system"
+    ],
+    "team": [
+      "abdulghani",
+      "ahmed-sami",
+      "sarah-ali",
+      "tariq-mahmoud",
+      "nour-hassan",
+      "omar-khaled",
+      "lina-qasim"
+    ]
+  }
+}
