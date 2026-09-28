@@ -19,6 +19,7 @@ const ContactPage = lazy(() => import('./ContactPage'));
 const AuthPage = lazy(() => import('./AuthPage'));
 const UserProfilePage = lazy(() => import('./UserProfilePage'));
 const ProjectsCatalogSection = lazy(() => import('./components/projects/ProjectsCatalogSection'));
+const LiveProjectsShowcase = lazy(() => import('./components/projects/LiveProjectsShowcase'));
 const FaqSection = lazy(() => import('./components/faq/FaqSection'));
 import OfficeBlogSection from './components/articles/OfficeBlogSection';
 import ProjectReelsFeed from './components/videos/ProjectReelsFeed';
@@ -38,6 +39,7 @@ export default function App() {
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [isUserProfileOpen, setIsUserProfileOpen] = useState(false);
   const [activeNavIndex, setActiveNavIndex] = useState(0);
+  const [currentHash, setCurrentHash] = useState(() => typeof window !== 'undefined' ? window.location.hash : '');
   const [isPastHero, setIsPastHero] = useState(false);
   const [navHeight, setNavHeight] = useState(78);
   const navbarRef = useRef<HTMLElement | null>(null);
@@ -148,6 +150,7 @@ export default function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash;
+      setCurrentHash(hash);
       if (hash && hash.startsWith('#profile-')) {
         const id = hash.replace('#profile-', '');
         const found = teamMembers.find((m: any) => m.id === id);
@@ -518,7 +521,20 @@ export default function App() {
         </Suspense>
       ) : currentTab === 'projects' ? (
         <div className="tab-page-container" style={{ padding: '0', maxWidth: '100%' }}>
-          <Suspense fallback={<div style={{ minHeight: '60vh', backgroundColor: 'var(--bg-main)' }} />}>
+          {!currentHash.startsWith('#project/') && (
+            <>
+              <div className="tab-page-header">
+                <h1 className="tab-page-title">{t.liveProjects.pageTitle}</h1>
+                <p className="tab-page-subtitle">{t.liveProjects.pageSubtitle}</p>
+              </div>
+
+              <Suspense fallback={<div style={{ minHeight: '60vh', backgroundColor: 'var(--bg-main)' }} />}>
+                <LiveProjectsShowcase />
+              </Suspense>
+            </>
+          )}
+
+          <Suspense fallback={<div style={{ minHeight: '40vh', backgroundColor: 'var(--bg-main)' }} />}>
             <ProjectsCatalogSection />
           </Suspense>
         </div>
