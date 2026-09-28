@@ -1,13 +1,50 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Globe, ChevronDown, Check } from 'lucide-react';
+import { ChevronDown, Check } from 'lucide-react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import './LanguageDropdown.css';
 
 interface LanguageDropdownProps {
   className?: string;
 }
+
+export const SyriaFlag: React.FC<{ size?: number; className?: string }> = ({ size = 18, className = '' }) => (
+  <svg 
+    viewBox="0 0 30 20" 
+    width={size} 
+    height={Math.round(size * 0.67)} 
+    className={`lang-flag-svg ${className}`} 
+    aria-hidden="true"
+    style={{ borderRadius: '2px', overflow: 'hidden', display: 'inline-block', flexShrink: 0, boxShadow: '0 0 2px rgba(0,0,0,0.4)' }}
+  >
+    <rect width="30" height="20" fill="#000000" />
+    <rect width="30" height="13.33" fill="#ffffff" />
+    <rect width="30" height="6.67" fill="#ce1126" />
+    <g fill="#007a3d">
+      <path transform="translate(10, 10)" d="M 0 -2.2 L 0.65 -0.65 L 2.2 -0.65 L 1.0 0.3 L 1.4 1.9 L 0 0.9 L -1.4 1.9 L -1.0 0.3 L -2.2 -0.65 L -0.65 -0.65 Z" />
+      <path transform="translate(20, 10)" d="M 0 -2.2 L 0.65 -0.65 L 2.2 -0.65 L 1.0 0.3 L 1.4 1.9 L 0 0.9 L -1.4 1.9 L -1.0 0.3 L -2.2 -0.65 L -0.65 -0.65 Z" />
+    </g>
+  </svg>
+);
+
+export const UKFlag: React.FC<{ size?: number; className?: string }> = ({ size = 18, className = '' }) => (
+  <svg 
+    viewBox="0 0 60 30" 
+    width={size} 
+    height={Math.round(size * 0.67)} 
+    className={`lang-flag-svg ${className}`} 
+    aria-hidden="true"
+    style={{ borderRadius: '2px', overflow: 'hidden', display: 'inline-block', flexShrink: 0, boxShadow: '0 0 2px rgba(0,0,0,0.4)' }}
+  >
+    <rect width="60" height="30" fill="#012169" />
+    <path d="M0 0 L60 30 M60 0 L0 30" stroke="#ffffff" strokeWidth="6" />
+    <path d="M0 0 L30 15 M60 30 L30 15" stroke="#c8102e" strokeWidth="2" />
+    <path d="M60 0 L30 15 M0 30 L30 15" stroke="#c8102e" strokeWidth="2" />
+    <path d="M30 0 v30 M0 15 h60" stroke="#ffffff" strokeWidth="10" />
+    <path d="M30 0 v30 M0 15 h60" stroke="#c8102e" strokeWidth="6" />
+  </svg>
+);
 
 export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = '' }) => {
   const { lang, setLang } = useThemeLanguage();
@@ -56,7 +93,7 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = 
         title={isRtl ? 'تغيير لغة الموقع' : 'Change Website Language'}
         aria-label={isRtl ? 'تغيير لغة الموقع' : 'Change Website Language'}
       >
-        <Globe size={15} className="lang-globe-icon" />
+        {lang === 'ar' ? <SyriaFlag size={18} /> : <UKFlag size={18} />}
         <span className="lang-current-label">
           {lang === 'ar' ? 'العربية' : 'English'}
         </span>
@@ -74,10 +111,10 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = 
             onClick={() => selectLang('ar')}
           >
             <div className="lang-item-content">
-              <span className="lang-flag" aria-hidden="true">🇸🇦</span>
+              <SyriaFlag size={20} />
               <div className="lang-text-group">
                 <span className="lang-native-name">العربية</span>
-                <span className="lang-sub-name">Arabic</span>
+                <span className="lang-sub-name">سوريا (Syria)</span>
               </div>
             </div>
             {lang === 'ar' && <Check size={14} className="lang-check-icon" />}
@@ -91,10 +128,10 @@ export const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = 
             onClick={() => selectLang('en')}
           >
             <div className="lang-item-content">
-              <span className="lang-flag" aria-hidden="true">🇬🇧</span>
+              <UKFlag size={20} />
               <div className="lang-text-group">
                 <span className="lang-native-name">English</span>
-                <span className="lang-sub-name">الإنجليزية</span>
+                <span className="lang-sub-name">United Kingdom</span>
               </div>
             </div>
             {lang === 'en' && <Check size={14} className="lang-check-icon" />}

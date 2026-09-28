@@ -23,6 +23,7 @@ export function AppShell({ children }: AppShellProps) {
   const router = useRouter();
 
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [mounted, setMounted] = useState(false);
   const [isPastHero, setIsPastHero] = useState(false);
   const [navHeight, setNavHeight] = useState(78);
   const navbarRef = useRef<HTMLElement | null>(null);
@@ -69,6 +70,7 @@ export function AppShell({ children }: AppShellProps) {
 
   // Auth sync
   useEffect(() => {
+    setMounted(true);
     setCurrentUser(getLoggedInUser());
     const handleAuthSync = () => {
       setCurrentUser(getLoggedInUser());
@@ -191,13 +193,31 @@ export function AppShell({ children }: AppShellProps) {
             <ThemeSwitch />
 
             {/* User Profile / Auth Button */}
-            <button
-              type="button"
-              className={`navbar-auth-btn ${pathname === '/account' || pathname === '/login' || pathname === '/register' ? 'active' : ''}`}
-              onClick={() => {
-                if (currentUser) {
-                  router.push('/account');
-                } else {
+            {mounted && currentUser ? (
+              <Link
+                href="/account"
+                className={`navbar-user-avatar-btn ${pathname === '/account' ? 'active' : ''}`}
+                title={currentUser.name ? `${currentUser.name} - ${lang === 'en' ? 'My Profile' : 'الملف الشخصي'}` : (lang === 'en' ? 'My Profile' : 'الملف الشخصي')}
+                aria-label={lang === 'en' ? 'My Profile' : 'الملف الشخصي'}
+              >
+                {currentUser.avatar ? (
+                  <img
+                    src={currentUser.avatar}
+                    alt={currentUser.name || 'User Profile'}
+                    className="navbar-user-avatar-img"
+                  />
+                ) : (
+                  <div className="navbar-user-avatar-fallback">
+                    {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : <User size={16} />}
+                  </div>
+                )}
+                <span className="navbar-user-status-dot" aria-hidden="true" />
+              </Link>
+            ) : (
+              <button
+                type="button"
+                className={`navbar-auth-btn ${pathname === '/login' || pathname === '/register' ? 'active' : ''}`}
+                onClick={() => {
                   try {
                     const currentTarget = window.location.pathname + window.location.search + window.location.hash;
                     if (!currentTarget.startsWith('/login') && !currentTarget.startsWith('/register')) {
@@ -206,30 +226,17 @@ export function AppShell({ children }: AppShellProps) {
                     }
                   } catch (e) {}
                   router.push('/login');
-                }
-              }}
-              title={currentUser 
-                ? (currentUser.name || (lang === 'en' ? 'My Profile' : 'حسابي')) 
-                : t.nav.login}
-              style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
-            >
-              <span className="navbar-auth-btn-icon">
-                {currentUser?.avatar ? (
-                  <img
-                    src={currentUser.avatar}
-                    alt=""
-                    style={{ width: '18px', height: '18px', borderRadius: '50%', objectFit: 'cover', display: 'block' }}
-                  />
-                ) : (
+                }}
+                title={t.nav.login}
+              >
+                <span className="navbar-auth-btn-icon">
                   <User size={15} />
-                )}
-              </span>
-              <span className="navbar-auth-btn-label">
-                {currentUser 
-                  ? (currentUser.name || (lang === 'en' ? 'My Profile' : 'حسابي')) 
-                  : t.nav.login}
-              </span>
-            </button>
+                </span>
+                <span className="navbar-auth-btn-label">
+                  {t.nav.login}
+                </span>
+              </button>
+            )}
           </div>
         </nav>
       </div>
