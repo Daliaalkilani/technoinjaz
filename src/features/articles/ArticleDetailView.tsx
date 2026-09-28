@@ -249,7 +249,6 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               sizes="(max-width: 1023.98px) 100vw, (max-width: 1720px) calc(100vw - 420px), 1280px"
               priority 
             />
-            <div className="article-banner-ambient-glow" style={{ backgroundColor: article.categoryColor }} />
           </div>
 
           {/* Table of contents (phones & tablets) */}
@@ -257,7 +256,6 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             variant="accordion"
             items={toc}
             title={isEn ? "Table of Contents" : "فهرس محتويات المقال"}
-            countLabel={isEn ? `${toc.length} sections` : `${toc.length} فقرة`}
           />
 
           {/* Server-Rendered Markdown Body passed as children */}
@@ -311,6 +309,21 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                 {isItemSaved ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
                 <span>{isItemSaved ? (isEn ? "Saved" : "محفوظ") : (isEn ? "Save" : "حفظ")}</span>
               </button>
+              <button
+                type="button"
+                className="article-action-btn comment-action-btn"
+                onClick={() => {
+                  const el = document.getElementById('article-discussion');
+                  el?.scrollIntoView({ behavior: 'smooth' });
+                  const textarea = document.querySelector<HTMLTextAreaElement>('.comment-textarea');
+                  textarea?.focus();
+                }}
+                title={isEn ? "Comments" : "التعليقات"}
+                aria-label={isEn ? "Comments" : "التعليقات"}
+              >
+                <MessageSquare size={17} />
+                <span>{comments.length}</span>
+              </button>
             </div>
 
             <button
@@ -325,16 +338,8 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             </button>
           </div>
 
-          {/* End-of-article navigation: where readers decide what to do next */}
-          <nav className="article-end-nav" aria-label={isEn ? "Article navigation" : "التنقل بين المقالات"}>
-            <Link href="/articles" className="article-back-nav-btn">
-              {isEn ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
-              <span>{isEn ? "Browse all articles" : "تصفّح كل المقالات"}</span>
-            </Link>
-          </nav>
-
           {/* Interactive Discussion Section */}
-          <section className="article-discussion-section">
+          <section className="article-discussion-section" id="article-discussion">
             <div className="discussion-header">
               <div className="discussion-title-wrap">
                 <MessageSquare size={20} className="discussion-icon" />
@@ -395,6 +400,14 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               )}
             </div>
           </section>
+
+          {/* End-of-article navigation: where readers decide what to do next */}
+          <nav className="article-end-nav" aria-label={isEn ? "Article navigation" : "التنقل بين المقالات"}>
+            <Link href="/articles" className="article-back-nav-btn">
+              {isEn ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
+              <span>{isEn ? "Browse all articles" : "تصفّح كل المقالات"}</span>
+            </Link>
+          </nav>
         </div>
 
         {/* Sidebar: Table of Contents & Related Articles */}
@@ -403,7 +416,6 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             variant="card"
             items={toc}
             title={isEn ? "Table of Contents" : "فهرس المقال"}
-            countLabel={isEn ? `${toc.length} sections` : `${toc.length} فقرة`}
           />
 
           {related.length > 0 && (

@@ -3,7 +3,6 @@
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { 
-  HelpCircle, 
   ChevronDown, 
   ChevronUp, 
   ArrowLeft, 
@@ -76,10 +75,6 @@ export const FaqSection: React.FC = () => {
     <section className="faq-section-container" dir={isEn ? 'ltr' : 'rtl'}>
       {/* 2. Page Header */}
       <div className="faq-header-wrapper">
-        <div className="faq-header-badge">
-          <HelpCircle size={15} />
-          <span>{isEn ? "Knowledge Base & Inquiries" : "مركز الإجابات والاستفسارات"}</span>
-        </div>
         <h1 className="faq-page-main-title">
           {isEn ? "Frequently Asked Questions" : "الأسئلة الشائعة"}
         </h1>
@@ -128,6 +123,7 @@ export const FaqSection: React.FC = () => {
                 <article 
                   key={item.id} 
                   className={`faq-accordion-item ${isOpen ? 'is-open' : ''}`}
+                  onMouseEnter={() => setOpenItems({ [item.id]: true })}
                 >
                   <button
                     type="button"

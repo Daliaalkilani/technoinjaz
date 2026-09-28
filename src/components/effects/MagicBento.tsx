@@ -8,8 +8,6 @@ import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { useSavedProjects } from '@/hooks/useSavedProjects';
 import './MagicBento.css';
 
-import ch6 from '@/assets/showcase/chapter4-06.webp';
-
 export interface BentoCardItem {
   color?: string;
   title: string;
@@ -79,13 +77,13 @@ const defaultCardData: BentoCardItem[] = [
   },
   {
     color: '#0d1629',
-    title: 'حوكمة وموثوقية النظم الذكية VVUQ',
-    titleEn: 'AI Verification & Uncertainty (VVUQ)',
-    description: 'معايير التحقق من صحة النماذج الرقمية، وقياس عدم اليقين وأمن البيانات التشغيلية في 2026.',
-    descriptionEn: 'Engineering validation, uncertainty quantification, and operational trust in predictive systems.',
-    label: 'هندسة الموثوقية',
-    labelEn: 'Reliability Engineering',
-    image: (ch6 as any).src || ch6
+    title: 'ما هو إنترنت الأشياء (IoT)؟ البنية والبروتوكولات والتطبيقات والأمان',
+    titleEn: 'What is IoT? Architecture, Protocols & Security Standards',
+    description: 'دليل شامل لإنترنت الأشياء (IoT): البنية الهندسية، مقارنة MQTT وCoAP، وتقنيات الاتصال والأمان المعتمدة.',
+    descriptionEn: 'Architectural layers of IoT, MQTT vs CoAP protocols, edge intelligence, and zero-trust IoT security standards.',
+    label: 'إنترنت الأشياء',
+    labelEn: 'Internet of Things',
+    image: '/images/articles/internet-of-things-iot.png'
   }
 ];
 
@@ -634,7 +632,7 @@ const MagicBento: React.FC<MagicBentoProps> = ({
             'emotion-aware-recommendation',
             'model-context-protocol-mcp',
             'next-token-prediction',
-            'digital-twin'
+            'internet-of-things-iot'
           ];
           const targetSlug = articleSlugs[index] || 'digital-twin';
           const articleId = targetSlug;

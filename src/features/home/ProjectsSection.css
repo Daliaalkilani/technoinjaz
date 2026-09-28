@@ -2,13 +2,14 @@
 .projects-section {
   position: relative;
   width: 100%;
-  min-height: 100vh;
+  min-height: auto;
   background-color: #030508;
   color: #ffffff;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 5vw, 4rem);
+  justify-content: flex-start;
+  padding: clamp(2.5rem, 4vw, 4rem) clamp(1.5rem, 5vw, 4rem) clamp(4rem, 6vw, 6rem);
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -199,7 +200,7 @@
 
 @media (max-width: 640px) {
   .projects-section {
-    padding: 3.5rem 1rem 4.5rem;
+    padding: 2.5rem 1rem 3.5rem;
   }
 
   .projects-heading {

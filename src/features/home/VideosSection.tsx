@@ -71,7 +71,7 @@ const VideosSection: React.FC<VideosSectionProps> = ({
             <CardSwap
               cardDistance={95}
               verticalDistance={85}
-              delay={3500}
+              delay={2200}
               pauseOnHover
               width={500}
               height={425}

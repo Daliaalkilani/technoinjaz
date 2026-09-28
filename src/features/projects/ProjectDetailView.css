@@ -12,6 +12,7 @@
 }
 
 /* Breadcrumb Navigation */
+.project-breadcrumbs,
 .project-breadcrumb-nav {
   display: flex;
   align-items: center;
@@ -22,32 +23,46 @@
   color: var(--text-muted);
 }
 
-.breadcrumb-btn {
+.project-breadcrumbs .breadcrumb-link,
+.project-breadcrumb-nav .breadcrumb-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   background: none;
   border: none;
   color: var(--text-muted);
+  text-decoration: none;
   cursor: pointer;
-  padding: 0;
-  transition: color 0.2s ease;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: color 0.2s ease, background-color 0.2s ease;
 }
 
-.breadcrumb-btn:hover {
-  color: #00d2ff;
+.project-breadcrumbs .breadcrumb-link:visited,
+.project-breadcrumb-nav .breadcrumb-btn:visited {
+  color: var(--text-muted);
 }
 
-.breadcrumb-sep {
+.project-breadcrumbs .breadcrumb-link:hover,
+.project-breadcrumb-nav .breadcrumb-btn:hover {
+  color: var(--accent-cyan);
+  background: rgba(0, 210, 255, 0.08);
+}
+
+.project-breadcrumbs .breadcrumb-separator,
+.project-breadcrumb-nav .breadcrumb-sep {
   opacity: 0.4;
+  color: var(--text-muted);
 }
 
-.breadcrumb-category {
-  color: #38bdf8;
+.project-breadcrumbs .breadcrumb-category,
+.project-breadcrumb-nav .breadcrumb-category {
+  color: var(--accent-cyan);
   font-weight: 500;
 }
 
-.breadcrumb-current {
+.project-breadcrumbs .breadcrumb-current,
+.project-breadcrumb-nav .breadcrumb-current {
   color: var(--text-main);
   font-weight: 600;
 }
@@ -130,7 +145,7 @@
 .project-meta-action-bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   flex-wrap: wrap;
   gap: 16px;
   padding: 14px 0;

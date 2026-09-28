@@ -133,6 +133,15 @@ select {
   font-family: 'Readex Pro', var(--font-readex), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:visited {
+  color: inherit;
+}
+
 /* Screen reader only utility (A11y & Crawlability) */
 .sr-only {
   position: absolute !important;

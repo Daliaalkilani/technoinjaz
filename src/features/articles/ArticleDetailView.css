@@ -205,8 +205,6 @@
   position: relative;
   width: 100%;
   max-width: 100%;
-  aspect-ratio: 16 / 9;
-  max-height: 520px;
   border-radius: 24px;
   overflow: hidden;
   margin-bottom: 3rem;
@@ -221,18 +219,14 @@
 .article-fullscreen-banner-img,
 .article-fullscreen-banner {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
   display: block;
 }
 
 .article-banner-ambient-glow {
-  position: absolute;
-  inset: 0;
-  opacity: 0.15;
-  mix-blend-mode: color-dodge;
-  pointer-events: none;
+  display: none;
 }
 
 /* Article Body Content */
@@ -399,137 +393,7 @@
   color: #ffffff;
 }
 
-.article-comment-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 2rem;
-  background: rgba(15, 23, 42, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
-  padding: 14px;
-}
 
-.comment-name-field {
-  padding: 8px 14px;
-  border-radius: 12px;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #ffffff;
-  font-family: inherit;
-  font-size: 0.875rem;
-  outline: none;
-  max-width: 260px;
-}
-
-.comment-textarea-wrap {
-  position: relative;
-  width: 100%;
-}
-
-.comment-text-field {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 12px 14px 44px 14px;
-  border-radius: 14px;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #ffffff;
-  font-family: inherit;
-  font-size: 0.925rem;
-  outline: none;
-  resize: vertical;
-}
-
-.comment-submit-btn {
-  position: absolute;
-  bottom: 12px;
-  inset-inline-end: 12px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: 9999px;
-  background: #0284c7;
-  border: none;
-  color: #ffffff;
-  font-family: inherit;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.comment-submit-btn:hover {
-  background: #0ea5e9;
-}
-
-.article-comments-list {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.no-comments-msg {
-  padding: 2rem;
-  text-align: center;
-  color: #94a3b8;
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 14px;
-}
-
-.article-comment-item {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-}
-
-.comment-avatar-placeholder {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #0284c7, #0d9488);
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 0.875rem;
-  flex-shrink: 0;
-}
-
-.comment-bubble {
-  flex: 1;
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 16px;
-  padding: 10px 14px;
-}
-
-.comment-bubble-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 4px;
-}
-
-.comment-author-name {
-  font-size: 0.825rem;
-  font-weight: 700;
-  color: #f1f5f9;
-}
-
-.comment-date-meta {
-  font-size: 0.75rem;
-  color: #64748b;
-}
-
-.comment-body-text {
-  margin: 0;
-  font-size: 0.875rem;
-  color: #cbd5e1;
-  line-height: 1.55;
-}
 
 /* ==========================================================================
    TABLE OF CONTENTS (TOC) & HEADING SCROLL
@@ -756,6 +620,7 @@
 [data-theme="light"] .article-fullscreen-banner-wrap {
   border-color: rgba(0, 0, 0, 0.08);
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+  background: #f8fafc;
 }
 
 [data-theme="light"] .article-content-paragraph {
@@ -1291,6 +1156,14 @@
   box-shadow: 0 4px 18px rgba(245, 158, 11, 0.25);
 }
 
+/* Comment Button */
+.article-action-btn.comment-action-btn:hover {
+  background: rgba(56, 189, 248, 0.1);
+  border-color: rgba(56, 189, 248, 0.35);
+  color: #38bdf8;
+  box-shadow: 0 4px 16px rgba(56, 189, 248, 0.2);
+}
+
 /* Share Button */
 .article-action-btn.share-action-btn:hover {
   background: rgba(56, 189, 248, 0.1);
@@ -1380,13 +1253,11 @@
 .comment-form-actions {
   display: flex;
   justify-content: flex-end;
-}
-
-[dir="rtl"] .comment-form-actions {
-  justify-content: flex-start;
+  margin-top: 6px;
 }
 
 .comment-submit-btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 9px;

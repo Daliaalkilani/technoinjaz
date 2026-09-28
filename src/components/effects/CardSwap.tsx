@@ -81,9 +81,9 @@ const CardSwap: React.FC<CardSwapProps> = ({
     easing === 'elastic'
       ? {
           ease: 'elastic.out(0.6,0.9)',
-          durDrop: 2,
-          durMove: 2,
-          durReturn: 2,
+          durDrop: 1.2,
+          durMove: 1.2,
+          durReturn: 1.2,
           promoteOverlap: 0.9,
           returnDelay: 0.05
         }

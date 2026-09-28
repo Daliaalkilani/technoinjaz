@@ -39,6 +39,22 @@
   box-sizing: border-box;
 }
 
+.scroll-expand__stage::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(to bottom, transparent 0%, rgba(3, 5, 8, 0.4) 35%, #030508 100%);
+  pointer-events: none;
+  z-index: 4;
+}
+
+[data-theme="light"] .scroll-expand__stage::after {
+  background: linear-gradient(to bottom, transparent 0%, rgba(248, 250, 252, 0.4) 35%, #f8fafc 100%);
+}
+
 .scroll-expand__frame {
   position: absolute;
   inset: 0;

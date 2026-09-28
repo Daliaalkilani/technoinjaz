@@ -26,24 +26,24 @@ const getResponsiveConfig = (width: number): ResponsiveConfig => {
     return {
       startWidth: 84,
       startHeight: 54,
-      scrollDistance: 0.60,
-      holdDistance: 0.20,
+      scrollDistance: 0.55,
+      holdDistance: 0.03,
       mediaZoom: 1.25,
     };
   } else if (width < 1024) {
     return {
       startWidth: 80,
       startHeight: 58,
-      scrollDistance: 0.85,
-      holdDistance: 0.25,
+      scrollDistance: 0.75,
+      holdDistance: 0.05,
       mediaZoom: 1.30,
     };
   } else {
     return {
       startWidth: 76,
       startHeight: 64,
-      scrollDistance: 1.10,
-      holdDistance: 0.35,
+      scrollDistance: 0.90,
+      holdDistance: 0.06,
       mediaZoom: 1.35,
     };
   }

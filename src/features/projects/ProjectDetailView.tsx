@@ -7,7 +7,6 @@ import Link from 'next/link';
 import { 
   ArrowRight, 
   ArrowLeft, 
-  Clock, 
   Bookmark, 
   BookmarkCheck, 
   Share2, 
@@ -16,8 +15,7 @@ import {
   Layers, 
   ShieldCheck,
   Send,
-  PhoneCall,
-  Sparkles
+  PhoneCall
 } from 'lucide-react';
 import type { ProjectItem } from '@/data/projectsData';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
@@ -125,19 +123,8 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
           </div>
         </div>
 
-        {/* Metadata Bar & Actions */}
+        {/* Actions Bar */}
         <div className="project-meta-action-bar">
-          <div className="project-meta-left">
-            <span className="project-meta-item">
-              <Clock size={15} />
-              <span>{isEn ? "Verified Study" : "دراسة حالة معتمدة"}</span>
-            </span>
-            <span className="project-meta-item">
-              <Sparkles size={15} />
-              <span>{isEn ? "Prototype Model" : "نموذج تطبيقي"}</span>
-            </span>
-          </div>
-
           <div className="project-action-buttons">
             <button
               type="button"
@@ -178,7 +165,6 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
         variant="accordion"
         items={toc}
         title={isEn ? "Project contents" : "فهرس محتويات المشروع"}
-        countLabel={isEn ? `${toc.length} sections` : `${toc.length} قسم`}
       />
 
       {/* Main Content Layout: Markdown Body + Sidebar TOC */}
@@ -236,7 +222,6 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
             variant="card"
             items={toc}
             title={isEn ? "Project contents" : "فهرس المشروع"}
-            countLabel={isEn ? `${toc.length} sections` : `${toc.length} قسم`}
           />
 
           {/* Sidebar Related Projects */}

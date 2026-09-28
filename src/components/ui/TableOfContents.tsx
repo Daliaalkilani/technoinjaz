@@ -13,7 +13,7 @@ export interface TocItem {
 interface TableOfContentsProps {
   items: TocItem[];
   title: string;
-  countLabel: string;
+  countLabel?: string;
   /** `card`: sticky sidebar card (≥1024px). `accordion`: collapsible block in the content column (<1024px). */
   variant: 'card' | 'accordion';
 }
@@ -41,7 +41,7 @@ function useActiveHeading(items: TocItem[]) {
   return [activeId, setActiveId] as const;
 }
 
-export default function TableOfContents({ items, title, countLabel, variant }: TableOfContentsProps) {
+export default function TableOfContents({ items, title, variant }: TableOfContentsProps) {
   const [activeId, setActiveId] = useActiveHeading(items);
   const [isOpen, setIsOpen] = useState(false);
   const panelId = useId();
@@ -91,7 +91,6 @@ export default function TableOfContents({ items, title, countLabel, variant }: T
           <span className="te-toc__title-wrap">
             <ListOrdered size={18} className="te-toc__icon" aria-hidden="true" />
             <span className="te-toc__title">{title}</span>
-            <span className="te-toc__badge">{countLabel}</span>
           </span>
           <ChevronDown size={18} className="te-toc__chevron" aria-hidden="true" />
         </button>
@@ -109,7 +108,6 @@ export default function TableOfContents({ items, title, countLabel, variant }: T
           <ListOrdered size={18} className="te-toc__icon" aria-hidden="true" />
           <span className="te-toc__title">{title}</span>
         </span>
-        <span className="te-toc__badge">{countLabel}</span>
       </div>
       <div className="te-toc__scroll">{list}</div>
     </nav>
