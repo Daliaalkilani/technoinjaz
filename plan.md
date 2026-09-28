@@ -1,1577 +1,1192 @@
-# خطة ترحيل Techno Enjaz إلى Next.js (SSG/SSR) على Cloudflare Workers
+# خطة Responsive/Adaptive + Assets لموقع Techno Enjaz
 
-> **لمن هذه الوثيقة:** Coding Agent سينفّذ الترحيل خطوة بخطوة.
-> **القاعدة الذهبية:** كل القرارات المعمارية محسومة هنا. لا تتخذ قراراً معمارياً جديداً. إذا واجهت حالة غير مغطاة، توقّف واسأل المالك.
-> **Repository:** `github.com/Daliaalkilani/technoinjaz`
-> **الحالة عند كتابة الخطة:** آخر commit هو `2d5567d`. المشروع React 19 + Vite 8 SPA بـhash routing.
-
----
-
-## 0. قواعد غير قابلة للتفاوض
-
-1. **لا صفحة عامة تعتمد على React CSR لإظهار محتواها الأساسي.** كل صفحة عامة تُسلَّم كـHTML كامل من الخادم (SSG أو SSR). وجود أي صفحة عامة يُبنى محتواها في المتصفح = **FAILURE**.
-2. **الإطار النهائي:** Next.js App Router على Cloudflare Workers عبر `@opennextjs/cloudflare`. هذا القرار نهائي للحاضر والمستقبل. التطوير اللاحق يغيّر **إعداد rendering لكل route** فقط، ولا يغيّر المعمارية.
-3. **الافتراضي لكل route عام هو SSG.** يتحول route إلى ISR أو SSR فقط وفق "دليل التحويل" (القسم 12). البنية التحتية لـISR و SSR تُجهَّز من اليوم.
-4. **لا redesign.** يبقى كما هو: التصميم والألوان والخطوط والمسافات والـanimations و GSAP و framer-motion و OGL و WebGL و Canvas والسلوك على الموبايل.
-5. **لا تخترع بيانات.** الـstructured data والـmetadata تأتي فقط من محتوى موجود في الـrepo أو من قيمة أكّدها المالك.
-6. **حافظ على الـslugs كما هي حرفياً.** الـURLs الجديدة محددة في القسم 5.3، والروابط القديمة (hash) تُحوَّل تلقائياً.
-7. كل مرحلة تنتهي بـcommit مستقل، ولا تبدأ مرحلة قبل نجاح Validation المرحلة السابقة.
+> **لمن هذه الوثيقة:** الـCoding Agent.
+>
+> **خطة الترحيل إلى Next.js (المشار إليها هنا باسم "خطة الترحيل" بمراحلها P0–P12):** كانت سابقاً في هذا الملف، وهي محفوظة في تاريخ git. لقراءتها:
+> ```bash
+> git show 60933a1:plan.md
+> ```
+> أو على GitHub: `https://github.com/Daliaalkilani/technoinjaz/blob/60933a1/plan.md`
+>
+> **ترتيب التنفيذ:**
+> - R2 و R3 من هذه الخطة تحل محل الخطوات P8.2 و P8.3 و P8.4 في خطة الترحيل.
+> - باقي مراحل هذه الخطة (R0 و R1 و R4 إلى R9) تُنفذ **بعد نجاح P11 في خطة الترحيل**، لأن هذه الخطة تغيّر الشكل **عمداً** على الموبايل والتابلت، و P11 يثبت أن الترحيل لم يغيّره.
+> - إذا كان الترحيل لم يبدأ بعد أو لن يُنفذ: نفّذ هذه الخطة على الكود الحالي، وطبّق المسارات والمكونات حسب ما هو موجود فعلاً في الـrepo.
+>
+> **القاعدة الذهبية:** القرارات هنا محسومة. أي حالة غير مغطاة: توقف واسأل المالك.
 
 ---
 
-## 1. Executive Summary
+## 0. تصحيحات على خطة الترحيل (الـrepo تغيّر بعد كتابتها)
 
-**الوضع الحالي:**
-- SPA يُعرض بالكامل في المتصفح. الملف `dist/index.html` لا يحتوي إلا `<div id="root"></div>`.
-- كل التنقل عبر hash: `#articles` و `#article/slug` و `#project/slug` وغيرها. محركات البحث تعامل هذا كله كـURL واحد.
-- الـcanonical والـsitemap يشيران إلى دومين غير موجود (`techno-enjaz.com`) ومسارات لا تعرض المحتوى.
-- ملف JS واحد بحجم 1.4MB (436KB gzip)، يضم كل المقالات والمشاريع.
+تحقّقت من آخر commits (`3c92b59` و `68db100`):
 
-**القرار:**
-- **Next.js App Router + React 19 + TypeScript** على **Cloudflare Workers (OpenNext)**.
-- **SSG لكل الصفحات العامة اليوم.** المحتوى كله ملفات داخل الـrepo، ولا يوجد backend.
-- **بنية ISR و SSR جاهزة من اليوم:** ‏R2 incremental cache و D1 tag cache و Durable Object queue.
-- **React Server Components** تبقي الـmarkdown وملفات البيانات ومكتبة `marked` على الخادم.
-- **Client Components** للتفاعل فقط: الـnav والـanimations والـWebGL والفلاتر والإعجابات والتعليقات والـtheme واللغة.
-
-**لماذا ليس SSR لكل شيء:** لا توجد اليوم أي بيانات تتغير حسب الطلب أو حسب المستخدم على الخادم. الـauth الحالي يعيش في localStorage، ولا يصل للخادم. SSR هنا يعني تشغيل Worker عند كل زيارة لإنتاج نفس الـHTML، أي زمن استجابة وتكلفة أعلى بدون أي فائدة SEO. عندما يظهر سبب حقيقي (مصادقة بـcookies أو CMS)، يتحول الـroute المعني وحده (القسم 12).
+1. **`src/assets/projects/techno-projects/*` أصبحت مستخدمة** في الرئيسية (InfiniteSpiral: ‏`project-01` إلى `project-14`). **لا تحذفها** رغم ورودها في القسم 2.1 من خطة الترحيل. القاعدة العامة هناك (`grep` قبل الحذف) تبقى ملزمة.
+2. **الأيقونات أُضيفت فعلاً في `public/`:** ‏`favicon.ico`، و `favicon-16x16.png`، و `favicon-32x32.png`، و `favicon-48x48.png`، و `apple-touch-icon.png` (180)، و `android-chrome-192x192.png`، و `android-chrome-512x512.png`، و `manifest.webmanifest`.
+   - في P10 من خطة الترحيل: **استخدم هذه الملفات كما هي**.
+   - انقل قيم `manifest.webmanifest` حرفياً إلى `src/app/manifest.ts` (أو اترك الملف في `public/` واحذف `manifest.ts`. **اختر واحداً فقط**، والمفضل `manifest.ts` مع حذف الملف الثابت).
+   - `public/favicon.svg` ما زال **شعار Vite**. يُستبدل في R2 بشعار SVG الحقيقي.
 
 ---
 
-## 2. Repository Audit (ما وُجد فعلياً)
+## 1. نتائج الفحص الفعلي (قياس وليس تخمين)
 
-| البند | النتيجة |
-|---|---|
-| Stack | ‏React 19.2 و Vite 8.3 و TypeScript 6 و oxlint. لا router |
-| Entry | `index.html` ← `src/main.tsx` ← `ThemeLanguageProvider` ← `src/App.tsx` (931 سطراً، كل الـ"routing" فيه كـstate) |
-| Build الحالي | ‏`tsc -b && vite build` ينجح. ‏Lint فيه warnings فقط |
-| Bundle | ‏`index.js` حجمه 1,405KB (436KB gz). ‏Lazy فقط لـ Profile و Contact و Auth و UserProfile و ProjectsCatalog و FAQ |
-| Network | لا يوجد `fetch` أو API أو env. الخارجي فقط: Google Fonts، و YouTube-nocookie iframe في modal، و Google Maps iframe في Contact، وصور Unsplash لأعضاء الفريق |
-| localStorage | `techno_theme`، `theme`، `techno_theme_manual`، `techno_lang`، `techno_user`، `techno_logged_out`، `techno_blog_likes`، `techno_blog_comments`، `techno_reels_likes`، `techno_reels_comments`، `techno_saved_projects` + مفاتيح per-user |
-| sessionStorage | `techno_auth_return_hash` |
-| Auth | **Mock:** أي بريد وكلمة سر تُقبل، ويُخزَّن user في localStorage بحالة "حساب موثق". لا backend |
-| Animation libs | ‏gsap: ‏CinematicFooter و ui/CardSwap و videos/CardSwap و MagicBento. ‏framer-motion: ‏scroll-progress و svg-follow-scroll و auth-switch. ‏ogl: ‏Orb. ‏gl-matrix + WebGL2: ‏InfiniteMenu. ‏Canvas 2D: ‏TeamMomentsRing و الـloader |
-| Dependencies غير مستخدمة | `three`، `@types/three`، `page-flip`، `@types/page-flip`، `pdfjs-dist` |
-| Loader | صاروخ Canvas بملء الشاشة (`public/loader/`) يعمل في **كل** تحميل صفحة لمدة 2.5s تقريباً |
-| Fonts | ‏Readex Pro (6 أوزان) يُحمَّل **مرتين**: `<link>` في index.html و `@import` في `src/index.css` |
-| Favicon | `<link rel=icon href=/loader/assets/brand.webp>`. الملف `public/favicon.svg` هو شعار Vite الافتراضي. لا apple-touch-icon ولا manifest |
-| Assets | ‏`public` حجمه 34MB و `src/assets` حجمه 47MB. صور PNG بين 1.3 و1.9MB. `5g-iot.png` مطابقة لـ`internet-of-things-iot.png` |
-| Domain | `technoenjaz.com` خلف Cloudflare ويرجع 525 (مشكلة SSL في الـorigin). `techno-enjaz.com` **لا يُحلّ في DNS** |
-| Hosting | غير موثّق في الـrepo. المالك قرر: **Cloudflare Workers + OpenNext** |
-| SSR probe | كل المكونات الرئيسية (App و OfficeBlog و ArticleDetail و Catalog و ProjectDetail و FAQ و Contact و Reels) تُعرض بـ`renderToString` في Node **بدون crash**. الترحيل لا يحتاج إعادة كتابة المكونات |
+**طريقة الفحص:**
+- بناء الموقع الحالي، ثم Playwright/Chromium على 10 صفحات × 9 مقاسات: ‏320، و 360، و 390، و 844×390 (موبايل أفقي)، و 768، و 820، و 1024 أفقي، و 1180 أفقي (iPad Air)، و 1440.
+- لكل حالة: قياس الـoverflow الأفقي، وأحجام أهداف اللمس، والنصوص الأصغر من 12px، والصور الأكبر من الحاجة، ووزن الصور المحمّلة.
 
-### 2.1 ملفات غير مستخدمة (غير قابلة للوصول من entry)
+### 1.1 مشاكل حرجة
 
-- `src/App.css`، و `src/PrismaticBurst.*`، و `src/ScrollReveal.*`، و `src/TextLoop.*`.
-- `src/components/articles/ArticleReaderModal.*`.
-- `src/components/ui/`: ‏`FacetedText.tsx` و `GridDistortion.*` و `OptionWheel.*` و `demo.jsx` و `demo.tsx` و `interactive-hover-button.jsx` و `interactive-hover-button.tsx` و `scroll-progress.jsx` و `svg-follow-scroll.jsx`.
-- `src/registry/magicui/interactive-hover-button.jsx`، و `src/lib/utils.js`، و `src/data/driveProjectsData.ts`.
-- `src/assets/`: ‏`react.svg` و `vite.svg` و `hero.png` و `cinematic-engineering.jpg`.
-- `src/assets/articles/*` (نسخ مكررة من `public/articles/`).
-- `src/assets/projects/techno-projects/*`.
-- `src/content/articles/*-seo.md`: غير مستوردة **عمداً**. هي حزم SEO داخلية كُتب عليها "DO NOT PUBLISH". **تبقى في الـrepo.**
+| # | المشكلة | أين | السبب الجذري (مؤكد) |
+|---|---|---|---|
+| C1 | **Overflow أفقي في كل الصفحات** (scrollWidth بين 1201 و 1221) | العروض من 961 إلى ~1220px: ‏iPad أفقي 1024 و 1180، ولابتوبات صغيرة | `nav#navbar` بـ`display:grid` وأعمدة `134px + 716px + 311px = 1161px`. الـbreakpoint الوحيد للـnav هو `max-width: 960px` في `src/index.css`، فالمجال بين 961 و 1220 بلا معالجة |
+| C2 | **صفحة المقال تُعرض مصغّرة (zoomed-out)** على كل الموبايلات (320، و 360، و 390) | `#article/*` | عناصر `ol > li > p` في قائمة المراجع تحتوي روابط URL طويلة غير قابلة للكسر (عرض 655px). المتصفح يوسّع الـlayout إلى 667px ويصغّر الصفحة كلها. النص يصبح صغيراً جداً |
+| C3 | **الرئيسية تحمّل 22.5MB صور على الموبايل** | `/` | 14 صورة `project-NN.png` بدقة 1254×1254 (حتى 1.7MB لكل واحدة) تُعرض بعرض 140–190px. `Asset-1@4x.png` بدقة 2449px يُعرض بـ78px. ‏`im1` و `im2` و `hero-bg-distortion` PNG بين 1.3 و 1.9MB. أغلبها `loading=eager` |
+| C4 | **قائمة التنقل على الموبايل مقطوعة** | كل الصفحات < 768px | 7 روابط في شريط أفقي قابل للتمرير (522px داخل 366px). "الرئيسية" و"من نحن" مقطوعتان بلا أي إشارة أن هناك المزيد. الـheader يأخذ 105px من الشاشة |
+| C5 | **أهداف لمس صغيرة** | كل الصفحات | روابط الـnav بارتفاع 30px، وزر اللغة 32px، وأزرار البطاقات. المطلوب ≥ 44×44px |
+
+### 1.2 مشاكل متوسطة
+
+| # | المشكلة | الأرقام |
+|---|---|---|
+| M1 | نصوص أصغر من 12px | ‏`/projects`: 77 عنصراً (`.cat-count` 11px، و `.card-cat-badge` 11.5px، و `.card-tag-item`). ‏`/videos`: 92 عنصراً (`.engineer-pill-role` 10.56px، و `.cinema-project-desc` 11.84px). ‏`.footer-copyright` 11px في كل الصفحات |
+| M2 | **235 قاعدة `:hover` بدون أي `@media (hover: hover)`** | على اللمس يعلق تأثير الـhover بعد النقر (sticky hover) |
+| M3 | `100vh` مستخدم في 23 مكاناً، و `dvh` و `svh` في 8 فقط | على iOS و Android الأقسام بارتفاع الشاشة تُقص تحت شريط العنوان أو تقفز عند التمرير |
+| M4 | لا دعم لـ`safe-area-inset` ولا `viewport-fit=cover` | الأجهزة ذات النوتش وشريط الإيماءات: أزرار Reels السفلية قريبة من حافة الإيماءات |
+| M5 | 16 قيمة breakpoint مختلفة | ‏380، و 480، و 599، و 600، و 640، و 768، و 820، و 850، و 900، و 950، و 960، و 992، و 1024 (max)، و 600 و 1024 (min). ‏C1 نتيجة مباشرة لهذا التشتت |
+| M6 | صور أكبر من الحاجة على التابلت واللابتوب | ‏`/projects` على 1440 فيه 27 صورة أكبر من ضعف الحاجة، ووزن الصفحة 22.7MB |
+| M7 | صور مكررة في الـrepo | ‏`src/assets/articles/*` = ‏`public/articles/*`. ‏`Asset-1@4x.png` في الجذر = ‏`assets/logo.png` = ‏`src/assets/Asset-1@4x.png`. ‏`public/loader/assets/original-logo.png` (600KB) و `logo.webp` و `brand.webp` غير مستخدمة |
+
+### 1.3 ما يعمل جيداً (لا تلمسه)
+
+- الموبايل الأفقي (844×390): لا overflow.
+- التابلت العمودي (768 و 820): لا overflow، والـnav على سطرين يعمل جيداً. **هذا هو النموذج لسلوك التابلت.**
+- اللابتوب 1440: سليم.
 
 ---
 
-## 3. Current Architecture
+## 2. القرارات المعمارية
 
-```text
-Request (any path) → index.html (empty #root + rocket loader overlay)
-→ 1.4MB JS → React mounts → App reads location.hash
-→ useState: currentTab / isContactOpen / isAuthOpen / selectedMember / isUserProfileOpen
-→ conditional render of the "page"
-→ Article/Project SEO: document.title + meta + canonical + JSON-LD injected in useEffect (CSR only)
+### 2.1 Responsive أم Adaptive؟
+
+**القرار: Responsive كأساس + Adaptive على مستوى المكونات فقط.**
+
+| الطبقة | الأسلوب | السبب |
+|---|---|---|
+| Layout والـtypography والمسافات والشبكات | **Responsive** (fluid: `clamp()` و rem و grid auto-fit + breakpoints موحدة) | محتوى واحد يتكيف مع كل عرض، و HTML واحد (مهم للـSSG والـSEO) |
+| الـNavigation | **Adaptive** (بنية مختلفة حسب العرض: desktop bar، و tablet two-row، و mobile drawer) | 7 روابط لا يمكن أن تتسع في 360px بشكل مقروء |
+| المؤثرات الثقيلة (WebGL و Canvas و GSAP magnetic و hover) | **Adaptive حسب قدرة الجهاز** (`pointer` و `hover` و `prefers-reduced-motion` و `saveData` و `deviceMemory`) | نفس العرض قد يكون هاتفاً ضعيفاً أو تابلت قوياً. العرض وحده لا يكفي |
+| الصور | **Responsive images** (`<picture>` + AVIF و WebP + `srcset` و `sizes`) | المتصفح يختار الملف المناسب لعرض الشاشة وكثافتها |
+
+**لماذا ليس Adaptive كامل** (قوالب HTML منفصلة للموبايل): يضاعف الصيانة، ويكسر SSG (صفحة واحدة لكل URL)، ويسبب محتوى مختلفاً للـcrawler حسب الجهاز.
+
+### 2.2 مسألة dp و px (مهم)
+
+- **CSS `px` في الويب هو أصلاً وحدة مستقلة عن الكثافة.** ‏1 CSS px يعادل `dp` في Android و `pt` في iOS. المتصفح يضربه بـ`devicePixelRatio` (DPR) تلقائياً: على iPhone بـDPR=3 فإن 1 CSS px = 3 بكسلات فيزيائية.
+- **لذلك:**
+  1. **الأبعاد والمسافات:** `rem` للمسافات والخطوط (تحترم إعداد حجم الخط عند المستخدم)، و `px` مقبول للحدود (1px) والظلال. **ممنوع** ضبط `html { font-size: ...px }`. الأساس يبقى 16px من المتصفح.
+  2. **الصور النقطية (raster):** يجب توفير ملفات بعدة عروض فيزيائية لتغطية DPR من 1 إلى 3 عبر `srcset` مع `w` descriptors، والمتصفح يحسب `sizes × DPR`. هذه هي المعالجة الصحيحة لـ"dp" في الصور.
+  3. **الشعارات والأيقونات:** SVG (vector)، فتبقى حادة على أي DPR بملف واحد.
+  4. **أهداف اللمس:** الحد الأدنى **44×44 CSS px** (يعادل 44pt في iOS)، والمفضّل 48×48 (يعادل 48dp في Android Material).
+  5. **الـCanvas و WebGL:** حجم الـbuffer = حجم CSS × `min(devicePixelRatio, cap)`. الـcap يُحدد حسب فئة الجهاز (R6) لتفادي 3× على هواتف ضعيفة.
+
+### 2.3 الـBreakpoints الموحّدة (نهائية)
+
+```css
+/* src/styles/breakpoints.md (documentation) — values used in all @media */
+--bp-sm:  480px;   /* large phones */
+--bp-md:  768px;   /* tablet portrait */
+--bp-lg:  1024px;  /* tablet landscape / small laptop */
+--bp-xl:  1280px;  /* laptop */
+--bp-2xl: 1536px;  /* desktop */
 ```
 
-- ثلاثة مستمعين منفصلين لـ`hashchange`: في `App.tsx` و `OfficeBlogSection.tsx` و `ProjectsCatalogSection.tsx`.
-- **المقالات:** الـmetadata في `src/data/blogArticlesData.ts`، والنص في `src/content/articles/<slug>.md?raw`. التحويل في المتصفح بـ`marked`.
-- **المشاريع:** كل البيانات والـmarkdown داخل `src/data/projectsData.ts` (163KB) كـstrings. الـrenderer يُضبط global عبر `marked.setOptions({renderer})`، فيتسرّب إلى renderer المقالات.
-- **الـhead:** ثابت في `index.html`. الاستثناء صفحات المقال والمشروع التي تعدّله عبر useEffect.
+- CSS custom properties لا تعمل داخل `@media`. لذلك **القيم تُكتب حرفياً** في كل ملف، ويُمنع أي رقم غير هذه الخمسة (يُفحص بسكربت في R9).
+- **الاستثناء الوحيد:** `public/loader/loader.css` (380 و 600) لأنه مستقل عن React. اتركه.
+- **قاعدة الكتابة:** استخدم `max-width: <bp - 0.02px>` (مثل `max-width: 767.98px`) مع `min-width: <bp>` لتفادي تداخل الحدود. الكود الحالي يستخدم `max-width` فقط، فالتحويل كالتالي.
 
----
+**خريطة التحويل الإلزامية:**
 
-## 4. Current Problems (مؤكدة)
-
-### Rendering و Crawlability
-1. CSR كامل، والـHTML الأولي فارغ.
-2. كل الصفحات hash fragments، أي URL واحد من منظور محركات البحث.
-3. الـcanonical للمقالات `https://techno-enjaz.com/articles/<slug>`: دومين غير موجود، والمسار نفسه لا يعرض المقال.
-4. الـcanonical للمشاريع `https://techno-enjaz.com/#project/<slug>`: fragment ودومين خاطئ.
-5. البطاقات والـrelated والـbreadcrumbs و MagicBento كلها `div` أو `article` أو `button` بـ`onClick`. **لا توجد `<a href>`**.
-6. إجابات الـFAQ المغلقة غير موجودة في الـDOM (`{isOpen && ...}`).
-7. أسماء الفريق موجودة فقط داخل WebGL canvas (InfiniteMenu).
-
-### صحة البيانات و SEO
-8. تضارب الدومين: `technoenjaz.com` في index.html و llms.txt والبريد، و `techno-enjaz.com` في sitemap و robots والمقالات والمشاريع.
-9. الـsitemap فيه 5 مقالات فقط من 12، وروابط بـ`#`.
-10. ‏JSON-LD للمقالات يستخدم `datePublished: 2026-09-20` لكل المقالات، مع أن 7 منها نُشرت في 21.
-11. العنصر الثالث في breadcrumb المقال يشير للمقال نفسه باسم التصنيف.
-12. **H1 مكرر في كل صفحة مشروع (14 من 14):** الـmarkdown يبدأ بـ`# title`، والـcomponent يعرض H1 أيضاً.
-13. **124 تعليق HTML تحريري يظهر في الـDOM** في المشاريع (FEATURED IMAGE و IMAGE SLOT و GALLERY ITEM و Suggested Internal Link وروابط `docs.google.com`). مقتطف مشروع `interactive-children-ai-learning-system` يبدأ بـ`<!-- FEATURED IMAGE`، وبعض المقتطفات فيها `**`.
-14. `tags` لكل المشاريع = `["WebPage","BreadcrumbList","Organization","ImageObject"]`. تُعرض للمستخدم تحت "الوسوم والكلمات المفتاحية" وتُستخدم كـkeywords.
-15. العنوان متضارب: JSON-LD و README يقولان "طريق دمشق - حماة"، والـUI (Contact و FAQ و translations) يقول "حماة - ساحة العاصي - بناء الخاني - بجوار أفران السلام - الطابق الرابع".
-16. `og:image` نسبي، و `og:locale:alternate en_US` بدون صفحات إنجليزية.
-17. `twitter:site @TECHNO_ENJAZ` هو handle إنستغرام وغير مُتحقق على X.
-18. ‏llms.txt و llms-full.txt فيهما فريق مختلف عن `teamData` (Noor Al-Huda و Omar Farooq و Tala...)، و 5 مقالات فقط.
-
-### Trust و GEO
-19. `teamData.js`: سبعة أشخاص بصور Unsplash وبريد `@company.com` وروابط LinkedIn و GitHub مُفترضة. الصورة الوحيدة الحقيقية `/abdulghani.jpg`. هذه **بيانات placeholder**.
-20. أرقام تفاعل ثابتة (initialLikes و initialViews "3.4K" وتعليقات Reels جاهزة) تُعرض كأنها حقيقية.
-
-### Performance
-21. ملف JS بحجم 1.4MB على كل صفحة.
-22. صور PNG بين 1.3 و1.9MB، بدون srcset أو webp.
-23. الـloader يغطي كل صفحة 2.5s، حتى على صفحات المقالات القادم إليها زائر من البحث.
-24. الخط يُحمَّل مرتين.
-
-### Hydration readiness
-25. قراءة window و localStorage داخل `useState(() => ...)` في: `ThemeLanguageContext` و `App.currentUser` والـlikes والتعليقات (Blog و Reels) و `ScrollExpandPrototype.config` و `ProjectsSection.isMobile` و `ProjectsCatalogSection.activeProject` و `useSavedProjects`.
-26. ‏38 استخداماً لـ`theme === 'light' ? ... : ...` في inline styles.
-
-### Accessibility
-27. لا skip link، ولا `:focus-visible` مخصص. الـreduced-motion مدعوم في 4 أماكن فقط.
-28. بطاقات تُفتح بالنقر لكنها غير قابلة للوصول بالكيبورد، والـcanvas بدون بديل نصي.
-
----
-
-## 5. Complete Route Inventory
-
-### 5.1 Routes الحالية
-
-| Route الحالي | الغرض | المكونات | البيانات | Auth | Browser APIs | أهمية SEO |
-|---|---|---|---|---|---|---|
-| `/` و `#top` | الرئيسية | ScrollExpandPrototype (ScrollExpand و ProjectsSection/InfiniteSpiral و VideosSection/CardSwap و ArticlesSection/MagicBento) + قسم About (TeamMomentsRing و Skiper19 و InfiniteMenu و Orb) + CinematicFooter | translations و projects و videos و articles | لا | scroll و resize و WebGL و canvas | عالية جداً |
-| `#projects` | قائمة المشاريع | ProjectsCatalogSection | PROJECTS_DATA | لا | — | عالية |
-| `#project/<slug>` ×14 | تفاصيل مشروع | ProjectDetailView | markdownContent | الحفظ يحتاج login | clipboard و IntersectionObserver | عالية |
-| `#articles` | قائمة المقالات | OfficeBlogSection | blogArticlesData | الإعجاب يحتاج login | localStorage | عالية |
-| `#article/<slug>` ×12 | تفاصيل مقال | ArticleDetailView | md + metadata | التفاعل يحتاج login | localStorage و clipboard | **الأعلى** |
-| `#videos` | Reels | ProjectReelsFeed | projectReelsData | الإعجاب يحتاج login | localStorage | متوسطة |
-| `#faq` | الأسئلة الشائعة (13) | FaqSection | داخل الـcomponent | لا | — | عالية (AEO) |
-| `#about` | من نحن والفريق | قسم About (مكرر مرتين في App) | translations و teamData | لا | WebGL | متوسطة-عالية |
-| `#contact` | التواصل | ContactPage | translations | لا | — | عالية (local) |
-| `#profile-<id>` ×7 | عضو فريق | ProfilePage | teamData (placeholder) | لا | — | منخفضة |
-| `#login` و `#auth` و `#register` | دخول (mock) | AuthPage | — | — | localStorage | لا تُفهرس |
-| `#my-profile` و `#favorites` و `#profile` | الحساب والمحفوظات | UserProfilePage | localStorage | نعم | localStorage | لا تُفهرس |
-| `#academic-projects` | يُستدعى من UserProfilePage | لا handler له (dead link) | — | — | — | — |
-
-### 5.2 الـslugs الموجودة
-
-**المقالات (12):**
-`digital-twin`، `affective-computing`، `emotion-aware-recommendation`، `model-context-protocol-mcp`، `next-token-prediction`، `5g-iot`، `facial-expression-recognition-ai`، `internet-of-things-iot`، `embedded-serial-protocols`، `ai-image-classification`، `5g-nr-radio-architecture`، `smart-ai-ride-pooling`
-
-**المشاريع (14):**
-`virtual-board-hand-tracking`، `interactive-children-ai-learning-system`، `remote-controlled-ground-robot`، `robotic-hand-gesture-control`، `syrian-tourism-app`، `employee-presence-tracking`، `exam-computer-vision-monitoring`، `student-university-guide-app`، `ultrasonic-water-level-monitoring-project`، `news-fact-checking-platform`، `face-recognition-access-control-project`، `electronic-voting-system-laravel`، `weapon-detection-yolo-ai`، `ai-children-learning-system`
-
-**الفريق (7):** كما في `src/data/teamData.js`. أول عضو `abdulghani`.
-
-### 5.3 خريطة الـURLs الجديدة (نهائية)
-
-| القديم | الجديد | ملاحظة |
+| الحالي | الجديد | ملاحظة |
 |---|---|---|
-| `/` و `/#top` | `/` | |
-| `/#projects` | `/projects` | |
-| `/#project/<slug>` | `/projects/<slug>` | نفس الـslug |
-| `/#articles` | `/articles` | |
-| `/#article/<slug>` | `/articles/<slug>` | يطابق الـcanonical المعلن في البيانات |
-| `/#videos` | `/videos` | |
-| `/#faq` | `/faq` | |
-| `/#about` | `/about` | |
-| `/#contact` | `/contact` | |
-| `/#profile-<id>` | `/team/<id>` | noindex |
-| `/#login` و `/#auth` | `/login` | noindex |
-| `/#register` | `/register` | noindex |
-| `/#my-profile` و `/#favorites` و `/#profile` | `/account` | noindex |
-| `/#academic-projects` | `/projects` | |
-| `/index.html` | `/` | 301 من الخادم |
+| `max-width: 380px` | يبقى (loader فقط) | |
+| `max-width: 480px` | `max-width: 479.98px` | |
+| `max-width: 599px` و `600px` و `640px` | `max-width: 639.98px` | تحقّق بصرياً بين 600 و 640 |
+| `min-width: 600px` | `min-width: 640px` | MagicBento |
+| `max-width: 768px` | `max-width: 767.98px` | |
+| `max-width: 820px` و `850px` و `900px` و `950px` و `960px` و `992px` | `max-width: 1023.98px` | تخطيط التابلت يشمل الآن iPad العمودي كاملاً |
+| `max-width: 1024px` | `max-width: 1279.98px` | ‏**يحل C1** (يشمل iPad الأفقي 1024 و 1180) |
+| `min-width: 1024px` | `min-width: 1280px` | |
 
-- **Trailing slash:** لا (`trailingSlash: false`).
-- **Canonical domain:** `https://technoenjaz.com` (بدون www).
-- الصور تبقى على مساراتها الحالية (`/articles/<slug>.png` و `/projects/<slug>.png`). لا تتعارض مع صفحات `/articles/<slug>` لأن الصور بامتداد.
+> ⚠️ هذا التحويل يغيّر شكل بعض المقاسات الحدّية عمداً. كل ملف يُحوَّل ثم يُراجع بلقطات 600 و 640 و 800 و 1000 و 1100 و 1200 و 1280 قبل الانتقال للذي يليه.
+
+### 2.4 الصور: ماذا يصبح Vector وماذا يبقى Raster
+
+**القاعدة:** الـvector مناسب فقط لما هو أشكال هندسية وألوان مسطحة أو تدرجات بسيطة. الصور الفوتوغرافية ولقطات الشاشة والصور المولَّدة بالذكاء الاصطناعي **لا تُحوَّل إلى vector أبداً**. التتبع الآلي (auto-trace) لها ينتج ملفات SVG بعدة ميغابايت بمظهر مُبسّط (posterized)، أي جودة أسوأ وأداء أسوأ.
+
+| الأصل | النوع | القرار |
+|---|---|---|
+| `public/techno-logo.png` (483×517)، و `src/assets/Asset-1@4x.png` (2449×2618)، و `assets/logo.png`، و `public/loader/assets/original-logo.png` | شعار هندسي: 3 مثلثات ومعيّنات + دائرة بتدرجات (teal إلى blue/violet) | **Vector:** إعادة بناء يدوية دقيقة كـSVG |
+| `public/loader/assets/rocket-body.webp` (820×877) | الشعار بدون الدائرة | **Vector** (نفس الـSVG بدون الدائرة) |
+| `public/loader/assets/launch-button.webp` (240×240) | دائرة بتدرج خطي وحلقة | **Vector** |
+| `public/favicon.svg` | شعار Vite | **استبدال** بـSVG الشعار |
+| favicons PNG و ICO و apple و android | أيقونات أضافها المالك | **تبقى** (لا تحتاج تغييراً) |
+| `public/articles/*` (12، ‏1280×720) | صور توضيحية مولَّدة | **Raster:** ‏AVIF + WebP متعدد العروض |
+| `public/projects/*` (14، ‏1672×941) | صور توضيحية وفوتوغرافية | **Raster:** ‏AVIF + WebP |
+| `src/assets/projects/techno-projects/project-*.png|jpg` (1254×1254) | صور منتجات ومشاريع | **Raster:** ‏AVIF + WebP |
+| `src/assets/projects/techno-projects/chapter4-*.webp` | صور | **Raster** (تحقق من الاستخدام أولاً) |
+| `public/projects-live/*` (13، ‏1280×800) | **لقطات شاشة بنصوص** | **Raster** بجودة أعلى (النص يجب أن يبقى حاداً)، وبعضها lossless (انظر R3) |
+| `public/moments/*` (768×1024) | صور فوتوغرافية | **Raster** |
+| `src/assets/{im1,im2,im3,hero-bg-distortion}.png` | خلفيات وصور hero | **Raster** |
+| `src/assets/videos/*.png` | أغلفة فيديو | **Raster** |
+| `public/abdulghani.jpg` | صورة شخص | **Raster** |
+| أيقونات lucide-react | SVG أصلاً | تبقى |
 
 ---
 
-## 6. Content/Data Architecture
-
-### 6.1 الحالية
-- **المقالات:** metadata في TS + markdown في `src/content/articles/<slug>.md`. الحقول: id و slug (متطابقان) و title و titleEn و seoTitle و metaDescription و canonical (خاطئ) و category و categoryEn و categoryColor و image و publishDate (نص عربي) و publishDateEn و readTime و readTimeEn و author (فريق، مع صورة abdulghani) و excerpt و excerptEn و rawMarkdown و content[] (غير معروض) و tags و initialLikes و initialComments. **الـbody بالعربية فقط.**
-- **المشاريع:** كل شيء داخل `projectsData.ts`. مشاريع طلابية "بمساعدة تكنو إنجاز"، بلا client ولا تاريخ ولا live link.
-- **Reels:** 7 عناصر في `projectReelsData.ts`، كل منها بـ`liveUrl` على pages.dev.
-- **Videos (الرئيسية):** 3 فيديوهات YouTube مكتوبة داخل `VideosSection.tsx`، بدون تاريخ رفع.
-- **الفريق:** 7 أعضاء (placeholder).
-- **FAQ:** 13 سؤالاً داخل الـcomponent.
-- **معلومات المؤسسة:** موزعة ومتضاربة بين index.html و translations و FAQ و ContactPage و README و llms.txt.
-
-### 6.2 المستهدفة (بعد الترحيل)
+## 3. المراحل
 
 ```text
-src/
-  config/site.ts                      ← single source: domain, org facts, flags
-  content/
-    articles/<slug>.md                ← unchanged
-    articles/<slug>-seo.md            ← unchanged (internal, never imported)
-    projects/<slug>.md                ← NEW: extracted verbatim from projectsData.ts
-  data/
-    blogArticlesData.ts               ← metadata only (+ publishedAt ISO, − canonical, − rawMarkdown import)
-    projectsData.ts                   ← metadata only (− markdownContent)
-    faqData.ts                        ← NEW: moved verbatim from FaqSection.tsx
-    videosData.ts                     ← NEW: moved verbatim from VideosSection.tsx
-    projectReelsData.ts, teamData.js  ← unchanged
-  lib/
-    content/articles.ts               ← server-only loaders
-    content/projects.ts               ← server-only loaders
-    markdown.ts                       ← server-only renderMarkdown()
-    text.ts                           ← plainExcerpt(), projectTags()
-  seo/
-    metadata.ts                       ← buildMetadata() helpers
-    jsonld.ts                         ← schema builders
-    JsonLd.tsx                        ← <script type="application/ld+json">
+R0  Baseline responsive (after plan.md P11)
+R1  Foundations: viewport, tokens, breakpoints, units, safe areas
+R2  Vector brand assets (logo, loader, favicon.svg)
+R3  Raster image pipeline (AVIF/WebP, srcset, budgets)  ← replaces plan.md P8.2–P8.4
+R4  Navigation (adaptive: desktop / tablet / mobile drawer)
+R5  Page-by-page layout fixes (overflow, typography, grids, touch targets)
+R6  Adaptive effects (hover, WebGL/Canvas tiers, GSAP, reduced motion)
+R7  Forms & inputs on mobile
+R8  Performance budgets per device
+R10 Senior additions (Arabic typography, logical props, dynamic header, glass perf, container queries,
+    short heights, text zoom, overscroll, motion control, art direction, fonts, content-visibility,
+    forced-colors, print, foldables, regression guards, field data)   ← before R9
+R11 Android devices (Samsung / Xiaomi / Redmi / Poco): width & font-scale sweep, Samsung Internet & Mi Browser,
+    in-app browsers, forced dark mode, edge-to-edge, 120Hz, low-end GPU & WebGL context loss,
+    battery killers, slow networks, real-device QA   ← after R10
+R9  Validation matrix (automated + real devices)
 ```
 
----
+**ترتيب التنفيذ مع خطة الترحيل:**
+- R2 و R3 تُنفذان **ضمن P8 في خطة الترحيل** (الصور والأصول لا تغير الشكل، فهي آمنة قبل P11).
+- R0 و R1 و R4 إلى R10 تُنفذ **بعد P11 في خطة الترحيل**. ترتيب التنفيذ: R0، R1، R4، R5، R6، R10، R11، R7، R8، R9. يأتي R10 بعد R6 لأن R10.4 و R10.9 يعتمدان على `data-tier` الذي يعرّفه R6.
 
-## 7. Article Architecture (المستهدفة)
-
-```text
-/articles (SSG, Server Component)
-  → getAllArticles() metadata only
-  → <ArticlesListing articles={meta[]}>  (client: search/filter/sort/likes)
-      → each card: <h2><Link href="/articles/<slug>">title</Link></h2> (stretched link)
-
-/articles/[slug] (SSG, generateStaticParams, dynamicParams=false)
-  → getArticle(slug) → renderMarkdown(md) → { html, toc }  (server only)
-  → generateMetadata → title/description/canonical/OG article
-  → <JsonLd BlogPosting + BreadcrumbList>
-  → <ArticleDetailView article={clientMeta} toc={toc} related={related}>   (client shell)
-        <ArticleBody html={html} />                                          (server)
-     </ArticleDetailView>
-```
-
-- **Related articles:** نفس `categoryEn` أولاً، ثم عدد الـtags المشتركة، ثم الأحدث (`publishedAt` تنازلياً). 3 عناصر.
-- **التاريخ:** `publishedAt` بصيغة ISO. التواريخ المشتقة من `publishDateEn` الحالي:
-  - `2026-09-20`: ‏digital-twin و affective-computing و emotion-aware-recommendation و model-context-protocol-mcp و next-token-prediction.
-  - `2026-09-21`: البقية (7 مقالات).
-- **Author:** "فريق تكنو إنجاز الهندسي" = Organization (نفس `@id` المؤسسة). لا Person.
-
-## 8. Project Architecture (المستهدفة)
-
-```text
-/projects (SSG) → <ProjectsCatalog projects={meta[]}> (client filters) → <Link href="/projects/<slug>">
-/projects/[slug] (SSG) → getProject(slug) → renderMarkdown(md, stripLeadingH1) → single H1
-  → <JsonLd CreativeWork(contributor=Org) + BreadcrumbList>
-  → <ProjectDetailView project={clientMeta} toc related><ProjectBody html/></ProjectDetailView>
-```
-
-- **Excerpt:** يُعرض عبر `plainExcerpt()`، التي تحذف تعليقات HTML ورموز markdown.
-- **Tags:** عبر `projectTags()`، التي تحذف أسماء أنواع schema. إذا لم تبقَ وسوم، **لا يُعرض قسم الوسوم**.
-- **Related:** يبقى منطق `getRelatedProjects` الحالي (نفس الفئة أولاً).
-
-## 9. Authentication / Private Pages
-
-- الـauth الحالي mock ويبقى **وظيفياً كما هو** في هذا الترحيل. كل مفاتيح localStorage تبقى.
-- `/login` و `/register`: ‏SSG، و `robots: noindex, follow`، وخارج الـsitemap.
-- `/account`:
-  - الصفحة SSG وتعرض skeleton فقط، مع noindex.
-  - Client component يقرأ المستخدم بعد mount.
-  - إذا لم يوجد مستخدم: يحفظ مسار العودة ثم `router.replace('/login')`.
-- الـnavbar: الخادم وأول render في المتصفح يعرضان "تسجيل الدخول"، ثم يتحدث الزر بعد mount.
-- **مفتاح العودة:** الجديد `techno_auth_return_path` (pathname + search + hash). عند القراءة: إذا لم يوجد، يُقرأ `techno_auth_return_hash` القديم ويُحوَّل عبر خريطة 5.3.
-- **مستقبلاً:** المصادقة الحقيقية تُضاف وفق القسم 12.
+> القواعد العامة كما في خطة الترحيل:
+> - commit لكل مرحلة.
+> - لا تغيير في الألوان أو الخطوط أو الهوية.
+> - كل تغيير بصري مقصود يُوثَّق في `docs/responsive-changes.md` مع لقطة قبل وبعد.
 
 ---
 
-## 10. Rendering Analysis
+### R0 — Baseline Responsive
 
-| المعيار | الواقع | الاستنتاج |
-|---|---|---|
-| مصدر البيانات | ملفات TS و MD داخل الـrepo | معروفة وقت البناء، إذن SSG |
-| تكرار التحديث | commits يدوية | إعادة البناء والنشر عند كل push تكفي |
-| البيانات الحية | لا يوجد | لا حاجة لـSSR اليوم |
-| التخصيص حسب المستخدم | localStorage فقط | Client Components داخل صفحات SSG |
-| Backend | لا يوجد | لا يوجد ما يُعرض per-request |
-| المكونات | تعمل في Node (probe) | الترحيل بدون إعادة كتابة |
-| التفاعل | عالٍ جداً (WebGL و GSAP و framer) | الـClient Components تُعرض على الخادم أولاً ثم تُفعَّل (hydrate) |
-| المستقبل | مصادقة حقيقية، تعليقات بـbackend، CMS محتمل | ‏ISR و SSR جاهزان في البنية التحتية من اليوم |
-
-## 11. Architecture Options (ملخص المقارنة)
-
-| الخيار | الحكم | السبب |
-|---|---|---|
-| **Next.js App Router على Cloudflare Workers (OpenNext)** | **مختار** | ‏SSG و ISR و SSR لكل route في إطار واحد. الـRSC تبقي المحتوى الثقيل على الخادم. ‏Metadata API و sitemap و robots و manifest مدمجة. البقاء على Cloudflare (الدومين هناك). الترقية لاحقاً تغيير إعداد لكل route |
-| React + Vite + prerender مخصص | مرفوض | يحقق SSG فقط. أي SSR أو ISR لاحقاً يعني إعادة بناء المعمارية، والمالك يريد قراراً واحداً للمستقبل |
-| Astro + React Islands | مرفوض | الـContext (theme و lang و auth) يمر عبر كل الشجرة، والـislands لا تتشاركه. أغلب الصفحة تفاعلية، فالتوفير محدود والخطر البصري عالٍ |
-| Next.js بـ`output: 'export'` | مرفوض | يغلق باب SSR و ISR نهائياً |
-| Next.js على Vercel | بديل صالح | المالك اختار Cloudflare |
-| SSR لكل الصفحات | مرفوض | تكلفة وزمن استجابة لكل طلب بلا فائدة SEO، فالمحتوى ثابت |
-| CSR (الحالي) | مرفوض | لا يصلح للـSEO |
-
-## 12. Final Architecture Decision + دليل التحويل المستقبلي
-
-### 12.1 القرار
-- **Framework:** Next.js App Router. ثبّت الإصدار في P1: أحدث إصدار stable تدعمه `@opennextjs/cloudflare` حسب جدول التوافق في توثيقها.
-- **Runtime:** Cloudflare Workers، ‏Node.js compatibility (`nodejs_compat`). **ممنوع** `export const runtime = 'edge'` في أي ملف.
-- **Cache infrastructure (تُجهَّز في P1 وتبقى دائماً):**
-  - Incremental cache: ‏R2 + regional cache.
-  - Tag cache: ‏D1 (لـ`revalidatePath` و `revalidateTag`).
-  - Queue: ‏Durable Object (للـISR الزمني).
-- **كل route يعلن طريقة rendering صراحة في ملفه.** لا اعتماد على الاستنتاج التلقائي.
-
-### 12.2 دليل التحويل (Future Playbook)
-
-| الحالة المستقبلية | الـroutes المتأثرة | التغيير المطلوب فقط |
-|---|---|---|
-| مقالات أو مشاريع من CMS أو API بدل الملفات | `/articles/[slug]` و `/articles` و `/projects/[slug]` و `/projects` | `export const revalidate = 3600`، و `dynamicParams = true`، وتغيير loader واحد في `src/lib/content/*`. للتحديث الفوري: webhook إلى route handler ينفّذ `revalidatePath` |
-| مصادقة حقيقية بـhttpOnly cookie | `/account` (و `/login` للـredirect) | `export const dynamic = 'force-dynamic'` + قراءة `cookies()` في الـpage |
-| إعجابات وتعليقات على backend | صفحات المقالات والفيديو | الصفحة تبقى SSG. ‏Route Handlers في `src/app/api/*` مع fetch من Client Component |
-| صفحة تعتمد على الطلب (بحث server-side مثلاً) | الـroute الجديد فقط | `dynamic = 'force-dynamic'` |
-| نسخة إنجليزية كاملة للمحتوى | كل الصفحات | ‏`src/app/[lang]/...` + hreflang. **لا يُنفذ الآن** لأن نص المقالات عربي فقط |
-
----
-
-## 13. Route-by-Route Rendering Matrix
-
-| Route | Rendering | إعداد الملف | HTML الأولي يحتوي | JS / Client | Data | SEO |
-|---|---|---|---|---|---|---|
-| `/` | SSG | `dynamic='force-static'` | H1 الـhero، وعناوين وروابط أقسام Projects و Videos و Articles، و heading الـAbout، وقائمة الفريق (sr-only)، والـfooter | ScrollExpand و InfiniteSpiral و CardSwap و MagicBento و footer. ‏Orb و InfiniteMenu و TeamMomentsRing بـ`ssr:false` عند الاقتراب | translations و projects و videos و articles | index |
-| `/projects` | SSG | force-static | H1، و14 بطاقة `<a>` (عنوان ومقتطف وتصنيف وصورة) | الفلاتر والبحث والحفظ | projects meta | index |
-| `/projects/[slug]` | SSG | force-static + generateStaticParams + `dynamicParams=false` | H1 واحد، و lead، و roleQualifier، ونص كامل، و TOC، و related `<a>` | الحفظ والمشاركة و TOC scrollspy | md + meta | index |
-| `/articles` | SSG | force-static | H1، و12 بطاقة `<a>` (عنوان ومقتطف وكاتب و `<time>`) | البحث والفلترة والترتيب والإعجابات | articles meta | index |
-| `/articles/[slug]` | SSG | force-static + generateStaticParams + `dynamicParams=false` | H1 و excerpt و author و `<time>` ونص كامل و TOC و tags و related `<a>` و breadcrumbs `<a>` | الإعجابات والتعليقات والحفظ والمشاركة و scrollspy | md + meta | index |
-| `/videos` | SSG | force-static | H1 و subtitle، وكل الـreels (عنوان ووصف ورابط live) | scroll-snap والإعجابات والتعليقات | projectReelsData | index |
-| `/faq` | SSG | force-static | H1، و**13 سؤالاً وإجابة كاملة** (المغلقة بـ`hidden`) | الـaccordion والبحث | faqData | index + FAQPage |
-| `/about` | SSG | force-static | H1 و subtitle وقائمة الفريق | WebGL و canvas بـ`ssr:false` | translations و teamData | index |
-| `/contact` | SSG | force-static | H1، والهاتف والبريد و WhatsApp والعنوان كنص، والخريطة iframe lazy | الفورم (mailto) | site.ts و translations | index |
-| `/team/[id]` | SSG | force-static + generateStaticParams | محتوى الـprofile | — | teamData | **noindex,follow** |
-| `/login` و `/register` | SSG | force-static | واجهة الفورم | الفورم | — | noindex |
-| `/account` | SSG shell + client-only | force-static | skeleton | كل المحتوى من localStorage | — | noindex |
-| 404 | `not-found.tsx` | — | رسالة وروابط رئيسية | — | — | noindex، status 404 |
-| `/sitemap.xml` | Static | `sitemap.ts` | — | — | الـroutes | — |
-| `/robots.txt` | Static | `robots.ts` | — | — | — | — |
-| `/manifest.webmanifest` | Static | `manifest.ts` | — | — | — | — |
-| `/llms.txt` و `/llms-full.txt` | Static | route handler + `dynamic='force-static'` | — | — | البيانات | — |
-
-## 14. React / Server / Browser Boundaries
-
-1. **`page.tsx` و `layout.tsx` دائماً Server Components.** تحمّل البيانات، وتحوّل الـmarkdown، وتبني الـmetadata و JSON-LD، ثم تمرر للـClient Component **الحقول التي يعرضها فقط**. ممنوع تمرير markdown خام.
-2. **جسم المقال أو المشروع:** مكون server `<ArticleBody html />` أو `<ProjectBody html />` يُمرَّر كـ`children` إلى الـView (client).
-3. **النصوص التي تتغير بين العربية والإنجليزية** تبقى في Client Components تقرأ `useThemeLanguage()`. الخادم يعرض العربية.
-4. **ملفات `src/lib/content/*` و `src/lib/markdown.ts`** تبدأ بـ`import 'server-only'`.
-5. **قاعدة الـhydration:** أول render في المتصفح يطابق الخادم حرفياً.
-   - ممنوع قراءة `window` أو `document` أو `localStorage` أو `sessionStorage` أو `matchMedia` أو `innerWidth` أو `location` داخل الـrender أو داخل `useState` initializer.
-   - القراءة مسموحة فقط داخل `useEffect` أو `useLayoutEffect` أو event handlers.
-6. **الـtheme:** يُطبَّق عبر CSS على `[data-theme]` الذي يضبطه سكربت inline قبل الرسم. ممنوع `theme === 'light' ? ... : ...` في inline style أو في `src`.
-7. **WebGL و Canvas:** عبر `next/dynamic(() => import(...), { ssr: false })` داخل Client wrapper، مع placeholder بنفس الأبعاد.
-8. **`suppressHydrationWarning`** مسموح فقط على `<html>`، لأن السكربت inline يعدّل `data-theme` و `dir` و `lang` و `class`.
-
----
-
-## 15. UX Strategy
-
-**KEEP (لا يتغير):**
-- كل الـlayout والمسافات والخطوط والألوان والـbreakpoints والـanimations والـtransitions.
-- GooeyNav (الشريط الأفقي القابل للتمرير على الموبايل) و ScrollExpand hero و InfiniteSpiral و CardSwap و MagicBento و InfiniteMenu و Orb و TeamMomentsRing و CinematicFooter.
-- تبديل الـtheme واللغة، والإعجابات والتعليقات والمحفوظات، وسلوك "scroll to top" عند تغيير الصفحة، والـloader على الرئيسية.
-
-**تغييرات مقصودة (كل منها بسبب تقني):**
-
-| التغيير | السبب | التأثير |
-|---|---|---|
-| الـloader على `/` فقط، ومرة واحدة لكل جلسة (`sessionStorage te_loader_seen`) | زائر قادم من البحث إلى مقال لا يجب أن ينتظر 2.5s، و LCP | تحسّن. الـflag `LOADER_MODE` في `site.ts` يعيد السلوك القديم |
-| URLs حقيقية بدل hash | الـSEO، وزر Back، وفتح في tab جديد، والمشاركة | الشكل لا يتغير |
-| إخفاء وسوم المشاريع الخاطئة | تعرض أسماء schema للمستخدم | إزالة نص خاطئ |
-| H1 واحد في المشروع | H1 مكرر حالياً | العنوان الظاهر لا يتغير، يُحذف التكرار من الـbody فقط |
-| Related articles مرتبة منطقياً | الحالي "أول 3" عشوائي | روابط داخلية أفضل |
-
-**تبديل اللغة بدون وميض:** إذا خزّن المستخدم `en`، يضيف السكربت inline على `<html>` الـattribute `data-lang-pending`، وقاعدة CSS تخفي `#app-root` حتى يبدّل الـProvider اللغة ويحذف الـattribute (خلال أجزاء من الثانية). الـcrawlers لا تملك localStorage فلا تتأثر.
-
-## 16. Performance Strategy
-
-| البند | الإجراء | الهدف |
-|---|---|---|
-| Content JS | الـmarkdown والبيانات الكاملة و `marked` على الخادم فقط | لا وجود لأي markdown في client chunks |
-| Code splitting | تلقائي لكل route في Next | صفحة المقال لا تحمّل كود الرئيسية |
-| WebGL و Canvas | ‏`next/dynamic({ ssr:false })` + `useInView(rootMargin '400px')` لـ Orb و InfiniteMenu و TeamMomentsRing | لا تحميل قبل الحاجة |
-| Deps | حذف three و page-flip و pdfjs-dist | — |
-| Fonts | ‏`next/font/google` لـReadex Pro (arabic و latin، الأوزان 300 إلى 800)، مع حذف `<link>` و `@import` | self-hosted، بلا تحميل مزدوج |
-| Images | سكربت sharp وقت البناء يولّد `.w640.webp` و `.w1280.webp` + مكون `ResponsiveImage` بـsrcset و width و height. `images.unoptimized: true` | صور أصغر بـ80–90% |
-| LCP | ‏hero و banner المقال: `fetchPriority="high"` و eager | LCP < 2.5s |
-| CLS | ‏width و height لكل صورة، و placeholders للـcanvas | CLS < 0.1 |
-| INP | استبدال 38 inline theme style بـCSS vars | تبديل theme أسرع |
-| Caching | ‏`/_next/static/*` بكاش immutable (افتراضي في Next). الصفحات من الـincremental cache | — |
-
-## 17. SEO Strategy
-
-- **Canonical:** `https://technoenjaz.com` + path، بدون trailing slash، في كل صفحة عبر `alternates.canonical`.
-- **Head لكل صفحة:**
-  - `title` (بالقالب `%s | تكنو إنجاز`، والرئيسية بعنوان كامل مخصص) و `description`.
-  - `robots` (index أو noindex حسب القسم 13).
-  - `openGraph`: ‏type (`website` أو `article`) و title و description و url و images (مطلقة) و `locale: 'ar_SY'` و siteName.
-  - `twitter`: ‏`card: 'summary_large_image'` و title و description و images.
-  - **يُحذف:** `keywords`، و `og:locale:alternate`، و `twitter:site` و `twitter:creator` (إلى أن يؤكد المالك حساب X).
-  - **يبقى:** geo meta tags (`geo.region SY-HM`، `geo.placename`، `geo.position`، `ICBM`) و `theme-color #030712`، عبر `metadata.other` و `viewport`.
-- **العناوين والأوصاف:**
-  - المقالات: `seoTitle` و `metaDescription`.
-  - المشاريع: `seoTitle` و `metaDesc`.
-  - الرئيسية: title و description الحاليان من index.html حرفياً.
-  - باقي الصفحات: من `translations.ar` (عنوان الصفحة و subtitle). إن لم يوجد نص مناسب، استخدم النص الحالي من index.html للرئيسية، **ولا تخترع نصاً تسويقياً جديداً.** إذا لزم وصف غير موجود، اتركه بقيمة الرئيسية وسجّله في `docs/owner-todo.md`.
-- **Semantic HTML:**
-  - H1 واحد لكل صفحة.
-  - في `/about` يكون عنوان About هو H1، وفي الرئيسية H2.
-  - الـbreadcrumbs `<nav aria-label><ol>` بروابط `<a>`.
-  - التواريخ `<time dateTime>`.
-  - `<main id="main-content">` واحد في الصفحة.
-- **Internal linking:** كل بطاقة وكل عنصر related وكل breadcrumb وكل رابط footer أو nav أو CTA هو `<a href>` عبر `next/link`.
-- **Sitemap:** 33 URL:
-  - `/` و `/projects` و 14 مشروعاً و `/articles` و 12 مقالاً و `/videos` و `/faq` و `/about` و `/contact`.
-  - `lastModified` للمقالات فقط (`modifiedAt ?? publishedAt`). لا `priority` ولا `changefreq`.
-- **robots.txt:** `User-agent: *` + `Allow: /` + `Sitemap: https://technoenjaz.com/sitemap.xml`. لا Disallow لصفحات noindex (Google يحتاج الزحف ليقرأ noindex).
-- **404:** حقيقي، مع status 404 (`dynamicParams=false` + `not-found.tsx`).
-
-## 18. GEO Strategy
-
-- **مصدر حقيقة واحد:** `src/config/site.ts` يغذي الـUI و JSON-LD و llms.txt و Contact.
-- **Organization** (`@id: https://technoenjaz.com/#organization`)، النوع `["Organization","ProfessionalService"]`:
-  - `name`: "تكنو إنجاز"، و `alternateName`: "Techno Enjaz"، و `url`، و `logo`: `https://technoenjaz.com/techno-logo.png`.
-  - `telephone`: `+963958794195`، و `email`: `info@technoenjaz.com`.
-  - `address`: ‏`addressLocality: "حماة"`، و `addressRegion: "حماة"`، و `addressCountry: "SY"`. ‏`streetAddress` **فقط بعد تأكيد المالك** (انظر القسم 26).
-  - `geo`: ‏`35.128992, 36.754001` (موجودة ومتسقة في index.html و README و llms)، و `hasMap` (الرابط الموجود في index.html).
-  - `sameAs`: `["https://instagram.com/TECHNO_ENJAZ"]` فقط.
-  - `contactPoint`: ‏`{ "@type": "ContactPoint", "telephone": "+963958794195", "email": "info@technoenjaz.com", "contactType": "customer service", "availableLanguage": ["ar","en"] }`.
-  - **يُحذف:** `priceRange`، و wa.me من sameAs.
-- **WebSite** (`@id: .../#website`): ‏`publisher → #organization`، و `inLanguage: "ar"`.
-- **المقالات:** ‏author و publisher = `{ "@id": "https://technoenjaz.com/#organization" }`.
-- **المشاريع:** ‏`contributor = #organization`. لا `creator`، لأنها مشاريع طلابية بمساعدة المكتب.
-- **الفريق:** لا Person entities. صفحات noindex، وقائمة الفريق تُحذف من llms.txt.
-- **llms.txt و llms-full.txt:** يُولَّدان من البيانات:
-  - معلومات المؤسسة من `site.ts`.
-  - كل المقالات (عنوان ورابط و metaDescription).
-  - كل المشاريع (عنوان ورابط و metaDesc).
-  - المنصات الحية (reels: عنوان و liveUrl ووصف).
-  - الصفحات الرئيسية.
-  - `llms-full.txt` يضيف المقتطفات و FAQ كاملاً.
-- **بديل الـcanvas:** قائمة `<ul class="sr-only">` بأسماء الفريق وروابط `/team/<id>`.
-
-## 19. AEO Strategy
-
-- **FAQ:** الإجابات الـ13 كلها في HTML. ‏`FAQPage` JSON-LD على `/faq` فقط، من `faqData` بنص **مطابق حرفياً** للنص المرئي بالعربية (plain text).
-- **المقالات:** بنيتها الحالية سؤال وإجابة مباشرة. نحافظ على:
-  - ids ثابتة للـH2 و H3 (`sec-<n>-<slug>` بنفس الخوارزمية الحالية).
-  - الـTOC كروابط `<a href="#id">`.
-  - الـexcerpt كـlead `<p>` تحت H1.
-- **Contact و About:** الحقائق كنص قابل للاستخراج (المدينة، الهاتف، البريد، الخدمات كما وردت في translations و FAQ).
-- **لا محتوى مصطنع.**
-
----
-
-## 20. Migration Strategy (ترتيب الاعتماديات)
-
-```text
-P0  Baseline & safety net
-P1  Next.js + OpenNext scaffold + cache infrastructure
-P2  Single sources of truth (site config, content, markdown)
-P3  Client boundaries + hydration safety
-P4  Root layout + App shell + navigation
-P5  Routes (all pages, SSG)
-P6  Crawlability (links, FAQ, canvas fallbacks, H1s)
-P7  SEO / GEO / AEO (metadata, JSON-LD, sitemap, robots, llms)
-P8  Loader + Performance (images, fonts, lazy WebGL)
-P9  Accessibility
-P10 Favicon & manifest
-P11 Full validation
-P12 Deploy & cutover
-```
-
-**لماذا هذا الترتيب:**
-- P2 و P3 تجعل المكونات جاهزة للخادم قبل إنشاء الـroutes.
-- P4 قبل P5 لأن كل الصفحات تعتمد على الـshell.
-- الـSEO في P7 يُبنى فوق rendering مكتمل، وليس بدلاً عنه.
-
----
-
-## 21. Detailed Coding-Agent Implementation Plan
-
-> **قبل كل مرحلة:** اقرأ الملفات المذكورة كاملة.
-> **بعد كل مرحلة:** نفّذ `npm run build` و `npm run lint` واختبارات المرحلة، ثم commit.
-> **ممنوع:** تعديل قيم CSS أو نصوص المحتوى إلا حيث تنص الخطة صراحة.
-
-### P0 — Baseline & Safety Net
-
-**Goal:** تجميد الوضع الحالي للمقارنة.
-**Files:** `tests/visual/*`، و `playwright.config.ts`، و `docs/baseline.md`، و `docs/url-inventory.json`.
+**Goal:** مرجع قبل التغيير.
 **Actions:**
-1. `git checkout -b feat/nextjs-migration`.
-2. `npm i -D @playwright/test` ثم `npx playwright install chromium webkit`.
-3. `npm run build`، ثم سجّل في `docs/baseline.md` أحجام الـchunks وعدد warnings في lint.
-4. أنشئ `tests/visual/baseline.spec.ts` يعمل على `vite preview` (النسخة الحالية):
-   - **الـURLs:** `/#top`، و `/#projects`، و `/#project/virtual-board-hand-tracking`، و `/#articles`، و `/#article/digital-twin`، و `/#videos`، و `/#faq`، و `/#about`، و `/#contact`، و `/#profile-abdulghani`، و `/#login`.
-   - **المقاسات:** 390×844، و 768×1024، و 1440×900.
-   - **التركيبات:** ‏theme (dark و light) × lang (ar و en).
-   - **قبل التحميل:** `addInitScript` يضبط `localStorage` (`techno_theme_manual='true'` و `theme` و `techno_theme` و `techno_lang`).
-   - **إخفاء الـloader:** `addStyleTag('#te-loader{display:none!important}')`.
-   - **تثبيت الحركة:** `reducedMotion: 'reduce'`، ثم انتظار `document.fonts.ready` و 1500ms.
-   - **اللقطات:** للـviewport، و fullPage للمقال والمشروع و FAQ.
-   - **الحفظ:** في `tests/visual/__baseline__/` مع commit.
-5. `scripts/inventory-urls.mjs` يكتب `docs/url-inventory.json` بالـslugs في القسم 5.2.
+1. `tests/responsive/devices.ts`: مصفوفة الأجهزة الرسمية.
 
-**Validation:** كل اللقطات موجودة، والـinventory فيه 12 و14 و7 عناصر.
-**Risks:** عدم ثبات الـanimations. الحل: reducedMotion + `mask` على عناصر canvas.
+   | الاسم | viewport | DPR | touch |
+   |---|---|---|---|
+   | fold-280 | 280×653 | 3 | ✓ |
+   | small-320 | 320×640 | 2 | ✓ |
+   | galaxy-360 | 360×800 | 3 | ✓ |
+   | iphone-se | 375×667 | 2 | ✓ |
+   | iphone-15 | 393×852 | 3 | ✓ |
+   | pixel-7 | 412×915 | 2.625 | ✓ |
+   | phone-landscape | 852×393 | 3 | ✓ |
+   | ipad-mini | 768×1024 | 2 | ✓ |
+   | ipad-air | 820×1180 | 2 | ✓ |
+   | ipad-air-landscape | 1180×820 | 2 | ✓ |
+   | ipad-pro-12 | 1024×1366 | 2 | ✓ |
+   | ipad-landscape-1024 | 1024×768 | 2 | ✓ |
+   | laptop-1280 | 1280×800 | 1 | ✗ |
+   | laptop-1440 | 1440×900 | 2 | ✗ |
+   | desktop-1920 | 1920×1080 | 1 | ✗ |
+   | desktop-2560 | 2560×1440 | 1 | ✗ |
+   | phone-landscape-short | 740×360 | 3 | ✓ |
+   | ipad-split | 507×1024 | 2 | ✓ |
 
-### P1 — Next.js + OpenNext Scaffold + Cache Infrastructure
+2. `tests/responsive/audit.spec.ts`: لكل جهاز × كل URL في الـsitemap + `/login` و `/account`، يسجّل **نفس المقاييس المستخدمة في هذا الفحص**:
+   - `document.documentElement.scrollWidth > clientWidth` (overflow أفقي).
+   - أهداف اللمس الأصغر من 44×44 (a و button و input و `[role=button]`)، مستثنياً الروابط داخل فقرات النص (`p a` و `li a` داخل `.article-fullscreen-markdown-body` و ProjectBody).
+   - عناصر نص بـfont-size أقل من 12px.
+   - صور `naturalWidth > renderedWidth × DPR × 2` بعرض طبيعي > 800.
+   - مجموع bytes الصور المحمّلة حتى `networkidle`، والـLCP (PerformanceObserver) والـCLS.
+   - يحفظ `docs/responsive-baseline.json` ولقطات `tests/responsive/__baseline__/`.
+3. **الأرقام المرجعية المتوقعة** (من فحصنا، للتأكد أن الأداة تقيس صحيحاً):
+   - `/` على galaxy-360: صور ≈ 22.5MB.
+   - `/articles/digital-twin` على iphone-15: ‏scrollWidth ≈ 667.
+   - كل الصفحات على ipad-air-landscape: ‏scrollWidth ≈ 1221.
 
-**Goal:** مشروع Next.js يعمل على workerd محلياً، مع بنية ISR و SSR جاهزة.
-**Files:** `package.json`، و `next.config.ts`، و `open-next.config.ts`، و `wrangler.jsonc`، و `tsconfig.json`، و `.gitignore`، و `src/app/layout.tsx` و `src/app/page.tsx` (placeholder مؤقت).
+**Validation:** ملف baseline موجود، والأرقام قريبة من المذكورة.
+
+---
+
+### R1 — Foundations
+
+**Goal:** أساس موحّد: viewport، وtokens، ووحدات، و safe areas.
+**Files:** `src/app/layout.tsx` (viewport)، و `src/index.css`، و `src/styles/tokens.css` (جديد، يُستورد أول شيء في `index.css`)، و `docs/breakpoints.md`.
 
 **Actions:**
-1. **Dependencies:**
-   ```bash
-   npm i next@<PINNED> react@^19 react-dom@^19
-   npm i -D @opennextjs/cloudflare@<PINNED> wrangler@<PINNED> @playwright/test @axe-core/playwright linkedom sharp @next/bundle-analyzer server-only
-   npm uninstall vite @vitejs/plugin-react three @types/three page-flip @types/page-flip pdfjs-dist
-   ```
-   `<PINNED>`: أحدث إصدارات متوافقة حسب توثيق `@opennextjs/cloudflare`. سجّلها في `docs/baseline.md`.
-2. **حذف ملفات Vite (بعد نقل محتواها):**
-   - `vite.config.ts` و `tsconfig.node.json`.
-   - `index.html` (بعد نسخ محتوى الـhead والسكربتات إلى `docs/legacy-index-head.html` كمرجع).
-   - `src/main.tsx`.
-3. **`tsconfig.json`** (ملف واحد):
-   ```jsonc
-   {
-     "compilerOptions": {
-       "target": "ES2022", "lib": ["dom", "dom.iterable", "ES2023"],
-       "allowJs": true, "skipLibCheck": true, "strict": false,
-       "noEmit": true, "esModuleInterop": true, "module": "esnext",
-       "moduleResolution": "bundler", "resolveJsonModule": true,
-       "isolatedModules": true, "jsx": "preserve", "incremental": true,
-       "plugins": [{ "name": "next" }],
-       "paths": { "@/*": ["./src/*"] }
-     },
-     "include": ["next-env.d.ts", "src/**/*", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-     "exclude": ["node_modules", ".open-next", "demo", "theme"]
-   }
-   ```
-   **ملاحظة:** `strict: false` يطابق المشروع الحالي (لم يكن strict). لا تفعّله في هذا الترحيل.
-4. **الـimports ذات الامتداد الصريح:** عدّل `import App from './App.tsx'` و `import AuthSwitch from './components/ui/auth-switch.tsx'` بحذف الامتداد. ابحث عن غيرها: `grep -rn "from '.*\.tsx'" src`.
-5. **`next.config.ts`:**
+1. **Viewport** (Next `viewport` export):
    ```ts
-   import type { NextConfig } from 'next';
-   import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
-
-   const nextConfig: NextConfig = {
-     trailingSlash: false,
-     images: { unoptimized: true },
-     poweredByHeader: false,
-     async redirects() {
-       return [{ source: '/index.html', destination: '/', permanent: true }];
-     },
+   export const viewport: Viewport = {
+     width: 'device-width', initialScale: 1, maximumScale: 5, viewportFit: 'cover',
+     themeColor: [
+       { media: '(prefers-color-scheme: dark)', color: '#030712' },
+       { media: '(prefers-color-scheme: light)', color: '#f8fafc' },
+     ],
    };
-   export default nextConfig;
-   initOpenNextCloudflareForDev();
    ```
-6. **`open-next.config.ts`** (تحقق من مسارات الـimports مقابل توثيق الإصدار المثبت، صفحة "Caching"):
-   ```ts
-   import { defineCloudflareConfig } from '@opennextjs/cloudflare';
-   import r2IncrementalCache from '@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache';
-   import { withRegionalCache } from '@opennextjs/cloudflare/overrides/incremental-cache/regional-cache';
-   import d1NextTagCache from '@opennextjs/cloudflare/overrides/tag-cache/d1-next-tag-cache';
-   import doQueue from '@opennextjs/cloudflare/overrides/queue/do-queue';
-
-   export default defineCloudflareConfig({
-     incrementalCache: withRegionalCache(r2IncrementalCache, { mode: 'long-lived' }),
-     tagCache: d1NextTagCache,
-     queue: doQueue,
-   });
-   ```
-7. **`wrangler.jsonc`:**
-   ```jsonc
-   {
-     "$schema": "node_modules/wrangler/config-schema.json",
-     "name": "technoenjaz",
-     "main": ".open-next/worker.js",
-     "compatibility_date": "<DATE_OF_P1>",
-     "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
-     "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
-     "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "technoenjaz" }],
-     "r2_buckets": [{ "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "technoenjaz-next-cache" }],
-     "d1_databases": [{ "binding": "NEXT_TAG_CACHE_D1", "database_name": "technoenjaz-tag-cache", "database_id": "<FROM wrangler d1 create>" }],
-     "durable_objects": { "bindings": [{ "name": "NEXT_CACHE_DO_QUEUE", "class_name": "DOQueueHandler" }] },
-     "migrations": [{ "tag": "v1", "new_sqlite_classes": ["DOQueueHandler"] }],
-     "observability": { "enabled": true }
-   }
-   ```
-   أنشئ الموارد:
-   ```bash
-   npx wrangler r2 bucket create technoenjaz-next-cache
-   npx wrangler d1 create technoenjaz-tag-cache
-   ```
-   تهيئة جدول الـD1 تتم حسب توثيق OpenNext (أمر أو migration). اتبعه حرفياً.
-8. **`package.json` scripts:**
-   ```json
-   {
-     "dev": "next dev",
-     "build": "node scripts/optimize-images.mjs && next build",
-     "preview": "npm run build && opennextjs-cloudflare build && opennextjs-cloudflare preview",
-     "deploy": "npm run build && opennextjs-cloudflare build && opennextjs-cloudflare deploy",
-     "lint": "oxlint",
-     "typecheck": "tsc --noEmit",
-     "verify": "node scripts/verify-site.mjs",
-     "test:e2e": "playwright test"
-   }
-   ```
-   حتى تُكتب في P8، اجعل `scripts/optimize-images.mjs` placeholder يخرج بـ0.
-9. **`.gitignore`:** أضف `.next`، و `.open-next`، و `.wrangler`، و `public/_img`، و `next-env.d.ts`.
-10. **Placeholder:**
-    - `src/app/layout.tsx`: ‏`<html lang="ar" dir="rtl"><body>{children}</body></html>`.
-    - `src/app/page.tsx`: ‏`<h1>ok</h1>`.
-
-**Rendering:** لا شيء نهائي بعد.
-**Validation:**
-- `npm run build` ينجح.
-- `npm run preview` يفتح `http://localhost:8787` ويعرض `ok`.
-- `curl -s localhost:8787/ | grep '<h1>ok'`.
-
-**Risks:** عدم توافق الإصدارات. الحل: اتبع جدول التوافق في توثيق OpenNext.
-
-### P2 — Single Sources of Truth
-
-**Goal:** مصدر واحد للمؤسسة والمحتوى، و markdown يُعالج على الخادم.
-**Files:**
-- جديدة: `src/config/site.ts`، و `src/lib/content/articles.ts`، و `src/lib/content/projects.ts`، و `src/lib/markdown.ts`، و `src/lib/text.ts`، و `src/content/projects/*.md`، و `src/data/faqData.ts`، و `src/data/videosData.ts`، و `scripts/extract-project-markdown.mjs`.
-- معدّلة: `src/data/blogArticlesData.ts`، و `src/data/projectsData.ts`، و `FaqSection.tsx`، و `VideosSection.tsx`.
-
-**Actions:**
-1. **`src/config/site.ts`:**
-   ```ts
-   export const SITE_URL = 'https://technoenjaz.com';
-   export const ORG_ID = `${SITE_URL}/#organization`;
-   export const WEBSITE_ID = `${SITE_URL}/#website`;
-   export const LOADER_MODE: 'home-first-visit' | 'always' | 'off' = 'home-first-visit';
-   export const ORG = {
-     nameAr: 'تكنو إنجاز',
-     nameEn: 'Techno Enjaz',
-     logo: `${SITE_URL}/techno-logo.png`,
-     telephone: '+963958794195',
-     email: 'info@technoenjaz.com',
-     instagram: 'https://instagram.com/TECHNO_ENJAZ',
-     whatsapp: 'https://wa.me/963958794195',
-     address: {
-       streetAddress: null as string | null, // OWNER MUST CONFIRM (see section 26)
-       addressLocality: 'حماة', addressRegion: 'حماة', addressCountry: 'SY',
-     },
-     geo: { latitude: 35.128992, longitude: 36.754001 },
-     hasMap: "https://www.google.com/maps/place/35%C2%B007'44.4%22N+36%C2%B045'14.4%22E/@35.1289918,36.7561901,17z",
-     descriptionAr: '<copy verbatim from current index.html Organization.description>',
-   } as const;
-   export const absoluteUrl = (path: string) => `${SITE_URL}${path === '/' ? '' : path}`;
-   ```
-   - `absoluteUrl('/')` يرجع `https://technoenjaz.com`.
-   - الـcanonical للرئيسية: `https://technoenjaz.com/` (Next يضيف `/` للجذر).
-2. **استخراج markdown المشاريع:**
-   - `scripts/extract-project-markdown.mjs` يستورد `PROJECTS_DATA` (عبر `tsx` أو نسخ مؤقت) ويكتب كل `markdownContent` **حرفياً** إلى `src/content/projects/<slug>.md` (UTF-8، بدون BOM).
-   - بعد الكتابة يقارن SHA-256 للنص الأصلي والملف، ويفشل عند أي اختلاف.
-   - ثم احذف الحقل `markdownContent` من الـinterface ومن البيانات.
-3. **`blogArticlesData.ts`:**
-   - احذف الـ12 سطراً `import ... from '../content/articles/*.md?raw'`، والحقل `rawMarkdown`.
-   - احذف الحقل `canonical` من الـinterface والبيانات.
-   - أضف `publishedAt: string` (ISO date) حسب القسم 7، و `modifiedAt?: string` (غير معرّف حالياً).
-   - لا تغيّر أي نص آخر.
-4. **`src/lib/content/articles.ts`:**
-   ```ts
-   import 'server-only';
-   import { readFile } from 'node:fs/promises';
-   import path from 'node:path';
-   import { blogArticlesData, type BlogArticle } from '@/data/blogArticlesData';
-   const DIR = path.join(process.cwd(), 'src/content/articles');
-   export const getAllArticles = () => blogArticlesData;
-   export const getArticleMeta = (slug: string) => blogArticlesData.find(a => a.slug === slug) ?? null;
-   export async function getArticleMarkdown(slug: string) { return readFile(path.join(DIR, `${slug}.md`), 'utf8'); }
-   export function getRelatedArticles(slug: string, limit = 3): BlogArticle[] { /* section 7 rules */ }
-   ```
-   - `projects.ts` بنفس النمط، و `getRelatedProjects` يُنقل كما هو.
-   - القراءة من `fs` تحدث **وقت البناء فقط** لأن الصفحات SSG. إذا تحولت صفحة إلى ISR مع CMS لاحقاً، يُستبدل الـloader (القسم 12.2).
-5. **`src/lib/markdown.ts`:**
-   ```ts
-   import 'server-only';
-   import { Marked, Renderer } from 'marked';
-   export interface TocHeading { id: string; text: string; level: number }
-   export function renderMarkdown(md: string, opts: { stripLeadingH1?: boolean } = {}) {
-     let src = md.replace(/<!--[\s\S]*?-->/g, '');
-     src = src.replace(/^(SEO Title|Meta Description|Suggested Slug):.*$/gim, '');
-     if (opts.stripLeadingH1 !== false) src = src.replace(/^\s*#\s+[^\r\n]+[\r\n]*/, '');
-     const toc: TocHeading[] = []; let i = 0;
-     const renderer = new Renderer();
-     renderer.heading = function ({ tokens, depth }) {
-       const inner = this.parser.parseInline(tokens);
-       if (depth !== 2 && depth !== 3) return `<h${depth}>${inner}</h${depth}>`;
-       const text = inner.replace(/<[^>]+>/g, '').trim();
-       const slug = text.toLowerCase().replace(/[^\w\u0621-\u064A0-9]+/g, '-').replace(/^-+|-+$/g, '');
-       const id = `sec-${i++}-${slug || 'heading'}`;
-       toc.push({ id, text, level: depth });
-       return `<h${depth} id="${id}" class="article-content-heading scroll-mt-offset">${inner}</h${depth}>`;
-     };
-     renderer.link = function ({ href, title, tokens }) {
-       const text = this.parser.parseInline(tokens);
-       let h = href.replace(/^#article\//, '/articles/').replace(/^#project\//, '/projects/');
-       const ext = /^https?:\/\//.test(h);
-       const t = title ? ` title="${title}"` : '';
-       return `<a href="${h}"${t}${ext ? ' target="_blank" rel="noopener noreferrer"' : ''}>${text}</a>`;
-     };
-     const html = new Marked({ gfm: true, breaks: true, renderer }).parse(src.trim()) as string;
-     return { html, toc };
-   }
-   ```
-   - **خوارزمية الـids** مطابقة لـ`ArticleDetailView` الحالي (`sec-${index}-${slug}`، والعدّاد يبدأ من 0).
-   - **class الـheading للمشاريع:** `ProjectDetailView` الحالي يستخدم `project-heading-${depth} scroll-mt-offset` وعدّاداً يبدأ من 1. أضف خيار `variant: 'article' | 'project'` يحافظ على class وعدّاد كل نوع كما هو، حتى يبقى الـCSS مطابقاً.
-   - **تحقق من signature الـrenderer** في إصدار `marked` المثبت (^18). إذا اختلف `this.parser`، استخدم API الإصدار نفسه.
-6. **`src/lib/text.ts`:**
-   ```ts
-   export const plainExcerpt = (s: string) => s.replace(/<!--[\s\S]*?-->/g, '').replace(/\*\*|__|`/g, '').replace(/\s+/g, ' ').trim();
-   const SCHEMA_TYPES = new Set(['WebPage','BreadcrumbList','Organization','ImageObject','CreativeWork','FAQPage','Article','BlogPosting']);
-   export const projectTags = (tags: string[]) => tags.filter(t => !SCHEMA_TYPES.has(t));
-   ```
-   - مقتطف `interactive-children-ai-learning-system` يبدأ بتعليق مقطوع (`"<!-- FEATURED IMAGE ... واج..."` بدون `-->`). أضف قاعدة: إذا بدأ النص بـ`<!--` ولا يحتوي `-->`، استخدم `plainExcerpt(metaDesc)` لهذا المشروع. **لا تعدّل البيانات.**
-7. **نقل faqData:** انقل المصفوفة من `FaqSection.tsx` إلى `src/data/faqData.ts` **حرفياً**. استبدل `actionIcon: <Sparkles/>` بـ`actionIconKey: 'sparkles'`، ويبقى map للأيقونات داخل `FaqSection`.
-8. **نقل videosList:** انقل `videosList` من `VideosSection.tsx` إلى `src/data/videosData.ts` حرفياً. الصور تُستورد كما هي.
-9. **حذف `techno-enjaz.com`** من كل الكود. المصدر الوحيد للدومين `SITE_URL`.
-
-**Validation:**
-- `grep -rn "techno-enjaz.com" src` = 0.
-- `grep -rn "markdownContent\|rawMarkdown" src` = 0 خارج `lib/content`.
-- سكربت التطابق SHA-256 ينجح.
-- `npm run typecheck` ينجح.
-
-**Risks:** اختلاف ids الـTOC. الحل: اختبار في P11 يقارن ids الحالية لمقال ومشروع.
-
-### P3 — Client Boundaries + Hydration Safety
-
-**Goal:** كل مكون تفاعلي يعمل كـClient Component، ويعطي نفس النتيجة على الخادم وفي أول render بالمتصفح.
-**Files:** كل الملفات في القائمة أدناه، و `src/index.css`، و `src/hooks/useHydrated.ts` و `src/hooks/useInView.ts` و `src/components/ThemedImage.tsx` و `src/components/ClientOnly.tsx` (جديدة).
-
-**Actions:**
-1. **أضف `'use client';` كأول سطر في:**
-   - `src/context/ThemeLanguageContext.tsx`، و `src/GooeyNav.jsx`، و `src/components/ui/ThemeSwitch.tsx`، و `src/components/ui/LanguageDropdown.tsx`.
-   - `src/components/ui/ScrollExpand.tsx`، و `src/pages/ScrollExpandPrototype.tsx` (انقله إلى `src/components/home/HomeHero.tsx`، لأن `src/pages/` محجوز في Next).
-   - `src/components/projects/ProjectsSection.tsx`، و `src/components/ui/InfiniteSpiral.tsx`.
-   - `src/components/videos/VideosSection.tsx`، و `src/components/videos/CardSwap.tsx`، و `src/components/ui/CardSwap.tsx`، و `src/components/videos/VideoPlayerModal.tsx`، و `src/components/videos/ProjectReelsFeed.tsx`.
-   - `src/components/articles/ArticlesSection.tsx`، و `src/components/articles/MagicBento.tsx`، و `src/components/ui/MagicBento.tsx`.
-   - `src/components/CinematicFooter.jsx`، و `src/components/CurvedInput.jsx`، و `src/registry/magicui/scroll-progress.jsx`، و `src/components/ui/svg-follow-scroll.tsx`.
-   - `src/components/TeamMomentsRing.jsx`، و `src/InfiniteMenu.jsx`، و `src/Orb.jsx`.
-   - `src/components/articles/OfficeBlogSection.tsx`، و `src/components/articles/ArticleDetailView.tsx`.
-   - `src/components/projects/ProjectsCatalogSection.tsx`، و `src/components/projects/ProjectDetailView.tsx`.
-   - `src/components/faq/FaqSection.tsx`، و `src/ContactPage.jsx`، و `src/AuthPage.jsx`، و `src/components/ui/auth-switch.tsx`، و `src/UserProfilePage.jsx`، و `src/ProfilePage.jsx`، و `src/components/SocialButtons.jsx`، و `src/components/ui/button.tsx`.
-   - `src/hooks/useSavedProjects.ts` (hook يستخدم state).
-   - **مهم:** مجلد `src/pages/` يجب ألا يبقى فيه أي ملف، لأن Next يعامله كـPages Router.
-2. **`ThemeLanguageContext`:**
-   - `useState<Theme>('dark')` و `useState<Language>('ar')`، بدون initializers تقرأ المتصفح.
-   - `useLayoutEffect` عند mount:
-     ```ts
-     const attr = document.documentElement.getAttribute('data-theme');
-     if (attr === 'light' || attr === 'dark') setTheme(attr);
-     try { const l = localStorage.getItem('techno_lang'); if (l === 'en' || l === 'ar') setLangState(l); } catch {}
-     document.documentElement.removeAttribute('data-lang-pending');
-     ```
-   - `data-lang-pending` يُحذف **بعد** تطبيق اللغة: في effect يعتمد على `lang` ويعمل بعد أول مزامنة.
-   - باقي المنطق (متابعة النظام والحفظ و toggle) يبقى كما هو.
-3. **38 inline theme style:**
-   - في `App.tsx` (18، وستنتقل إلى AboutTeamSection و AppShell في P4)، و `CinematicFooter.jsx` (7)، و `svg-follow-scroll.tsx` (2)، و `ProjectsSection` و `VideosSection` و `ArticlesSection` و `ScrollExpandPrototype` و `MagicBento` و `TeamMomentsRing` (1 لكل منها).
-   - كل تعبير `theme === 'light' ? A : B` داخل `style` يصبح `var(--token)`. عرّف الـtoken في `src/index.css`:
-     ```css
-     :root, [data-theme='dark'] { --about-bg: #050508; /* B */ }
-     [data-theme='light'] { --about-bg: #f8fafc; /* A */ }
-     ```
-     - سمِّ الـtokens حسب الغرض: `--about-bg`، و `--about-fade-bottom`، و `--team-showcase-bg`، و `--team-showcase-fade-top`، و `--members-badge-bg`، و `--members-badge-border`، وهكذا.
-     - **القيم حرفياً كما هي.**
-   - **استثناء:** props تُمرَّر إلى canvas أو WebGL (`Orb.backgroundColor`، و `TeamMomentsRing isLight`، و `Skiper19 strokeColor` إن كان مرتبطاً بالـtheme). هذه تبقى من الـContext، لأن مكوناتها client-only وتُعرض بعد mount.
-   - للـSVG أو attributes المرتبطة بالـtheme داخل مكونات تُعرض على الخادم: استخدم `currentColor` أو CSS var.
-4. **`ThemedImage`:**
-   ```tsx
-   export function ThemedImage({ dark, light, alt, className, priority }: {...}) {
-     return (<>
-       <img src={dark.src} width={dark.width} height={dark.height} alt={alt} className={`${className} themed themed--dark`} loading={priority ? 'eager' : 'lazy'} fetchPriority={priority ? 'high' : 'auto'} decoding="async" />
-       <img src={light.src} width={light.width} height={light.height} alt={alt} className={`${className} themed themed--light`} loading="lazy" decoding="async" />
-     </>);
-   }
-   ```
+   - ‏`maximumScale: 5` يبقى (**ممنوع** منع التكبير، فهذا شرط accessibility).
+   - ‏`#f8fafc` هو لون الخلفية الفاتحة المستخدم فعلاً في `App.tsx`.
+2. **`tokens.css`:** لا يغيّر أي قيمة موجودة، يضيف فقط:
    ```css
-   [data-theme='light'] .themed--dark, :root:not([data-theme='light']) .themed--light { display: none; }
+   :root{
+     /* fluid type scale (min at 360px → max at 1440px) */
+     --fs-xs:  max(0.75rem, 12px);                              /* hard floor 12px */
+     --fs-sm:  clamp(0.8125rem, 0.78rem + 0.15vw, 0.875rem);    /* 13–14px */
+     --fs-base:clamp(0.9375rem, 0.9rem + 0.2vw, 1rem);          /* 15–16px */
+     --fs-lg:  clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
+     --fs-xl:  clamp(1.25rem, 1.1rem + 0.7vw, 1.75rem);
+     --fs-2xl: clamp(1.5rem, 1.2rem + 1.4vw, 2.5rem);
+     --fs-3xl: clamp(1.75rem, 1.3rem + 2.2vw, 3.25rem);
+     /* spacing (rem-based) */
+     --space-1:.25rem; --space-2:.5rem; --space-3:.75rem; --space-4:1rem; --space-5:1.25rem; --space-6:1.5rem; --space-8:2rem; --space-10:2.5rem; --space-12:3rem; --space-16:4rem;
+     --gutter: clamp(1rem, 0.6rem + 1.8vw, 2rem);               /* 16px phones → 32px desktop */
+     --container: min(1200px, 100% - 2 * var(--gutter));
+     --tap-min: 44px;
+     /* viewport heights with fallbacks */
+     --vh-full: 100vh;
+     --safe-top: env(safe-area-inset-top, 0px);
+     --safe-bottom: env(safe-area-inset-bottom, 0px);
+     --safe-left: env(safe-area-inset-left, 0px);
+     --safe-right: env(safe-area-inset-right, 0px);
+   }
+   @supports (height: 100svh){ :root{ --vh-full: 100svh; } }
    ```
-   - الاستخدام: الـhero (`im3` داكن و `im2` فاتح)، وخلفيات Projects و Videos و Articles (`hero-bg-distortion` داكن و `im1` فاتح).
-   - إذا كان `ScrollExpand` يقبل `src` فقط: أضف prop اسمه `media?: ReactNode` يُعرض بدل `<img>` الداخلي، **مع نفس الـclasses والأنماط**. لا تغيّر CSS الـcomponent.
-5. **قراءات المتصفح داخل الـrender:**
-
-   | الملف | الحالي | المطلوب |
-   |---|---|---|
-   | `App.tsx` (ينتقل إلى AppShell) | `useState(() => getLoggedInUser())` | `useState(null)` + `useEffect(() => setCurrentUser(getLoggedInUser()), [])` |
-   | `OfficeBlogSection.tsx` | likes و comments من localStorage في initializer | initial من البيانات، و `useEffect` يحمّل localStorage |
-   | `ProjectReelsFeed.tsx` | نفس الشيء (`techno_reels_*`) | نفس الحل |
-   | `useSavedProjects.ts` | قراءة عند التهيئة | `[]` ثم effect |
-   | `ScrollExpandPrototype` (HomeHero) | `getResponsiveConfig(window.innerWidth)` | `getResponsiveConfig(1200)` ثم `useLayoutEffect` يضبط القيمة الحقيقية |
-   | `ProjectsSection.tsx` | `isMobile` من innerWidth | `false` ثم `useLayoutEffect` |
-   | `ProjectsCatalogSection.tsx` | `activeProject` من hash | يُحذف كلياً في P5 (التفاصيل route مستقل) |
-   | `CinematicFooter.jsx` | `gsap.registerPlugin` على مستوى الـmodule | داخل `useEffect` في الـcomponent الرئيسي |
-
-   - **ScrollExpand على الموبايل:** بعد تغيير config يعاد mount مرة واحدة (بسبب `key`). تحقق بصرياً (P11). إذا ظهرت قفزة واضحة: احذف `key`، ومرّر الأبعاد كـCSS custom properties مع media queries بنفس القيم في `getResponsiveConfig`.
-6. **Hooks:**
-   - `useHydrated()`: يرجع `false` حتى mount.
-   - `useInView(ref, { rootMargin: '400px', once: true })`.
-   - `<ClientOnly fallback>` يعرض `children` فقط عندما `useHydrated()` true.
-7. **الخط:**
-   - في layout (P4): ‏`const readex = Readex_Pro({ subsets: ['arabic','latin'], weight: ['300','400','500','600','700','800'], display: 'swap', variable: '--font-readex' })`.
-   - استبدل كل `'Readex Pro'` في ملفات CSS بـ`var(--font-readex)` (مع الإبقاء على fallback stack الموجود بعده).
-   - احذف السطر الأول `@import url('https://fonts.googleapis.com/...')` من `src/index.css`.
+   - **لا تستبدل الأحجام الحالية بشكل شامل.** الـtokens تُستخدم فقط في الأماكن التي تصلحها R5 (النصوص تحت 12px، والعناوين التي تحتاج fluid).
+3. **`100vh` (23 موضعاً):**
+   - كل `height: 100vh` أو `min-height: 100vh` في CSS يصبح:
+     ```css
+     height: 100vh; height: var(--vh-full);
+     ```
+     (السطر الأول fallback للمتصفحات القديمة).
+   - في inline styles داخل TSX و JSX: `'100vh'` يصبح `'var(--vh-full)'`.
+   - **الاستثناء:** ScrollExpand و ProjectReelsFeed. هذان يحتاجان `100dvh` لأن المحتوى يجب أن يملأ الشاشة الفعلية أثناء التمرير. استخدم `100vh` ثم `100dvh` كـfallback chain.
+   - المواضع الثمانية التي تستخدم `dvh` أو `svh` حالياً تبقى كما هي.
+4. **Safe areas:**
+   - الـnavbar الثابت: `padding-top: calc(<existing> + var(--safe-top))`.
+   - أزرار Reels السفلية و `.cinema-*` actions: `padding-bottom: calc(<existing> + var(--safe-bottom))`.
+   - الـfooter: `padding-bottom` مع `var(--safe-bottom)`.
+   - الـdrawer (R4): كل الجهات.
+   - في landscape على iPhone: الحاويات الرئيسية `padding-inline: max(var(--gutter), var(--safe-left))` (و right). طبّق على `.tab-page-container` والحاويات العليا فقط.
+5. **حماية عامة من الـoverflow** (في `index.css`):
+   ```css
+   html, body { overflow-x: clip; }            /* not 'hidden' — keeps position:sticky working */
+   img, svg, video, canvas, iframe { max-width: 100%; }
+   img, video { height: auto; }
+   :where(.grid, [class*="grid"]) > * { min-width: 0; }   /* grid children can shrink */
+   ```
+   ⚠️ ‏`overflow-x: clip` **شبكة أمان فقط، وليست الحل**. كل overflow يُصلح من سببه في R5، والفحص في R9 يعمل **مع تعطيل هذه القاعدة** (عبر `addStyleTag` بقيمة `html,body{overflow-x:visible!important}`) ليكشف أي سبب متبقٍّ.
+6. **Breakpoints:** طبّق خريطة القسم 2.3 على **كل** ملفات CSS (القائمة: ‏`index.css`، و `AuthPage.css`، و `ContactPage.css`، و `InfiniteMenu.css`، و `ProfilePage.css`، و `UserProfilePage.css`، و `CinematicFooter.css`، و `TeamMomentsRing.css`، و `ArticlesSection.css`، و `OfficeBlogSection.css`، و `ProjectsCatalogSection.css`، و `InfiniteSpiral.css`، و `auth-switch.css`، و `VideoPlayerModal.css`، و `FaqSection.css`، و `ProjectsSection.css`، و `ui/CardSwap.css`، و `ProjectReelsFeed.css`، و `ScrollExpandPrototype.css` أو `HomeHero.css`، و `ArticleDetailView.css`، و `LiveProjectsShowcase.css`، و `MagicBento.css`، و `ProjectDetailView.css`، و `VideosSection.css`). ‏**ملف واحد لكل commit فرعي، مع لقطات قبل وبعد.**
+   - الملفات غير المستخدمة (`App.css`، و `ScrollReveal.css`...) تُحذف في خطة الترحيل P1، فلا تحوّلها.
+   - في JS: ‏`ProjectsSection` (`innerWidth < 640`)، و `MagicBento` (`MOBILE_BREAKPOINT`)، و `getResponsiveConfig` في الـhero. وحّد العتبات إلى نفس القيم، وأنشئ `src/lib/breakpoints.ts`:
+     ```ts
+     export const BP = { sm: 480, md: 768, lg: 1024, xl: 1280, xxl: 1536 } as const;
+     ```
+     واستخدم `matchMedia('(max-width: 767.98px)')` بدل `innerWidth`، مع listener على `change`.
 
 **Validation:**
-- `npm run build` بدون `window is not defined` أو `localStorage is not defined`.
-- `next dev`: لا تحذيرات hydration في الـconsole لأي صفحة (بعد P5).
+- `grep -rhoE "\((max|min)-width: *[0-9.]+px\)" src | sort -u` لا يُظهر إلا القيم المسموحة.
+- ‏C1 محلول: لا overflow على 1024 و 1180 (مع تعطيل `overflow-x: clip`). التحقق الكامل بعد R4.
 
-**Risks:** مكون ناقص من `'use client'` يسبب خطأ build واضحاً ("useState only works in Client Components"). أضفه.
+---
 
-### P4 — Root Layout + App Shell + Navigation
+### R2 — Vector Brand Assets
 
-**Goal:** استبدال `App.tsx` بـlayout و shell، والتنقل بمسارات حقيقية.
+**Goal:** الشعار وأصول الـloader كـSVG حادة على أي كثافة وبحجم صغير.
 **Files:**
-- جديدة: `src/app/layout.tsx`، و `src/components/shell/AppShell.tsx`، و `src/components/shell/ScrollToTop.tsx`، و `src/components/about/AboutTeamSection.tsx`، و `src/lib/inline-scripts.ts`.
-- معدّلة: `GooeyNav.jsx`، و `CinematicFooter.jsx`، و `authUtils.ts`، و `AuthPage.jsx`، و `UserProfilePage.jsx`، و `ProfilePage.jsx`، و `public/loader/loader.js`.
-- محذوفة: `src/App.tsx`.
+- جديدة: `public/brand/logo.svg`، و `public/brand/logo-mark.svg` (بدون الدائرة)، و `public/brand/launch-button.svg`، و `public/favicon.svg` (استبدال)، و `scripts/compare-vector.mjs`.
+- معدّلة: مراجع الشعار في الـnavbar والـhero والـfooter والـloader.
 
 **Actions:**
-1. **`src/lib/inline-scripts.ts`:** يصدّر ثلاثة سكربتات كنصوص.
-   ```ts
-   export const LEGACY_HASH_REDIRECT = `(function(){try{
-     if(location.pathname!=='/')return;var h=location.hash;if(!h)return;
-     var map={'#projects':'/projects','#articles':'/articles','#videos':'/videos','#faq':'/faq','#about':'/about','#contact':'/contact','#login':'/login','#auth':'/login','#register':'/register','#my-profile':'/account','#favorites':'/account','#profile':'/account','#academic-projects':'/projects'};
-     if(h==='#top'){history.replaceState(null,'','/');return;}
-     if(map[h]){location.replace(map[h]);return;}
-     var m;
-     if((m=h.match(/^#article\\/([a-z0-9-]+)\\/?$/)))location.replace('/articles/'+m[1]);
-     else if((m=h.match(/^#project\\/([a-z0-9-]+)\\/?$/)))location.replace('/projects/'+m[1]);
-     else if((m=h.match(/^#profile-([a-z0-9-]+)$/)))location.replace('/team/'+m[1]);
-   }catch(e){}})();`;
+1. **تحليل الشعار الأصلي** (`src/assets/Asset-1@4x.png` بدقة 2449×2618، وهو الأعلى دقة):
+   - الشكل: معيّنان جانبيان مائلان + مثلث علوي (حرف A مفتوح)، مع فواصل شفافة بين القطع، ودائرة في الأسفل الوسط.
+   - الألوان: تدرّج خطي من teal فاتح في الأعلى إلى أزرق ثم بنفسجي في الأسفل. الدائرة بتدرج قطري بنفسجي إلى teal.
+2. **إعادة البناء:**
+   - (a) استخرج قناع الـalpha من PNG بسكربت (sharp: `.extractChannel('alpha').threshold(128)`).
+   - (b) تتبّع الحدود بـ`potrace` (npm: `potrace`) لكل قطعة **منفصلة** للحصول على الإحداثيات.
+   - (c) **بسّط يدوياً** إلى polygons: القطع هندسية، فكل قطعة 3 إلى 6 نقاط. قرّب الإحداثيات إلى 0.5.
+   - (d) الدائرة: `<circle>` بمركز ونصف قطر مقاسين من القناع.
+   - (e) التدرجات: خذ عينات لون من PNG عند 5 نقاط على المحور الرأسي لكل قطعة، وابنِ `<linearGradient>` بـ`gradientUnits="userSpaceOnUse"` يمتد على كامل ارتفاع الشعار (حتى تتصل الألوان بين القطع كما في الأصل)، مع 2 إلى 4 `stop` كحد أقصى.
+   - (f) `viewBox` بنفس نسبة الأصل (2449:2618).
+3. **الملفات:**
+   - `logo.svg`: الشكل الكامل.
+   - `logo-mark.svg`: بدون الدائرة (يطابق `rocket-body.webp`).
+   - `launch-button.svg`: من `launch-button.webp` (دائرة بتدرج + حلقة خارجية)، وبنفس الطريقة.
+   - `favicon.svg`: نسخة من `logo.svg`، مع `<style>@media (prefers-color-scheme: dark){…}</style>` **فقط إذا** احتاج الشعار تبايناً على خلفية تبويب داكنة. الأصل ملوّن ومتباين على الخلفيتين، فالأرجح لا حاجة.
+4. **مقارنة الجودة** (`scripts/compare-vector.mjs`): اعرض كل SVG بـsharp على نفس أبعاد PNG الأصلي على خلفية رمادية (`#808080`)، واعرض PNG الأصلي على نفس الخلفية، ثم احسب **SSIM** (npm: `ssim.js`) على مقاسَي 512px و 64px.
+   - **الشرط:** SSIM ≥ 0.97 عند 512px و ≥ 0.95 عند 64px.
+   - إذا فشل: عدّل النقاط أو الـstops وأعد القياس.
+   - احفظ صور المقارنة في `docs/vector-compare/`.
+5. **الحجم:** ‏SVGO (`npx svgo --multipass`)، والهدف ≤ 4KB لكل ملف.
+6. **الاستبدال:**
+   - الـnavbar (`/techno-logo.png` بعرض 42px): ‏`<img src="/brand/logo.svg" width=".." height="..">` بنفس الأبعاد المعروضة.
+   - الـhero (`Asset-1@4x.png` بعرض 78–246px): ‏`logo.svg`.
+   - الـfooter وأي مرجع آخر: `grep -rn "techno-logo.png\|Asset-1@4x" src`.
+   - **Loader:** في `loader.js` الـtemplate (بعد خطة الترحيل P4.3)، استبدل `rocket-body.webp` بـ`/brand/logo-mark.svg`، و `launch-button.webp` بـ`/brand/launch-button.svg`، **بنفس `width` و `height` والـclasses**. تحقّق بصرياً من الـloader (الإضاءة والـplume تبقى CSS).
+   - **يبقى PNG:** `public/techno-logo.png` لأن الـJSON-LD `logo` والـOpen Graph يحتاجان raster. Google يقبل SVG للـlogo أحياناً، لكن og:image لا يقبله.
+7. **حذف المكررات** (بعد `grep` = 0 لكل واحد):
+   - `assets/logo.png`، و `Asset-1@4x.png` في الجذر.
+   - `src/assets/Asset-1@4x.png` (بعد الاستبدال).
+   - `public/loader/assets/original-logo.png` و `logo.webp` و `brand.webp`.
+   - `rocket-body.webp` و `launch-button.webp` بعد نجاح الـloader بالـSVG.
+
+**Validation:**
+- SSIM ضمن الحدود.
+- اللقطات: الـnavbar والـhero والـloader مطابقة بصرياً على DPR 1 و 2 و 3.
+- وزن الشعار ينتقل من 137–600KB إلى ≤ 4KB.
+
+**Risks:**
+- اختلاف طفيف في التدرج، فالـSSIM يكشفه.
+- الـloader يعتمد على أبعاد الصورة، فتثبيت `width` و `height` يمنع ذلك.
+
+---
+
+### R3 — Raster Image Pipeline (يحل محل خطة الترحيل P8.2 و P8.3 و P8.4)
+
+**Goal:** تقليل وزن الصور 85–95% مع الحفاظ على الجودة المرئية، مع ملف مناسب لكل شاشة وكثافة.
+
+**القرارات:**
+- **الصيغ:** ‏AVIF (أساسي) ثم WebP (احتياطي) ثم الأصل (احتياطي أخير)، عبر `<picture>`. ‏AVIF مدعوم في كل المتصفحات الحديثة (Safari 16.4+)، و WebP احتياط للأقدم.
+- **العروض المولَّدة:** ‏`320، 480، 640، 960، 1280، 1600، 1920`. **لا تكبير أبداً:** العرض الأقصى = العرض الأصلي. الأصل 1254 مثلاً يولّد حتى 960 + نسخة بعرضه الأصلي 1254.
+- **مكان الملفات:** كل الصور المستخدمة في `public/` (مصدر واحد). صور `src/assets` المستخدمة تُنقل إلى `public/media/` بنفس الأسماء:
+  - `public/media/home/im1.png` و `im2.png` و `im3.png` و `hero-bg-distortion.png`.
+  - `public/media/videos/*.png`.
+  - `public/media/techno-projects/*`.
+  - الـimports في الكود تصبح مسارات نصية.
+  - **السبب:** pipeline واحد، ولا hashing من الـbundler يعيق الـsrcset.
+- **المخرجات:** ‏`public/_img/<same path without ext>.<width>.avif|webp` + `public/_img/manifest.json`. المجلد مولَّد وقت البناء وفي `.gitignore`.
+
+**فئات الجودة** (تحددها الأداة حسب المسار):
+
+| الفئة | المسارات | AVIF | WebP | ملاحظة |
+|---|---|---|---|---|
+| `photo` | `articles/`، و `projects/`، و `moments/`، و `media/home/`، و `media/videos/`، و `media/techno-projects/`، و `abdulghani.jpg` | quality 55، effort 6، chroma 4:2:0 | quality 80، effort 5 | صور مولَّدة وفوتوغرافية |
+| `screenshot` | `projects-live/` | quality 65، effort 6، **chroma 4:4:4** | quality 88، `smartSubsample: true` | نصوص واجهات: الـ4:4:4 يمنع تشويش ألوان النص |
+| `flat` | صورة في `screenshot` أو `photo` عدد ألوانها المصغّر < 400 (مثل `hisab-erp.jpg` و `interactive-cv.jpg` و `taima-alwani.jpg`) | quality 70 | **lossless** WebP (`lossless: true`) إذا كان أصغر من lossy، وإلا q 90 | الأداة تقارن وتختار الأصغر الذي يمر شرط الجودة |
+
+**شرط الحفاظ على الدقة (إلزامي وآلي):**
+- لكل ملف مولَّد: صغّر الأصل إلى نفس العرض (sharp، ‏lanczos3)، ثم احسب **SSIM** بين الأصل المصغّر والملف المولَّد بعد فك ضغطه.
+- **الحد الأدنى:** `photo` ≥ 0.97، و `screenshot` ≥ 0.985، و `flat` ≥ 0.99.
+- إذا لم يتحقق الشرط: ارفع الـquality بخطوات 5 حتى يتحقق (الحد الأقصى AVIF 80 و WebP 95). تُسجَّل القيمة النهائية في الـmanifest.
+
+**Actions:**
+1. **`scripts/optimize-images.mjs`** (يستبدل placeholder خطة الترحيل P1.8):
+   ```js
+   // inputs: public/{articles,projects,projects-live,moments,media}/**/*.{png,jpg,jpeg,webp} + public/abdulghani.jpg
+   // for each file: read metadata (width,height), classify (photo|screenshot|flat),
+   // widths = [320,480,640,960,1280,1600,1920].filter(w => w < origW).concat([origW])
+   // for each width: resize (withoutEnlargement), encode avif + webp per class settings,
+   //   verify SSIM (ssim.js on raw RGBA buffers, downscaled original vs decoded output), bump quality until pass
+   // skip if output exists and newer than source (mtime) — incremental
+   // write public/_img/manifest.json: { "/articles/digital-twin.jpg": { w:1280, h:720, class:"photo", widths:[...], avifQ:55, webpQ:80, lqip:"data:image/webp;base64,..." } }
    ```
-   - **`THEME_LANG_BOOT`:** انسخ سكربت الـtheme و lang الموجود في `index.html` الحالي **حرفياً**، مع تعديلين:
-     - في حالة `savedLang === 'en'` أضف `document.documentElement.setAttribute('data-lang-pending','')`.
-     - أضف كتلة الـloader:
-       ```js
-       var skip = location.pathname!=='/' || sessionStorage.getItem('te_loader_seen')==='1';
-       if(skip){document.documentElement.setAttribute('data-skip-loader','');}
-       else{sessionStorage.setItem('te_loader_seen','1');}
-       ```
-       ملفوفة في try.
-     - إذا كان `LOADER_MODE` في site.ts بقيمة `'always'`: يُولَّد السكربت بشرط `pathname!=='/'` فقط. وإذا كان `'off'`: `skip=true` دائماً.
-2. **`src/app/layout.tsx`:**
+   - **LQIP:** نسخة 16px WebP بـbase64 (≈ 150 byte) تُستخدم كـbackground-image placeholder أثناء التحميل. **فقط** لصور LCP وصور البطاقات الكبيرة.
+   - **الأداء:** concurrency = عدد الأنوية (`os.availableParallelism()`). أول تشغيل قد يأخذ دقائق، واللاحقة incremental.
+   - **في CI أو Cloudflare build:** إذا كان وقت البناء مشكلة، يُسمح بعمل commit لـ`public/_img` بدل تجاهله. **القرار الافتراضي:** مولَّد وغير متتبع في git.
+2. **مكون `src/components/ResponsiveImage.tsx`:**
    ```tsx
-   import './globals-import.css'; // imports '../index.css' first, then nothing else
-   export const metadata: Metadata = buildRootMetadata(); // P7
-   export const viewport: Viewport = { themeColor: '#030712', width: 'device-width', initialScale: 1, maximumScale: 5 };
-   export default function RootLayout({ children }) {
+   type Props = { src: string; alt: string; sizes: string; priority?: boolean; className?: string; style?: React.CSSProperties };
+   export function ResponsiveImage({ src, alt, sizes, priority, className, style }: Props) {
+     const m = imageManifest[src];            // imported JSON (server-safe)
+     if (!m) return <img src={src} alt={alt} className={className} style={style} loading={priority ? 'eager' : 'lazy'} decoding="async" />;
+     const set = (ext: 'avif' | 'webp') => m.widths.map(w => `/_img${stripExt(src)}.${w}.${ext} ${w}w`).join(', ');
      return (
-       <html lang="ar" dir="rtl" suppressHydrationWarning className={readex.variable}>
-         <head>
-           <script dangerouslySetInnerHTML={{ __html: LEGACY_HASH_REDIRECT }} />
-           <script dangerouslySetInnerHTML={{ __html: THEME_LANG_BOOT }} />
-           <link rel="stylesheet" href="/loader/loader.css" />
-           <script src="/loader/loader.js" defer />
-         </head>
-         <body>
-           <ThemeLanguageProvider>
-             <AppShell>{children}</AppShell>
-           </ThemeLanguageProvider>
-           <JsonLd data={[organization(), website()]} />
-         </body>
-       </html>
+       <picture>
+         <source type="image/avif" srcSet={set('avif')} sizes={sizes} />
+         <source type="image/webp" srcSet={set('webp')} sizes={sizes} />
+         <img src={src} width={m.w} height={m.h} alt={alt} sizes={sizes} className={className} style={style}
+              loading={priority ? 'eager' : 'lazy'} fetchPriority={priority ? 'high' : 'auto'} decoding="async" />
+       </picture>
      );
    }
    ```
-   - **CSS:** استورد `src/index.css` في layout أولاً. كل مكون يبقى يستورد CSS الخاص به كما هو (App Router يسمح بـglobal CSS imports في أي component).
-   - **القاعدة في `index.css`:** `html[data-lang-pending] #app-root{visibility:hidden}`، حيث `#app-root` هو wrapper الـAppShell.
-3. **`public/loader/loader.js`:**
-   - الـmarkup الموجود حالياً في `index.html` (من `<div id="te-loader">` حتى إغلاقه) يُنقل **حرفياً** إلى template string داخل الـIIFE، ويُنشأ بـ`document.body.insertAdjacentHTML('afterbegin', TEMPLATE)`، **قبل** أي `getElementById`.
-   - أول سطر داخل الـIIFE:
-     ```js
-     if (document.documentElement.hasAttribute('data-skip-loader')) { window.dispatchEvent(new CustomEvent('techno:completed')); return; }
-     ```
-   - السكربت `defer`، فيعمل بعد تحليل الـHTML وقبل `DOMContentLoaded`. React 19 يتسامح مع عناصر أضافها سكربت خارجي داخل `<body>`.
-   - تحقق في P11 من عدم وجود تحذير hydration بسببه. إذا ظهر: أنشئ الـloader داخل `document.documentElement` بدل body، أو استخدم `<div id="te-loader-host" suppressHydrationWarning />` في layout كحاوية فارغة يملؤها السكربت.
-4. **`AppShell.tsx` (`'use client'`):** ينقل من `App.tsx` كما هي:
-   - `<ScrollProgress className="top-0" />`.
-   - الـnavbar بنفس الـmarkup والـclasses:
-     - `navItems` تصبح `{ label, href: '/', '/projects', '/videos', '/articles', '/faq', '/about', '/contact' }`.
-     - `activeIndex` مشتق من `usePathname()`: `/projects*` = 1، و `/videos` = 2، و `/articles*` = 3، و `/faq` = 4، و `/about` أو `/team/*` = 5، و `/contact` = 6، و `/` = 0. صفحات `/login` و `/register` و `/account` = -1.
-     - زر الـauth: ‏`router.push(currentUser ? '/account' : '/login')` بعد حفظ return path.
-     - `isPastHero`: نفس المنطق، والشرط `pathname === '/'`.
-     - الـclass `is-tab-sticky` عندما `pathname !== '/'`.
-   - `<div id="app-root"><main id="main-content">{children}</main></div>`، ويليه `<CinematicFooter key={pathname} />`.
-   - مستمع `techno_require_login`: يحفظ return path ثم `router.push('/login')`.
-   - مستمعا `techno_auth_updated` و `storage`: كما هما.
-   - `isLoaderDone`: `true` فوراً إذا كان `data-skip-loader` موجوداً أو `pathname !== '/'`. غير ذلك، استمع لـ`techno:completed` مع fallback 2700ms (كما هو). يُمرَّر عبر Context صغير `LoaderContext` لأن Orb في AboutTeamSection يحتاجه.
-   - `<ScrollToTop />`: عند تغيّر `pathname` (وليس الـhash): `window.scrollTo({ top: 0, behavior: 'smooth' })`.
-5. **`GooeyNav.jsx`:** في `handleClick` نفّذ `e.preventDefault()`، وشغّل نفس الـanimation، ثم `router.push(item.href)` بدل `window.location.hash = ...`. الـ`<a href>` يبقى بالمسار الحقيقي (Ctrl+Click يعمل).
-6. **`AboutTeamSection.tsx`:** استخرج JSX قسم About من `App.tsx` (مكرر حالياً في السطور 556–733 و 745–922) **حرفياً**، مع:
-   - prop `headingLevel: 'h1' | 'h2'`.
-   - الـinline styles المرتبطة بالـtheme تصبح CSS vars (P3).
-   - `Orb` و `InfiniteMenu` و `TeamMomentsRing` عبر `next/dynamic(..., { ssr: false })` + `useInView` (P8)، مع placeholder بنفس حاوية الأبعاد (الحاويات الحالية لها `height: 100vh` و `minHeight: 700px`، فلا CLS).
-   - داخل حاوية `#team-showcase`:
-     ```tsx
-     <ul className="sr-only">{teamMembers.map(m => <li key={m.id}><Link href={`/team/${m.id}`}>{m.name} — {m.role}</Link></li>)}</ul>
-     ```
-   - `onSelectMember` من InfiniteMenu يصبح `router.push('/team/' + member.id)`.
-   - `onScrollDown` يبقى `scrollToTeam`.
-7. **`CinematicFooter.jsx`:** كل `href="#projects"` وما شابهه يصبح مساراً حقيقياً عبر `next/link`. مع `MagneticButton as={Link}`: تأكد أن forwardRef يعمل، وإلا لفّ `Link` داخل `<a>` مخصص.
-8. **الـauth:**
-   - `authUtils.requireAuth()`: احذف `window.location.hash = '#login'` و `scrollTo`. احفظ `techno_auth_return_path = location.pathname + location.search + location.hash`، ثم أطلق الـevent فقط.
-   - `AuthPage`: `onBack` = `router.back()` إذا كان في history، وإلا `router.push('/')`. `onSuccess` = الانتقال لـreturn path أو `/account`.
-   - `UserProfilePage`: `onBack` = `router.push('/')`، و `onLogout` = `router.push('/')`، و `onOpenReader` و `onExploreProjects` = `router.push('/projects')`.
-   - `ProfilePage.onBack` = `router.push('/about#team-showcase')`.
-9. **احذف `src/App.tsx`** بعد نقل كل شيء. تحقق أن لا ملف يستورده.
+   - `width` و `height` الحقيقيان يمنعان CLS، والـCSS الموجود (`width:100%; height:auto` أو `object-fit`) يبقى.
+   - **`<picture>` يضيف عنصراً:** إذا كان CSS الحالي يستهدف `.card img` مباشرة فلا مشكلة. إذا اعتمد على `parent > img`: أضف `picture{display:contents}` في `index.css`، فيبقى الـlayout مطابقاً.
+3. **قيم `sizes` الإلزامية** (مشتقة من الـlayouts الحالية، ويتحقق منها الـagent بقياس العرض المعروض في Playwright على 390 و 820 و 1440، ثم يعدّلها إذا اختلفت أكثر من 20%):
+
+   | الاستخدام | `sizes` | priority |
+   |---|---|---|
+   | صورة hero الرئيسية (`im2` و `im3`) | `(max-width: 767.98px) 100vw, 60vw` | ✓ (المتغيّر الداكن فقط، انظر ThemedImage في خطة الترحيل) |
+   | خلفيات أقسام الرئيسية (`im1` و `hero-bg-distortion`) | `100vw` | ✗ |
+   | InfiniteSpiral (`techno-projects/project-*`) | `(max-width: 767.98px) 50vw, 25vw` | أول 2 فقط eager، والباقي lazy |
+   | أغلفة الفيديو (CardSwap) | `(max-width: 767.98px) 80vw, 40vw` | ✗ |
+   | بطاقات المقالات والمشاريع (القوائم) | `(max-width: 639.98px) 100vw, (max-width: 1023.98px) 50vw, 33vw` | أول بطاقة فقط eager |
+   | Banner المقال / صورة المشروع (التفاصيل) | `(max-width: 1023.98px) 100vw, 900px` | ✓ |
+   | Related (sidebar) | `(max-width: 1023.98px) 50vw, 280px` | ✗ |
+   | Reels covers | `(max-width: 767.98px) 100vw, 480px` | أول واحدة فقط |
+   | Moments (TeamMomentsRing، ‏canvas) | — | canvas يرسم الصورة، فحمّل `.640.webp` (أو `.960` على DPR ≥ 2) مباشرة بدل الأصل |
+   | صورة المؤلف و الـavatar | `48px` | ✗ |
+
+4. **Preload للـLCP:** في صفحات التفاصيل والرئيسية، أضف في الـpage:
+   ```tsx
+   <link rel="preload" as="image" type="image/avif" imageSrcSet={...avif set} imageSizes={sizes} fetchPriority="high" />
+   ```
+   (React 19 يرفعه إلى `<head>`).
+5. **استبدل كل `<img>` للصور المذكورة** بـ`ResponsiveImage`: ابحث بـ`grep -rn "<img" src`. **استثناء:** الشعار (SVG من R2) والـavatars الخارجية (Unsplash، وتبقى كما هي حتى يستبدلها المالك).
+6. **og:image:** يبقى الملف الأصلي (JPG أو PNG)، لأن المنصات الاجتماعية لا تدعم AVIF دائماً.
+   - **الاستثناء:** PNG الأكبر من 1MB (صور المقالات والمشاريع) يُولَّد لها `/_img/og/<slug>.jpg` بدقة 1200×630 وجودة JPEG 85، وتُستخدم في `openGraph.images`. عدّل `pageMetadata` في خطة الترحيل P7.
+7. **حذف المكررات:**
+   - `src/assets/articles/*` (نسخ من `public/articles`).
+   - `src/assets/cinematic-engineering.jpg` و `hero.png` (غير مستخدمة).
+   - `grep` قبل كل حذف.
+   - **لا تحذف الأصول الأصلية** من `public/`، فهي مصدر الـpipeline والـog والـfallback.
+8. **صورة `5g-iot.png` مطابقة لـ`internet-of-things-iot.png`:** سجّلها في `docs/owner-todo.md` ولا تغيّرها.
 
 **Validation:**
-- كل عنصر nav ينقل إلى المسار الصحيح، والـactive highlight صحيح.
-- Back و Forward يعملان.
-- Ctrl+Click على nav يفتح tab جديداً.
-- `/#article/digital-twin` يتحول إلى `/articles/digital-twin`، و `/#top` يصبح `/` بدون reload.
+- كل ملف في `_img` مرّ شرط SSIM (الـmanifest يحتوي القيم).
+- `/` على galaxy-360: صور ≤ **1.5MB** حتى `networkidle` (من 22.5MB).
+- `/projects` على laptop-1440: ≤ **2.5MB** (من 22.7MB).
+- لا صورة `naturalWidth > rendered × DPR × 1.5` (إلا أصغر نسخة متاحة).
+- مقارنة بصرية: الفرق ≤ 0.1% (الصور بجودة مكافئة).
 
-**Risks:** الـGSAP ScrollTrigger في الـfooter بعد التنقل. الحل: `key={pathname}` (موجود) + `ScrollTrigger.refresh()` في effect بعد تغيّر pathname.
+---
 
-### P5 — Routes (All Pages, SSG)
+### R4 — Navigation (Adaptive)
 
-**Goal:** إنشاء كل الصفحات بـSSG.
-**Files (جديدة):**
-```text
-src/app/page.tsx
-src/app/projects/page.tsx
-src/app/projects/[slug]/page.tsx
-src/app/articles/page.tsx
-src/app/articles/[slug]/page.tsx
-src/app/videos/page.tsx
-src/app/faq/page.tsx
-src/app/about/page.tsx
-src/app/contact/page.tsx
-src/app/team/[id]/page.tsx
-src/app/login/page.tsx
-src/app/register/page.tsx
-src/app/account/page.tsx
-src/app/not-found.tsx
-src/components/articles/ArticleBody.tsx
-src/components/projects/ProjectBody.tsx
-src/components/articles/ArticlesListing.tsx
-src/components/account/AccountClient.tsx
+**Goal:** حل C1 و C4 و C5 في الـnav، مع الإبقاء على هوية GooeyNav.
+**Files:** `src/components/shell/AppShell.tsx`، و `src/components/shell/MobileNav.tsx` (جديد)، و `src/components/shell/MobileNav.css` (جديد)، و `src/index.css` (قسم الـnavbar)، و `src/GooeyNav.css`.
+
+**القرار:**
+
+| العرض | الشكل |
+|---|---|
+| ≥ 1280px | كما هو اليوم: سطر واحد (brand | GooeyNav | actions) |
+| 768 إلى 1279.98px | **سطران** (نفس ما يعمل اليوم على 768 و 820): السطر الأول brand + actions، والثاني GooeyNav بكل الروابط السبعة ظاهرة ومتوسطة **بدون تمرير**. يطبَّق الآن حتى 1279.98 (كان حتى 960 فقط)، **فيُحل C1** |
+| < 768px | **Header مضغوط** (سطر واحد، ارتفاع 56px + safe-top): الشعار (يمين في RTL) + أزرار الأيقونات (theme، واللغة كأيقونة كرة أرضية، والحساب) + زر قائمة ☰ (44×44). الروابط السبعة في **Drawer** |
+
+**Actions:**
+1. **CSS الـnavbar** في `index.css`:
+   - ما كان تحت `@media (max-width: 960px)` ينتقل إلى `@media (min-width: 768px) and (max-width: 1279.98px)`.
+   - ما كان تحت `@media (max-width: 640px)` يُراجع ويُدمج في قسم `< 768` الجديد.
+   - `.navbar-center-menu` في وضع السطرين: `flex-wrap: wrap; justify-content: center; overflow: visible` بدل `overflow-x: auto`.
+   - إذا لم تتسع الروابط السبعة على 768 بسطر واحد داخل السطر الثاني (قِس ذلك): قلّل `padding-inline` للروابط إلى `0.75rem`، **ولا تصغّر الخط تحت 14px**.
+2. **أهداف اللمس في GooeyNav:** ارتفاع الرابط `min-height: 44px` (حالياً 30px)، مع `padding-block` لتعويض الفرق. تحقق أن تأثير الـgooey (الفقاعة) يتبع الارتفاع الجديد: `GooeyNav.jsx` يقيس `getBoundingClientRect` للعنصر، فيجب أن يعمل تلقائياً. راجع اللقطة.
+3. **`MobileNav.tsx`** (`'use client'`)، يظهر فقط `< 768px` عبر CSS (`display:none` على العروض الأكبر، و GooeyNav `display:none` تحت 768). **كلاهما في HTML** لأجل الـSSG والـcrawlers.
+   - **زر القائمة:** ‏`<button aria-expanded aria-controls="mobile-drawer" aria-label="فتح القائمة">` بأيقونة lucide `Menu` و `X`، بحجم 44×44.
+   - **Drawer:** ‏`<nav id="mobile-drawer" aria-label="القائمة الرئيسية">`، يُفتح من جهة البداية (يمين في RTL، ويسار في LTR عبر `inset-inline-start`)، بعرض `min(84vw, 360px)` وارتفاع `var(--vh-full)`، مع padding للـsafe-areas.
+   - **الخلفية:** نفس ألوان الـnavbar الحالية (`var(--bg-main)` مع الـglass الموجود)، و backdrop بـ`rgba(0,0,0,.5)`.
+   - **المحتوى:** الروابط السبعة كـ`<Link>` بارتفاع 52px، وخط `var(--fs-lg)`، والرابط النشط بنفس لون الـaccent الحالي (`#00d2ff` أو class active الموجود). تحتها صف: تبديل اللغة + تبديل الـtheme + زر الدخول أو الحساب بنصه الكامل.
+   - **السلوك:**
+     - يُغلق عند تغيّر pathname، و Escape، والنقر على الـbackdrop.
+     - **Focus trap** داخل الـdrawer أثناء الفتح.
+     - إعادة الـfocus لزر القائمة عند الإغلاق.
+     - `body` بـ`overflow: hidden` أثناء الفتح.
+     - `inert` على `#app-root` أثناء الفتح.
+   - **الحركة:** ‏`transform: translateX(±100%)` إلى `0`، بمدة 280ms `cubic-bezier(.16,1,.3,1)` (نفس المنحنى المستخدم في `FaqSection.css`). ‏`prefers-reduced-motion`: بدون transition.
+4. **Header < 768:**
+   - زر اللغة: `LanguageDropdown` يأخذ prop `compact` (أيقونة فقط، مع `aria-label="اللغة"`) ويفتح نفس القائمة.
+   - زر الحساب: أيقونة فقط (موجود فعلاً بإخفاء الـlabel).
+   - نص الـbrand "تكنو إنجاز" يبقى إذا اتسع على 360px. على 320px يُخفى النص ويبقى الشعار: `@media (max-width: 379.98px)`، وهذا استثناء موثق (ليس breakpoint layout).
+5. **`isPastHero` و sticky:** السلوك الحالي يبقى، مع تحديث حساب `navHeight` لأنه أصبح أقصر على الموبايل (يُقاس بـResizeObserver بدل القياس مرة واحدة).
+
+**Validation:**
+- لا overflow أفقي على أي جهاز في المصفوفة (مع تعطيل `overflow-x: clip`).
+- على 360 و 390: كل الروابط السبعة قابلة للوصول (افتح الـdrawer وعدّها = 7، كلها ≥ 44px).
+- على 768 و 820 و 1024 و 1180: الروابط السبعة ظاهرة بلا تمرير.
+- keyboard: Tab إلى زر القائمة، ثم Enter، ثم التركيز في الـdrawer، ثم Escape يغلق ويعيد التركيز.
+- axe بلا مشاكل في الـdrawer.
+
+---
+
+### R5 — Page-by-Page Layout Fixes
+
+**Goal:** حل C2 و M1 و C5 في كل صفحة، مع الإبقاء على التصميم.
+**قاعدة:** كل إصلاح في CSS الخاص بالمكون، بدون إعادة هيكلة JSX إلا حيث يُذكر.
+
+**R5.1 — المقال (`ArticleDetailView.css`)، يحل C2:**
+```css
+.article-fullscreen-markdown-body { overflow-wrap: anywhere; word-break: normal; }
+.article-fullscreen-markdown-body a { overflow-wrap: anywhere; }
+.article-fullscreen-markdown-body pre { overflow-x: auto; max-width: 100%; direction: ltr; text-align: left; }
+.article-fullscreen-markdown-body code { overflow-wrap: anywhere; }
+.article-fullscreen-markdown-body table { display: block; max-width: 100%; overflow-x: auto; }
+.article-fullscreen-layout, .article-main-container { min-width: 0; }
+.article-view-top-bar { flex-wrap: wrap; min-width: 0; }   /* measured 435px on 390 viewport */
+```
+- `display:block` على `table` يحافظ على الـstyling ويسمح بالتمرير الأفقي داخل الجدول. **بديل أنظف:** في `renderMarkdown` (خطة الترحيل P2.5) لفّ كل `<table>` بـ`<div class="table-scroll">`، وأضف `.table-scroll{overflow-x:auto}`. **اختر البديل الأنظف** لأنه يحافظ على `display:table`.
+- **Breadcrumb على الموبايل:** العنوان الأخير `text-overflow: ellipsis; white-space: nowrap; overflow: hidden; max-width: 60vw`.
+- **حجم نص المقال:** `font-size: max(1rem, 16px)` على الموبايل، و `line-height ≥ 1.8` للعربية. تحقق من القيمة الحالية، ولا تصغّرها.
+- **TOC الموبايل:** الموجود (قائمة منسدلة) يبقى. تأكد أن الـtoggle ≥ 44px.
+- **Sidebar:** تحت 1024 ينتقل أسفل المحتوى (تحقق أنه يحدث حالياً عند 992، وسيصبح 1024).
+
+**R5.2 — نفس الإصلاحات لـProjectDetailView/ProjectBody:** ‏`overflow-wrap` والجداول والـpre (المشاريع فيها روابط طويلة أيضاً).
+
+**R5.3 — النصوص تحت 12px (M1):** كل قاعدة `font-size` أقل من 12px تصبح `var(--fs-xs)` (يعادل 12px كحد أدنى). المواضع المقاسة:
+- `ProjectsCatalogSection.css`: ‏`.cat-count`، و `.card-cat-badge`، و `.card-tag-item`.
+- `ProjectReelsFeed.css`: ‏`.category-item-badge`، و `.engineer-pill-role`، و `.cinema-project-desc` (هذا نص وصف، فاجعله `var(--fs-sm)` أي 13px أو أكثر).
+- `CinematicFooter.css`: ‏`.footer-copyright`.
+- `FaqSection.css`: ‏`.faq-chip-count`.
+- للبحث عن الباقي: `grep -rnE "font-size: *(9|10|11)(\.[0-9]+)?px|font-size: *0\.(5|6|7)[0-9]*rem" src`.
+- الـbadges الصغيرة قد تحتاج `padding` أقل لتعويض الحجم، فلا يتغير عرضها كثيراً.
+
+**R5.4 — أهداف اللمس (C5):**
+- كل `button` و `a` تفاعلي (ليس داخل فقرة نص) يحصل على `min-height: var(--tap-min)` و `min-width: var(--tap-min)`.
+- عندما يجب أن يبقى الشكل المرئي صغيراً (أيقونة 32px): وسّع منطقة اللمس بدون تغيير الشكل:
+  ```css
+  .icon-btn { position: relative; }
+  .icon-btn::before { content: ''; position: absolute; inset: -6px; }  /* expands hit area to ≥44px */
+  ```
+- **القائمة الإلزامية:** أزرار الإعجاب والحفظ والمشاركة في البطاقات والـreels، والـfilter chips في المقالات والمشاريع و FAQ، و `lang-dropdown-btn` (32px)، و ThemeSwitch، وأزرار الـcarousel و CardSwap، وأزرار الـmodal، وزر إغلاق الفيديو، والـbreadcrumb links، و TOC links (ارتفاع السطر ≥ 44px عبر padding).
+- **المسافة بين أهداف متجاورة ≥ 8px.**
+
+**R5.5 — الرئيسية:**
+- **ScrollExpand hero:** على `< 768` تحقق أن حركة التوسع لا تسبب قفزة مع شريط عنوان المتصفح (استخدم `var(--vh-full)` أو `dvh` من R1). على `(pointer: coarse)`، قلّل `scrollDistance` بنسبة 30% (القيم في `getResponsiveConfig`)، لأن التمرير باللمس أقصر.
+- **InfiniteSpiral:** تحقق من السحب باللمس. `touch-action: pan-y` على الحاوية حتى لا تمنع تمرير الصفحة الرأسي.
+- **CardSwap** (فيديوهات الرئيسية): على `< 640`، تأكد أن البطاقة لا تتجاوز العرض (`max-width: calc(100vw - 2 * var(--gutter))`).
+- **MagicBento:** على `< 640`، عمود واحد (تحقق من الحالي)، وتأثير الـborder glow و spotlight يُعطَّل على `(hover: none)` (R6).
+- **About:** قسما `100vh` (`team-moments-section` و `team-showcase`) يصبحان `var(--vh-full)`، مع `min-height: 560px` على الموبايل الأفقي (بدل 700 الذي يتجاوز 390px ارتفاع).
+
+**R5.6 — `/projects` و LiveProjectsShowcase:**
+- **الشريط الأفقي على الموبايل** (البطاقات مقطوعة عند الحافة كما في اللقطة): هذا carousel مقصود. أضف:
+  - `scroll-snap-type: x mandatory` و `scroll-snap-align: start`.
+  - `scroll-padding-inline: var(--gutter)`.
+  - مؤشر نقاط أو "1/7" أسفله.
+  - عرض البطاقة `85%` حتى يظهر جزء من التالية (إشارة واضحة للتمرير).
+- **شبكة الـcatalog:** `grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr))`، إذا كانت الحالية ثابتة الأعمدة.
+
+**R5.7 — `/videos` (Reels):**
+- ارتفاع الـreel `100dvh` مع fallback، ومنطقة الـactions الجانبية فوق `var(--safe-bottom)`.
+- على التابلت العمودي والأفقي (≥ 768): الـreel بعرض أقصى 480px متوسط (موجود ‏`max-width: 480px`، تحقق)، مع الخلفية تملأ الباقي.
+- **الموبايل الأفقي:** الـreel بنسبة 9:16 لا يتسع. اعرض البطاقة بارتفاع الشاشة وعرض `calc(var(--vh-full) * 9 / 16)` متوسطة.
+
+**R5.8 — `/faq` و `/contact` و `/login` و `/account` و `/team/*`:**
+- **Contact:** الخريطة `aspect-ratio: 16/10; width: 100%` على الموبايل، والبطاقات عمود واحد تحت 1024 (كان 950).
+- **Auth** (`auth-switch`): الـsliding panel على `< 768` يتحول إلى تبويبين (دخول و تسجيل) بدل اللوحة المنزلقة **إذا** كانت اللوحة تتجاوز العرض (قِس على 320 و 360). إذا لم تتجاوز، اتركها.
+- **ProfilePage و UserProfilePage:** راجع الـbreakpoint الموحّد فقط.
+
+**R5.9 — Modal الفيديو:** على `< 768`، ملء الشاشة (`inset: 0`)، و iframe بنسبة 16:9 بعرض 100%، وزر الإغلاق 44px مع safe-top.
+
+**R5.10 — Footer:** الـMagneticButtons تُعرض كشبكة عمودين على `< 480`، والنصوص ≥ 12px.
+
+**Validation (لكل صفحة):**
+- لا overflow.
+- 0 نصوص تحت 12px.
+- أهداف اللمس ≥ 44 (عدا الروابط داخل النص).
+- لقطات موثقة في `docs/responsive-changes.md`.
+
+---
+
+### R6 — Adaptive Effects (Hover، WebGL، Canvas، GSAP)
+
+**Goal:** تجربة سلسة على الأجهزة الضعيفة واللمس، مع الإبقاء على المؤثرات على الأجهزة القادرة.
+
+**Actions:**
+1. **Hover (M2):** كل قاعدة `:hover` تُلف بـ:
+   ```css
+   @media (hover: hover) and (pointer: fine) { .x:hover { ... } }
+   ```
+   - وأضف حالة `:active` بنفس تأثير الـhover **مختصراً** (مثل `transform: scale(.98)` أو تغيير اللون) للمس.
+   - **آلية التنفيذ:** سكربت codemod (`scripts/wrap-hover.mjs` بـpostcss) يلف كل rule فيها `:hover` تلقائياً، ثم مراجعة يدوية للّقطات على laptop (يجب ألا يتغير شيء على الماوس).
+   - ممنوع لف `:focus-visible` (يبقى للجميع).
+2. **فئات الجهاز** (`src/lib/deviceTier.ts`، client-only، يُحسب مرة واحدة بعد mount):
+   ```ts
+   export type Tier = 'full' | 'lite' | 'minimal';
+   export function getTier(): Tier {
+     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+     const saveData = (navigator as any).connection?.saveData === true;
+     const mem = (navigator as any).deviceMemory ?? 8;       // Chrome/Android only; default optimistic
+     const cores = navigator.hardwareConcurrency ?? 8;
+     const coarse = matchMedia('(pointer: coarse)').matches;
+     if (reduce || saveData) return 'minimal';
+     if (mem <= 4 || cores <= 4 || (coarse && innerWidth < 768)) return 'lite';
+     return 'full';
+   }
+   ```
+   - يُضاف كـattribute على `<html data-tier="...">` لاستخدامه في CSS.
+   - يُتاح عبر `useDeviceTier()`.
+3. **الجدول الإلزامي:**
+
+   | المؤثر | full | lite | minimal |
+   |---|---|---|---|
+   | InfiniteMenu (WebGL2) | كما هو، DPR ≤ 2 | DPR ≤ 1.5، ويبدأ عند الاقتراب (موجود من خطة الترحيل P8) | **لا WebGL**: شبكة بطاقات فريق ثابتة (نفس البيانات، ونفس ألوان البطاقة، و `<Link>` لكل عضو) |
+   | Orb (OGL) | كما هو، DPR ≤ 2 | DPR ≤ 1، ونصف الدقة | **لا**: خلفية `radial-gradient` بنفس اللون (hue 360 = أحمر بنفسجي، فاستخرج اللون من الـshader الافتراضي) |
+   | TeamMomentsRing (Canvas) | كما هو، DPR ≤ 2 | DPR ≤ 1.5، وصور `.640.webp` | صور ثابتة في شبكة 2×2 |
+   | GSAP magnetic buttons (footer) | ✓ | ✗ (`pointer: coarse` لا يملك mousemove) | ✗ |
+   | MagicBento spotlight و particles | ✓ | glow فقط، بدون particles | ✗ |
+   | CardSwap auto-swap | ✓ | ✓ بفاصل أطول ×1.5 | ✗ (يدوي فقط) |
+   | ScrollExpand | ✓ | ✓ | الحالة المتوسعة مباشرة |
+   | Loader | ✓ | ✓ | يُتخطى (موجود: `reducedQuery`) |
+   | GooeyNav particles | ✓ | ✓ بعدد جسيمات 8 بدل 15 | بدون جسيمات |
+
+   - **تطبيق DPR:** في كل مكون WebGL و Canvas، ابحث عن `devicePixelRatio`. ‏`TeamMomentsRing.jsx:308` يستخدم `window.innerWidth * dpr`. استبدل بـ`Math.min(window.devicePixelRatio, DPR_CAP[tier])`.
+   - **الإيقاف عند الخروج من الشاشة:** كل حلقة `requestAnimationFrame` في Orb و InfiniteMenu و TeamMomentsRing تتوقف عندما يكون المكون خارج الشاشة (IntersectionObserver) أو عندما `document.hidden`. وفّر البطارية.
+4. **اللمس في WebGL:**
+   - InfiniteMenu يستخدم pointer events (مؤكد). أضف `touch-action: none` **على الـcanvas فقط** (وليس الحاوية)، حتى لا يسرق تمرير الصفحة خارج الـcanvas.
+   - على `(pointer: coarse)`: أضف زرين "السابق" و"التالي" (44px) أسفل الكرة لمن لا يريد السحب.
+5. **`prefers-reduced-motion`** في كل مكتبة (مكمّل لـخطة الترحيل P9.3): ‏tier `minimal` يغطيها.
+
+**Validation:**
+- على galaxy-360 مع CPU throttling ×4 (Playwright CDP `Emulation.setCPUThrottlingRate`): ‏INP ≤ 200ms في التفاعلات (فتح الـdrawer، والإعجاب، والفلاتر)، ولا long tasks > 200ms بعد التحميل.
+- على laptop: لا تغيّر بصري في المؤثرات.
+- `data-tier` يظهر صحيحاً (لقطة لكل tier عبر emulation: ‏`reducedMotion: 'reduce'` = minimal).
+
+---
+
+### R7 — Forms & Inputs on Mobile
+
+**Actions:**
+1. كل `input` و `textarea` و `select`: ‏`font-size: max(16px, 1rem)` على `(pointer: coarse)`. **يمنع iOS Safari من التكبير التلقائي عند التركيز.**
+2. **الأنواع والسمات:**
+   - Contact: ‏`type="email" autocomplete="email" inputmode="email"`، و `type="tel" autocomplete="tel" inputmode="tel"` (إن وُجد حقل هاتف)، والاسم `autocomplete="name"`.
+   - Auth: ‏`autocomplete="email"` و `autocomplete="current-password"` (للدخول) و `"new-password"` (للتسجيل).
+   - البحث: ‏`type="search" enterkeyhint="search"`.
+   - التعليقات: ‏`enterkeyhint="send"`.
+3. **`CurvedInput`** (الـfooter): تحقق أنه قابل للاستخدام باللمس، وأن حقل الإدخال الحقيقي ≥ 44px ارتفاعاً.
+4. **لوحة المفاتيح الافتراضية:** الحقول في أسفل الشاشة (التعليقات) تستخدم `scrollIntoView({block:'center'})` عند التركيز على `(pointer: coarse)`.
+
+**Validation:** على iphone-15 (WebKit في Playwright): التركيز في كل حقل لا يغير `visualViewport.scale`.
+
+---
+
+### R8 — Performance Budgets per Device
+
+**الميزانيات (تُفرض في CI):**
+
+| المقياس | موبايل (galaxy-360، 4G محاكاة، CPU ×4) | تابلت (ipad-air) | لابتوب (1440) |
+|---|---|---|---|
+| LCP | ≤ 2.5s | ≤ 2.0s | ≤ 1.8s |
+| CLS | ≤ 0.05 | ≤ 0.05 | ≤ 0.05 |
+| INP (محاكاة التفاعلات في R6) | ≤ 200ms | ≤ 150ms | ≤ 100ms |
+| وزن الصور حتى networkidle: `/` | ≤ 1.5MB | ≤ 2.5MB | ≤ 3.5MB |
+| وزن الصور: `/projects` | ≤ 1.2MB | ≤ 2MB | ≤ 2.5MB |
+| وزن الصور: `/articles/[slug]` | ≤ 400KB | ≤ 600KB | ≤ 800KB |
+| JS (gzip) للصفحة الأولى | ≤ 250KB | نفسه | نفسه |
+
+**Actions:**
+1. ‏Lighthouse CI (`@lhci/cli`) بـ`lighthouserc.json`: ‏`emulatedFormFactor` mobile و desktop على `/` و `/articles/digital-twin` و `/projects/virtual-board-hand-tracking` و `/projects` و `/videos`. ‏`assertions` حسب الجدول.
+2. سكربت `tests/responsive/budgets.spec.ts` يقيس bytes الصور لكل جهاز (نفس آلية R0) ويفشل عند تجاوز الميزانية.
+3. **إذا تجاوزت `/` ميزانية الموبايل:** قلّل الصور eager في InfiniteSpiral إلى 2، وتأكد أن `im1` و `hero-bg-distortion` (خلفيات) `loading="lazy"` لأنهما تحت الـfold.
+
+---
+
+### R9 — Validation Matrix
+
+**آلي (Playwright، على `npm run preview`):**
+1. `tests/responsive/audit.spec.ts` (من R0) على **كل** أجهزة المصفوفة × كل URL. **شروط النجاح:**
+   - `scrollWidth ≤ clientWidth` **مع تعطيل** `overflow-x: clip`.
+   - 0 نصوص < 12px.
+   - 0 أهداف لمس < 44×44 (عدا الروابط داخل النص).
+   - 0 صور أكبر من `rendered × DPR × 1.5` (عدا أصغر نسخة متاحة).
+   - الميزانيات (R8).
+2. `tests/responsive/visual.spec.ts`: لقطات لكل جهاز × الصفحات الأساسية.
+   - **على laptop-1440:** مطابقة لـbaseline خطة الترحيل (فرق ≤ 0.1%). الـdesktop لا يتغير.
+   - **على الموبايل والتابلت:** تُراجع يدوياً مرة واحدة وتُعتمد كـbaseline جديد (`--update-snapshots`) بعد موافقة المالك على `docs/responsive-changes.md`.
+3. `tests/responsive/nav.spec.ts`: سيناريوهات R4.
+4. `tests/responsive/tiers.spec.ts`: ثلاث فئات.
+5. `tests/responsive/webkit.spec.ts`: نفس audit على WebKit (iPhone و iPad) لأن Safari يختلف في `dvh` و `safe-area` والتكبير عند التركيز.
+6. **فحص الـbreakpoints:** `scripts/check-breakpoints.mjs`: أي قيمة في `@media` خارج `{479.98, 480, 639.98, 640, 767.98, 768, 1023.98, 1024, 1279.98, 1280, 1535.98, 1536, 379.98}` + ملف الـloader = فشل.
+
+**يدوي على أجهزة حقيقية (قبل الإطلاق، يوثَّق في `docs/device-qa.md` بلقطات):**
+
+| الجهاز | المتصفح | ما يُفحص |
+|---|---|---|
+| iPhone (أي طراز بنوتش أو Dynamic Island) | Safari | الـnavbar والـdrawer والـsafe areas و Reels و ScrollExpand والتكبير عند التركيز والـloader والوضع الأفقي |
+| Android متوسط (4GB RAM أو أقل) | Chrome | tier = lite، وسلاسة About (WebGL)، و INP، والأزرار |
+| iPad (عمودي وأفقي) | Safari | سطرا الـnav، ولا overflow على 1180، والـsidebar في المقال |
+| لابتوب 1280 و 1440 | Chrome و Firefox و Safari | لا تغيير عن الحالي |
+
+**Definition of Done:**
+1. كل فحوص R9 الآلية خضراء على Chromium و WebKit.
+2. ‏C1 إلى C5 و M1 إلى M7 محلولة (كل واحدة مرتبطة بفحص).
+   وبنود R11 منفذة: الـsweep من 280 إلى 1600، و font-scale 200%، و WebGL context loss، و `docs/device-qa.md` لأجهزة Android الحقيقية.
+   وبنود R10 كلها منفذة. الفحوص الإضافية: letter-spacing = 0 على العربية، و TOC غير مغطى تحت الـheader، ونص 200% بلا قص، و Stylelint و `check-assets` خضراء، و fold-280 بلا overflow.
+3. الـdesktop مطابق بصرياً لما قبل الخطة.
+4. قائمة الأجهزة الحقيقية موثقة بلا مشاكل مفتوحة.
+5. `docs/responsive-changes.md` معتمد من المالك.
+
+---
+
+### R10 — إضافات Senior (أشياء تكسر التجربة على الأجهزة الحقيقية ولا يلتقطها فحص العرض وحده)
+
+> كل بند هنا مبني على دليل من الكود. **الترتيب:** بعد R6 وقبل R7، و R9 يتحقق منها أيضاً.
+
+#### R10.1 — الخط العربي و letter-spacing (خلل مرئي حقيقي)
+
+**الدليل:** 30 موضعاً بـ`letter-spacing` سالب و 18 موجباً في `src`. من بينها عناوين عربية، مثل `letterSpacing: '-0.02em'` على `t.about.heading` في `App.tsx`.
+
+**المشكلة:** الحروف العربية متصلة. أي `letter-spacing` غير صفري:
+- يفصل الحروف أو يشوّه الاتصال في بعض المتصفحات (Safari و Firefox أوضح من Chrome).
+- يظهر أكثر على الشاشات الصغيرة عالية الكثافة.
+
+**Actions:**
+```css
+:lang(ar), [dir="rtl"] { letter-spacing: 0 !important; }
+[dir="rtl"] :lang(en), [dir="rtl"] [lang="en"] { letter-spacing: revert; }
+```
+- الأنظف: في كل قاعدة فيها `letter-spacing`، أضف `:where([dir="ltr"])` كشرط، أو انقل القيمة إلى `[dir="ltr"] .selector`. **القاعدة العامة أعلاه شبكة أمان.**
+- **line-height:** العربية تحتاج ≥ 1.6 للنص و ≥ 1.25 للعناوين (التشكيل والنقاط). ابحث عن `line-height` < 1.2 على عناصر عربية وارفعه إلى 1.25.
+- **لا `text-transform: uppercase`** على نص عربي (لا أثر له، لكنه يسبب مشاكل في المختلط). اجعله `[dir="ltr"]` فقط.
+
+**Validation:** لقطات مكبّرة ×3 لعناوين About والـhero والبطاقات على WebKit قبل وبعد. الحروف متصلة.
+
+#### R10.2 — Logical CSS Properties (RTL/LTR على كل المقاسات)
+
+**الدليل:** 103 خاصية فيزيائية (`left` و `right` و `margin-left` و `padding-right`...) مقابل 17 منطقية فقط. الموقع ثنائي الاتجاه، فكل قاعدة فيزيائية إما مكررة بـ`[dir=rtl]` أو خاطئة في إحدى اللغتين، وتظهر المشكلة أكثر على الموبايل (هوامش غير متناظرة، وأيقونات في الجهة الخطأ).
+
+**Actions:**
+1. Codemod (`scripts/logical-props.mjs` بـpostcss): ‏`margin-left` إلى `margin-inline-start` و `margin-right` إلى `margin-inline-end`، وكذلك padding و border-left و right.
+   - `left` و `right` في positioning **فقط** عندما لا يكون العنصر متناظراً عمداً: `left: 0; right: 0` تبقى كما هي (أو `inset-inline: 0`).
+   - `text-align: left` و `right` تصبح `start` و `end`.
+   - **لا تحوّل:** قواعد داخل `[dir="rtl"]` أو `[dir="ltr"]` صريحة (هي مقصودة)، ولا ملف الـloader، ولا transforms (`translateX`).
+2. **الأيقونات الاتجاهية** (أسهم Back و Next و Chevron): الكود يختار `ArrowLeft` أو `ArrowRight` حسب `isEn` في أماكن. وحّدها بـclass `.icon-directional { transform: scaleX(var(--dir-flip)); }` مع `[dir="rtl"]{--dir-flip:-1}`، **أو** اترك المنطق الحالي إذا كان صحيحاً في اللغتين (تحقق بلقطات ar و en).
+3. **النص المختلط:** العناوين تحتوي مصطلحات إنجليزية ("5G NR" و "MCP" و "CNN"). على الشاشات الضيقة يلتف السطر بترتيب خاطئ أحياناً.
+   - في `renderMarkdown`: لفّ كل `code` و `kbd` بـ`<bdi>` أو `unicode-bidi: isolate`.
+   - في البطاقات: `unicode-bidi: plaintext` على العناوين المقصوصة بـellipsis، حتى تظهر النقاط الثلاث في الجهة الصحيحة.
+
+**Validation:** لقطات ar و en على 360 و 768 و 1440 لكل الصفحات. `grep -cE "(margin|padding)-(left|right)" src/**/*.css` ينخفض إلى القواعد المقصودة فقط (توثَّق).
+
+#### R10.3 — Header ديناميكي و scroll offsets (يكسر فهرس المقال على الموبايل)
+
+**الدليل:** قيم ثابتة لا تتوافق مع header الموبايل الجديد (56px) ولا مع ارتفاعه الحالي (105px):
+- `ArticleDetailView.tsx:239` (`scrollY + 130`) و `:259` (`topOffset = 95`).
+- `ProjectDetailView.tsx:217` (`navbarOffset = 90`).
+- `ArticleDetailView.css:554` (`scroll-margin-top: 110px`).
+
+**Actions:**
+1. في AppShell: ‏`ResizeObserver` على `#navbar` يكتب `document.documentElement.style.setProperty('--header-h', h + 'px')`، مع قيمة افتراضية في CSS: `--header-h: 78px` (desktop) و `56px` (< 768).
+2. `.scroll-mt-offset { scroll-margin-top: calc(var(--header-h) + 16px); }` و `html { scroll-padding-top: calc(var(--header-h) + 16px); }`.
+3. في JS: احذف الأرقام الثابتة، واقرأ `parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h'))`. الأفضل: استبدل `window.scrollTo(... - offset)` بـ`el.scrollIntoView({ behavior, block: 'start' })`، فيحترم `scroll-margin-top` تلقائياً.
+4. الـscrollspy: `IntersectionObserver` بـ`rootMargin: -(header+16)px 0px -65% 0px` بدل حلقة `scroll` (المقال يستخدم scroll listener، والمشروع يستخدم IO. وحّدهما على IO).
+
+**Validation:** على iphone-15 و ipad-air و laptop: النقر على كل عنصر TOC يضع العنوان تحت الـheader مباشرة، **غير مغطّى**.
+
+#### R10.4 — أداء الـglassmorphism على الموبايل
+
+**الدليل:** 102 استخدام لـ`backdrop-filter` أو `backdropFilter`. ‏`backdrop-filter: blur()` من أثقل عمليات الرسم على GPU الهواتف المتوسطة، خاصة داخل عناصر sticky أو متحركة. هو سبب شائع لتقطّع التمرير (jank) على Android.
+
+**Actions:**
+1. ‏tier `lite`: `html[data-tier="lite"] * { backdrop-filter: none !important; }` مع خلفية بديلة أكثر عتامة لكل عنصر زجاجي. أضف متغير `--glass-fallback-bg` في tokens (مثلاً لون الخلفية بشفافية 0.92). **الشكل قريب جداً والأداء أفضل بكثير.**
+2. ‏tier `full`: اترك blur، لكن **حدّه بـ≤ 12px** على العناصر الـsticky (الـnavbar)، إذا كانت أكبر.
+3. **ممنوع** `backdrop-filter` على عنصر يتحرك باستمرار (animation). راجع CardSwap و MagicBento.
+
+**Validation:** ‏Chrome Performance (CPU ×4، GPU throttling غير متاح، فاستخدم جهاز Android حقيقي في R9): التمرير في `/` و `/articles` بمعدل ≥ 55fps على lite.
+
+#### R10.5 — Container Queries للبطاقات (بدل تكرار breakpoints)
+
+**الدليل:** نفس بطاقة المقال أو المشروع تظهر في 3 سياقات بعروض مختلفة: الـlisting، و related في الـsidebar (≈ 280px)، والرئيسية. حالياً كل سياق يعيد تعريف أحجامه بـ`@media` حسب عرض **الشاشة** وليس عرض **الحاوية**. على iPad يظهر sidebar ضيق ببطاقة مصممة للعرض الكامل. لا يوجد أي `@container` في المشروع.
+
+**Actions:**
+1. حاويات البطاقات: `.cards-grid, .related-sidebar-list, .bottom-related-grid { container-type: inline-size; }` (أسماء الحاويات الفعلية حسب الـCSS).
+2. داخل CSS البطاقة: استبدل الـ`@media` التي تغيّر تخطيط **البطاقة نفسها** (صورة فوق أو بجانب، وحجم العنوان) بـ`@container (max-width: 360px) {...}`.
+3. **لا تستبدل** الـ`@media` التي تغيّر **عدد الأعمدة** للشبكة (هذه مسؤولية الصفحة).
+4. الدعم: Safari 16+ و Chrome 105+، والـfallback (بدون container queries) هو شكل البطاقة الافتراضي. مقبول.
+
+**Validation:** لقطات related sidebar على 1024 و 1440 والبطاقة نفسها في الـlisting. كل منها متناسق مع مساحته.
+
+#### R10.6 — الارتفاعات القصيرة (الموبايل الأفقي و Split View على iPad)
+
+**الدليل:** لا يوجد أي `@media (max-height: ...)`. الأقسام بـ`min-height: 700px` (فريق About) و `100vh` (hero و Reels) تنكسر عندما يكون الارتفاع 390px (موبايل أفقي) أو ≈ 500px (iPad Split View أو لوحة مفاتيح ظاهرة).
+
+**Actions:**
+```css
+@media (max-height: 540px) and (orientation: landscape) {
+  /* About sections */ #team-moments-section, #team-showcase { min-height: 0; height: auto; aspect-ratio: 16/9; }
+  /* Hero */ .initial-title { font-size: var(--fs-2xl); }
+  /* Drawer */ .mobile-drawer a { min-height: 44px; }   /* instead of 52 */
+}
+```
+- ‏Reels في الوضع الأفقي: حسب R5.7.
+- أضف إلى مصفوفة الأجهزة: `phone-landscape-short` (740×360)، و `ipad-split` (507×1024، أي نصف شاشة iPad Pro).
+
+#### R10.7 — التكبير النصي والـReflow (WCAG 1.4.4 و 1.4.10)
+
+**المشكلة:** مستخدمون كثيرون (خصوصاً فوق 40 سنة) يرفعون حجم الخط في إعدادات الهاتف أو يكبّرون المتصفح. الأحجام بـpx (139 موضعاً للخط) لا تتبع إعداد المستخدم في بعض المتصفحات، و Reflow عند 400% تكبير يعادل عرض 320 CSS px.
+
+**Actions:**
+1. `-webkit-text-size-adjust: 100%; text-size-adjust: 100%;` على `html`. **يمنع** iOS من تضخيم الخط عشوائياً في الوضع الأفقي، **ولا يمنع** تكبير المستخدم.
+2. **أحجام الخط الأساسية** (body والفقرات وعناوين الأقسام) بـ`rem` أو tokens R1. أحجام الـbadges والزخارف بـpx مقبولة.
+3. **الحاويات:** `height` ثابت بالـpx على عناصر فيها نص يصبح `min-height`، حتى لا يُقص النص عند التكبير. ابحث: `grep -nE "^\s*height: *[0-9]+px" src/**/*.css` وراجع ما يحتوي نصاً.
+
+**Validation:**
+- Playwright: `page.emulateMedia` + ضبط `document.documentElement.style.fontSize='200%'` على 390، ثم لا نص مقصوص (`scrollHeight > clientHeight` على عناصر `overflow:hidden` النصية = 0)، ولا overflow أفقي.
+- وعرض 320 مع zoom 100% (يعادل 1280 عند 400%): لا overflow (مغطى في R9).
+
+#### R10.8 — Overscroll و Scroll chaining و Pull-to-refresh
+
+**الدليل:** استخدام واحد فقط لـ`overscroll-behavior`. الـdrawer والـmodal والـReels و TOC الموبايل عناصر قابلة للتمرير داخل الصفحة. بدون `overscroll-behavior`:
+- الوصول لنهاية الـdrawer يمرّر الصفحة خلفه.
+- التمرير للأعلى في أول Reel يفعّل pull-to-refresh في Chrome Android، فيعيد تحميل الصفحة وسط المشاهدة.
+
+**Actions:**
+```css
+.mobile-drawer, .video-modal, .mobile-toc-dropdown, .article-toc-card-scroll { overscroll-behavior: contain; }
+.reels-feed-container /* actual scroller class */ { overscroll-behavior-y: contain; }
+body.scroll-locked { overflow: hidden; }   /* class toggled by JS when drawer/modal open — no :has() (see R11.4) */
+```
+و `-webkit-tap-highlight-color: transparent` على العناصر التفاعلية المخصصة، **مع** وجود حالة `:active` واضحة (R6) لتعويض الـfeedback.
+
+#### R10.9 — الحركة التلقائية (WCAG 2.2.2) والتحكم فيها
+
+**الدليل:**
+- `CardSwap` (`setInterval(swap, delay)`) بـ`pauseOnHover = false` افتراضياً، ولا يوجد hover على اللمس أصلاً.
+- `ProjectReelsFeed.tsx:147` فيه `setInterval`.
+- الشرائط المتحركة (LiveProjectsShowcase marquee).
+
+أي حركة تلقائية تستمر أكثر من 5 ثوانٍ تحتاج وسيلة إيقاف. على الموبايل تسرق الانتباه وتستهلك البطارية.
+
+**Actions:**
+1. زر إيقاف وتشغيل (44px، ‏`aria-label` و `aria-pressed`) لكل: CardSwap في الرئيسية، و marquee المشاريع، وأي carousel تلقائي. يُحفظ الاختيار في `sessionStorage`.
+2. الإيقاف التلقائي عندما يكون المكون خارج الشاشة (IO)، أو `document.hidden`، أو التركيز داخله (`focusin`).
+3. ‏tier `minimal` بلا حركة تلقائية (من R6).
+
+#### R10.10 — Art Direction لصور الـhero و focal points
+
+**المشكلة:** صورة الـhero (`im2` و `im3` بنسبة 16:9) تُعرض في بطاقة شبه مربعة على الموبايل (اللقطة: الشخص في المنتصف، والشاشة مقصوصة). على الموبايل العمودي يضيع موضوع الصورة. نفس الأمر في بطاقات المشاريع بـ`object-fit: cover`.
+
+**Actions:**
+1. **Focal point** لكل صورة في الـmanifest (R3): حقل اختياري `focal: "50% 30%"`، يُطبّق كـ`object-position` في `ResponsiveImage`. القيمة الافتراضية `50% 50%` (الحالي).
+   - للـhero وصور المشاريع الـ14: الـagent يحدد النقطة بفحص بصري (أين الموضوع الرئيسي)، ويوثقها في `docs/focal-points.md` بلقطة.
+2. **Hero على الموبايل:** `<picture>` بـ`<source media="(max-width: 767.98px) and (orientation: portrait)">` يشير إلى قصّة 4:5 مولَّدة من الأصل حول الـfocal point (sharp `extract` + resize). السكربت يولدها تلقائياً للصور الموسومة `artDirection: true` في config (الـhero فقط مبدئياً).
+3. **لا تعدّل الصور الأصلية.**
+
+#### R10.11 — تحسين تحميل الخط العربي
+
+**الدليل:** ‏Readex Pro بـ6 أوزان (300 إلى 800). على شبكات الموبايل كل وزن ملف منفصل (arabic + latin).
+
+**Actions:**
+1. **قِس الأوزان المستخدمة فعلاً:** `grep -rhoE "font-weight: *[0-9]+" src | sort | uniq -c`. احذف من `next/font` الأوزان غير المستخدمة، **أو** استخدم النسخة variable (`Readex_Pro` في next/font تدعم `weight: 'variable'` إن توفرت، فملف واحد لكل subset).
+2. **`adjustFontFallback`** (افتراضي في next/font) يولّد fallback بمقاييس مطابقة (`size-adjust`)، فيقل CLS عند تبديل الخط. تأكد أنه غير معطّل.
+3. **الأولوية:** `preload: true` للـsubset `arabic` فقط، لأن الموقع عربي أولاً. الـlatin بدون preload.
+
+#### R10.12 — `content-visibility` للصفحات الطويلة
+
+**الدليل:** المقالات 15 إلى 22 دقيقة قراءة (آلاف العناصر)، و FAQ و Projects طويلة. الموبايل يرسم الصفحة كلها عند التحميل.
+
+**Actions:**
+```css
+.article-fullscreen-markdown-body > h2 ~ * { content-visibility: auto; contain-intrinsic-size: auto 400px; }
+.article-comments-section, .bottom-related-section, footer { content-visibility: auto; contain-intrinsic-size: auto 600px; }
+```
+- ⚠️ ‏`content-visibility` قد يؤثر على `Ctrl+F` في متصفحات قديمة (الحديثة تدعم البحث فيه)، وعلى حساب `offsetTop` للـscrollspy. لذلك الـscrollspy يعتمد IO (R10.3) وليس offsetTop.
+
+**Validation:** INP و "Rendering" time في Lighthouse mobile لـ`/articles/smart-ai-ride-pooling` (الأطول، 22 دقيقة) ينخفض. لا قفزات في شريط التمرير (`contain-intrinsic-size: auto` يتذكر الحجم الحقيقي).
+
+#### R10.13 — وضع التباين العالي و forced-colors
+
+**الدليل:** صفر قواعد لـ`forced-colors` أو `prefers-contrast`. الموقع يعتمد على glassmorphism وتدرجات و `color: #c4b5fd` على خلفيات شفافة. في Windows High Contrast أو Android "High contrast text" قد تختفي الحدود والأزرار.
+
+**Actions:**
+```css
+@media (forced-colors: active) {
+  .navbar-auth-btn, .cta-button, [class*="card"], .mobile-drawer, button { border: 1px solid CanvasText; }
+  .themed, .gradient-text, [class*="gradient"] { forced-color-adjust: auto; }
+}
+@media (prefers-contrast: more) {
+  :root { --text-muted: var(--text-main); }   /* use the existing token names */
+  * { backdrop-filter: none !important; }
+}
 ```
 
-**قواعد مشتركة لكل ملف page:**
-- `export const dynamic = 'force-static';`.
-- صفحات `[param]` فقط: `export const dynamicParams = false;` + `generateStaticParams`.
-- `generateMetadata` أو `metadata` من `src/seo/metadata.ts` (P7). حتى P7: title و canonical على الأقل.
-- JSON-LD الخاص بالصفحة عبر `<JsonLd />` (P7).
-- الـwrappers والأنماط المنقولة من App تبقى حرفياً (مثل `tab-page-container` و `style={{ padding: '0', maxWidth: '100%' }}`).
+#### R10.14 — Print stylesheet للمقالات والمشاريع
+
+**لماذا:** مقالات هندسية طويلة (مراجع وجداول ومقارنات)، والطلاب والمهندسون يطبعونها أو يحفظونها PDF.
+
+**Actions** (`src/styles/print.css`، يُستورد في layout):
+```css
+@media print {
+  #navbar, .mobile-drawer, footer, .article-engagement-bar, .article-comments-section, .article-related-sidebar,
+  .bottom-related-section, #te-loader, .skip-link, canvas, [data-print="hide"] { display: none !important; }
+  body { background: #fff !important; color: #000 !important; }
+  * { backdrop-filter: none !important; box-shadow: none !important; }
+  .article-fullscreen-markdown-body a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; overflow-wrap: anywhere; }
+  h2, h3 { break-after: avoid; } pre, table, figure, img { break-inside: avoid; }
+  img { max-width: 100% !important; }
+}
+```
+
+#### R10.15 — Foldables و الشاشات الكبيرة جداً
+
+- **Galaxy Z Fold (مغلق):** العرض **280px**، وهو أضيق من 320. أضف `fold-280` (280×653) إلى المصفوفة. الهدف: لا overflow ولا قص نصوص (قد يحتاج الـheader إخفاء نص الـbrand، وهو موجود من R4 تحت 379.98px).
+- **Fold مفتوح:** (≈ 673×841) يقع في تخطيط التابلت. غطِّه بلقطة.
+- **الشاشات ≥ 1920 و ultra-wide:** تأكد أن كل حاوية نصية لها `max-width` (قراءة المقال ≤ 75ch)، وأن الخلفيات تمتد بينما المحتوى متوسط. أضف `desktop-2560` (2560×1440) للمصفوفة.
+
+#### R10.16 — منع التراجع مستقبلاً (الأهم على المدى الطويل)
+
+**لماذا:** كل ما سبق يُصلح مرة واحدة. بدون قواعد آلية، أول مكون جديد يعيد المشاكل (breakpoint عشوائي، أو صورة 2MB، أو خط 10px).
 
 **Actions:**
-1. **`/` (`src/app/page.tsx`):**
-   ```tsx
-   export default function Home() {
-     return (<>
-       <HomeHero />                 {/* ex ScrollExpandPrototype: Hero + ProjectsSection + VideosSection + ArticlesSection */}
-       <AboutTeamSection headingLevel="h2" />
-     </>);
-   }
-   ```
-   - في `HomeHero`: الـcallbacks `onNavigateTo*` تُحذف، والأزرار تصبح `<Link>`: "استكشف المشاريع" إلى `/projects`، و"تقديم طلب مشروع" إلى `/contact`. تحتفظ بنفس الـclasses (`cta-button cta-primary` وغيرها).
-   - أزرار "عرض الكل" في الأقسام الثلاثة تصبح `<Link>` إلى `/projects` و `/videos` و `/articles`.
-2. **`/projects`:**
-   - الصفحة (server) تمرر `PROJECTS_DATA` بدون markdown إلى `ProjectsCatalogSection`.
-   - في `ProjectsCatalogSection`: احذف state `activeProject` ومستمع الـhash وعرض `ProjectDetailView`. البطاقة تُعرض بـ`<Link href={`/projects/${slug}`}>` على العنوان بنمط stretched link:
-     ```css
-     .card-title a::after { content: ''; position: absolute; inset: 0; }
-     ```
-     (الـcard الأب `position: relative`). الأزرار الداخلية (save) تأخذ `position: relative; z-index: 1`. **الشكل لا يتغير.**
-   - العنوان H1 الحالي (`catalog-hero-title`) يبقى.
-3. **`/projects/[slug]`:**
-   ```tsx
-   export function generateStaticParams() { return getAllProjects().map(p => ({ slug: p.slug })); }
-   export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
-     const { slug } = await params;
-     const meta = getProjectMeta(slug); if (!meta) notFound();
-     const { html, toc } = renderMarkdown(await getProjectMarkdown(slug), { stripLeadingH1: true, variant: 'project' });
-     const related = getRelatedProjects(slug, 3).map(toProjectCard);
-     return (<>
-       <JsonLd data={[projectJsonLd(meta), breadcrumbJsonLd([...])]} />
-       <div className="tab-page-container" style={{ padding: '0', maxWidth: '100%' }}>
-         <ProjectDetailView project={toProjectClient(meta)} toc={toc} related={related}>
-           <ProjectBody html={html} />
-         </ProjectDetailView>
-       </div>
-     </>);
-   }
-   ```
-   - **`ProjectDetailView`:**
-     - احذف `useEffect` الخاص بالـSEO (title و meta و canonical و schema) بالكامل.
-     - احذف `useMemo` الخاص بـmarked. الـtoc يأتي كـprop، والـbody يأتي كـ`children` في نفس مكان `dangerouslySetInnerHTML` السابق وبنفس الـwrapper والـclass.
-     - `onBack` و `onSelectProject` تصبح `<Link>`.
-     - الـexcerpt بـ`plainExcerpt()` (يُحسب في الـpage).
-     - الوسوم بـ`projectTags()`، والقسم لا يُعرض إذا كانت فارغة.
-     - `handleShare` يستخدم `absoluteUrl('/projects/' + slug)`.
-     - `window.scrollTo` عند mount يُحذف (ScrollToTop يتكفل).
-     - CTA `href="#contact"` يصبح `<Link href="/contact">`.
-     - الـbreadcrumb: `<nav aria-label="مسار التصفح"><ol>`: ‏`<Link href="/">`، ثم `<Link href="/projects">`، ثم التصنيف `<span>`، ثم العنوان `aria-current="page"`. **نفس الـclasses الحالية.**
-   - **`ProjectBody` (server):**
-     ```tsx
-     <div className="<existing markdown body class>" dangerouslySetInnerHTML={{ __html: html }} />
-     ```
-     class الـbody الحالي يُنقل كما هو.
-4. **`/articles`:**
-   - `OfficeBlogSection` يُقسم إلى:
-     - `ArticlesListing` (client): الـhero banner والبحث والفلاتر والترتيب والبطاقات والإعجابات والحفظ والمشاركة. نفس الـJSX.
-     - الصفحة (server): تمرر metadata فقط.
-   - البطاقة: `<h2 className="card-main-title"><Link href={`/articles/${slug}`}>` (كانت `h3`، والتغيير في الـtag فقط مع نفس الـclass، ويُضاف في CSS `.card-main-title{font-size:<same computed value>}` إذا تأثر الحجم) + stretched link.
-   - احذف `onClick={() => setSelectedArticle(article)}`.
-   - التاريخ: `<time dateTime={publishedAt}>{publishDate}</time>`.
-   - `handleShare`: `absoluteUrl('/articles/' + slug)`.
-   - احذف كل منطق `selectedArticle` ومستمع الـhash.
-5. **`/articles/[slug]`:** بنفس نمط المشروع.
-   - `renderMarkdown(md, { stripLeadingH1: true, variant: 'article' })`.
-   - `ArticleDetailView`:
-     - احذف useEffect الـSEO و useMemo الـmarked.
-     - الـbody عبر `children` داخل wrapper الحالي (`article-fullscreen-markdown-body`).
-     - `handleContentClick` يُحذف (الروابط الداخلية أصبحت مسارات، ونقرها يعمل بشكل طبيعي). **للتنقل بدون reload:** أضف handler يعترض `<a>` داخلية تبدأ بـ`/` فينفّذ `router.push`.
-     - الـbreadcrumb: ‏`<Link href="/">`، ثم `<Link href="/articles">`، ثم التصنيف `<span>`، ثم العنوان.
-     - "العودة للمقالات" تصبح `<Link href="/articles">`.
-     - related في الـsidebar: `<Link>` بنمط stretched على العنوان.
-     - التاريخ في `<time>`.
-     - الإعجابات والتعليقات تنتقل إلى hook جديد `useArticleEngagement(article.id, initialLikes)` (client، localStorage في effect، **نفس المفاتيح**).
-6. **`/videos`:**
-   ```tsx
-   <div className="tab-page-container tab-page-videos" style={...}>
-     <div className="tab-page-header reels-page-header" style={...}>
-       <h1 className="tab-page-title reels-page-title">...</h1>
-       <p>...</p>
-     </div>
-     <ProjectReelsFeed />
-   </div>
-   ```
-   - الـheader نفسه منقول من App. النص من `translations.ar.videos` في الخادم، أو اجعل الـheader client ليتبع اللغة (الأبسط: client wrapper صغير `VideosHeader`).
-   - روابط `liveUrl`: `<a href target="_blank" rel="noopener noreferrer">`.
-7. **`/faq`:**
-   - `FaqSection` بدون `onNavigateTab`.
-   - أزرار الـaction تصبح `<Link href={map[actionTarget]}>` حيث `map = {'#contact':'/contact','#projects':'/projects','#articles':'/articles','#about':'/about'}`، والافتراضي `/`.
-   - الإجابة:
-     ```tsx
-     <div id={`faq-a-${item.id}`} role="region" hidden={!isOpen} className="...existing...">...</div>
-     ```
-     بدل `{isOpen && ...}`. والزر: `aria-expanded={isOpen} aria-controls={`faq-a-${item.id}`}`.
-   - إذا كانت الـanimation تعتمد على mount: أبقِ class `is-open` وأضف CSS `[hidden]{display:none}` (موجودة افتراضياً في المتصفح).
-8. **`/about`:** ‏`<AboutTeamSection headingLevel="h1" />`.
-9. **`/contact`:**
-   - `ContactPage` بدون `onBack` (أو Back إلى `/`).
-   - الـiframe: `loading="lazy"` و `title="خريطة موقع تكنو إنجاز"`.
-   - كل بيانات التواصل من `ORG` في site.ts.
-   - العنوان النصي المعروض يبقى كما في translations.
-10. **`/team/[id]`:** ‏`generateStaticParams` من `teamMembers`، وعرض `ProfilePage`، و `metadata.robots = { index: false, follow: true }`.
-11. **`/login` و `/register`:** ‏`AuthPage initialMode="login"` و `"register"`، مع noindex.
-12. **`/account`:** ‏`AccountClient` (client):
-    - `useHydrated()`، ثم قراءة المستخدم.
-    - إذا لا يوجد: `router.replace('/login')` بعد حفظ return path `/account`.
-    - إذا وُجد: `UserProfilePage`.
-    - قبل الـhydration: skeleton بخلفية `var(--bg-main)` و `min-height: 100vh` (نفس fallback الـSuspense الحالي).
-    - noindex.
-13. **`not-found.tsx`:** H1 "الصفحة غير موجودة"، مع روابط `/` و `/articles` و `/projects` و `/contact`، ونفس الـcontainer classes. noindex.
+1. **Stylelint** (`stylelint` + `stylelint-config-standard` + `stylelint-use-logical`) بـ`.stylelintrc.json`:
+   - `media-feature-range-notation` و قاعدة مخصصة (plugin بسيط في `scripts/stylelint-breakpoints.js`) ترفض أي قيمة `@media` خارج القائمة المعتمدة.
+   - `declaration-property-value-disallowed-list`: ‏`{"font-size": ["/^([0-9]|1[01])(\\.\\d+)?px$/"], "letter-spacing": ["/^-/"]}` (الأخيرة مع استثناء `[dir=ltr]` عبر تعليق disable موثق).
+   - `csstools/use-logical` بمستوى warning (ترتفع إلى error بعد اكتمال R10.2).
+   - أضف `"lint:css": "stylelint \"src/**/*.css\""` إلى scripts.
+2. **حارس الصور** (`scripts/check-assets.mjs`، يعمل في CI و pre-commit):
+   - يفشل إذا أُضيفت صورة raster في `public/` أو `src/` أكبر من **600KB**، أو أبعادها > 2400px، دون أن تكون ضمن مصادر الـpipeline.
+   - ويفشل إذا استُخدم `<img` مباشرة لصورة في مسارات الـpipeline بدل `ResponsiveImage` (فحص نصي بسيط).
+3. **GitHub Actions** (`.github/workflows/quality.yml`): عند كل PR: `lint` و `lint:css` و `typecheck` و `build` و `check-assets` و `test:e2e --project=responsive-smoke` (مجموعة مصغّرة: 3 أجهزة × 5 صفحات، ≈ 3 دقائق).
+4. **`docs/assets-guide.md` للمالك** (بالعربية، صفحة واحدة): المقاس الموصى به لصورة مقال جديد (1600×900، JPG أو PNG بأي حجم لأن الـpipeline يضغط)، ومكان وضعها، وكيف تُحدد نقطة التركيز، ولماذا لا تُرفع صور > 2400px.
 
-**Rendering:** كل صفحة HTML كامل وقت البناء.
-**Validation:**
-- مخرجات `next build` في جدول الـroutes: **كل** الصفحات أعلاه بعلامة `○` (Static) أو `●` (SSG). ‏**`ƒ` (Dynamic) لأي route = FAILURE.**
-- `curl -s localhost:8787/articles/digital-twin | grep -c '<h1'` = 1، ويحتوي عنوان المقال.
-- `curl -s localhost:8787/projects/virtual-board-hand-tracking | grep -c '<h1'` = 1.
-- `curl -s localhost:8787/faq | grep -o 'faq-a-' | wc -l` ≥ 13.
-- `curl -o /dev/null -w '%{http_code}' localhost:8787/articles/does-not-exist` = 404.
+#### R10.17 — القياس الحقيقي بعد الإطلاق (Field data، وليس مختبر فقط)
 
-**Risks:** تمرير props غير قابلة للـserialization (دوال أو JSX) من server إلى client. الحل: الـcallbacks تُستبدل بـ`Link` و `router`، والأيقونات عبر keys.
-
-### P6 — Crawlability
-
-**Goal:** كل تنقل هو `<a href>`، وكل محتوى أساسي موجود في HTML.
-**Actions:**
-1. **MagicBento** (`src/components/ui/MagicBento.tsx`): ‏`cardProps.onClick` (`window.location.hash = '#article/...'`) يُحذف. داخل البطاقة `<Link href={`/articles/${targetSlug}`} className="magic-bento-card__link">` بنمط stretched على العنوان. زر الحفظ `position: relative; z-index: 2`.
-2. **InfiniteSpiral:** في `ProjectsSection` أضف `href: '/projects/' + p.slug` لكل item (الـcomponent يدعم `href` أصلاً). تحقق أن `onClickCapture` لا يمنع التنقل أثناء السحب إلا عند السحب الفعلي (المنطق الحالي). إذا كان `<a>` عادياً، استبدله بـ`Link`.
-3. **VideosSection (CardSwap):** البطاقة تفتح modal (يبقى). أضف رابط نصي `<a href={youtubeUrl} target="_blank" rel="noopener">` مخفي بصرياً (sr-only) داخل كل بطاقة، حتى يكون للفيديو رابط قابل للزحف.
-4. **فحص شامل:**
-   ```bash
-   grep -rn "window.location.hash\s*=" src
-   grep -rn "location.hash" src
-   grep -rn "href=\"#\(projects\|articles\|videos\|faq\|about\|contact\|top\)\"" src
-   ```
-   **النتيجة يجب أن تكون صفراً.** المسموح فقط روابط TOC (`#sec-...`) و `#team-showcase`.
-5. **الـcanvases:** `aria-hidden="true"` على TeamMomentsRing و InfiniteMenu و Orb canvas و loader canvas (موجود).
-6. **H1 واحد لكل صفحة:**
-   - الرئيسية: H1 في الـhero (`initial-title`)، و `expanded-hero-title` يبقى H2.
-   - About في الرئيسية H2، وفي `/about` H1.
-
-**Validation:** ‏`scripts/verify-site.mjs` (P11) + فحص يدوي بـ`curl` لروابط البطاقات.
-
-### P7 — SEO / GEO / AEO
-
-**Goal:** metadata و structured data و sitemap و robots و llms، من البيانات الفعلية.
-**Files:** `src/seo/metadata.ts`، و `src/seo/jsonld.ts`، و `src/seo/JsonLd.tsx`، و `src/app/sitemap.ts`، و `src/app/robots.ts`، و `src/app/llms.txt/route.ts`، و `src/app/llms-full.txt/route.ts`. احذف `public/sitemap.xml` و `public/robots.txt` و `public/llms.txt` و `public/llms-full.txt`.
+**لماذا:** Lighthouse يقيس جهازاً محاكى. الزوار الفعليون في سوريا والمنطقة قد يستخدمون أجهزة أضعف وشبكات أبطأ من المحاكاة. القرارات اللاحقة (مثل تفعيل tier `lite` لفئات أوسع) تحتاج بيانات حقيقية.
 
 **Actions:**
-1. **`metadata.ts`:**
-   ```ts
-   export function buildRootMetadata(): Metadata {
-     return {
-       metadataBase: new URL(SITE_URL),
-       title: { default: '<current index.html <title> verbatim>', template: '%s | تكنو إنجاز' },
-       description: '<current index.html meta description verbatim>',
-       applicationName: 'تكنو إنجاز',
-       openGraph: { siteName: 'تكنو إنجاز | Techno Enjaz', locale: 'ar_SY', type: 'website', images: [{ url: '/techno-logo.png' }] },
-       twitter: { card: 'summary_large_image' },
-       robots: { index: true, follow: true, 'max-snippet': -1, 'max-image-preview': 'large', 'max-video-preview': -1 },
-       other: { 'geo.region': 'SY-HM', 'geo.placename': 'Hama, Syria', 'geo.position': '35.128992;36.754001', ICBM: '35.128992, 36.754001' },
-     };
-   }
-   export function pageMetadata(o: { title: string; description: string; path: string; image?: string; type?: 'website' | 'article'; publishedTime?: string; modifiedTime?: string; noindex?: boolean; absoluteTitle?: boolean }): Metadata {
-     const url = absoluteUrl(o.path);
-     const images = [{ url: o.image ?? '/techno-logo.png' }];
-     return {
-       title: o.absoluteTitle ? { absolute: o.title } : o.title,
-       description: o.description,
-       alternates: { canonical: url },
-       robots: o.noindex ? { index: false, follow: true } : undefined,
-       openGraph: { url, title: o.title, description: o.description, type: o.type ?? 'website', images, ...(o.type === 'article' ? { publishedTime: o.publishedTime, modifiedTime: o.modifiedTime ?? o.publishedTime } : {}) },
-       twitter: { card: 'summary_large_image', title: o.title, description: o.description, images: images.map(i => i.url) },
-     };
-   }
-   ```
-   **مصادر العناوين والأوصاف:**
-
-   | الصفحة | title | description |
-   |---|---|---|
-   | `/` | title الحالي في index.html (absolute) | description الحالي |
-   | `/articles/[slug]` | `seoTitle` | `metaDescription` |
-   | `/projects/[slug]` | `seoTitle` (يحتوي "تكنو إنجاز" أصلاً، فاستخدم absolute) | `metaDesc` |
-   | `/articles` و `/projects` و `/videos` و `/faq` و `/about` و `/contact` | من `translations.ar` (مفاتيح `pageTitle` و `heading` الموجودة لكل قسم) | من `translations.ar` (`pageSubtitle` و `subtitle`). إذا غاب: description الرئيسية + سجّل في `docs/owner-todo.md` |
-   | `/team/[id]` | اسم العضو | `description` أو `bio` الخاص به (noindex) |
-   | `/login` و `/register` و `/account` | من translations | noindex |
-
-2. **`jsonld.ts`:** دوال ترجع كائنات، ويجمعها `<JsonLd data={[...]}/>` في `@graph` واحد لكل صفحة.
-   - `organization()` و `website()`: في layout لكل صفحة.
-   - `webPage({ path, name, type })`، حيث type من: `WebPage` و `CollectionPage` و `AboutPage` و `ContactPage` و `FAQPage`.
-   - `breadcrumb(items: { name, path }[])`: أول عنصر الرئيسية `/`، وآخر عنصر الصفحة الحالية مع `item`.
-   - `blogPosting(a)`:
-     ```json
-     {
-       "@type": "BlogPosting", "@id": "<url>#article", "mainEntityOfPage": "<url>",
-       "headline": "<title, max 110 chars>", "name": "<seoTitle>", "description": "<metaDescription>",
-       "image": "<absolute image>", "datePublished": "<publishedAt>T00:00:00+03:00",
-       "dateModified": "<(modifiedAt ?? publishedAt)>T00:00:00+03:00",
-       "author": { "@id": "https://technoenjaz.com/#organization" },
-       "publisher": { "@id": "https://technoenjaz.com/#organization" },
-       "inLanguage": "ar", "articleSection": "<category>",
-       "keywords": "<tags joined by ', ' with '_' replaced by ' '>",
-       "isPartOf": { "@id": "https://technoenjaz.com/#website" }
-     }
-     ```
-   - `projectWork(p)`: ‏`CreativeWork` بـname (title) و headline (seoTitle) و description (metaDesc) و image مطلقة و url و `inLanguage: 'ar'` و `genre: categoryNameAr` و `contributor: {@id: ORG_ID}`. أضف `keywords` فقط إذا كانت `projectTags(p.tags)` غير فارغة.
-   - `itemList(items: { name, path }[])`: لـ`/articles` و `/projects` داخل CollectionPage (`mainEntity`).
-   - `faqPage(items)`: ‏`mainEntity: [{ "@type": "Question", name: question, acceptedAnswer: { "@type": "Answer", text: answer } }]`. النص العربي **حرفياً** من faqData.
-   - **ممنوع:** Person، و VideoObject (لا يوجد uploadDate)، و Review، و AggregateRating، و InteractionCounter، و priceRange.
-   - **`JsonLd.tsx`:**
-     ```tsx
-     export function JsonLd({ data }: { data: object[] }) {
-       const json = JSON.stringify({ '@context': 'https://schema.org', '@graph': data }).replace(/</g, '\\u003c');
-       return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: json }} />;
-     }
-     ```
-3. **`sitemap.ts`:**
-   ```ts
-   export const dynamic = 'force-static';
-   export default function sitemap(): MetadataRoute.Sitemap {
-     const s = (p: string) => ({ url: absoluteUrl(p) });
-     return [
-       s('/'), s('/projects'), ...getAllProjects().map(p => s(`/projects/${p.slug}`)),
-       s('/articles'), ...getAllArticles().map(a => ({ url: absoluteUrl(`/articles/${a.slug}`), lastModified: a.modifiedAt ?? a.publishedAt })),
-       s('/videos'), s('/faq'), s('/about'), s('/contact'),
-     ];
-   }
-   ```
-   **33 URL بالضبط.**
-4. **`robots.ts`:**
-   ```ts
-   export const dynamic = 'force-static';
-   export default function robots(): MetadataRoute.Robots {
-     return { rules: [{ userAgent: '*', allow: '/' }], sitemap: `${SITE_URL}/sitemap.xml`, host: SITE_URL };
-   }
-   ```
-5. **`llms.txt/route.ts` و `llms-full.txt/route.ts`:**
-   - `export const dynamic = 'force-static'`، و GET يرجع `text/plain; charset=utf-8`.
-   - **المحتوى:**
-     - `# Techno Enjaz | تكنو إنجاز` + ملخص من `ORG.descriptionAr`.
-     - الهوية (الدومين والهاتف والبريد و Instagram والمدينة).
-     - `## Articles`: لكل مقال `- [title](absoluteUrl): metaDescription`.
-     - `## Projects`: بنفس الشكل.
-     - `## Live Platforms`: من reels (title و liveUrl و description).
-     - `## Pages`: الروابط الأساسية.
-     - `llms-full` يضيف excerpt كل مقال ومشروع + FAQ كاملاً (سؤال وإجابة).
-   - **ممنوع:** قائمة الفريق، وأي stack تقني غير موجود في البيانات.
-
-**Validation:**
-- `curl localhost:8787/sitemap.xml | grep -c '<loc>'` = 33.
-- كل JSON-LD يمر `JSON.parse`، ويحتوي `@id` المؤسسة نفسه في كل الصفحات.
-- validator.schema.org و Google Rich Results Test (بعد النشر) لعينات: `/`، و `/articles/digital-twin`، و `/projects/virtual-board-hand-tracking`، و `/faq`.
-- `grep -rn "twitter:site\|keywords\|priceRange" .open-next/assets` = 0.
-
-### P8 — Loader + Performance
-
-**Goal:** تقليل JS والصور، وتأجيل WebGL.
-**Actions:**
-1. **WebGL و Canvas:**
-   ```tsx
-   const Orb = dynamic(() => import('@/Orb'), { ssr: false });
-   const InfiniteMenu = dynamic(() => import('@/InfiniteMenu'), { ssr: false });
-   const TeamMomentsRing = dynamic(() => import('@/components/TeamMomentsRing'), { ssr: false });
-   ```
-   داخل AboutTeamSection: تُعرض فقط عندما يكون `useInView(containerRef)` true، و Orb يبقى مشروطاً بـ`isLoaderDone` (كما هو).
-2. **`scripts/optimize-images.mjs` (sharp):**
-   - المصادر: `public/articles/*`، و `public/projects/*`، و `public/projects-live/*`، و `public/moments/*`، و `public/abdulghani.jpg`، و `public/techno-logo.png`.
-   - المخرجات: `public/_img/<same relative path without ext>.w640.webp` و `.w1280.webp` (quality 78)، و `public/_img/manifest.json` بالأبعاد الأصلية `{ "/articles/digital-twin.jpg": { w, h } }`.
-   - يتخطى الملفات المحدّثة (مقارنة mtime).
-   - يعمل ضمن `npm run build` قبل `next build`.
-3. **`ResponsiveImage`:**
-   ```tsx
-   <img src={orig} srcSet={`${w640} 640w, ${w1280} 1280w`} sizes={sizes} width={w} height={h} alt={alt} loading={priority ? 'eager' : 'lazy'} fetchPriority={priority ? 'high' : 'auto'} decoding="async" className={className} />
-   ```
-   - `orig` يبقى المسار الأصلي (fallback و og:image).
-   - يُستخدم في: بطاقات المقالات والمشاريع، و banner المقال (priority)، وصورة المشروع (priority)، و related، و reels covers.
-4. **صور `src/assets` المستخدمة:** ‏`im1.png` و `im2.png` و `im3.png` و `hero-bg-distortion.png` و `videos/*.png` و `Asset-1@4x.png`.
-   - حوّلها **مرة واحدة** إلى `.webp` بنفس الأبعاد (quality 80) بسكربت sharp، وحدّث الـimports.
-   - الأصول تبقى في الـrepo إلى نهاية P11، ثم تُحذف في commit مستقل.
-   - في Next، import الصورة يرجع كائناً `{ src, width, height }` (StaticImageData). حدّث الاستخدامات إلى `.src` أو مرّرها إلى `ThemedImage`.
-5. **حذف ما تبقى من P1 cleanup:** احذف الملفات في القسم 2.1 (باستثناء `*-seo.md`). قبل حذف كل ملف: `grep -rn "<basename>" src` = 0.
-6. **Bundle check:**
-   ```bash
-   ANALYZE=true npm run build
-   ```
-   مع `withBundleAnalyzer` في `next.config.ts` عند `ANALYZE`.
-   - تأكد أن `marked` وملفات `src/content` و `blogArticlesData.rawMarkdown` **غير موجودة** في أي client chunk.
-   - `grep -rl "SEO Title:" .next/static` = 0.
-
-**Validation:**
-- ‏Lighthouse (mobile) على `/` و `/articles/digital-twin` و `/projects/virtual-board-hand-tracking`: ‏LCP < 2.5s، و CLS < 0.1، و TBT < 300ms. سجّل مقابل baseline.
-- الـloader يظهر فقط في أول زيارة لـ`/` في الجلسة.
-
-### P9 — Accessibility
-
-**Actions:**
-1. **Skip link** في AppShell قبل الـnavbar:
-   ```tsx
-   <a href="#main-content" className="skip-link">تخطَّ إلى المحتوى</a>
-   ```
-   ```css
-   .skip-link{position:absolute;inset-inline-start:8px;top:-60px;z-index:100000;padding:10px 14px;background:var(--bg-main);color:var(--text-main);border-radius:8px}
-   .skip-link:focus{top:8px}
-   ```
-2. **`:focus-visible` عام:**
-   ```css
-   :where(a,button,input,textarea,select,[tabindex]):focus-visible{outline:2px solid #00d2ff;outline-offset:2px}
-   ```
-3. **`prefers-reduced-motion`:**
-   - GSAP (CinematicFooter و MagicBento و CardSwap): `gsap.matchMedia()` أو فحص `matchMedia('(prefers-reduced-motion: reduce)')` داخل effect، وعند reduce تُعطَّل الحركة المستمرة (magnetic و auto-swap و particles) وتبقى الحالة النهائية.
-   - framer-motion: `useReducedMotion()`.
-   - ScrollExpand: عند reduce يعرض الحالة المتوسعة مباشرة.
-   - الـloader يدعمها أصلاً (`reducedQuery`).
-4. **`aria-label`** للأزرار الأيقونية: الإعجاب والحفظ والمشاركة و ThemeSwitch و LanguageDropdown وإغلاق الـmodal.
-5. **النصوص البديلة:** `alt` من `altText` و title. الصور الزخرفية (خلفيات الأقسام) `alt=""`.
-6. **Labels:** `<label htmlFor>` لكل input في Contact و Auth والتعليقات و البحث. إذا كان التصميم لا يعرض label: `className="sr-only"`.
-7. **الـmodal (VideoPlayerModal):** ‏`role="dialog"` و `aria-modal="true"`، وإغلاق بـEscape، وإعادة التركيز للعنصر السابق. إذا وُجد بعضها فلا تكرّره.
-8. **`<main>` واحد:** `AuthPage` تستخدم `<main className="auth-main-content">`، فغيّرها إلى `<div>` بنفس الـclass. افعل نفس الشيء لأي `<main>` داخلي آخر.
-
-**Validation:** ‏`@axe-core/playwright` على كل صفحة indexable، بدون violations من مستوى serious أو critical. اختبار keyboard: ‏Tab (skip link)، ثم Enter، ثم Tab إلى أول بطاقة، ثم Enter يفتح الصفحة.
-
-### P10 — Favicon & Manifest
-
-**Actions:**
-1. افحص المجلد المحلي `C:\Users\PC\Downloads\favicons` مباشرة: اسرد الملفات وأبعادها (`sharp(file).metadata()`) وسجّلها في `docs/favicons.md`.
-2. **App Router file conventions:**
-   - `src/app/favicon.ico` (يجب أن يحتوي 16 و32 و48).
-   - `src/app/icon.svg` إن وُجد SVG، وإلا `src/app/icon.png` (96×96 أو 192×192).
-   - `src/app/apple-icon.png` (180×180).
-   - `public/web-app-manifest-192x192.png` و `public/web-app-manifest-512x512.png`.
-3. **`src/app/manifest.ts`:**
-   ```ts
-   export default function manifest(): MetadataRoute.Manifest {
-     return {
-       name: 'تكنو إنجاز | Techno Enjaz', short_name: 'تكنو إنجاز', start_url: '/', display: 'standalone',
-       dir: 'rtl', lang: 'ar', theme_color: '#030712', background_color: '#030712',
-       icons: [
-         { src: '/web-app-manifest-192x192.png', sizes: '192x192', type: 'image/png' },
-         { src: '/web-app-manifest-512x512.png', sizes: '512x512', type: 'image/png' },
-       ],
-     };
-   }
-   ```
-   أضف `purpose: 'maskable'` فقط إذا كانت أيقونة المجلد مصممة بـsafe zone (المحتوى داخل 80% من المركز).
-4. أي مقاس ناقص يُولَّد بـsharp من أكبر PNG أو SVG متاح، مع توثيق ذلك.
-5. احذف `public/favicon.svg` (شعار Vite) ورابط `brand.webp`، وتحقق من `public/icons.svg` (هل يُستخدم؟ `grep -rn "icons.svg" src`).
-
-**Validation:**
-- كل أيقونة ترجع 200.
-- Chrome DevTools ← Application ← Manifest بدون أخطاء.
-- الأيقونة تظهر في Chrome و Firefox و Safari، و Add to Home Screen على iOS يُظهر apple-icon.
-
-### P11 — Full Validation
-
-**Goal:** إثبات أن كل شيء يعمل قبل الدمج.
-**بيئة الاختبار:** دائماً `npm run preview` (workerd على `localhost:8787`).
-
-**1. `scripts/verify-site.mjs` (linkedom):**
-- يجلب `/sitemap.xml` ويستخرج كل URL، ويضيف صفحات noindex (`/login` و `/register` و `/account` و `/team/abdulghani`) و `/this-page-does-not-exist`.
-- **لكل صفحة indexable:**
-  - status = 200، بدون redirect.
-  - `<title>` غير فارغ وفريد عبر كل الصفحات.
-  - `meta[name=description]` طولها بين 50 و 200.
-  - `link[rel=canonical]` = `https://technoenjaz.com` + path.
-  - لا `noindex`.
-  - `h1` عددها 1 بالضبط.
-  - نص `main` > 300 حرف.
-  - `og:title` و `og:url` و `og:image` (مطلق يبدأ بـ`https://technoenjaz.com`).
-  - كل `script[type="application/ld+json"]` يمر `JSON.parse` ويحتوي `@graph`.
-- **للمقالات:** وجود نص أول H2 من الـmarkdown الأصلي في HTML، ووجود `BlogPosting` بـ`datePublished` صحيح لكل slug حسب القسم 7.
-- **للمشاريع:** وجود `CreativeWork`، وعدم وجود `WebPage` أو `BreadcrumbList` كنص وسوم ظاهر.
-- **لـ`/faq`:** 13 عنصراً بـid يبدأ بـ`faq-a-`، و `FAQPage` بـ13 سؤالاً.
-- **لكل الصفحات، فشل إذا وُجد:**
-  - `<!--` متبوعاً بأحد: `FEATURED IMAGE` أو `IMAGE SLOT` أو `GALLERY ITEM` أو `Suggested Internal Link` أو `Filename:`.
-  - `docs.google.com`، أو `techno-enjaz.com`.
-  - `href="#article/` أو `href="#project/`، أو `href="#projects"` وما شابهها.
-- **الروابط الداخلية:** كل `a[href^="/"]` (بدون hash) يرجع 200.
-- **noindex pages:** `robots` يحتوي `noindex`، وغير موجودة في الـsitemap.
-- `/this-page-does-not-exist` يرجع 404.
-- **الناتج:** تقرير في `docs/verify-report.md`، و exit 1 عند أي فشل.
-
-**2. `tests/no-js.spec.ts`:**
-- `test.use({ javaScriptEnabled: false })` لكل URL في الـsitemap.
-- `h1` مرئي، وأول فقرة محتوى مرئية.
-- في صفحات القوائم: عدد روابط البطاقات = 12 أو 14.
-- في المقال: الـbody مرئي.
-- **أي فشل = FAILURE** (القاعدة 0.1).
-
-**3. `tests/hydration.spec.ts`:**
-- لكل URL في الـsitemap × (dark,ar) و (light,ar) و (dark,en) و (light,en) × viewports (390 و 1440).
-- اجمع `console` (error و warning) و `pageerror`.
-- فشل عند: `Hydration`، أو `did not match`، أو `Minified React error #418` أو `#423` أو `#425`، أو `Text content does not match`.
-- **يُشغَّل مرتين:** على `next dev` (رسائل مفصلة) و على `preview`.
-
-**4. `tests/visual/compare.spec.ts`:**
-- نفس تركيبات P0، والـURLs الجديدة تقابل القديمة: `/projects` مقابل `/#projects`، وهكذا.
-- `toHaveScreenshot` مع `maxDiffPixelRatio: 0.001` و `mask` لكل `canvas`.
-- **الفروق المتوقعة (توثّق ولا تعتبر فشلاً):**
-  - صفحات المشاريع: اختفاء H1 المكرر من الـbody، واختفاء قسم الوسوم الخاطئ، والـexcerpt النظيف.
-  - مقتطف `interactive-children-ai-learning-system` في الـcatalog.
-  - غير ذلك **أي فرق = FAILURE** ويُصلح.
-
-**5. `tests/legacy-redirects.spec.ts`:** كل صف في جدول 5.3: زيارة القديم تنتهي بـ`page.url()` = الجديد.
-
-**6. `tests/navigation.spec.ts`:**
-- nav لكل عنصر، و back و forward، و scroll إلى الأعلى عند تغيير الصفحة.
-- TOC anchor لا يغيّر الصفحة.
-- الإعجاب بدون login يحوّل إلى `/login`، وبعد login يعود لنفس المقال، ويبقى الإعجاب محفوظاً بعد reload.
-- حفظ مشروع يظهر في `/account`.
-- تبديل الـtheme واللغة يبقى بعد reload، بدون وميض عربي لمستخدم en (screenshot عند `domcontentloaded` لا يُظهر نصاً عربياً).
-- الـloader: أول زيارة لـ`/` يظهر، وثاني زيارة في نفس الجلسة لا يظهر، و `/articles/digital-twin` مباشرة لا يظهر.
-
-**7. `tests/a11y.spec.ts`:** ‏axe على كل URL في الـsitemap.
-
-**8. Lighthouse CI:** كما في P8.
-
-**9. TOC ids:** مقارنة ids الـH2 لمقال `digital-twin` ومشروع `virtual-board-hand-tracking` مع ids baseline (استخرجها في P0 من DOM النسخة القديمة بعد التحميل).
-
-**10. Build output:** جدول `next build` لا يحتوي `ƒ` لأي صفحة (الاستثناء الوحيد المسموح: route handlers مستقبلية تحت `/api`).
-
-**11.** `npm run typecheck` و `npm run lint` (warnings ≤ baseline).
-
-### P12 — Deploy & Cutover
-
-**Actions:**
-1. `npx wrangler login` (المالك)، ثم `npm run deploy`.
-2. **حجم الـWorker:** راجع حجم `.open-next/worker.js` المضغوط في مخرجات الـdeploy. الحد 3MB في الخطة المجانية و10MB في المدفوعة. إذا تجاوز الحد: أبلغ المالك (ترقية الخطة). لا تحذف features.
-3. **الدومين:** في Cloudflare Dashboard ← Workers ← technoenjaz ← Settings ← Domains & Routes، أضف `technoenjaz.com` كـCustom Domain، ثم `www.technoenjaz.com` مع redirect rule إلى الدومين بدون www.
-   - هذا يحل خطأ 525 الحالي (سببه origin قديم).
-   - **قبل التبديل:** سجّل الإعداد الحالي للدومين في `docs/rollback.md`.
-4. **Post-deploy checks:**
-   ```bash
-   curl -sI https://technoenjaz.com/ | head -1                          # 200
-   curl -sI https://technoenjaz.com/articles/digital-twin | head -1     # 200 (no redirect)
-   curl -sI https://technoenjaz.com/index.html | grep -i location       # → /
-   curl -sI https://technoenjaz.com/nope | head -1                      # 404
-   curl -s  https://technoenjaz.com/sitemap.xml | grep -c '<loc>'       # 33
-   ```
-   شغّل `scripts/verify-site.mjs` مع `BASE_URL=https://technoenjaz.com`.
-5. **Search Console:**
-   - أضف الـproperty (Domain).
-   - أرسل `https://technoenjaz.com/sitemap.xml`.
-   - URL Inspection (Live test) لـ`/` و `/articles/digital-twin` و `/projects/virtual-board-hand-tracking`، وتأكد أن الـHTML المعروض يحتوي المحتوى.
-6. **Rich Results Test** لمقال و `/faq`.
+1. تفعيل **Cloudflare Web Analytics** (مجاني، بدون cookies، والموقع على Cloudflare أصلاً). يعطي Core Web Vitals (LCP و INP و CLS) من الزوار الحقيقيين مقسّمة حسب الجهاز والدولة والصفحة. التفعيل من Dashboard (Web Analytics ثم Automatic setup للدومين)، بدون كود.
+2. **بعد أسبوعين من الإطلاق:** راجع الـp75 لكل من mobile و tablet و desktop. إذا كان LCP mobile p75 > 2.5s أو INP > 200ms: وثّق أسوأ 3 صفحات في `docs/field-vitals.md` كمدخل لتحسين لاحق.
+3. **الخصوصية:** لا يُضاف أي analytics آخر بـcookies دون قرار المالك.
 
 ---
 
-## 22. Expected Files/Folders to Change
+### R11 — أجهزة Android (Samsung و Xiaomi/Redmi/Poco وغيرها)
 
-### ADD
-- **Config:** `next.config.ts`، و `open-next.config.ts`، و `wrangler.jsonc`، و `playwright.config.ts`.
-- **App:**
-  ```text
-  src/app/layout.tsx
-  src/app/page.tsx
-  src/app/not-found.tsx
-  src/app/sitemap.ts
-  src/app/robots.ts
-  src/app/manifest.ts
-  src/app/favicon.ico
-  src/app/icon.(svg|png)
-  src/app/apple-icon.png
-  src/app/projects/page.tsx
-  src/app/projects/[slug]/page.tsx
-  src/app/articles/page.tsx
-  src/app/articles/[slug]/page.tsx
-  src/app/videos/page.tsx
-  src/app/faq/page.tsx
-  src/app/about/page.tsx
-  src/app/contact/page.tsx
-  src/app/team/[id]/page.tsx
-  src/app/login/page.tsx
-  src/app/register/page.tsx
-  src/app/account/page.tsx
-  src/app/llms.txt/route.ts
-  src/app/llms-full.txt/route.ts
+> **لماذا مرحلة مستقلة:** معظم زوار المنطقة على Android. أجهزة Samsung و Xiaomi تختلف عن iPhone وعن Chrome المكتبي في:
+> - مقاسات الشاشة وإعدادات "حجم العرض".
+> - المتصفحات: Samsung Internet، و Mi Browser، و متصفحات التطبيقات (in-app).
+> - الوضع الداكن المفروض.
+> - شريط الإيماءات، وشاشات 90 إلى 144Hz، و GPU أضعف في الفئات الاقتصادية.
+>
+> **الترتيب:** بعد R10 وقبل R7.
+
+#### R11.1 — لماذا لا تكفي قائمة أجهزة ثابتة
+
+عرض الـviewport على Android **ليس ثابتاً لنفس الهاتف**. يتغير مع:
+- إعداد **Screen zoom / Display size** في One UI (Samsung) و HyperOS/MIUI (Xiaomi). نفس Galaxy S24 Ultra يعطي تقريباً من 320 إلى 450 CSS px حسب الإعداد.
+- **دقة الشاشة المختارة** (HD+ و FHD+ و QHD+ في Samsung)، وهذا يغير DPR.
+- **الشاشات القابلة للطي** (مغلقة ومفتوحة) و **Pop-up view** و **Split screen**.
+
+**القرار:** اختبار **مسح مستمر للعرض (width sweep)** يغطي كل الاحتمالات، **إضافة إلى** قائمة أجهزة للقطات.
+
+#### R11.2 — مصفوفة Android (تُضاف إلى `tests/responsive/devices.ts`)
+
+> القيم أدناه تقريبية للإعداد الافتراضي، ولأغراض اللقطات فقط. الضمان الحقيقي هو الـsweep في R11.3.
+
+| الاسم | يمثّل | viewport (CSS px) | DPR |
+|---|---|---|---|
+| redmi-low | Redmi A و Redmi 12C و 13C، و Galaxy A0x (720p، وهي الأكثر انتشاراً اقتصادياً) | 360×800 | 2 |
+| redmi-note | Redmi Note 12 و 13 و Poco X5 و X6 (1080×2400) | 393×873 | 2.75 |
+| xiaomi-flagship | Xiaomi 13 و 14 | 393×873 | 3 |
+| galaxy-s | Galaxy S23 و S24 (FHD+) | 360×780 | 3 |
+| galaxy-ultra | Galaxy S23 Ultra و S24 Ultra (FHD+ الافتراضي) | 384×832 | 2.8125 |
+| galaxy-ultra-zoomed | نفس الجهاز مع Screen zoom مرتفع | 320×693 | 3.375 |
+| galaxy-a | Galaxy A15 و A25 و A35 و A55 | 412×915 | 2.625 |
+| galaxy-fold-cover | Z Fold 5 و 6 (الشاشة الخارجية) | 344×882 | 2.625 |
+| galaxy-fold-open | Z Fold 5 و 6 (مفتوح) | 690×829 | 2.625 |
+| galaxy-flip | Z Flip 5 و 6 | 412×1004 | 2.625 |
+| galaxy-tab | Galaxy Tab S9 و Tab A9+، و Xiaomi Pad 6 (عمودي) | 800×1280 | 2 |
+| galaxy-tab-landscape | نفسها أفقياً | 1280×800 | 2 |
+| galaxy-tab-ultra-landscape | Tab S9 Ultra أفقياً (عرض desktop مع لمس) | 1480×924 | 2 |
+
+- **ملاحظة مهمة للـTab Ultra الأفقي:** العرض 1480 يعطي layout الـdesktop، لكنه جهاز لمس. قواعد `(hover: hover)` من R6 تحميه، و `data-tier` يُحدد بالقدرة وليس العرض.
+- **مع S-Pen أو ماوس:** يصبح `(pointer: fine)` صحيحاً، فتعمل الـhover effects (سلوك صحيح).
+
+#### R11.3 — Width sweep و Font-scale sweep (آلي)
+
+`tests/responsive/sweep.spec.ts`:
+1. **لكل عرض من 280 إلى 1600 بخطوة 8px** (166 عرضاً)، على ارتفاعَي 700 و 900، وعلى الصفحات `/` و `/articles/digital-twin` و `/projects` و `/projects/virtual-board-hand-tracking` و `/videos` و `/faq` و `/contact`:
+   - لا overflow أفقي (مع تعطيل `overflow-x: clip`).
+   - الـheader: كل عناصره داخل الشاشة، ولا تداخل بين الشعار والأزرار (فحص تقاطع `getBoundingClientRect`).
+   - لا نص مقصوص في الـnav والأزرار (`scrollWidth > clientWidth` على عناصر `overflow:hidden` و `white-space:nowrap` = 0، عدا المقصود بـellipsis والموسوم `data-ellipsis`).
+   - **الأداء:** صفحة واحدة، يُغيَّر `setViewportSize` فقط مع انتظار 150ms، بدون إعادة تحميل.
+2. **Font scale:** على `galaxy-a` و `redmi-low`، مع `html{font-size:130%}` ثم 150% ثم 200% (يحاكي "Font size" في إعدادات Android و "Text scaling" في Samsung Internet): لا overflow، ولا نص مقصوص، والأزرار تتمدد ولا تقص.
+3. **الإبلاغ:** أي فشل يُسجل العرض بالضبط + لقطة في `docs/sweep-failures/`.
+
+#### R11.4 — المتصفحات: Samsung Internet و Mi Browser و In-App Browsers
+
+**الواقع:**
+- **Samsung Internet** مثبت افتراضياً على كل Samsung، و **Mi/HyperOS Browser** على Xiaomi. كلاهما مبني على Chromium لكن **بنسخ أقدم** من Chrome الحالي أحياناً، مع ميزات خاصة (الوضع الداكن المفروض، ومانع الإعلانات، وتكبير النص).
+- الزوار القادمون من **Instagram و WhatsApp و Facebook و Telegram** (الموقع يعتمد على Instagram) يفتحون الروابط داخل **WebView** التطبيق: Android System WebView أو iOS WKWebView. لها شريط علوي خاص، و `100vh` مختلف، و `window.open` محدود.
+
+**مصفوفة الدعم الرسمية** (تُضاف إلى `package.json` لأدوات البناء والـlinting):
+```json
+"browserslist": ["chrome >= 100", "and_chr >= 100", "samsung >= 18", "ios_saf >= 15.4", "safari >= 15.4", "firefox >= 110", "edge >= 100"]
+```
+
+**قاعدة إلزامية:** أي ميزة CSS أو JS أحدث من Chromium 100 يجب أن يكون لها fallback لا يكسر الشكل:
+
+| الميزة | أول Chromium | الـfallback المطلوب |
+|---|---|---|
+| `dvh` و `svh` | 108 | `100vh` قبلها (موجود في R1) |
+| `:has()` | 105 | **ممنوع** للمنطق الوظيفي. استبدل `body:has(.mobile-drawer[data-open])` في R10.8 بـclass على `body` تضيفه JS (`document.body.classList.toggle('scroll-locked', open)`). راجع الاستخدام الوحيد الحالي لـ`:has(` في `src` |
+| Container queries | 105 | الشكل الافتراضي للبطاقة (مقبول، من R10.5) |
+| `inert` | 102 | الـfocus trap في JS يغطي |
+| `text-wrap: balance` | 114 | تجميلي، بدون fallback |
+| `color-mix()` | 111 | لا تستخدمه، أو ضع قيمة ثابتة قبله |
+| AVIF | 85 | `<picture>` مع WebP (R3) |
+| `overflow: clip` | 90 | مدعوم |
+
+**Validation:**
+- Playwright لا يشغّل Samsung Internet. الاختبار الحقيقي في R11.10.
+- آلياً: فحص الكود بـ`eslint-plugin-compat` (JS) و `stylelint-no-unsupported-browser-features` (CSS) مع الـbrowserslist أعلاه، بمستوى error للميزات بدون fallback.
+
+#### R11.5 — الوضع الداكن المفروض (Samsung Internet و Mi Browser و Chrome Auto Dark)
+
+**الدليل:** لا يوجد `<meta name="color-scheme">` ولا `color-scheme` في CSS. عندما يفعّل المستخدم "Dark mode for websites" في Samsung Internet أو Mi Browser، أو "Auto-darken web contents" في Chrome، قد يعكس المتصفح ألوان الموقع **آلياً**:
+- الألوان الفاتحة تنقلب.
+- الصور تتعتم.
+- التدرجات والـglass تُشوّه.
+
+الموقع يملك وضعاً داكناً حقيقياً، فالحل أن **نعلن ذلك**.
+
+**Actions:**
+1. في `layout.tsx` (أو `metadata.other`): `<meta name="color-scheme" content="dark light" />`. الترتيب dark أولاً يطابق الافتراضي للموقع.
+2. في CSS: `:root, [data-theme='dark'] { color-scheme: dark; } [data-theme='light'] { color-scheme: light; }`. هذا يجعل scrollbars وحقول الإدخال و date pickers تتبع الـtheme أيضاً.
+3. **السكربت inline** (الـtheme boot) يحترم `prefers-color-scheme` أصلاً. Samsung Internet مع "Dark mode" يبلّغ `prefers-color-scheme: dark`، فيطبّق الموقع وضعه الداكن الحقيقي بدل العكس الآلي.
+
+**Validation (أجهزة حقيقية R11.10):** Samsung Internet مع Dark mode مفعّل، و Mi Browser مع الوضع الليلي، و Chrome Android مع flag `#enable-force-dark`: الموقع يظهر بوضعه الداكن الأصلي، **لا صور معكوسة ولا ألوان مقلوبة**.
+
+#### R11.6 — شريط التنقل السفلي و Edge-to-edge و Punch-hole
+
+- **Android 15 وما بعده مع Chrome الحديث** يعرض الصفحات edge-to-edge. مع `viewport-fit=cover` (R1)، يصبح `env(safe-area-inset-bottom)` غير صفري فوق شريط الإيماءات، ويختلف بين **Gesture navigation** و **3-button navigation** (Samsung و Xiaomi يدعمان الاثنين).
+- كل عنصر مثبت في الأسفل يستخدم `var(--safe-bottom)`: أزرار Reels، وأسفل الـdrawer، وأزرار الـmodal، و CardSwap controls إن كانت ثابتة.
+- **Punch-hole** (كاميرا مثقوبة) في الوضع الأفقي: `--safe-left` و `--safe-right` على الحاويات العليا (R1).
+- **Validation:** R11.10، مع لقطات بوضعي التنقل على Samsung و Xiaomi.
+
+#### R11.7 — شاشات 90 و 120 و 144Hz
+
+**الدليل (تحققت منه):** حلقات الحركة كلها **مبنية على الزمن وليس عدد الإطارات**:
+- `Orb.jsx`: `t * 0.001`.
+- `InfiniteMenu.jsx`: `timeScale = deltaTime / targetFrameDuration`.
+- `TeamMomentsRing.jsx`: `(now - t0)`.
+- `InfiniteSpiral.tsx`: `delta`.
+
+فالسرعة صحيحة على 120Hz. **لكن** الـGPU يرسم ضعف الإطارات، فيزيد الحرارة والبطارية على Redmi و Galaxy A.
+
+**Actions:**
+1. **قاعدة للكود الجديد:** أي حلقة `requestAnimationFrame` يجب أن تستخدم `delta time`. ممنوع `x += constant` لكل frame. يُذكر في `docs/assets-guide.md` قسم للمطورين، ويُفحص في المراجعة.
+2. **Frame cap حسب الـtier:** helper مشترك `src/lib/raf.ts`:
+   ```ts
+   export function loop(cb: (t: number, dt: number) => void, maxFps: number) {
+     let last = 0, id = 0; const min = 1000 / maxFps;
+     const f = (t: number) => { id = requestAnimationFrame(f); if (t - last < min - 1) return; const dt = last ? t - last : 16.7; last = t; cb(t, dt); };
+     id = requestAnimationFrame(f); return () => cancelAnimationFrame(id);
+   }
+   ```
+   `maxFps`: ‏full = 120، و lite = 60، و minimal = لا حلقة. طبّقه على Orb و InfiniteMenu و TeamMomentsRing و InfiniteSpiral **بدون تغيير منطق الرسم**.
+
+#### R11.8 — GPU الفئات الاقتصادية (Mali و PowerVR) وفقدان سياق WebGL
+
+**الدليل:**
+- `InfiniteMenu` يحتاج **WebGL2**، و `Orb` يستخدم `precision highp float` في الـfragment shader.
+- **لا يوجد أي معالج لـ`webglcontextlost`** في الكود.
+
+على Android، يفقد المتصفح سياق WebGL عند ضغط الذاكرة أو الرجوع من تطبيق آخر، فيبقى الـcanvas **أسود** حتى إعادة التحميل. هذا شائع على Redmi و Galaxy A بذاكرة 3 إلى 4GB.
+
+**Actions:**
+1. **كشف القدرة قبل التحميل** (يُضاف إلى `getTier()` في R6):
+   ```ts
+   const c = document.createElement('canvas');
+   const gl2 = c.getContext('webgl2');
+   const gl = gl2 || c.getContext('webgl');
+   const highp = !!gl && gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT)!.precision > 0;
+   const maxTex = gl ? gl.getParameter(gl.MAX_TEXTURE_SIZE) : 0;
+   // no webgl2 → InfiniteMenu uses static fallback (same as tier minimal)
+   // no highp → Orb uses CSS gradient fallback
+   // maxTex < 4096 → tier at most 'lite'
+   (gl as any)?.getExtension('WEBGL_lose_context')?.loseContext();   // free the probe context
+   ```
+2. **Context loss** في Orb و InfiniteMenu:
+   ```ts
+   canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); stopLoop(); setFallback(true); });
+   canvas.addEventListener('webglcontextrestored', () => { reinit(); setFallback(false); });
+   ```
+   الـfallback هو نفس بديل tier `minimal` (شبكة الفريق أو gradient). **لا canvas أسود أبداً.**
+3. **Texture atlas في InfiniteMenu:** على `lite`، حجم أقصى 1024px لكل صورة عضو في الـatlas، وصور الأعضاء من نسخ `.480.webp` (R3) بدل الأصل.
+
+**Validation:**
+- Playwright: `page.evaluate(() => canvas.getContext('webgl2').getExtension('WEBGL_lose_context').loseContext())` ثم تحقق ظهور الـfallback، ثم `restoreContext()` ثم عودة المؤثر.
+- ‏Emulation بدون WebGL2: `--disable-webgl2` في launch args للـChromium، والـfallback يظهر.
+
+#### R11.9 — إدارة البطارية العدوانية (Xiaomi و Samsung)
+
+**الواقع:** HyperOS و MIUI و One UI تقتل تبويبات المتصفح في الخلفية بسرعة. عند العودة، **تُعاد تحميل الصفحة** ويضيع موضع المستخدم (Reel كان يشاهده، أو فلتر في المشاريع، أو فقرة في مقال طويل).
+
+**Actions:**
+1. **Reels:** احفظ فهرس الـreel الحالي في `sessionStorage('te_reel_index')` عند التغيير، واستعده بعد mount (scroll إليه بدون animation).
+2. **الفلاتر والبحث** في `/articles` و `/projects`: اعكسها في الـURL كـquery (`?category=vision&q=...`) عبر `router.replace` (بدون إضافة history entries). هذا يحفظ الحالة عند إعادة التحميل، **ويجعل الروابط قابلة للمشاركة**. الصفحة تبقى SSG لأن الـquery تُقرأ في Client Component.
+3. **المقالات الطويلة:** المتصفح يستعيد موضع التمرير تلقائياً (`history.scrollRestoration = 'auto'`). تأكد أن `ScrollToTop` (خطة الترحيل P4) **لا يعمل** عند التحميل الأول، فقط عند تغيّر pathname أثناء الجلسة.
+4. **الـdrawer والـmodal:** لا تُستعاد (سلوك متوقع).
+
+#### R11.10 — الشبكات البطيئة وباقات البيانات
+
+**الواقع:** شريحة كبيرة من الزوار على بيانات موبايل محدودة أو 3G و 4G ضعيف.
+
+**Actions:**
+- امتداد `getTier()`:
+  ```ts
+  const et = (navigator as any).connection?.effectiveType;
+  if (saveData || et === 'slow-2g' || et === '2g') return 'minimal';
+  if (et === '3g') tier = min(tier, 'lite');
   ```
-- **Lib, SEO, Config:** `src/config/site.ts`، و `src/lib/{markdown,text,inline-scripts}.ts`، و `src/lib/content/{articles,projects}.ts`، و `src/seo/{metadata,jsonld}.ts`، و `src/seo/JsonLd.tsx`.
-- **Components:**
-  ```text
-  src/components/shell/AppShell.tsx
-  src/components/shell/ScrollToTop.tsx
-  src/components/about/AboutTeamSection.tsx
-  src/components/home/HomeHero.tsx
-  src/components/articles/ArticleBody.tsx
-  src/components/articles/ArticlesListing.tsx
-  src/components/projects/ProjectBody.tsx
-  src/components/account/AccountClient.tsx
-  src/components/ThemedImage.tsx
-  src/components/ResponsiveImage.tsx
-  src/components/ClientOnly.tsx
-  ```
-- **Hooks:** `src/hooks/{useHydrated,useInView,useArticleEngagement}.ts`.
-- **Data و Content:** `src/data/{faqData,videosData}.ts`، و `src/content/projects/*.md` (14).
-- **Scripts:** `scripts/{inventory-urls,extract-project-markdown,optimize-images,verify-site}.mjs`.
-- **Tests:** `tests/**`.
-- **Docs:** `docs/{baseline.md,url-inventory.json,legacy-index-head.html,owner-todo.md,favicons.md,verify-report.md,rollback.md}`.
-- **Public:** `public/web-app-manifest-*.png`.
+- **على `minimal`:**
+  - لا preload لغير صورة الـLCP.
+  - الـvideo modal يعرض صورة الغلاف + زر "تشغيل على YouTube" بدل تحميل iframe تلقائياً.
+  - الـloader يُتخطى.
+- **الـpipeline في R3** يولّد عرض 320 أصلاً، والمتصفح يختاره على الشاشات الصغيرة.
 
-### REFACTOR
-- `package.json`، و `tsconfig.json`، و `.gitignore`، و `src/index.css`.
-- `src/context/ThemeLanguageContext.tsx`.
-- `src/data/{blogArticlesData,projectsData}.ts`.
-- `src/components/articles/{OfficeBlogSection,ArticleDetailView,ArticlesSection,MagicBento}.tsx`.
-- `src/components/projects/{ProjectsCatalogSection,ProjectDetailView,ProjectsSection}.tsx`.
-- `src/components/videos/{VideosSection,ProjectReelsFeed,VideoPlayerModal}.tsx`.
-- `src/components/faq/FaqSection.tsx`، و `src/components/ui/{MagicBento,ScrollExpand,InfiniteSpiral}.tsx`.
-- `src/components/{CinematicFooter,TeamMomentsRing}.jsx`، و `src/{GooeyNav,ContactPage,AuthPage,UserProfilePage,ProfilePage}.jsx`.
-- `src/hooks/useSavedProjects.ts`، و `src/utils/authUtils.ts`، و `public/loader/loader.js`.
-- كل ملفات CSS التي تستخدم `'Readex Pro'`، وتُضاف إليها CSS vars للـtheme.
+#### R11.11 — الاختبار على أجهزة حقيقية (إلزامي قبل الإطلاق)
 
-### REPLACE
-- `index.html` يصبح `layout.tsx`.
-- `src/main.tsx` يصبح App Router.
-- `public/sitemap.xml` و `robots.txt` و `llms*.txt` تصبح مولَّدة.
-- `public/favicon.svg` (Vite) يصبح أيقونات المالك.
-- `src/pages/ScrollExpandPrototype.tsx` يصبح `src/components/home/HomeHero.tsx`.
+**الأدوات (بالترتيب المفضل):**
+1. **أجهزة المالك والفريق الفعلية:** Chrome على الكمبيوتر، ثم `chrome://inspect`، ثم USB debugging لـSamsung و Xiaomi. يسمح بفحص DevTools كامل على الهاتف الحقيقي (ومنها Samsung Internet عبر `chrome://inspect` بعد تفعيل Web debugging).
+2. **Samsung Remote Test Lab:** خدمة **مجانية** من Samsung لتشغيل هواتف Galaxy حقيقية عن بعد من المتصفح. يغطي Galaxy S و A و Fold و Flip و Tab.
+3. **BrowserStack أو LambdaTest (Real Devices):** لأجهزة Xiaomi و Redmi و Poco و In-App browsers. تجربة مجانية محدودة، وإلا اشتراك.
 
-### REMOVE
-- `vite.config.ts`، و `tsconfig.node.json`، و `tsconfig.app.json`، و `src/App.tsx`.
-- الملفات في القسم 2.1 (عدا `*-seo.md`).
-- الـdependencies: `vite`، و `@vitejs/plugin-react`، و `three`، و `@types/three`، و `page-flip`، و `@types/page-flip`، و `pdfjs-dist`.
+**قائمة الفحص لكل جهاز** (تُوثق في `docs/device-qa.md` بلقطة لكل بند):
 
-### KEEP (لا تُلمس)
-- `src/content/articles/*.md` و `*-seo.md`.
-- `src/data/{projectReelsData.ts,teamData.js}`، و `src/locales/translations.ts`.
-- كل ملفات CSS للمكونات (تعديلات vars و font فقط).
-- `public/loader/assets/*`، و `public/articles/*`، و `public/projects/*`، و `public/projects-live/*`، و `public/moments/*`، و `public/abdulghani.jpg`، و `public/techno-logo.png`.
-- `theme/`، و `demo/`، و `test-scroll-expand.js`، و `puppeteer-core`، و `Asset-1@4x.png` في الجذر: قرار المالك (القسم 26).
+| # | الفحص |
+|---|---|
+| 1 | الرئيسية: الـloader، ثم الـhero، ثم التمرير حتى الـfooter، سلس بلا تقطيع واضح |
+| 2 | القائمة: فتح الـdrawer والتنقل، بلا scroll خلفه |
+| 3 | مقال طويل: قراءة و TOC والعنوان غير مغطى، والجداول والمراجع بلا overflow |
+| 4 | Reels: التمرير والأزرار فوق شريط الإيماءات، بلا pull-to-refresh |
+| 5 | About: الـWebGL يعمل أو يظهر الـfallback، ولا شاشة سوداء بعد الخروج إلى تطبيق آخر ثم العودة (يختبر context loss) |
+| 6 | تبديل الـtheme واللغة |
+| 7 | الوضع الداكن المفروض في المتصفح (R11.5) |
+| 8 | حقل البحث وفورم التواصل: لا تكبير عند التركيز، ولوحة المفاتيح لا تغطي الحقل |
+| 9 | الوضع الأفقي |
+| 10 | Font size كبير من إعدادات النظام |
+
+**المصفوفة الدنيا لأجهزة حقيقية:**
+
+| الجهاز | المتصفحات |
+|---|---|
+| Redmi اقتصادي (Redmi 12C و 13C، أو ما يماثله بذاكرة 3 إلى 4GB) | Chrome، و Mi Browser، و Instagram in-app |
+| Redmi Note أو Poco | Chrome، و Mi Browser |
+| Galaxy A (A15 إلى A55) | Samsung Internet، و Chrome، و WhatsApp in-app |
+| Galaxy S Ultra | Samsung Internet (مع Screen zoom مرتفع مرة)، و Chrome |
+| Galaxy Z Fold | الشاشة الخارجية والمفتوحة |
+| Galaxy Tab أو Xiaomi Pad | عمودي وأفقي |
+| iPhone (أي) | Safari، و Instagram in-app |
+
+**Definition of Done لـR11:**
+- الـsweep و font-scale خضراوان.
+- اختبارات context loss و no-WebGL2 خضراء.
+- `docs/device-qa.md` مكتمل للمصفوفة الدنيا، بلا مشاكل مفتوحة من مستوى "تكسر الاستخدام".
 
 ---
 
-## 23. Testing & Validation (ملخص)
+## 4. Risks & Mitigations
 
-| المجال | الأداة | معيار النجاح |
+| الخطر | التخفيف | التحقق |
 |---|---|---|
-| Build | `npm run build` و `typecheck` و `lint` | صفر أخطاء، و warnings ≤ baseline |
-| Rendering mode | جدول `next build` | لا `ƒ` لأي صفحة |
-| HTML content | `verify-site.mjs` + no-JS Playwright | كل صفحة indexable فيها H1 واحد ومحتوى كامل. **أي فشل = FAILURE** |
-| Hydration | hydration.spec | صفر أخطاء في 4 تركيبات × 2 viewports |
-| SEO | verify-site + Rich Results + schema validator | canonical مطلق، و sitemap بـ33 URL كلها 200، و JSON-LD صالح |
-| GEO و AEO | verify-site + llms.txt | ‏`@id` موحد، و FAQPage بـ13 سؤالاً، ولا Person |
-| UX | visual compare + navigation.spec | فرق ≤ 0.1% (عدا الموثّق)، والتنقل سليم |
-| Accessibility | axe + keyboard | لا serious ولا critical |
-| Performance | Lighthouse CI + bundle analyzer | ‏LCP < 2.5s، و CLS < 0.1، ولا markdown في client chunks |
-| Content | verify-site | 12 مقالاً و14 مشروعاً، ولا روابط مكسورة، و 404 صحيح |
-| Legacy URLs | legacy-redirects.spec | كل الصفوف تنجح |
+| توحيد الـbreakpoints يغيّر شكل عروض حدّية | ملف واحد لكل commit + لقطات 600 و 640 و 800 و 1000 و 1100 و 1200 و 1280 | visual |
+| `<picture>` يكسر selectors | `picture{display:contents}` | visual |
+| AVIF بطيء في البناء | incremental + التوازي، والخيار commit لـ`_img` | زمن البناء |
+| SVG الشعار يختلف عن الأصل | SSIM ≥ 0.97 | compare-vector |
+| الـdrawer يتعارض مع GooeyNav | GooeyNav مخفي بـCSS تحت 768، وكلاهما في HTML | nav.spec |
+| codemod الـhover يكسر قواعد مركّبة | مراجعة لقطات laptop، و postcss يحافظ على البنية | visual laptop |
+| DPR cap يجعل WebGL ضبابياً على iPad قوي | tier `full` حتى DPR 2 | يدوي iPad |
+| `overflow-x: clip` يخفي مشاكل | الفحص يعطّله | audit |
+| إخفاء محتوى على الموبايل يضر SEO | ممنوع `display:none` لمحتوى أساسي. البديل (شبكة الفريق مثلاً) يعرض نفس البيانات | verify-site من خطة الترحيل |
 
-## 24. Risks & Mitigations
+## 5. Rollback
 
-| الخطر | السبب | الأثر | التخفيف | التحقق |
-|---|---|---|---|---|
-| Hydration mismatch | قراءة المتصفح أثناء الـrender | وميض أو فقدان تفاعل | قواعد القسم 14، و P3 | hydration.spec |
-| تغيّر ترتيب CSS | App Router يجمع CSS بترتيب الاستيراد | تراجع بصري | `index.css` أولاً في layout، وكل مكون يستورد CSS الخاص به كما اليوم | visual compare |
-| قفزة ScrollExpand على الموبايل | config يُحسب بعد mount | اهتزاز | الخيار البديل بـCSS vars (P3.5) | visual mobile |
-| WebGL على الخادم | ogl و gl-matrix | فشل البناء | `dynamic({ssr:false})` | build |
-| GSAP ScrollTrigger بعد التنقل | triggers قديمة | animations معطلة | `gsap.context().revert()` في الـcleanup + `ScrollTrigger.refresh()` | navigation.spec |
-| الـloader مع hydration | DOM يضيفه سكربت | تحذير | React 19 يتسامح مع body، والبديل في P4.3 | hydration.spec |
-| حجم الـWorker | bundle الخادم | فشل deploy على الخطة المجانية | server-only للمحتوى، وخطة مدفوعة إن لزم | P12.2 |
-| مسارات OpenNext overrides | اختلاف الإصدارات | فشل build | اتباع توثيق الإصدار المثبت | P1 |
-| كسر روابط قديمة | الانتقال من hash | فقدان روابط مشاركة | السكربت inline | legacy spec |
-| تسرّب محتوى داخلي | تعليقات markdown | روابط Docs مكشوفة | الحذف في `renderMarkdown` | verify-site |
-| وميض الـtheme أو اللغة | الخادم يعرض dark و ar | وميض | CSS vars + ThemedImage + `data-lang-pending` | navigation.spec |
-| فقدان بيانات المستخدم المحلية | إعادة تسمية مفاتيح | فقدان الإعجابات والمحفوظات | لا إعادة تسمية. المفتاح الجديد للـreturn path فقط مع fallback | navigation.spec |
-| next/font يغيّر اسم العائلة | hash في الاسم | خط خاطئ | `var(--font-readex)` | visual |
-| تعارض `src/pages` | Next يعامله كـPages Router | أخطاء routing | نقل ScrollExpandPrototype وحذف المجلد | build |
+- كل مرحلة R مستقلة بـcommit، والتراجع بـ`git revert`.
+- R3: إذا فشل الـpipeline في بيئة البناء، `ResponsiveImage` يعود تلقائياً للأصل عند غياب الـmanifest (الـfallback مبني في المكون). الموقع يعمل بصور أثقل لكن سليمة.
+- R6: متغير `FORCE_TIER` في `site.ts` (`null` افتراضياً) يسمح بفرض `full` مؤقتاً لكل الأجهزة.
 
-## 25. Rollback Strategy
+## 6. قرارات تحتاج المالك
 
-- **الفروع:** كل العمل على `feat/nextjs-migration`، و `main` يبقى نسخة Vite الحالية إلى نجاح P11 كاملة. كل مرحلة commit مستقل، والتراجع عنها بـ`git revert <sha>`.
-- **علامات الفشل:**
-  - أي فحص في P11 أحمر.
-  - `ƒ` في جدول البناء لصفحة عامة.
-  - فرق بصري غير موثّق.
-  - 404 لأي URL في `docs/url-inventory.json` بعد تحويله.
-- **بعد النشر:**
-  - Worker الإصدار السابق: `npx wrangler rollback` (يعود لآخر deployment ناجح).
-  - فشل كامل: أعد إعداد الدومين المسجّل في `docs/rollback.md` (الـorigin السابق)، وهذا تغيير Custom Domain أو DNS فقط.
-- **ما لا يُفقد أبداً:**
-  - `src/content/**` (تحقق SHA قبل وبعد).
-  - الـslugs.
-  - مفاتيح localStorage.
-  - `tests/visual/__baseline__`.
-
-## 26. Final Pre-Implementation Checklist
-
-**قرارات المالك (تُسجَّل في `docs/owner-todo.md`، والتنفيذ يبدأ بالقيم الافتراضية المذكورة):**
-
-| # | القرار | الافتراضي في الخطة |
-|---|---|---|
-| 1 | الدومين الرسمي `https://technoenjaz.com` | ✅ معتمد |
-| 2 | خطة Cloudflare Workers (مجانية أو مدفوعة) | مدفوعة إذا تجاوز الـWorker 3MB |
-| 3 | العنوان الصحيح للمكتب: "ساحة العاصي - بناء الخاني - الطابق الرابع" أم "طريق دمشق"؟ وصحة الإحداثيات | `streetAddress` فارغ في schema حتى التأكيد. الـUI يبقى كما هو |
-| 4 | بيانات الفريق الحقيقية (أسماء وصور وروابط) | صفحات الفريق noindex، ولا Person schema |
-| 5 | الـloader على الرئيسية أول زيارة فقط | ✅ `LOADER_MODE='home-first-visit'` |
-| 6 | حساب X (Twitter) | لا `twitter:site` |
-| 7 | أرقام التفاعل الثابتة وشارة "حساب موثق" في mock auth | تبقى في الـUI كما هي، ولا تدخل الـschema |
-| 8 | صورة `5g-iot.png` مطابقة لـ`internet-of-things-iot.png` | تبقى |
-| 9 | `demo/` و `theme/` و `test-scroll-expand.js` و `Asset-1@4x.png` في الجذر | تبقى |
-| 10 | مجلد `C:\Users\PC\Downloads\favicons` متاح على جهاز التنفيذ | مطلوب لـP10 |
-
-**قبل البدء، تحقق الـagent من:**
-- [ ] Node.js بإصدار يدعمه Next.js المثبت.
-- [ ] حساب Cloudflare مع صلاحية Workers و R2 و D1.
-- [ ] `git status` نظيف، والـbranch `feat/nextjs-migration`.
-- [ ] baseline P0 مكتمل ومحفوظ.
-- [ ] قراءة هذه الوثيقة كاملة.
-
-**تعريف "مكتمل" (Definition of Done):**
-1. كل فحوص P11 خضراء.
-2. لا صفحة عامة بعلامة `ƒ`.
-3. كل صفحة عامة تُظهر H1 ومحتواها الكامل بدون JavaScript.
-4. 33 URL في الـsitemap، كلها 200 على `https://technoenjaz.com`.
-5. الروابط القديمة (hash) كلها تتحول للمسارات الجديدة.
-6. الشكل مطابق للـbaseline (عدا الفروق الموثقة).
+1. اعتماد شكل الـdrawer على الموبايل (لقطة قبل وبعد في `docs/responsive-changes.md`).
+2. اعتماد شبكة الفريق الثابتة كبديل WebGL على الأجهزة الضعيفة و reduced-motion.
+3. `public/_img`: مولَّد في البناء (افتراضي) أم commit في الـrepo؟ (حسب زمن البناء على Cloudflare.)
+4. صور placeholder الفريق (Unsplash) تبقى خارج الـpipeline حتى تُستبدل بصور حقيقية.
