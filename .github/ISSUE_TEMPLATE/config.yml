@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🔒 Security vulnerability · ثغرة أمنية
+    url: https://github.com/Daliaalkilani/technoinjaz/blob/main/.github/SECURITY.md
+    about: Please report security issues privately, not in a public issue. · أبلغ عن الثغرات بشكل خاص وليس في Issue عامة.
+  - name: 💬 Project request or general question · طلب مشروع أو سؤال عام
+    url: https://technoenjaz.com/contact
+    about: For services, quotes and general questions, contact the office directly. · للخدمات والأسعار والأسئلة العامة تواصل مع المكتب مباشرة.

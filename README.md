@@ -222,6 +222,12 @@ npm run deploy
 7. **صور ناقصة:** نص مشروع `virtual-board-hand-tracking` يشير إلى 4 صور غير موجودة في المستودع (`/images/projects/virtual-board/*`).
 8. **عرض المنصات الحية (`LiveProjectsShowcase`)** كان يظهر في صفحة المشاريع قبل الترحيل، ولم يعد مستخدماً في أي صفحة. الكود محفوظ في `src/features/projects/`، ويحتاج قراراً بإعادته.
 
+### المساهمة والترخيص
+
+- دليل المساهمة: [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md)، وقواعد السلوك: [`.github/CODE_OF_CONDUCT.md`](.github/CODE_OF_CONDUCT.md).
+- الثغرات الأمنية: [`.github/SECURITY.md`](.github/SECURITY.md). لا تُنشر في Issues عامة.
+- **الترخيص:** جميع الحقوق محفوظة لتكنو إنجاز. المستودع معروض للاطلاع فقط. انظر [`LICENSE`](LICENSE).
+
 ### التواصل
 
 - الهاتف وواتساب: `+963 958 794 195`
@@ -406,6 +412,12 @@ Then in the Cloudflare dashboard, go to **Workers → technoenjaz → Settings �
 6. **Responsive and adaptive:** measured issues on phones and tablets (the mobile menu, horizontal overflow on landscape iPad, image weight, touch targets). The full plan is in [`plan.md`](plan.md).
 7. **Missing images:** the `virtual-board-hand-tracking` project text references 4 images that are not in the repo (`/images/projects/virtual-board/*`).
 8. **The live platforms showcase (`LiveProjectsShowcase`)** used to appear on the Projects page before the migration and is no longer used on any page. The code is kept in `src/features/projects/` and needs a decision on restoring it.
+
+### Contributing and license
+
+- Contributing guide: [`.github/CONTRIBUTING.md`](.github/CONTRIBUTING.md). Code of conduct: [`.github/CODE_OF_CONDUCT.md`](.github/CODE_OF_CONDUCT.md).
+- Security issues: [`.github/SECURITY.md`](.github/SECURITY.md). Never report them in public issues.
+- **License:** all rights reserved by Techno Enjaz. The repository is public for reference only. See [`LICENSE`](LICENSE).
 
 ### Contact
 

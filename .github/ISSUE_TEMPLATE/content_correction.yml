@@ -1,0 +1,43 @@
+name: 📝 Content correction · تصحيح محتوى
+description: A factual, technical, language or link error in an article or project page. · خطأ علمي أو تقني أو لغوي أو رابط معطّل في مقال أو مشروع.
+title: "[Content]: "
+labels: ["content"]
+body:
+  - type: input
+    id: url
+    attributes:
+      label: Page URL · رابط الصفحة
+      placeholder: https://technoenjaz.com/articles/5g-iot
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Type of issue · نوع المشكلة
+      options:
+        - Factual / technical error · خطأ علمي أو تقني
+        - Outdated information · معلومة قديمة
+        - Language or typo · خطأ لغوي أو إملائي
+        - Broken link or image · رابط أو صورة معطّلة
+        - Missing source or attribution · مصدر أو نسبة ناقصة
+        - Other · آخر
+    validations:
+      required: true
+  - type: textarea
+    id: quote
+    attributes:
+      label: Current text · النص الحالي
+      description: Quote the exact sentence or section. · انسخ الجملة أو القسم كما هو.
+    validations:
+      required: true
+  - type: textarea
+    id: correction
+    attributes:
+      label: Suggested correction · التصحيح المقترح
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Sources · المصادر
+      description: Links to standards, papers or official documentation that support the correction. · روابط لمعايير أو أوراق أو توثيق رسمي يدعم التصحيح.

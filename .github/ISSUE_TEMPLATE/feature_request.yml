@@ -1,0 +1,37 @@
+name: 💡 Suggestion · اقتراح
+description: An idea to improve the website, its content or its experience. · فكرة لتحسين الموقع أو محتواه أو تجربته.
+title: "[Suggestion]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does it solve? · ما المشكلة التي يحلها؟
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal · الاقتراح
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area · القسم
+      options:
+        - Home · الرئيسية
+        - Articles · المقالات
+        - Projects · المشاريع
+        - Videos · الفيديوهات
+        - FAQ · الأسئلة الشائعة
+        - About / Team · من نحن والفريق
+        - Contact · التواصل
+        - Mobile / tablet experience · تجربة الموبايل والتابلت
+        - Accessibility · إمكانية الوصول
+        - Other · آخر
+  - type: textarea
+    id: extra
+    attributes:
+      label: Extra context · معلومات إضافية
+      description: Screenshots, examples from other sites, references. · لقطات، أو أمثلة من مواقع أخرى، أو مراجع.

@@ -1,0 +1,79 @@
+name: 🐞 Bug report · بلاغ عن خلل
+description: Something on the website is broken or behaves incorrectly. · شيء في الموقع لا يعمل أو يعمل بشكل خاطئ.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. · شكراً لوقتك في الإبلاغ.
+        For security issues, use SECURITY.md instead. · للثغرات الأمنية استخدم SECURITY.md بدلاً من هذا النموذج.
+  - type: input
+    id: url
+    attributes:
+      label: Page URL · رابط الصفحة
+      placeholder: https://technoenjaz.com/articles/digital-twin
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened? · ماذا حدث؟
+      description: What did you expect, and what happened instead? · ما المتوقع، وما الذي حدث فعلاً؟
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce · خطوات إعادة المشكلة
+      placeholder: |
+        1. Open ...
+        2. Tap ...
+        3. See ...
+    validations:
+      required: true
+  - type: dropdown
+    id: device
+    attributes:
+      label: Device type · نوع الجهاز
+      options:
+        - Phone · موبايل
+        - Tablet · تابلت
+        - Laptop / Desktop · لابتوب أو كمبيوتر
+    validations:
+      required: true
+  - type: input
+    id: device-model
+    attributes:
+      label: Device model & OS · موديل الجهاز ونظام التشغيل
+      placeholder: "Galaxy A35, Android 15 / iPhone 15, iOS 18 / Windows 11"
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser · المتصفح
+      options:
+        - Chrome
+        - Safari
+        - Samsung Internet
+        - Mi / HyperOS Browser
+        - Firefox
+        - Edge
+        - In-app browser (Instagram, WhatsApp, Facebook...) · متصفح داخل تطبيق
+        - Other · آخر
+    validations:
+      required: true
+  - type: dropdown
+    id: lang-theme
+    attributes:
+      label: Language & theme · اللغة والوضع
+      multiple: true
+      options:
+        - العربية
+        - English
+        - Dark · داكن
+        - Light · فاتح
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots · لقطات شاشة
+      description: Drag and drop images here. · اسحب الصور إلى هنا.
