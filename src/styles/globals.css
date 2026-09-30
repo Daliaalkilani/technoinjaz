@@ -26,6 +26,7 @@ html[data-lang-pending] #app-root {
   --about-fade-bottom: linear-gradient(to bottom, transparent 0%, rgba(5, 5, 8, 0.6) 60%, #000000 100%);
   --team-showcase-bg: #000000;
   --team-showcase-fade-top: linear-gradient(to bottom, #000000 0%, rgba(0, 0, 0, 0.8) 45%, rgba(0, 0, 0, 0.25) 75%, transparent 100%);
+  --team-showcase-fade-bottom: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.45) 50%, #000000 100%);
   --members-badge-bg: rgba(255, 255, 255, 0.06);
   --members-badge-border: 1px solid rgba(255, 255, 255, 0.12);
   --footer-giant-fill: url(#footerGiantGradDark);
@@ -72,6 +73,7 @@ html[data-lang-pending] #app-root {
   --about-fade-bottom: linear-gradient(to bottom, transparent 0%, rgba(248, 250, 252, 0.65) 60%, #f8fafc 100%);
   --team-showcase-bg: #f8fafc;
   --team-showcase-fade-top: linear-gradient(to bottom, #f8fafc 0%, rgba(248, 250, 252, 0.85) 45%, rgba(248, 250, 252, 0.25) 75%, transparent 100%);
+  --team-showcase-fade-bottom: linear-gradient(to bottom, transparent 0%, rgba(248, 250, 252, 0.5) 50%, #f8fafc 100%);
   --members-badge-bg: rgba(0, 0, 0, 0.05);
   --members-badge-border: 1px solid rgba(0, 0, 0, 0.1);
   --footer-giant-fill: url(#footerGiantGradLight);

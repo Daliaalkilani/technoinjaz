@@ -66,8 +66,8 @@
   position: absolute;
   inset: 0;
   background: 
-    radial-gradient(ellipse at 70% 50%, rgba(3, 5, 8, 0.3) 0%, rgba(3, 5, 8, 0.78) 68%, #030508 100%),
-    linear-gradient(to bottom, #030508 0%, transparent 18%, transparent 82%, #030508 100%);
+    radial-gradient(ellipse at 70% 50%, rgba(3, 5, 8, 0.15) 0%, rgba(3, 5, 8, 0.45) 75%, transparent 100%),
+    linear-gradient(to bottom, #030508 0%, transparent 22%);
   pointer-events: none;
   z-index: 1;
 }
@@ -252,8 +252,8 @@
 
 [data-theme="light"] .projects-grid-distortion-vignette {
   background: 
-    radial-gradient(ellipse at 70% 50%, rgba(248, 250, 252, 0.15) 0%, rgba(248, 250, 252, 0.65) 70%, #f8fafc 100%),
-    linear-gradient(to bottom, #f8fafc 0%, transparent 18%, transparent 82%, #f8fafc 100%);
+    radial-gradient(ellipse at 70% 50%, rgba(248, 250, 252, 0.08) 0%, rgba(248, 250, 252, 0.45) 75%, transparent 100%),
+    linear-gradient(to bottom, #f8fafc 0%, transparent 22%);
 }
 
 [data-theme="light"] .projects-heading {

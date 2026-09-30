@@ -208,6 +208,20 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
             />
           </SafeErrorBoundary>
         </div>
+
+        {/* Bottom smooth blending gradient to footer horizon */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '200px',
+            background: 'var(--team-showcase-fade-bottom)',
+            pointerEvents: 'none',
+            zIndex: 20
+          }}
+        />
       </div>
     </section>
   );
