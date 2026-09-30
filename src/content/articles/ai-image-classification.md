@@ -53,8 +53,6 @@ Monitoring
 
 # ما الفرق بين Image Classification وObject Detection وSegmentation؟
 
-![مقارنة تطبيقية بين مهام تصنيف الصور واكتشاف الأجسام والتجزئة الدلالية في الرؤية الحاسوبية](/images/articles/ai-image-classification.png)
-
 هذه المهام تُخلط كثيرًا.
 
 ## Image Classification

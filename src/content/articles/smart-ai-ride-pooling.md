@@ -48,8 +48,6 @@ Requests + Vehicles + Traffic + Constraints
           Continuous Re-optimization
 ```
 
-![خوارزميات التوفيق الديناميكي ومطابقة المسارات الذكية في أنظمة مشاركة الرحلات الجماعية Ride-Pooling](/images/articles/smart-ai-ride-pooling.png)
-
 # ما الفرق بين Ride-Hailing وRide-Pooling؟
 
 المصطلحان يُستخدمان أحيانًا وكأنهما شيء واحد، لكن الفرق مهم.
