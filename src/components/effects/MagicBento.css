@@ -262,11 +262,21 @@
   .magic-bento-card {
     width: 100%;
     min-height: auto;
-    padding: 1.1rem;
+    padding: 1rem;
+  }
+
+  /* Remove description from non-featured cards */
+  .magic-bento-card:not(:nth-child(3)):not(:nth-child(4)) .magic-bento-card__description {
+    display: none !important;
   }
 
   .magic-bento-card__media {
-    max-height: 180px;
+    max-height: 150px;
+  }
+
+  .magic-bento-card:nth-child(3) .magic-bento-card__media,
+  .magic-bento-card:nth-child(4) .magic-bento-card__media {
+    max-height: 200px;
   }
 }
 
@@ -285,20 +295,25 @@
     grid-column: span 2;
   }
 
+  /* Remove description from non-featured cards */
+  .magic-bento-card:not(:nth-child(3)):not(:nth-child(4)) .magic-bento-card__description {
+    display: none !important;
+  }
+
   .magic-bento-card__media {
-    max-height: 160px;
+    max-height: 140px;
   }
 
   .magic-bento-card:nth-child(3) .magic-bento-card__media,
   .magic-bento-card:nth-child(4) .magic-bento-card__media {
-    max-height: 240px;
+    max-height: 220px;
   }
 }
 
 @media (min-width: 1024px) {
   .card-grid {
     grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(3, minmax(260px, auto));
+    grid-template-rows: repeat(3, minmax(215px, auto));
     gap: 1.35rem;
     max-width: 78rem;
   }
@@ -306,7 +321,27 @@
   .magic-bento-card {
     min-height: auto;
     height: 100%;
-    padding: 1.1rem 1.1rem 1.25rem 1.1rem;
+  }
+
+  /* Compact 1x1 Cards: Remove description under title and fit snugly */
+  .magic-bento-card:not(:nth-child(3)):not(:nth-child(4)) {
+    padding: 1rem 1rem 1.15rem 1rem;
+  }
+
+  .magic-bento-card:not(:nth-child(3)):not(:nth-child(4)) .magic-bento-card__description {
+    display: none !important;
+  }
+
+  .magic-bento-card:not(:nth-child(3)):not(:nth-child(4)) .magic-bento-card__media {
+    max-height: 135px;
+    height: 135px;
+    margin-bottom: 0.65rem;
+  }
+
+  .magic-bento-card:not(:nth-child(3)):not(:nth-child(4)) .magic-bento-card__title {
+    font-size: 1.05rem;
+    line-height: 1.4;
+    --clamp-title: 2;
   }
 
   /* Asymmetric Bento Layout:
@@ -317,13 +352,13 @@
   .magic-bento-card:nth-child(3) {
     grid-column: 3 / span 2;
     grid-row: 1 / span 2;
-    padding: 1.35rem 1.35rem 1.5rem 1.35rem;
+    padding: 1.25rem 1.25rem 1.35rem 1.25rem;
   }
 
   .magic-bento-card:nth-child(4) {
     grid-column: 1 / span 2;
     grid-row: 2 / span 2;
-    padding: 1.35rem 1.35rem 1.5rem 1.35rem;
+    padding: 1.25rem 1.25rem 1.35rem 1.25rem;
   }
 
   .magic-bento-card:nth-child(5) {
@@ -336,33 +371,37 @@
     grid-row: 3;
   }
 
-  /* Compact 1x1 cards media size */
-  .magic-bento-card__media {
-    max-height: 140px;
-    margin-bottom: 0.75rem;
-  }
-
-  /* Hero 2x2 cards media size */
+  /* Featured 2x2 Hero Cards (Card 3 & Card 4): Media & Content sizing to eliminate bottom empty space */
   .magic-bento-card:nth-child(3) .magic-bento-card__media,
   .magic-bento-card:nth-child(4) .magic-bento-card__media {
-    max-height: 270px;
-    margin-bottom: 1rem;
+    max-height: 250px;
+    height: 240px;
+    margin-bottom: 0.85rem;
   }
 
-  /* Typography enhancement for 2x2 hero cards */
+  .magic-bento-card:nth-child(3) .magic-bento-card__content,
+  .magic-bento-card:nth-child(4) .magic-bento-card__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 0.45rem;
+  }
+
   .magic-bento-card:nth-child(3) .magic-bento-card__title,
   .magic-bento-card:nth-child(4) .magic-bento-card__title {
     font-size: 1.25rem;
     --clamp-title: 2;
     line-height: 1.4;
-    margin-bottom: 0.25rem;
+    margin: 0;
   }
 
   .magic-bento-card:nth-child(3) .magic-bento-card__description,
   .magic-bento-card:nth-child(4) .magic-bento-card__description {
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     --clamp-desc: 3;
     line-height: 1.6;
+    margin: 0;
   }
 }
 
