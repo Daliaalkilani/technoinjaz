@@ -44,7 +44,8 @@ export default function RootLayout({
         <link rel="stylesheet" href="/loader/loader.css" />
         <script src="/loader/loader.js" defer />
       </head>
-      <body className={readex.className}>
+      <body className={readex.className} suppressHydrationWarning>
+        <div id="te-loader-host" suppressHydrationWarning />
         <ThemeLanguageProvider>
           <LoaderProvider>
             <AppShell>{children}</AppShell>

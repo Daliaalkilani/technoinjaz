@@ -71,8 +71,9 @@
     </main>
   </div>`;
 
-  if (!document.getElementById('te-loader') && document.body) {
-    document.body.insertAdjacentHTML('afterbegin', LOADER_TEMPLATE);
+  const loaderHost = document.getElementById('te-loader-host') || document.body;
+  if (!document.getElementById('te-loader') && loaderHost) {
+    loaderHost.insertAdjacentHTML('afterbegin', LOADER_TEMPLATE);
   }
 
   const $ = id => document.getElementById(id);
@@ -134,6 +135,7 @@
         el.style.display = 'none';
         destroy();
         emit('completed');
+        try { el.remove(); } catch (e) {}
       }, 420);
     }
   }
