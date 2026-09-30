@@ -1,11 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { gsap } from 'gsap';
-import { Bookmark, BookmarkCheck } from 'lucide-react';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
-import { useSavedProjects } from '@/hooks/useSavedProjects';
 import './MagicBento.css';
 
 export interface BentoCardItem {
@@ -120,6 +119,7 @@ interface ParticleCardProps {
   enableTilt?: boolean;
   clickEffect?: boolean;
   enableMagnetism?: boolean;
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 const ParticleCard: React.FC<ParticleCardProps> = ({
@@ -131,7 +131,8 @@ const ParticleCard: React.FC<ParticleCardProps> = ({
   glowColor = DEFAULT_GLOW_COLOR,
   enableTilt = true,
   clickEffect = false,
-  enableMagnetism = false
+  enableMagnetism = false,
+  onClick
 }) => {
   const cardRef = useRef<HTMLDivElement | null>(null);
   const particlesRef = useRef<HTMLDivElement[]>([]);
@@ -353,6 +354,7 @@ const ParticleCard: React.FC<ParticleCardProps> = ({
       ref={cardRef}
       className={`${className} particle-container`}
       style={{ ...style, position: 'relative', overflow: 'hidden' }}
+      onClick={onClick}
     >
       {children}
     </div>
@@ -601,13 +603,13 @@ const MagicBento: React.FC<MagicBentoProps> = ({
   enableMagnetism = true,
   cards = defaultCardData
 }) => {
+  const router = useRouter();
   const { lang, theme } = useThemeLanguage();
   const isLight = theme === 'light';
   const isEn = lang === 'en';
   const gridRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useMobileDetection();
   const shouldDisableAnimations = disableAnimations || isMobile;
-  const { isSaved, toggleSave } = useSavedProjects();
 
   return (
     <>
@@ -623,7 +625,6 @@ const MagicBento: React.FC<MagicBentoProps> = ({
 
       <BentoCardGrid gridRef={gridRef}>
         {cards.map((card, index) => {
-          const cardLabel = isEn ? (card.labelEn || card.label) : card.label;
           const cardTitle = isEn ? (card.titleEn || card.title) : card.title;
           const cardDesc = isEn ? (card.descriptionEn || card.description) : card.description;
           const articleSlugs = [
@@ -635,12 +636,19 @@ const MagicBento: React.FC<MagicBentoProps> = ({
             'internet-of-things-iot'
           ];
           const targetSlug = articleSlugs[index] || 'digital-twin';
-          const articleId = targetSlug;
-          const isItemSaved = isSaved(articleId);
 
           const baseClassName = `magic-bento-card ${textAutoHide ? 'magic-bento-card--text-autohide' : ''} ${enableBorderGlow ? 'magic-bento-card--border-glow' : ''}`;
+          
+          const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
+            const target = e.target as HTMLElement;
+            if (!target.closest('a')) {
+              router.push(`/articles/${targetSlug}`);
+            }
+          };
+
           const cardProps = {
             className: baseClassName,
+            onClick: handleCardClick,
             style: {
               backgroundColor: isLight ? '#ffffff' : (card.color || '#0d1629'),
               '--glow-color': isLight ? '2, 132, 199' : glowColor,
@@ -652,12 +660,14 @@ const MagicBento: React.FC<MagicBentoProps> = ({
             <>
               {card.image && (
                 <div className="magic-bento-card__media">
-                  <img
-                    src={card.image}
-                    alt={cardTitle}
-                    className="magic-bento-card__img"
-                    loading="lazy"
-                  />
+                  <Link href={`/articles/${targetSlug}`} className="magic-bento-card__media-link block w-full h-full" tabIndex={-1}>
+                    <img
+                      src={card.image}
+                      alt={cardTitle}
+                      className="magic-bento-card__img"
+                      loading="lazy"
+                    />
+                  </Link>
                 </div>
               )}
 
