@@ -9,7 +9,6 @@ import { teamMembers, teamCircleSlots } from '@/data/teamData';
 import { Skiper19 } from '@/components/effects/SvgFollowScroll';
 import SafeErrorBoundary from '@/components/effects/SafeErrorBoundary';
 
-const Orb = dynamic(() => import('@/components/effects/Orb'), { ssr: false });
 const TeamFilmstrip = dynamic(() => import('@/components/effects/TeamFilmstrip'), { ssr: false });
 const TeamMomentsRing = dynamic(() => import('./TeamMomentsRing'), { ssr: false });
 
@@ -123,90 +122,20 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
         <Skiper19 strokeColor="#00d2ff" />
       </div>
 
-      {/* 3D InfiniteMenu Team Showcase with Orb Background */}
+      {/* 3D Team Showcase — Clean Seamless Dark Background */}
       <div
         id="team-showcase"
         style={{
           position: 'relative',
           width: '100%',
           height: '100vh',
-          minHeight: '700px',
-          backgroundColor: 'var(--team-showcase-bg)',
+          minHeight: '680px',
+          backgroundColor: 'var(--about-bg)',
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column'
         }}
       >
-        {/* Top smooth blending gradient */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: '240px',
-            background: 'var(--team-showcase-fade-top)',
-            pointerEvents: 'none',
-            zIndex: 20
-          }}
-        />
-
-        {/* Space Orb Background (deferred until loader done) */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            zIndex: 0,
-            pointerEvents: 'none',
-            overflow: 'hidden'
-          }}
-        >
-          {isLoaderDone && (
-            <SafeErrorBoundary>
-              <Orb
-                hoverIntensity={0.24}
-                rotateOnHover
-                hue={360}
-                forceHoverState={false}
-                backgroundColor={theme === 'light' ? '#f8fafc' : '#000000'}
-              />
-            </SafeErrorBoundary>
-          )}
-        </div>
-
-        {/* Members Count Badge */}
-        <header
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            zIndex: 30,
-            padding: '24px 36px',
-            display: 'flex',
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            pointerEvents: 'none',
-            direction: lang === 'ar' ? 'rtl' : 'ltr'
-          }}
-        >
-          <div
-            style={{
-              padding: '6px 14px',
-              background: 'var(--members-badge-bg)',
-              border: 'var(--members-badge-border)',
-              borderRadius: '999px',
-              color: '#c4b5fd',
-              fontSize: '12px',
-              fontWeight: 600,
-              backdropFilter: 'blur(10px)'
-            }}
-          >
-            {teamMembers.length} {lang === 'ar' ? 'مهندسين أساسيين' : 'Core Engineers'}
-          </div>
-        </header>
 
         {/* SEO & Accessibility: crawlable team list */}
         <ul
