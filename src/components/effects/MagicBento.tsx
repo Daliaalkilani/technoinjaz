@@ -650,31 +650,6 @@ const MagicBento: React.FC<MagicBentoProps> = ({
 
           const cardContent = (
             <>
-              <div className="magic-bento-card__header">
-                <div className="magic-bento-card__label">{cardLabel}</div>
-                <button
-                  type="button"
-                  className={`article-save-btn ${isItemSaved ? 'is-saved' : ''}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleSave({
-                      id: articleId,
-                      title: card.title,
-                      titleEn: card.titleEn,
-                      category: 'مقالات تقنية',
-                      categoryLabel: cardLabel,
-                      description: card.description,
-                      descriptionEn: card.descriptionEn,
-                      type: 'article',
-                      image: card.image
-                    });
-                  }}
-                  title={isItemSaved ? (isEn ? 'Saved to Library' : 'محفوظ في المكتبة') : (isEn ? 'Save Article' : 'حفظ المقال')}
-                >
-                  {isItemSaved ? <BookmarkCheck size={13} /> : <Bookmark size={13} />}
-                </button>
-              </div>
-
               {card.image && (
                 <div className="magic-bento-card__media">
                   <img

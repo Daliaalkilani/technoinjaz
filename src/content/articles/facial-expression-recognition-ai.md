@@ -50,6 +50,8 @@ Expression Representation
 Probabilistic Estimate
 ```
 
+![مراحل استخلاص معالم الوجه وتحليل التعبيرات البصرية عبر شبكات الرؤية الحاسوبية العميقة](/images/articles/facial-expression-recognition-ai.png)
+
 وليس:
 
 ```text

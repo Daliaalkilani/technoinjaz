@@ -176,38 +176,6 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
           )}
         </div>
 
-        {/* Members Count Badge */}
-        <header
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            zIndex: 30,
-            padding: '24px 36px',
-            display: 'flex',
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            pointerEvents: 'none',
-            direction: lang === 'ar' ? 'rtl' : 'ltr'
-          }}
-        >
-          <div
-            style={{
-              padding: '6px 14px',
-              background: 'var(--members-badge-bg)',
-              border: 'var(--members-badge-border)',
-              borderRadius: '999px',
-              color: '#c4b5fd',
-              fontSize: '12px',
-              fontWeight: 600,
-              backdropFilter: 'blur(10px)'
-            }}
-          >
-            {teamMembers.length} {lang === 'ar' ? 'مهندسين أساسيين' : 'Core Engineers'}
-          </div>
-        </header>
-
         {/* SEO & Accessibility: crawlable team list */}
         <ul
           className="sr-only"

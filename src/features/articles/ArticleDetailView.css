@@ -852,6 +852,29 @@
   line-height: 2.0;
 }
 
+.article-fullscreen-markdown-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 14px;
+  margin: 2.2rem auto;
+  display: block;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(3, 7, 18, 0.6);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.08);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.article-fullscreen-markdown-body img:hover {
+  transform: scale(1.015);
+  border-color: rgba(56, 189, 248, 0.35);
+}
+
+[data-theme="light"] .article-fullscreen-markdown-body img {
+  border-color: rgba(0, 0, 0, 0.1);
+  background: #f8fafc;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+}
+
 .article-fullscreen-markdown-body strong {
   font-weight: 600;
   color: #ffffff;

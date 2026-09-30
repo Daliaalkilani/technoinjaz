@@ -71,9 +71,9 @@
     </main>
   </div>`;
 
-  const loaderHost = document.getElementById('te-loader-host') || document.body;
+  const loaderHost = document.documentElement;
   if (!document.getElementById('te-loader') && loaderHost) {
-    loaderHost.insertAdjacentHTML('afterbegin', LOADER_TEMPLATE);
+    loaderHost.insertAdjacentHTML('beforeend', LOADER_TEMPLATE);
   }
 
   const $ = id => document.getElementById(id);

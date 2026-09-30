@@ -33,6 +33,8 @@ Suggested Slug: affective-computing
 
 ## هل الحوسبة العاطفية هي نفسها Emotion Recognition؟
 
+![المخطط التفاعلي لنظم الحوسبة العاطفية وتحليل تعبيرات الوجه والإشارات الحيوية](/images/articles/affective-computing.jpg)
+
 لا.
 
 **Emotion Recognition** أو التعرف على المشاعر يمثل مجموعة فرعية من المهام التي يمكن أن تدخل ضمن Affective Computing.

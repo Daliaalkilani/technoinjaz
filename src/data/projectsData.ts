@@ -17,7 +17,9 @@ export interface ProjectItem {
   altText: string;
   image: string;
   tags: string[];
-  roleQualifier: string;
+  roleQualifier?: string;
+  pdfUrl?: string;
+  presentationUrl?: string;
 }
 
 export const PROJECTS_DATA: ProjectItem[] = [
@@ -26,12 +28,12 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "slug": "virtual-board-hand-tracking",
     "folderName": "اللوح الافتراضي",
     "title": "اللوح الافتراضي التفاعلي بتتبع حركة اليد",
-    "excerpt": "مشروع طلابي أكاديمي لتطوير **لوح افتراضي تفاعلي** يتيح الكتابة والرسم والمسح واختيار الألوان باستخدام حركة اليد أمام الكاميرا، دون الحاجة إلى لمس شاشة أو استخدام قلم إلكتروني. أُنج...",
+    "excerpt": "مشروع تطوير **لوح افتراضي تفاعلي** يتيح الكتابة والرسم والمسح واختيار الألوان باستخدام حركة اليد أمام الكاميرا، دون الحاجة إلى لمس شاشة أو استخدام قلم إلكتروني...",
     "category": "vision",
     "categoryNameAr": "رؤية حاسوبية وذكاء اصطناعي",
     "categoryNameEn": "Computer Vision & AI",
-    "seoTitle": "اللوح الافتراضي بتتبع حركة اليد | مشروع بمساعدة تكنو إنجاز",
-    "metaDesc": "مشروع طلابي أُنجز بمساعدة تكنو إنجاز لتطوير لوح افتراضي يعتمد على تتبع حركة اليد، مع وظائف الرسم واختيار الألوان والمسح باستخدام MediaPipe وOpenCV.",
+    "seoTitle": "اللوح الافتراضي بتتبع حركة اليد | نموذج أولي تفاعلي",
+    "metaDesc": "تطوير لوح افتراضي تفاعلي يعتمد على تتبع حركة اليد، مع وظائف الرسم واختيار الألوان والمسح باستخدام MediaPipe وOpenCV.",
     "altText": "تجربة الرسم على اللوح الافتراضي باستخدام حركة اليد",
     "image": "/images/projects/virtual-board-hand-tracking.png",
     "tags": [
@@ -39,8 +41,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
       "BreadcrumbList",
       "Organization",
       "ImageObject"
-    ],
-    "roleQualifier": "مشروع طلابي أكاديمي — تم تنفيذه بمساعدة ودعم تقني من مكتب تكنو إنجاز"
+    ]
   },
   {
     "id": "interactive-children-ai-learning-system",
@@ -59,8 +60,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
       "أنظمة تعليمية وذكاء اصطناعي",
       "تكنو إنجاز",
       "مشاريع هندسية"
-    ],
-    "roleQualifier": "مشروع طلابي أكاديمي — تم تنفيذه بمساعدة ودعم تقني من مكتب تكنو إنجاز"
+    ]
   },
   {
     "id": "remote-controlled-ground-robot",
@@ -79,8 +79,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
       "روبوتات وميكاترونيكس",
       "تكنو إنجاز",
       "مشاريع هندسية"
-    ],
-    "roleQualifier": "مشروع طلابي أكاديمي — تم تنفيذه بمساعدة ودعم تقني من مكتب تكنو إنجاز"
+    ]
   },
   {
     "id": "robotic-hand-gesture-control",
@@ -99,8 +98,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
       "روبوتات ورؤية حاسوبية",
       "تكنو إنجاز",
       "مشاريع هندسية"
-    ],
-    "roleQualifier": "مشروع طلابي أكاديمي — تم تنفيذه بمساعدة ودعم تقني من مكتب تكنو إنجاز"
+    ]
   },
   {
     "id": "syrian-tourism-app",
@@ -119,8 +117,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
       "تطبيقات موبايل وسياحة ذكية",
       "تكنو إنجاز",
       "مشاريع هندسية"
-    ],
-    "roleQualifier": "مشروع طلابي أكاديمي — تم تنفيذه بمساعدة ودعم تقني من مكتب تكنو إنجاز"
+    ]
   },
   {
     "id": "employee-presence-tracking",
@@ -142,8 +139,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
       "Organization",
       "ImageObject",
       "VideoObject"
-    ],
-    "roleQualifier": "مشروع طلابي أكاديمي — تم تنفيذه بمساعدة ودعم تقني من مكتب تكنو إنجاز"
+    ]
   },
   {
     "id": "exam-computer-vision-monitoring",
@@ -162,8 +158,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
       "رؤية حاسوبية ومراقبة",
       "تكنو إنجاز",
       "مشاريع هندسية"
-    ],
-    "roleQualifier": "مشروع طلابي أكاديمي — تم تنفيذه بمساعدة ودعم تقني من مكتب تكنو إنجاز"
+    ]
   },
   {
     "id": "student-university-guide-app",
@@ -185,8 +180,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
       "طورت تكنو إنجاز المشروع بالكامل.",
       "صممت تكنو إنجاز جميع الواجهات.",
       "برمجت تكنو إنجاز Flutter وLaravel بالكامل."
-    ],
-    "roleQualifier": "مشروع طلابي أكاديمي — تم تنفيذه بمساعدة ودعم تقني من مكتب تكنو إنجاز"
+    ]
   },
   {
     "id": "ultrasonic-water-level-monitoring-project",
@@ -208,8 +202,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
       "ImageObject",
       "Product",
       "Review"
-    ],
-    "roleQualifier": "مشروع طلابي أكاديمي — تم تنفيذه بمساعدة ودعم تقني من مكتب تكنو إنجاز"
+    ]
   },
   {
     "id": "news-fact-checking-platform",
@@ -228,8 +221,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
       "منصات ويب وتطبيقات سحابية",
       "تكنو إنجاز",
       "مشاريع هندسية"
-    ],
-    "roleQualifier": "مشروع طلابي أكاديمي — تم تنفيذه بمساعدة ودعم تقني من مكتب تكنو إنجاز"
+    ]
   },
   {
     "id": "face-recognition-access-control-project",
@@ -251,8 +243,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
       "playsound",
       "srcset",
       "WebPage"
-    ],
-    "roleQualifier": "مشروع طلابي أكاديمي — تم تنفيذه بمساعدة ودعم تقني من مكتب تكنو إنجاز"
+    ]
   },
   {
     "id": "electronic-voting-system-laravel",
@@ -271,8 +262,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
       "منصات ويب وتطبيقات سحابية",
       "تكنو إنجاز",
       "مشاريع هندسية"
-    ],
-    "roleQualifier": "مشروع طلابي أكاديمي — تم تنفيذه بمساعدة ودعم تقني من مكتب تكنو إنجاز"
+    ]
   },
   {
     "id": "weapon-detection-yolo-ai",
@@ -291,8 +281,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
       "ذكاء اصطناعي ورؤية حاسوبية",
       "تكنو إنجاز",
       "مشاريع هندسية"
-    ],
-    "roleQualifier": "مشروع طلابي أكاديمي — تم تنفيذه بمساعدة ودعم تقني من مكتب تكنو إنجاز"
+    ]
   },
   {
     "id": "ai-children-learning-system",
@@ -311,8 +300,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
       "ذكاء اصطناعي وتعليم تفاعلي",
       "تكنو إنجاز",
       "مشاريع هندسية"
-    ],
-    "roleQualifier": "مشروع طلابي أكاديمي — تم تنفيذه بمساعدة ودعم تقني من مكتب تكنو إنجاز"
+    ]
   }
 ];
 

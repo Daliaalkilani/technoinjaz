@@ -40,7 +40,7 @@ export async function GET() {
 
   text += `## Engineering Projects & Prototypes\n`;
   for (const p of projects) {
-    text += `### ${p.title}\n- URL: ${absoluteUrl('/projects/' + p.slug)}\n- Category: ${p.categoryNameAr}\n- Nature: ${p.roleQualifier}\n- Overview: ${p.excerpt}\n\n`;
+    text += `### ${p.title}\n- URL: ${absoluteUrl('/projects/' + p.slug)}\n- Category: ${p.categoryNameAr}\n- Overview: ${p.excerpt}\n\n`;
   }
 
   text += `## Live Platforms\n`;

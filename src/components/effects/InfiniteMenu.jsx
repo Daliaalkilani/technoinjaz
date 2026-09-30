@@ -510,12 +510,11 @@ class ArcballControl {
       quat.slerp(this.pointerRotation, this.pointerRotation, this.IDENTITY_QUAT, INTENSITY);
 
       if (this.snapTargetDirection) {
-        const SNAPPING_INTENSITY = 0.2;
         const a = this.snapTargetDirection;
         const b = this.snapDirection;
         const sqrDist = vec3.squaredDistance(a, b);
-        const distanceFactor = Math.max(0.1, 1 - sqrDist * 10);
-        angleFactor *= SNAPPING_INTENSITY * distanceFactor;
+        const distanceFactor = Math.min(0.28, Math.max(0.06, Math.sqrt(sqrDist) * 0.18));
+        angleFactor *= distanceFactor;
         this.quatFromVectors(a, b, snapRotation, angleFactor);
       }
     }
@@ -603,6 +602,15 @@ class InfiniteGridMenu {
   smoothRotationVelocity = 0;
   scaleFactor = 1.0;
   movementActive = false;
+
+  autoTourEnabled = true;
+  isHovered = false;
+  targetMemberIndex = 0;
+  targetVertexIndex = -1;
+  dwellTimer = 0;
+  DWELL_DURATION = 4500;
+  isTransitioning = false;
+  microDriftAngle = 0;
 
   constructor(canvas, items, onActiveItemChange, onMovementChange, onInit = null, scale = 1.0) {
     this.canvas = canvas;
@@ -912,19 +920,83 @@ class InfiniteGridMenu {
       this.onMovementChange(isMoving);
     }
 
-    if (!this.control.isPointerDown) {
+    if (this.control.isPointerDown || this.isHovered) {
+      // Manual control: pause auto-cycle and track user's active item
+      this.dwellTimer = 0;
+      this.isTransitioning = false;
       const nearestVertexIndex = this.#findNearestVertexIndex();
-      const itemIndex = nearestVertexIndex % Math.max(1, this.items.length);
-      this.onActiveItemChange(itemIndex);
-      const snapDirection = vec3.normalize(vec3.create(), this.#getVertexWorldPosition(nearestVertexIndex));
-      this.control.snapTargetDirection = snapDirection;
+      this.targetMemberIndex = nearestVertexIndex % Math.max(1, this.items.length);
+      this.targetVertexIndex = nearestVertexIndex;
+      this.onActiveItemChange(this.targetMemberIndex);
+
+      if (!this.control.isPointerDown) {
+        const snapDirection = vec3.normalize(vec3.create(), this.#getVertexWorldPosition(nearestVertexIndex));
+        this.control.snapTargetDirection = snapDirection;
+      } else {
+        cameraTargetZ += this.control.rotationVelocity * 80 + 2.5;
+        damping = 7 / timeScale;
+      }
     } else {
-      cameraTargetZ += this.control.rotationVelocity * 80 + 2.5;
-      damping = 7 / timeScale;
+      // Auto-tour stepped cycle
+      if (this.targetVertexIndex < 0) {
+        this.targetMemberIndex = 0;
+        this.targetVertexIndex = this.#findBestVertexForMember(0);
+        this.onActiveItemChange(0);
+      }
+
+      if (this.isTransitioning) {
+        const targetWorldPos = vec3.normalize(vec3.create(), this.#getVertexWorldPosition(this.targetVertexIndex));
+        this.control.snapTargetDirection = targetWorldPos;
+        const sqrDist = vec3.squaredDistance(targetWorldPos, this.control.snapDirection);
+        if (sqrDist < 0.035) {
+          this.isTransitioning = false;
+          this.dwellTimer = 0;
+          this.onActiveItemChange(this.targetMemberIndex);
+        }
+      } else {
+        this.dwellTimer += deltaTime;
+        const snapDirection = vec3.normalize(vec3.create(), this.#getVertexWorldPosition(this.targetVertexIndex));
+
+        // Living organic micro-float drift while dwelling
+        this.microDriftAngle += deltaTime * 0.0012;
+        snapDirection[0] += Math.sin(this.microDriftAngle) * 0.016;
+        snapDirection[1] += Math.cos(this.microDriftAngle * 0.8) * 0.016;
+        vec3.normalize(snapDirection, snapDirection);
+        this.control.snapTargetDirection = snapDirection;
+
+        if (this.dwellTimer >= this.DWELL_DURATION) {
+          const nextIndex = (this.targetMemberIndex + 1) % Math.max(1, this.items.length);
+          this.targetMemberIndex = nextIndex;
+          this.targetVertexIndex = this.#findBestVertexForMember(nextIndex);
+          this.isTransitioning = true;
+          this.dwellTimer = 0;
+          this.onActiveItemChange(this.targetMemberIndex);
+        }
+      }
     }
 
     this.camera.position[2] += (cameraTargetZ - this.camera.position[2]) / damping;
     this.#updateCameraMatrix();
+  }
+
+  #findBestVertexForMember(memberIndex) {
+    const n = this.control.snapDirection;
+    const inversOrientation = quat.conjugate(quat.create(), this.control.orientation);
+    const nt = vec3.transformQuat(vec3.create(), n, inversOrientation);
+
+    let maxD = -Infinity;
+    let bestVertex = 0;
+    const len = Math.max(1, this.items.length);
+    for (let i = 0; i < this.instancePositions.length; ++i) {
+      if (i % len === memberIndex) {
+        const d = vec3.dot(nt, this.instancePositions[i]);
+        if (d > maxD) {
+          maxD = d;
+          bestVertex = i;
+        }
+      }
+    }
+    return bestVertex;
   }
 
   #findNearestVertexIndex() {
@@ -977,6 +1049,7 @@ export default function InfiniteMenu({
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
   const canvasRef = useRef(null);
+  const sketchRef = useRef(null);
   const [activeItem, setActiveItem] = useState(null);
   const [isMoving, setIsMoving] = useState(false);
   const [webglSupported, setWebglSupported] = useState(true);
@@ -1021,6 +1094,7 @@ export default function InfiniteMenu({
           null,
           scale
         );
+        sketchRef.current = sketch;
 
         observer = new IntersectionObserver(
           ([entry]) => {
@@ -1060,6 +1134,7 @@ export default function InfiniteMenu({
       try {
         sketch?.destroy();
       } catch (e) {}
+      sketchRef.current = null;
     };
   }, [items, scale]);
 
@@ -1080,6 +1155,8 @@ export default function InfiniteMenu({
   return (
     <div
       className="infinite-menu-wrapper"
+      onPointerEnter={() => { if (sketchRef.current) sketchRef.current.isHovered = true; }}
+      onPointerLeave={() => { if (sketchRef.current) sketchRef.current.isHovered = false; }}
       style={{
         position: 'relative',
         width: '100%',
@@ -1114,7 +1191,12 @@ export default function InfiniteMenu({
       )}
 
       {activeItem && (
-        <div className={`active-member-card ${isMoving ? 'inactive' : 'active'}`} dir={isEn ? 'ltr' : 'rtl'}>
+        <div
+          className={`active-member-card ${isMoving ? 'inactive' : 'active'}`}
+          dir={isEn ? 'ltr' : 'rtl'}
+          onPointerEnter={() => { if (sketchRef.current) sketchRef.current.isHovered = true; }}
+          onPointerLeave={() => { if (sketchRef.current) sketchRef.current.isHovered = false; }}
+        >
           <div className="active-member-content">
             <span className="member-label">
               {activeItem.isPlaceholder
