@@ -69,12 +69,6 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
           {isEn ? "Techno Enjaz Engineering Projects" : "مشاريع ومنظومات تكنو إنجاز"}
         </h1>
 
-        <p className="catalog-hero-subtitle">
-          {isEn 
-            ? "Explore practical engineering prototypes, AI vision architectures, and embedded solutions built with technical guidance and support from Techno Enjaz."
-            : "استعراض النماذج التطبيقية والمنظومات الهندسية في الذكاء الاصطناعي والرؤية الحاسوبية والروبوتات والأنظمة السحابية المنجزة بدعم ومساندة المكتب."}
-        </p>
-
         {/* Search Bar */}
         <div className="catalog-search-bar">
           <Search size={18} className="search-icon" />
