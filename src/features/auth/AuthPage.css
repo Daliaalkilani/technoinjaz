@@ -2,13 +2,36 @@
    AUTHENTICATION PAGE (LOGIN & REGISTER) STYLES
    ========================================================================== */
 
+/* Remove scrollbars completely on Auth pages (Login & Register) */
+html.auth-no-scroll,
+body.auth-no-scroll,
+html:has(.auth-page-wrapper),
+body:has(.auth-page-wrapper),
+.auth-page-wrapper {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+html.auth-no-scroll::-webkit-scrollbar,
+body.auth-no-scroll::-webkit-scrollbar,
+html:has(.auth-page-wrapper)::-webkit-scrollbar,
+body:has(.auth-page-wrapper)::-webkit-scrollbar,
+.auth-page-wrapper::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
 .auth-page-wrapper {
   width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;
   background-color: #050508;
   color: #ffffff;
   position: relative;
   overflow-x: hidden;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
 }
@@ -53,7 +76,18 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px 80px 20px;
+  padding: 24px 20px 36px 20px;
+}
+
+@media (min-width: 768px) {
+  .auth-page-wrapper {
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow-y: auto;
+  }
+  .auth-main-content {
+    padding: 16px 20px 24px 20px;
+  }
 }
 
 /* Back button */

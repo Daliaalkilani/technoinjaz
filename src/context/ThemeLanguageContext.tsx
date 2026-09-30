@@ -9,7 +9,7 @@ export type Language = 'ar' | 'en';
 interface ThemeLanguageContextType {
   theme: Theme;
   lang: Language;
-  toggleTheme: () => void;
+  toggleTheme: (e?: React.MouseEvent | MouseEvent) => void;
   setLang: (lang: Language) => void;
   t: Translations;
 }
@@ -73,15 +73,77 @@ export const ThemeLanguageProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [lang]);
 
-  const toggleTheme = () => {
-    setTheme(prev => {
-      const next = prev === 'dark' ? 'light' : 'dark';
+  const toggleTheme = (e?: React.MouseEvent | MouseEvent) => {
+    const nextTheme: Theme = theme === 'dark' ? 'light' : 'dark';
+
+    const applyTheme = () => {
+      setTheme(nextTheme);
       if (typeof window !== 'undefined') {
         localStorage.setItem('techno_theme_manual', 'true');
-        localStorage.setItem('techno_theme', next);
-        localStorage.setItem('theme', next);
+        localStorage.setItem('techno_theme', nextTheme);
+        localStorage.setItem('theme', nextTheme);
       }
-      return next;
+      if (typeof document !== 'undefined') {
+        document.documentElement.setAttribute('data-theme', nextTheme);
+        document.documentElement.classList.toggle('dark', nextTheme === 'dark');
+        document.documentElement.classList.toggle('light', nextTheme === 'light');
+      }
+    };
+
+    // Check if View Transitions API is available and user doesn't prefer reduced motion
+    const doc = (typeof document !== 'undefined' ? document : null) as any;
+    if (
+      typeof window === 'undefined' ||
+      !doc ||
+      !doc.startViewTransition ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+      applyTheme();
+      return;
+    }
+
+    // Determine coordinates (x, y) for circular expansion from the button
+    let x = window.innerWidth / 2;
+    let y = window.innerHeight / 2;
+
+    if (e && typeof e.clientX === 'number' && typeof e.clientY === 'number' && (e.clientX !== 0 || e.clientY !== 0)) {
+      x = e.clientX;
+      y = e.clientY;
+    } else {
+      const btn = document.getElementById('theme-toggle-btn') || document.querySelector('.theme-toggle-button');
+      if (btn) {
+        const rect = btn.getBoundingClientRect();
+        x = rect.left + rect.width / 2;
+        y = rect.top + rect.height / 2;
+      }
+    }
+
+    // Radius to the farthest corner of the viewport
+    const endRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    );
+
+    const transition = doc.startViewTransition(() => {
+      applyTheme();
+    });
+
+    transition.ready.then(() => {
+      const clipPath = [
+        `circle(0px at ${x}px ${y}px)`,
+        `circle(${endRadius}px at ${x}px ${y}px)`
+      ];
+
+      document.documentElement.animate(
+        {
+          clipPath: clipPath
+        },
+        {
+          duration: 550,
+          easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+          pseudoElement: '::view-transition-new(root)'
+        }
+      );
     });
   };
 

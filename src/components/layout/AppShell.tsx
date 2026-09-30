@@ -11,7 +11,7 @@ import LanguageDropdown from './LanguageDropdown';
 import ScrollToTop from './ScrollToTop';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { getLoggedInUser } from '@/lib/auth';
-import { User, Menu } from 'lucide-react';
+import { User, Menu, WifiOff } from 'lucide-react';
 import MobileNavDrawer from './MobileNavDrawer';
 
 export interface AppShellProps {
@@ -27,6 +27,7 @@ export function AppShell({ children }: AppShellProps) {
   const [mounted, setMounted] = useState(false);
   const [isPastHero, setIsPastHero] = useState(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const [isOffline, setIsOffline] = useState(false);
   const [navHeight, setNavHeight] = useState(78);
   const navbarRef = useRef<HTMLElement | null>(null);
 
@@ -52,6 +53,29 @@ export function AppShell({ children }: AppShellProps) {
   const isArticleDetailPage = /^\/articles\/[^\/]+/.test(pathname);
   const isProjectDetailPage = /^\/projects\/[^\/]+/.test(pathname);
   const isAuthPage = pathname === '/login' || pathname === '/register';
+  const isErrorPage = 
+    pathname === '/connection-error' || 
+    pathname === '/offline' || 
+    pathname === '/server-error' || 
+    pathname === '/access-denied' || 
+    pathname === '/403' || 
+    pathname === '/500';
+
+  // Monitor network connectivity in real time
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleOffline = () => setIsOffline(true);
+    const handleOnline = () => setIsOffline(false);
+
+    if (!navigator.onLine) setIsOffline(true);
+
+    window.addEventListener('offline', handleOffline);
+    window.addEventListener('online', handleOnline);
+    return () => {
+      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener('online', handleOnline);
+    };
+  }, []);
 
   // Navigation Items
   const navItems = [
@@ -265,7 +289,44 @@ export function AppShell({ children }: AppShellProps) {
         {children}
       </main>
 
-      {!isArticleDetailPage && !isProjectDetailPage && !isAuthPage && <CinematicFooter />}
+      {/* Floating Offline Notification */}
+      {isOffline && !isErrorPage && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: '24px',
+            insetInlineStart: '24px',
+            zIndex: 999999,
+            background: 'rgba(15, 23, 42, 0.94)',
+            backdropFilter: 'blur(14px)',
+            border: '1px solid rgba(239, 68, 68, 0.4)',
+            color: '#f87171',
+            borderRadius: '9999px',
+            padding: '8px 18px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            fontSize: '13px',
+            fontWeight: 600,
+            boxShadow: '0 12px 35px rgba(0,0,0,0.5)'
+          }}
+        >
+          <WifiOff size={16} />
+          <span>{lang === 'en' ? 'Offline Mode Active' : 'تم فقدان الاتصال بالشبكة'}</span>
+          <Link
+            href="/connection-error"
+            style={{
+              color: '#38bdf8',
+              textDecoration: 'underline',
+              marginInlineStart: '4px'
+            }}
+          >
+            {lang === 'en' ? 'Diagnose' : 'فحص الاتصال'}
+          </Link>
+        </div>
+      )}
+
+      {!isArticleDetailPage && !isProjectDetailPage && !isAuthPage && !isErrorPage && <CinematicFooter />}
     </div>
   );
 }

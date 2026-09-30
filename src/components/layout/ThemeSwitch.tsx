@@ -32,9 +32,9 @@ export function ThemeSwitch({ className = '' }: ThemeSwitchProps) {
   const isLight = activeTheme === 'light';
 
   // Toggle theme
-  const toggleTheme = React.useCallback(() => {
+  const toggleTheme = React.useCallback((e: React.MouseEvent) => {
     if (contextToggle) {
-      contextToggle();
+      contextToggle(e);
     } else {
       const newTheme = activeTheme === 'light' ? 'dark' : 'light';
       setLocalTheme(newTheme);

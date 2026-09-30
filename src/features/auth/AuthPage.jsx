@@ -19,6 +19,19 @@ export default function AuthPage({ initialMode = 'login', onBack, onSuccess } = 
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
 
+  React.useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.body.classList.add('auth-no-scroll');
+      document.documentElement.classList.add('auth-no-scroll');
+    }
+    return () => {
+      if (typeof document !== 'undefined') {
+        document.body.classList.remove('auth-no-scroll');
+        document.documentElement.classList.remove('auth-no-scroll');
+      }
+    };
+  }, []);
+
   const defaultBack = () => {
     if (typeof window !== 'undefined' && window.history.length > 1) {
       router.back();

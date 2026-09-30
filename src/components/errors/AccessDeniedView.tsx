@@ -1,0 +1,106 @@
+'use client';
+
+import React from 'react';
+import Link from 'next/link';
+import { ShieldAlert, LogIn, Home, KeyRound, Lock, Send } from 'lucide-react';
+import { useThemeLanguage } from '@/context/ThemeLanguageContext';
+import './ErrorPages.css';
+
+export interface AccessDeniedViewProps {
+  requiredRole?: string;
+  resourceName?: string;
+}
+
+export const AccessDeniedView: React.FC<AccessDeniedViewProps> = ({
+  requiredRole,
+  resourceName
+}) => {
+  const { lang } = useThemeLanguage();
+  const isEn = lang === 'en';
+
+  return (
+    <div className="te-error-wrapper">
+      <div className="te-error-ambient te-error-ambient--access" />
+      <div className="te-error-grid" />
+
+      <div className="te-error-card" dir={isEn ? 'ltr' : 'rtl'}>
+        {/* Visual Badge with Security Ring */}
+        <div className="te-error-visual-badge te-error-visual-badge--access">
+          <div className="te-error-scan-ring" />
+          <ShieldAlert size={42} strokeWidth={2.2} />
+        </div>
+
+        {/* 403 Code */}
+        <span className="te-error-code te-error-code--access">403</span>
+
+        {/* Status Pill */}
+        <div className="te-error-pill te-error-pill--access">
+          <span className="te-error-pill-dot" />
+          <span>{isEn ? 'Security Clearance Denied' : 'منطقة برمجية محمية - صلاحيات غير كافية'}</span>
+        </div>
+
+        <h1 className="te-error-title">
+          {isEn ? 'Access Forbidden' : 'تم رفض صلاحيات الوصول'}
+        </h1>
+
+        <p className="te-error-desc">
+          {isEn
+            ? `You do not have the required clearance to access ${resourceName ? `"${resourceName}"` : 'this engineering resource'}. Please sign in with an authorized account or contact an administrator.`
+            : `ليس لديك ترخيص الوصول الكافي لعرض ${resourceName ? `"${resourceName}"` : 'هذا المورد الهندسي المحمي'}. يرجى تسجيل الدخول بحساب معتمد أو مراجعة إدارة النظام.`}
+        </p>
+
+        {/* Security Telemetry Box */}
+        <div className="te-error-diagnostics">
+          <div className="te-error-diagnostics-header">
+            <span>{isEn ? 'Security Enforcement Specs' : 'مواصفات الحماية البرمجية'}</span>
+            <span style={{ fontFamily: 'monospace', color: '#f87171', fontSize: '11px' }}>
+              ZERO-TRUST
+            </span>
+          </div>
+          <ul className="te-error-tips-list">
+            <li className="te-error-tip-item">
+              <span className="te-error-tip-bullet" style={{ background: '#ef4444' }} />
+              <span>
+                {isEn ? 'Authorization Status: Unverified Session' : 'حالة الاعتماد: جلسة غير مصرح لها أو منتهية الصلاحية'}
+              </span>
+            </li>
+            <li className="te-error-tip-item">
+              <span className="te-error-tip-bullet" style={{ background: '#ef4444' }} />
+              <span>
+                {isEn
+                  ? `Required Level: ${requiredRole || 'Core Engineer / Verified Admin'}`
+                  : `المستوى المطلوب: ${requiredRole || 'مهندس معتمد / مشرف نظام'}`}
+              </span>
+            </li>
+            <li className="te-error-tip-item">
+              <span className="te-error-tip-bullet" style={{ background: '#ef4444' }} />
+              <span>
+                {isEn ? 'Policy: Role-Based Access Control (RBAC)' : 'البروتوكول: نظام إدارة الصلاحيات القائم على الأدوار (RBAC)'}
+              </span>
+            </li>
+          </ul>
+        </div>
+
+        {/* Actions */}
+        <div className="te-error-actions">
+          <Link href="/login" className="te-error-btn te-error-btn-access">
+            <LogIn size={16} />
+            <span>{isEn ? 'Log In to Authorized Account' : 'تسجيل الدخول بحساب معتمد'}</span>
+          </Link>
+
+          <Link href="/" className="te-error-btn te-error-btn-secondary">
+            <Home size={16} />
+            <span>{isEn ? 'Return Home' : 'العودة للرئيسية'}</span>
+          </Link>
+
+          <Link href="/contact?subject=access-clearance" className="te-error-btn te-error-btn-secondary">
+            <Send size={15} />
+            <span>{isEn ? 'Request Clearance' : 'طلب ترخيص صلاحيات'}</span>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AccessDeniedView;
