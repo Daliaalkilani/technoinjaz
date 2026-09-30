@@ -182,7 +182,9 @@ export function AppShell({ children }: AppShellProps) {
               activeIndex={activeIndex}
               onItemSelect={(item: any) => {
                 if (item?.href) {
-                  router.push(item.href);
+                  React.startTransition(() => {
+                    router.push(item.href);
+                  });
                 }
               }}
               animationTime={600}
@@ -260,7 +262,7 @@ export function AppShell({ children }: AppShellProps) {
         {children}
       </main>
 
-      <CinematicFooter key={pathname} />
+      <CinematicFooter />
     </div>
   );
 }
