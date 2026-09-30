@@ -976,43 +976,75 @@ export default function InfiniteMenu({
   const canvasRef = useRef(null);
   const [activeItem, setActiveItem] = useState(null);
   const [isMoving, setIsMoving] = useState(false);
+  const [webglSupported, setWebglSupported] = useState(true);
 
   useEffect(() => {
+    const list = items.length ? items : defaultItems;
     const canvas = canvasRef.current;
     let sketch;
 
     const handleActiveItem = index => {
-      const itemIndex = index % items.length;
-      setActiveItem(items[itemIndex]);
+      const itemIndex = index % list.length;
+      setActiveItem(list[itemIndex]);
     };
+
+    // Pre-flight check for WebGL2
+    try {
+      const testCanvas = document.createElement('canvas');
+      const testGl = testCanvas.getContext('webgl2');
+      if (!testGl) {
+        setWebglSupported(false);
+        if (!activeItem && list.length > 0) {
+          setActiveItem(list[0]);
+        }
+        return;
+      }
+    } catch {
+      setWebglSupported(false);
+      if (!activeItem && list.length > 0) {
+        setActiveItem(list[0]);
+      }
+      return;
+    }
 
     let observer;
     if (canvas) {
-      sketch = new InfiniteGridMenu(
-        canvas,
-        items.length ? items : defaultItems,
-        handleActiveItem,
-        setIsMoving,
-        null,
-        scale
-      );
+      try {
+        sketch = new InfiniteGridMenu(
+          canvas,
+          list,
+          handleActiveItem,
+          setIsMoving,
+          null,
+          scale
+        );
 
-      observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            sketch?.play();
-          } else {
-            sketch?.pause();
-          }
-        },
-        { threshold: 0.02 }
-      );
-      observer.observe(canvas);
+        observer = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting) {
+              sketch?.play();
+            } else {
+              sketch?.pause();
+            }
+          },
+          { threshold: 0.02 }
+        );
+        observer.observe(canvas);
+      } catch (err) {
+        console.warn('InfiniteMenu WebGL2 initialization failed, using fallback:', err);
+        setWebglSupported(false);
+        if (!activeItem && list.length > 0) {
+          setActiveItem(list[0]);
+        }
+        return;
+      }
     }
 
     const handleResize = () => {
       if (sketch) {
-        sketch.resize();
+        try {
+          sketch.resize();
+        } catch (e) {}
       }
     };
 
@@ -1022,7 +1054,9 @@ export default function InfiniteMenu({
     return () => {
       observer?.disconnect();
       window.removeEventListener('resize', handleResize);
-      sketch?.destroy();
+      try {
+        sketch?.destroy();
+      } catch (e) {}
     };
   }, [items, scale]);
 
@@ -1051,7 +1085,30 @@ export default function InfiniteMenu({
         '--infinite-menu-background': backgroundColor
       }}
     >
-      <canvas id="infinite-grid-menu-canvas" ref={canvasRef} aria-hidden="true" />
+      {!webglSupported ? (
+        <div className="infinite-menu-fallback-list" aria-label="Team Members">
+          {(items.length ? items : defaultItems).map((member, idx) => {
+            const isSelected = (activeItem?.id || activeItem?.title) === (member.id || member.title);
+            return (
+              <button
+                key={member.id || idx}
+                type="button"
+                className={`infinite-menu-fallback-avatar ${isSelected ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveItem(member);
+                  if (onSelectMember) onSelectMember(member);
+                }}
+                title={member.name || member.title}
+                aria-label={member.name || member.title}
+              >
+                <img src={member.image} alt={member.name || member.title} />
+              </button>
+            );
+          })}
+        </div>
+      ) : (
+        <canvas id="infinite-grid-menu-canvas" ref={canvasRef} aria-hidden="true" />
+      )}
 
       {activeItem && (
         <div className={`active-member-card ${isMoving ? 'inactive' : 'active'}`} dir={isEn ? 'ltr' : 'rtl'}>

@@ -1,8 +1,21 @@
 'use client';
 
 import { Mesh, Program, Renderer, Triangle, Vec3 } from 'ogl';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './Orb.css';
+
+function isWebGLSupported() {
+  if (typeof window === 'undefined') return false;
+  try {
+    const canvas = document.createElement('canvas');
+    return Boolean(
+      window.WebGLRenderingContext &&
+      (canvas.getContext('webgl2') || canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))
+    );
+  } catch {
+    return false;
+  }
+}
 
 export default function Orb({
   hue = 0,
@@ -185,46 +198,75 @@ export default function Orb({
     }
   `;
 
+  const [webglSupported, setWebglSupported] = useState(true);
+
   useEffect(() => {
     const container = ctnDom.current;
     if (!container) return;
 
-    const renderer = new Renderer({ alpha: true, premultipliedAlpha: false });
-    const gl = renderer.gl;
-    gl.clearColor(0, 0, 0, 0);
-    container.appendChild(gl.canvas);
+    if (!isWebGLSupported()) {
+      setWebglSupported(false);
+      return;
+    }
 
-    const geometry = new Triangle(gl);
-    const program = new Program(gl, {
-      vertex: vert,
-      fragment: frag,
-      uniforms: {
-        iTime: { value: 0 },
-        iResolution: {
-          value: new Vec3(gl.canvas.width, gl.canvas.height, gl.canvas.width / gl.canvas.height)
-        },
-        hue: { value: hue },
-        hover: { value: 0 },
-        rot: { value: 0 },
-        hoverIntensity: { value: hoverIntensity },
-        backgroundColor: { value: hexToVec3(backgroundColor) }
+    let renderer;
+    let gl;
+    let program;
+    let mesh;
+    let rafId = null;
+    let resize = null;
+    let handleMouseMove = null;
+    let handleMouseLeave = null;
+    let observer = null;
+
+    try {
+      renderer = new Renderer({ alpha: true, premultipliedAlpha: false });
+      gl = renderer?.gl;
+      if (!gl) {
+        setWebglSupported(false);
+        return;
       }
-    });
+      gl.clearColor(0, 0, 0, 0);
+      container.appendChild(gl.canvas);
 
-    const mesh = new Mesh(gl, { geometry, program });
+      const geometry = new Triangle(gl);
+      program = new Program(gl, {
+        vertex: vert,
+        fragment: frag,
+        uniforms: {
+          iTime: { value: 0 },
+          iResolution: {
+            value: new Vec3(gl.canvas.width, gl.canvas.height, gl.canvas.width / gl.canvas.height)
+          },
+          hue: { value: hue },
+          hover: { value: 0 },
+          rot: { value: 0 },
+          hoverIntensity: { value: hoverIntensity },
+          backgroundColor: { value: hexToVec3(backgroundColor) }
+        }
+      });
+
+      mesh = new Mesh(gl, { geometry, program });
+    } catch (err) {
+      console.warn('Orb WebGL initialization failed, using CSS glow fallback:', err);
+      setWebglSupported(false);
+      return;
+    }
 
     let cachedRect = null;
-    function resize() {
-      if (!container) return;
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
-      const width = container.clientWidth;
-      const height = container.clientHeight;
-      cachedRect = container.getBoundingClientRect();
-      renderer.setSize(width * dpr, height * dpr);
-      gl.canvas.style.width = width + 'px';
-      gl.canvas.style.height = height + 'px';
-      program.uniforms.iResolution.value.set(gl.canvas.width, gl.canvas.height, gl.canvas.width / gl.canvas.height);
-    }
+    resize = function () {
+      if (!container || !gl?.canvas) return;
+      try {
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        cachedRect = container.getBoundingClientRect();
+        renderer.setSize(width * dpr, height * dpr);
+        gl.canvas.style.width = width + 'px';
+        gl.canvas.style.height = height + 'px';
+        program.uniforms.iResolution.value.set(gl.canvas.width, gl.canvas.height, gl.canvas.width / gl.canvas.height);
+      } catch (e) {}
+    };
     window.addEventListener('resize', resize);
     resize();
 
@@ -234,7 +276,7 @@ export default function Orb({
     const rotationSpeed = 0.3;
     let isIntersecting = false;
 
-    const handleMouseMove = e => {
+    handleMouseMove = e => {
       if (!isIntersecting) return;
       if (!cachedRect) cachedRect = container.getBoundingClientRect();
       const x = e.clientX - cachedRect.left;
@@ -254,14 +296,13 @@ export default function Orb({
       }
     };
 
-    const handleMouseLeave = () => {
+    handleMouseLeave = () => {
       targetHover = 0;
     };
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     container.addEventListener('mouseleave', handleMouseLeave);
 
-    let rafId = null;
     const update = t => {
       if (!isIntersecting) {
         rafId = null;
@@ -270,23 +311,30 @@ export default function Orb({
       rafId = requestAnimationFrame(update);
       const dt = (t - lastTime) * 0.001;
       lastTime = t;
-      program.uniforms.iTime.value = t * 0.001;
-      program.uniforms.hue.value = hue;
-      program.uniforms.hoverIntensity.value = hoverIntensity;
-      program.uniforms.backgroundColor.value = hexToVec3(backgroundColor);
+      try {
+        program.uniforms.iTime.value = t * 0.001;
+        program.uniforms.hue.value = hue;
+        program.uniforms.hoverIntensity.value = hoverIntensity;
+        program.uniforms.backgroundColor.value = hexToVec3(backgroundColor);
 
-      const effectiveHover = forceHoverState ? 1 : targetHover;
-      program.uniforms.hover.value += (effectiveHover - program.uniforms.hover.value) * 0.1;
+        const effectiveHover = forceHoverState ? 1 : targetHover;
+        program.uniforms.hover.value += (effectiveHover - program.uniforms.hover.value) * 0.1;
 
-      if (rotateOnHover && effectiveHover > 0.5) {
-        currentRot += dt * rotationSpeed;
+        if (rotateOnHover && effectiveHover > 0.5) {
+          currentRot += dt * rotationSpeed;
+        }
+        program.uniforms.rot.value = currentRot;
+
+        renderer.render({ scene: mesh });
+      } catch (e) {
+        if (rafId) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+        }
       }
-      program.uniforms.rot.value = currentRot;
-
-      renderer.render({ scene: mesh });
     };
 
-    const observer = new IntersectionObserver(
+    observer = new IntersectionObserver(
       ([entry]) => {
         isIntersecting = entry.isIntersecting;
         if (isIntersecting) {
@@ -307,20 +355,30 @@ export default function Orb({
     observer.observe(container);
 
     return () => {
-      observer.disconnect();
+      observer?.disconnect();
       if (rafId) cancelAnimationFrame(rafId);
-      window.removeEventListener('resize', resize);
-      window.removeEventListener('mousemove', handleMouseMove);
-      container.removeEventListener('mouseleave', handleMouseLeave);
+      if (resize) window.removeEventListener('resize', resize);
+      if (handleMouseMove) window.removeEventListener('mousemove', handleMouseMove);
+      if (handleMouseLeave && container) container.removeEventListener('mouseleave', handleMouseLeave);
       try {
-        if (gl.canvas.parentNode === container) {
+        if (gl?.canvas && gl.canvas.parentNode === container) {
           container.removeChild(gl.canvas);
         }
       } catch (e) {}
-      gl.getExtension('WEBGL_lose_context')?.loseContext();
+      try {
+        gl?.getExtension?.('WEBGL_lose_context')?.loseContext();
+      } catch (e) {}
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hue, hoverIntensity, rotateOnHover, forceHoverState, backgroundColor]);
+
+  if (!webglSupported) {
+    return (
+      <div className="orb-container orb-fallback-wrap" aria-hidden="true">
+        <div className="orb-fallback-glow" />
+      </div>
+    );
+  }
 
   return <div ref={ctnDom} className="orb-container" aria-hidden="true" />;
 }

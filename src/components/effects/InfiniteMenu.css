@@ -284,3 +284,60 @@
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
+
+/* =========================================================
+   FALLBACK UI (WHEN WEBGL2 IS NOT AVAILABLE)
+   ========================================================= */
+.infinite-menu-fallback-list {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 620px;
+  padding: 24px;
+  z-index: 5;
+}
+
+.infinite-menu-fallback-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  background: #0f172a;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.infinite-menu-fallback-avatar:hover,
+.infinite-menu-fallback-avatar.active {
+  transform: scale(1.18);
+  border-color: #38bdf8;
+  box-shadow: 0 0 24px rgba(56, 189, 248, 0.55);
+}
+
+.infinite-menu-fallback-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+@media (max-width: 640px) {
+  .infinite-menu-fallback-list {
+    top: 32%;
+    gap: 10px;
+    padding: 12px;
+  }
+  .infinite-menu-fallback-avatar {
+    width: 54px;
+    height: 54px;
+  }
+}
+

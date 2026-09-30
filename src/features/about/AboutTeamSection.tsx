@@ -7,6 +7,7 @@ import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { useLoader } from '@/context/LoaderContext';
 import { teamMembers, teamCircleSlots } from '@/data/teamData';
 import { Skiper19 } from '@/components/effects/SvgFollowScroll';
+import SafeErrorBoundary from '@/components/effects/SafeErrorBoundary';
 
 const Orb = dynamic(() => import('@/components/effects/Orb'), { ssr: false });
 const InfiniteMenu = dynamic(() => import('@/components/effects/InfiniteMenu'), { ssr: false });
@@ -170,13 +171,15 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
           }}
         >
           {isLoaderDone && (
-            <Orb
-              hoverIntensity={0.24}
-              rotateOnHover
-              hue={360}
-              forceHoverState={false}
-              backgroundColor={theme === 'light' ? '#f8fafc' : '#000000'}
-            />
+            <SafeErrorBoundary>
+              <Orb
+                hoverIntensity={0.24}
+                rotateOnHover
+                hue={360}
+                forceHoverState={false}
+                backgroundColor={theme === 'light' ? '#f8fafc' : '#000000'}
+              />
+            </SafeErrorBoundary>
           )}
         </div>
 
@@ -236,11 +239,13 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
 
         {/* 3D Circular Team Carousel */}
         <div style={{ position: 'relative', width: '100%', height: '100%', flex: 1, zIndex: 1 }}>
-          <InfiniteMenu
-            items={localizedCircleSlots as any}
-            scale={1.4}
-            backgroundColor="transparent"
-          />
+          <SafeErrorBoundary>
+            <InfiniteMenu
+              items={localizedCircleSlots as any}
+              scale={1.4}
+              backgroundColor="transparent"
+            />
+          </SafeErrorBoundary>
         </div>
       </div>
     </section>
