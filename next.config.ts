@@ -8,7 +8,10 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   async redirects() {
     return [
-      { source: '/index.html', destination: '/', permanent: true }
+      { source: '/index.html', destination: '/', permanent: true },
+      // /500 is reserved by Next.js for its built-in error page: an app/500 route
+      // collides with it at export time and fails the build. Same view lives here.
+      { source: '/500', destination: '/server-error', permanent: false }
     ];
   },
 };
