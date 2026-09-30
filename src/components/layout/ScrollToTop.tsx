@@ -7,7 +7,12 @@ export function ScrollToTop() {
   const pathname = usePathname();
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Immediately scroll to the very beginning of the target page on route changes
+    window.scrollTo(0, 0);
+    const timer = setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 15);
+    return () => clearTimeout(timer);
   }, [pathname]);
 
   return null;

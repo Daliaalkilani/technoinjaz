@@ -148,7 +148,7 @@ export const translations: Record<'ar' | 'en', Translations> = {
       subtitle: 'منظومة رائدة في الحلول الهندسية والبرمجية',
       tagline: 'أفكار هندسية تتحول إلى حلول واقعية',
       exploreProjects: 'استكشف كافة المشاريع',
-      exploreVideos: 'استكشف الفيديوهات الخاصة بالمشاريع',
+      exploreVideos: 'شاهد الآن',
       projectsHeading: 'مشاريعنا',
       projectsStatement: 'أفكار هندسية تتحول إلى حلول واقعية'
     },
@@ -371,7 +371,7 @@ export const translations: Record<'ar' | 'en', Translations> = {
       subtitle: 'A Leading Ecosystem for Engineering & Software Solutions',
       tagline: 'Engineering Concepts Transformed Into Real Solutions',
       exploreProjects: 'Explore All Projects',
-      exploreVideos: 'Explore Project Videos',
+      exploreVideos: 'Watch Now',
       projectsHeading: 'Our Projects',
       projectsStatement: 'Engineering concepts transformed into real-world solutions'
     },

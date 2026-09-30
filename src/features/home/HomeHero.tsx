@@ -124,6 +124,10 @@ export const HomeHero: React.FC<HomeHeroProps> = ({
           <div className="cta-group">
             <Link
               href="/projects"
+              scroll={true}
+              onClick={() => {
+                if (typeof window !== 'undefined') window.scrollTo(0, 0);
+              }}
               className="cta-button cta-primary"
             >
               {t.hero.exploreProjects}

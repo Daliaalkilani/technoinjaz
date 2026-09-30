@@ -57,6 +57,10 @@ const VideosSection: React.FC<VideosSectionProps> = ({
           {showNavigateButton && (
             <Link
               href="/videos"
+              scroll={true}
+              onClick={() => {
+                if (typeof window !== 'undefined') window.scrollTo(0, 0);
+              }}
               className="projects-view-all-btn"
             >
               <span>{t.hero.exploreVideos}</span>

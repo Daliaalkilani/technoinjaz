@@ -1,7 +1,7 @@
 'use client';
 import ResponsiveImage from '@/components/ui/ResponsiveImage';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   Search, 
@@ -32,6 +32,10 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
   const { isSaved, toggleSave } = useSavedProjects();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<ProjectCategory>('all');
