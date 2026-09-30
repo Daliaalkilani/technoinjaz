@@ -61,8 +61,9 @@ export function AppShell({ children }: AppShellProps) {
     { label: t.nav.contact, href: '/contact' },
   ];
 
-  // Prefetch primary navigation routes for instant transitions
+  // Prefetch primary navigation routes only in production to avoid dev-mode compilation overload
   useEffect(() => {
+    if (process.env.NODE_ENV !== 'production') return;
     navItems.forEach((item) => {
       if (item.href && item.href !== pathname) {
         router.prefetch(item.href);

@@ -5,6 +5,7 @@
   min-height: 320px;
   overflow: hidden;
   isolation: isolate;
+  touch-action: pan-y;
 }
 
 .infinite-spiral__stage {

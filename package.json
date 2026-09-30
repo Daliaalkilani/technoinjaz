@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "node scripts/optimize-images.mjs && next build",
+    "dev": "node --max-old-space-size=4096 ./node_modules/next/dist/bin/next dev",
+    "build": "node scripts/optimize-images.mjs && node --max-old-space-size=4096 ./node_modules/next/dist/bin/next build",
+    "start": "next start",
     "preview": "npm run build && opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "npm run build && opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "lint": "oxlint",

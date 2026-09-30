@@ -77,7 +77,6 @@ export const HomeHero: React.FC<HomeHeroProps> = ({
   return (
     <div id="top" className="prototype-root">
       <ScrollExpand
-        key={`scroll-expand-${config.startWidth}`}
         media={
           <ThemedImage
             dark={im3Img}

@@ -261,6 +261,8 @@ const InfiniteSpiral = ({
         hoveredRef.current = false;
       }}
       onPointerDown={event => {
+        // Only mouse pointer drag. On touch screens, allow standard vertical page scrolling so users never get trapped
+        if (event.pointerType !== 'mouse') return;
         if (!dragEnabled || event.button !== 0) return;
         draggingRef.current = true;
         dragMovedRef.current = false;

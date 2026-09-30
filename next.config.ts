@@ -14,4 +14,11 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-initOpenNextCloudflareForDev();
+
+if (process.env.NODE_ENV === 'development' && !process.env.NEXT_PHASE?.includes('build')) {
+  try {
+    initOpenNextCloudflareForDev();
+  } catch (e) {
+    console.warn('initOpenNextCloudflareForDev skipped:', e);
+  }
+}
