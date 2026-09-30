@@ -529,6 +529,18 @@ a:visited {
   }
 }
 
+/* Desktop only navbar action items (Language, Theme, User profile) */
+.navbar-desktop-only {
+  display: inline-flex;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .navbar-desktop-only {
+    display: none !important;
+  }
+}
+
 /* Adaptive mobile & tablet header below 1024px */
 @media (max-width: 1023.98px) {
   .top-navbar-container {

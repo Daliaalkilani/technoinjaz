@@ -12,6 +12,7 @@ import SafeErrorBoundary from '@/components/effects/SafeErrorBoundary';
 const Orb = dynamic(() => import('@/components/effects/Orb'), { ssr: false });
 const InfiniteMenu = dynamic(() => import('@/components/effects/InfiniteMenu'), { ssr: false });
 const TeamMomentsRing = dynamic(() => import('./TeamMomentsRing'), { ssr: false });
+import './AboutTeamSection.css';
 
 export interface AboutTeamSectionProps {
   headingLevel?: 'h1' | 'h2';
@@ -40,42 +41,17 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
   return (
     <section
       id="about"
-      className="scroll-deferred-section"
-      style={{
-        position: 'relative',
-        width: '100%',
-        backgroundColor: 'var(--about-bg)'
-      }}
+      className="about-team-section scroll-deferred-section"
     >
       {/* Header for About Us Section */}
       <div
-        style={{
-          padding: '90px 24px 24px',
-          textAlign: 'center',
-          maxWidth: '850px',
-          margin: '0 auto',
-          direction: lang === 'ar' ? 'rtl' : 'ltr'
-        }}
+        className="about-header-container"
+        style={{ direction: lang === 'ar' ? 'rtl' : 'ltr' }}
       >
-        <HeadingTag
-          style={{
-            fontSize: 'clamp(2rem, 3.5vw, 3rem)',
-            fontWeight: 800,
-            color: 'var(--text-main)',
-            marginBottom: '14px',
-            letterSpacing: '-0.02em',
-            textShadow: '0 0 25px rgba(0, 210, 255, 0.2)'
-          }}
-        >
+        <HeadingTag className="about-header-title">
           {t.about.heading}
         </HeadingTag>
-        <p
-          style={{
-            fontSize: 'clamp(1rem, 1.3vw, 1.15rem)',
-            color: 'var(--text-muted)',
-            lineHeight: 1.7
-          }}
-        >
+        <p className="about-header-subtitle">
           {t.about.subtitle}
         </p>
       </div>
@@ -83,14 +59,7 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
       {/* Team Moments Ring */}
       <div
         id="team-moments-section"
-        style={{
-          position: 'relative',
-          width: '100%',
-          height: '100vh',
-          minHeight: '700px',
-          overflow: 'hidden',
-          backgroundColor: 'var(--about-bg)'
-        }}
+        className="team-moments-section-wrapper"
       >
         <TeamMomentsRing />
 
@@ -126,16 +95,7 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
       {/* 3D InfiniteMenu Team Showcase with Orb Background */}
       <div
         id="team-showcase"
-        style={{
-          position: 'relative',
-          width: '100%',
-          height: '100vh',
-          minHeight: '700px',
-          backgroundColor: 'var(--team-showcase-bg)',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column'
-        }}
+        className="team-showcase-section-wrapper"
       >
         {/* Top smooth blending gradient */}
         <div

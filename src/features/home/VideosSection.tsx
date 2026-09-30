@@ -71,7 +71,7 @@ const VideosSection: React.FC<VideosSectionProps> = ({
 
         {/* CardSwap Column */}
         <div className="videos-cardswap-col">
-          <div style={{ height: '600px', position: 'relative' }}>
+          <div className="videos-cardswap-wrapper">
             <CardSwap
               cardDistance={95}
               verticalDistance={85}

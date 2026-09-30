@@ -223,14 +223,18 @@ export function AppShell({ children }: AppShellProps) {
 
           {/* End Actions: Language Switcher, Theme Toggle, Login / User Profile */}
           <div className="navbar-end-actions">
-            <LanguageDropdown />
-            <ThemeSwitch />
+            <div className="navbar-desktop-only">
+              <LanguageDropdown />
+            </div>
+            <div className="navbar-desktop-only">
+              <ThemeSwitch />
+            </div>
 
             {/* User Profile / Auth Button */}
             {mounted && currentUser ? (
               <Link
                 href="/account"
-                className={`navbar-user-avatar-btn ${pathname === '/account' ? 'active' : ''}`}
+                className={`navbar-user-avatar-btn navbar-desktop-only ${pathname === '/account' ? 'active' : ''}`}
                 title={currentUser.name ? `${currentUser.name} - ${lang === 'en' ? 'My Profile' : 'الملف الشخصي'}` : (lang === 'en' ? 'My Profile' : 'الملف الشخصي')}
                 aria-label={lang === 'en' ? 'My Profile' : 'الملف الشخصي'}
               >
@@ -250,7 +254,7 @@ export function AppShell({ children }: AppShellProps) {
             ) : (
               <button
                 type="button"
-                className={`navbar-auth-btn ${pathname === '/login' || pathname === '/register' ? 'active' : ''}`}
+                className={`navbar-auth-btn navbar-desktop-only ${pathname === '/login' || pathname === '/register' ? 'active' : ''}`}
                 onClick={() => handleRequireLogin()}
                 title={t.nav.login}
                 aria-label={t.nav.login}

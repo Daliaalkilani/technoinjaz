@@ -307,12 +307,17 @@ export default function TeamMomentsRing({ onScrollDown = undefined } = {}) {
 
     function resize() {
       const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
-      W = Math.round(window.innerWidth * dpr);
-      H = Math.round(window.innerHeight * dpr);
+      const parent = cv.parentElement;
+      const rect = parent ? parent.getBoundingClientRect() : cv.getBoundingClientRect();
+      const clientW = rect.width || window.innerWidth;
+      const clientH = rect.height || window.innerHeight;
+      W = Math.round(clientW * dpr);
+      H = Math.round(clientH * dpr);
       cv.width = W;
       cv.height = H;
-      const S = Math.min(W * 1.12, H * DASP * 1.08);
-      K = (S / DW) * 1.25;
+      const isMobile = clientW < 768;
+      const S = isMobile ? Math.min(W * 1.28, H * DASP * 1.05) : Math.min(W * 1.12, H * DASP * 1.08);
+      K = (S / DW) * (isMobile ? 1.35 : 1.25);
       OX = (W - DW * K) / 2;
       OY = (H - DH * K) / 2;
       buildHead();

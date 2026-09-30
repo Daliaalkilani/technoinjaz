@@ -1,0 +1,91 @@
+/* About Team Section Styling */
+.about-team-section {
+  position: relative;
+  width: 100%;
+  background-color: var(--about-bg);
+}
+
+.about-header-container {
+  padding: 80px 24px 24px;
+  text-align: center;
+  max-width: 850px;
+  margin: 0 auto;
+}
+
+.about-header-title {
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 14px;
+  letter-spacing: -0.02em;
+  text-shadow: 0 0 25px rgba(0, 210, 255, 0.2);
+}
+
+.about-header-subtitle {
+  font-size: clamp(1rem, 1.3vw, 1.15rem);
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+.team-moments-section-wrapper {
+  position: relative;
+  width: 100%;
+  height: 90vh;
+  min-height: 650px;
+  overflow: hidden;
+  background-color: var(--about-bg);
+}
+
+.team-showcase-section-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 700px;
+  background-color: var(--team-showcase-bg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .about-header-container {
+    padding: 36px 16px 16px;
+  }
+
+  .about-header-title {
+    font-size: clamp(1.75rem, 6.5vw, 2.25rem);
+    margin-bottom: 10px;
+  }
+
+  .about-header-subtitle {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .team-moments-section-wrapper {
+    height: 500px;
+    min-height: 450px;
+  }
+
+  .team-showcase-section-wrapper {
+    height: 90vh;
+    min-height: 580px;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-header-container {
+    padding: 28px 12px 12px;
+  }
+
+  .team-moments-section-wrapper {
+    height: 460px;
+    min-height: 420px;
+  }
+
+  .team-showcase-section-wrapper {
+    height: 85vh;
+    min-height: 540px;
+  }
+}

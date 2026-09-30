@@ -163,7 +163,16 @@
 .videos-cardswap-col {
   position: relative;
   width: 100%;
-  min-height: 600px;
+  min-height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.videos-cardswap-wrapper {
+  position: relative;
+  width: 100%;
+  height: 520px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -425,7 +434,7 @@
 @media (max-width: 1024px) {
   .videos-container {
     grid-template-columns: 1fr;
-    gap: 3rem;
+    gap: 2.25rem;
   }
 
   .videos-info-col {
@@ -451,61 +460,99 @@
     justify-content: center;
   }
 
+  .videos-cardswap-wrapper {
+    height: 460px;
+  }
+
   .videos-cardswap-col .card-swap-container {
-    transform: scale(0.8) translate(-50%, -50%) !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-55%, -50%) scale(0.78) !important;
   }
 }
 
 @media (max-width: 768px) {
+  .videos-cardswap-wrapper {
+    height: 380px;
+  }
+
   .videos-cardswap-col .card-swap-container {
-    transform: scale(0.68) translate(-50%, -50%) !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-55%, -50%) scale(0.66) !important;
   }
 }
 
 @media (max-width: 640px) {
   .videos-section {
-    padding: 2.5rem 1rem 3.5rem;
+    padding: 2.25rem 1rem 2.75rem;
+  }
+
+  .videos-container {
+    gap: 1.5rem;
+  }
+
+  .videos-info-col {
+    gap: 0.85rem;
   }
 
   .videos-title {
-    font-size: clamp(1.85rem, 6.5vw, 2.5rem);
+    font-size: clamp(1.75rem, 6vw, 2.25rem);
   }
 
   .videos-subtitle {
-    font-size: 1rem;
-    line-height: 1.6;
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .videos-cardswap-wrapper {
+    height: 340px;
   }
 
   .videos-cardswap-col {
-    min-height: 440px;
+    min-height: auto;
   }
 
   .videos-cardswap-col .card-swap-container {
-    top: 45%;
-    transform: scale(0.58) translate(-50%, -50%) !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-55%, -50%) scale(0.58) !important;
   }
 }
 
 @media (max-width: 480px) {
-  .videos-cardswap-col .card-swap-container {
-    top: 42%;
-    transform: scale(0.55) translate(-50%, -50%) !important;
-  }
-}
-
-@media (max-width: 479.98px) {
   .videos-section {
-    padding: 2rem 0.75rem 2.5rem;
+    padding: 1.75rem 0.75rem 2.25rem;
+  }
+
+  .videos-container {
+    gap: 1.25rem;
+  }
+
+  .videos-cardswap-wrapper {
+    height: 300px;
+  }
+
+  .videos-cardswap-col .card-swap-container {
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-55%, -50%) scale(0.54) !important;
   }
 }
 
 @media (max-width: 380px) {
-  .videos-cardswap-col {
-    min-height: 380px;
+  .videos-cardswap-wrapper {
+    height: 270px;
   }
+
+  .videos-cardswap-col {
+    min-height: auto;
+  }
+
   .videos-cardswap-col .card-swap-container {
-    top: 40%;
-    transform: scale(0.48) translate(-50%, -50%) !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-55%, -50%) scale(0.48) !important;
   }
 }
 

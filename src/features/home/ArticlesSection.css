@@ -108,11 +108,21 @@
 
 @media (max-width: 640px) {
   .articles-section {
-    padding: 4rem 1rem 6rem;
+    padding: 2.5rem 1rem 3.5rem;
   }
 
   .articles-container {
-    gap: 2.5rem;
+    gap: 1.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .articles-section {
+    padding: 2rem 0.75rem 2.75rem;
+  }
+
+  .articles-container {
+    gap: 1.25rem;
   }
 }
 
