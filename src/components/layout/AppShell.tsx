@@ -53,6 +53,7 @@ export function AppShell({ children }: AppShellProps) {
   const isArticleDetailPage = /^\/articles\/[^\/]+/.test(pathname);
   const isProjectDetailPage = /^\/projects\/[^\/]+/.test(pathname);
   const isAuthPage = pathname === '/login' || pathname === '/register';
+  const isAccountPage = pathname === '/account' || pathname.startsWith('/account');
   const isErrorPage = 
     pathname === '/connection-error' || 
     pathname === '/offline' || 
@@ -326,7 +327,7 @@ export function AppShell({ children }: AppShellProps) {
         </div>
       )}
 
-      {!isArticleDetailPage && !isProjectDetailPage && !isAuthPage && !isErrorPage && <CinematicFooter />}
+      {!isArticleDetailPage && !isProjectDetailPage && !isAuthPage && !isAccountPage && !isErrorPage && <CinematicFooter />}
     </div>
   );
 }
