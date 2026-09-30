@@ -11,22 +11,20 @@ import {
   BookmarkCheck, 
   Share2, 
   Check, 
-  Home, 
-  Layers, 
+  Home,
+  Layers,
   FileText,
-  Download,
   Presentation,
-  X,
-  ChevronLeft,
-  ChevronRight,
   Send,
-  PhoneCall
+  PhoneCall,
+  BookOpen
 } from 'lucide-react';
 import type { ProjectItem } from '@/data/projectsData';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { useSavedProjects } from '@/hooks/useSavedProjects';
 import { plainExcerpt, projectTags } from '@/lib/text';
 import { SITE_URL } from '@/config/site';
+import FlipbookViewer from '@/components/bookcase/FlipbookViewer';
 import './ProjectDetailView.css';
 
 export interface TocHeading {
@@ -54,7 +52,6 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
 
   const [copied, setCopied] = useState(false);
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
-  const [pdfPage, setPdfPage] = useState(1);
 
   const handleShare = () => {
     const url = `${SITE_URL}/projects/${project.slug}`;
@@ -199,6 +196,60 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
             </div>
           )}
 
+          {/* 3D Interactive Documentation Showcase */}
+          <div className="project-bookcase-banner" style={{ margin: '2.5rem 0', padding: '2rem 1.5rem', borderRadius: '18px', background: 'radial-gradient(circle at 50% 20%, rgba(37, 99, 235, 0.12) 0%, rgba(15, 23, 42, 0.6) 100%)', border: '1px solid rgba(56, 189, 248, 0.25)', textAlign: 'center' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: '#38bdf8', fontSize: '0.85rem', fontWeight: 700, padding: '0.3rem 0.9rem', borderRadius: '9999px', background: 'rgba(56, 189, 248, 0.1)', border: '1px solid rgba(56, 189, 248, 0.25)', marginBottom: '0.85rem' }}>
+              <BookOpen size={16} />
+              <span>{isEn ? '3D Documentation & Interactive Flipbook' : 'المكتبة التوثيقية ثلاثية الأبعاد (3D Flipbook)'}</span>
+            </div>
+            <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '1.3rem', fontWeight: 800 }}>
+              {isEn ? 'Browse Project Technical Whitepaper in 3D' : 'تصفّح الوثيقة الهندسية بتقنية طي وتقليب الصفحات 3D'}
+            </h4>
+            <p style={{ margin: '0 auto 1.5rem auto', color: '#94a3b8', fontSize: '0.9rem', maxWidth: '580px', lineHeight: 1.6 }}>
+              {isEn 
+                ? 'Experience real-time interactive paper-folding physics and high-resolution architecture blueprints.'
+                : 'استكشف الوثيقة الهندسية الكاملة بتأثير فيزيائي واقعي لطي وتقليب الصفحات عبر قارئ الـ 3D التفاعلي.'}
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'center', perspective: '1000px', marginBottom: '1.25rem' }}>
+              <div 
+                className="book-3d-wrapper"
+                onClick={() => setIsPdfModalOpen(true)}
+                title={isEn ? "Click to open in 3D Flipbook" : "انقر للفتح في قارئ الـ 3D"}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className="book-3d">
+                  <div className="book-face book-front">
+                    <div className="book-cover-fallback">
+                      <div className="tag">{project.categoryNameAr || 'Engineering'}</div>
+                      <h4 className="title" style={{ fontSize: '1rem' }}>{project.title}</h4>
+                      <div className="badge">{isEn ? 'Click to Flip 3D' : 'انقر للتقليب 3D'}</div>
+                    </div>
+                  </div>
+                  <div className="book-face book-back" />
+                  <div className="book-face book-spine">
+                    <span className="book-spine-text">{project.title}</span>
+                  </div>
+                  <div className="book-face book-right" />
+                  <div className="book-face book-top" />
+                  <div className="book-face book-bottom" />
+                </div>
+                <div className="book-3d-info">
+                  <span className="book-3d-title">{project.title}</span>
+                  <span className="book-3d-action-pill">{isEn ? '📖 Read in 3D Flipbook' : '📖 تصفح بتقنية 3D'}</span>
+                </div>
+              </div>
+            </div>
+            <button
+              type="button"
+              className="fb-nav-btn"
+              onClick={() => setIsPdfModalOpen(true)}
+              style={{ margin: '0 auto', display: 'inline-flex' }}
+            >
+              <BookOpen size={16} />
+              <span>{isEn ? 'Open 3D Flipbook Reader' : 'افتح القارئ التفاعلي ثلاثي الأبعاد'}</span>
+            </button>
+          </div>
+
           {/* Project Inquiry CTA Box */}
           <div className="project-cta-card">
             <div className="project-cta-icon">
@@ -307,147 +358,14 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
         </section>
       )}
 
-      {/* Interactive PDF & Documentation Bookcase Modal */}
-      {isPdfModalOpen && (
-        <div className="pdf-bookcase-overlay" onClick={() => setIsPdfModalOpen(false)}>
-          <div className="pdf-bookcase-modal" onClick={e => e.stopPropagation()} dir={isEn ? 'ltr' : 'rtl'}>
-            <div className="pdf-bookcase-header">
-              <div className="pdf-header-title-group">
-                <div className="pdf-icon-badge">
-                  <FileText size={20} />
-                </div>
-                <div>
-                  <h3 className="pdf-header-title">{project.title}</h3>
-                  <span className="pdf-header-subtitle">
-                    {isEn ? "Technical Documentation & Project Whitepaper" : "التقرير التقني والمستند التوثيقي للمشروع"}
-                  </span>
-                </div>
-              </div>
-              <div className="pdf-header-actions">
-                <a
-                  href={project.pdfUrl || `/docs/projects/${project.slug}.pdf`}
-                  download={`${project.slug}-documentation.pdf`}
-                  className="pdf-toolbar-btn download-btn"
-                  title={isEn ? "Download PDF File" : "تحميل ملف الـ PDF"}
-                >
-                  <Download size={16} />
-                  <span className="btn-label-desktop">{isEn ? "Download" : "تحميل PDF"}</span>
-                </a>
-                <button
-                  type="button"
-                  className="pdf-toolbar-btn close-btn"
-                  onClick={() => setIsPdfModalOpen(false)}
-                  aria-label={isEn ? "Close reader" : "إغلاق العارض"}
-                >
-                  <X size={20} />
-                </button>
-              </div>
-            </div>
-
-            {/* Bookcase Content / Flip Reader */}
-            <div className="pdf-bookcase-body">
-              <div className="pdf-book-page-wrapper">
-                <div className="pdf-book-page">
-                  <div className="pdf-page-watermark">TECHNO ENJAZ</div>
-
-                  {pdfPage === 1 && (
-                    <div className="pdf-page-slide cover-slide">
-                      <div className="pdf-slide-badge">{project.categoryNameAr}</div>
-                      <h2 className="pdf-slide-title">{project.title}</h2>
-                      <div className="pdf-slide-media">
-                        <img src={project.image} alt={project.title} className="pdf-slide-img" />
-                      </div>
-                      <p className="pdf-slide-excerpt">{cleanExcerpt}</p>
-                      <div className="pdf-slide-meta-row">
-                        <span className="pdf-meta-pill">⚡ {isEn ? "Verified Architecture" : "معمارية برمجية موثقة"}</span>
-                        <span className="pdf-meta-pill">📁 {isEn ? "System Specifications" : "المواصفات الفنية المكتملة"}</span>
-                      </div>
-                    </div>
-                  )}
-
-                  {pdfPage === 2 && (
-                    <div className="pdf-page-slide tech-slide">
-                      <h3 className="pdf-slide-heading">{isEn ? "System Architecture & Technologies" : "المعمارية البرمجية والتقنيات"}</h3>
-                      <p className="pdf-slide-desc">
-                        {isEn 
-                          ? "Modular system workflow designed for real-time responsiveness, modular isolation, and clean state handling."
-                          : "مخطط هيكلي ومعالجة مصممة لضمان أعلى مستويات الأداء والاستجابة، مع عزل الطبقات والوحدات البرمجية بدقة."}
-                      </p>
-                      <div className="pdf-tech-pills-grid">
-                        {cleanTags.map((tag, i) => (
-                          <div key={i} className="pdf-tech-pill">
-                            <span className="tech-dot" />
-                            <span>{tag}</span>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="pdf-pipeline-card">
-                        <div className="pipeline-title">{isEn ? "Execution Pipeline" : "مسار المعالجة والتنفيذ"}</div>
-                        <p className="pipeline-desc">
-                          {isEn 
-                            ? "Sensor & Frame Ingestion ➔ Feature Detection & Normalization ➔ Real-time Decision Processing ➔ Interface Render"
-                            : "التقاط الإشارات والفيديو ➔ تحليل الخصائص والمعايرة ➔ محرك اتخاذ القرار في الزمن الحقيقي ➔ عرض النتيجة على الواجهة"}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {pdfPage === 3 && (
-                    <div className="pdf-page-slide summary-slide">
-                      <h3 className="pdf-slide-heading">{isEn ? "Technical Impact & Verification" : "مخرجات التنفيذ والتحقق العملي"}</h3>
-                      <div className="pdf-key-points">
-                        <div className="key-point-item">
-                          <span className="point-badge">01</span>
-                          <div>
-                            <h4>{isEn ? "Scalable Codebase Architecture" : "بنية كود نظيفة وقابلة للتوسع"}</h4>
-                            <p>{isEn ? "Built adhering to modern software design patterns, decoupling backend logic from presentation layers." : "تم البناء وفق أحدث أنماط التصميم البرمجي مع فصل منطق العمل عن طبقة العرض لضمان السهولة في الصيانة والتطوير المستقبلي."}</p>
-                          </div>
-                        </div>
-                        <div className="key-point-item">
-                          <span className="point-badge">02</span>
-                          <div>
-                            <h4>{isEn ? "Optimized Real-time Performance" : "استجابة فائقة في الزمن الحقيقي"}</h4>
-                            <p>{isEn ? "Tested under rigorous conditions with low latency response and smooth frame rates." : "خضع النموذج لاختبارات أداء مكثفة أثبتت استقرار المعالجة وزمن استجابة منخفض مع واجهات بصرية سلسلة."}</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Bookcase Navigation Footer */}
-              <div className="pdf-bookcase-footer">
-                <button
-                  type="button"
-                  className="pdf-page-nav-btn"
-                  disabled={pdfPage <= 1}
-                  onClick={() => setPdfPage(p => Math.max(1, p - 1))}
-                  title={isEn ? "Previous Page" : "الصفحة السابقة"}
-                >
-                  <ChevronRight size={18} />
-                  <span>{isEn ? "Previous" : "السابق"}</span>
-                </button>
-
-                <div className="pdf-page-indicator">
-                  <span>{isEn ? `Page ${pdfPage} of 3` : `صفحة ${pdfPage} من 3`}</span>
-                </div>
-
-                <button
-                  type="button"
-                  className="pdf-page-nav-btn"
-                  disabled={pdfPage >= 3}
-                  onClick={() => setPdfPage(p => Math.min(3, p + 1))}
-                  title={isEn ? "Next Page" : "الصفحة التالية"}
-                >
-                  <span>{isEn ? "Next" : "التالي"}</span>
-                  <ChevronLeft size={18} />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Interactive 3D PDF Flipbook Reader */}
+      <FlipbookViewer
+        isOpen={isPdfModalOpen}
+        onClose={() => setIsPdfModalOpen(false)}
+        pdfUrl={project.pdfUrl || '/pdf/robotics-summer-club.pdf'}
+        title={project.title}
+        subtitle={isEn ? "Technical Documentation & 3D Interactive Whitepaper" : "التقرير التقني والمستند التوثيقي ثلاثي الأبعاد"}
+      />
     </div>
   );
 };

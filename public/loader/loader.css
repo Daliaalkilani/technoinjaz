@@ -3,6 +3,11 @@
  * Space backdrop, orbit rings, rocket artwork, engine thrust.
  */
 
+/* Hide immediately if skipped */
+html[data-skip-loader] #te-loader {
+  display: none !important;
+}
+
 #te-loader {
   --bg: #030508;
   --text: #edf6f7;

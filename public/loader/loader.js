@@ -7,6 +7,8 @@
   'use strict';
 
   if (document.documentElement.hasAttribute('data-skip-loader')) {
+    const existing = document.getElementById('te-loader');
+    if (existing) existing.remove();
     window.dispatchEvent(new CustomEvent('techno:completed'));
     return;
   }

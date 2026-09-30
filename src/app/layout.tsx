@@ -9,6 +9,8 @@ import { buildRootMetadata } from '@/seo/metadata';
 import { JsonLd } from '@/seo/JsonLd';
 import { organization, website } from '@/seo/schemas';
 
+import { TeLoader } from '@/components/layout/TeLoader';
+
 const readex = Readex_Pro({
   subsets: ['arabic', 'latin'],
   weight: ['300', '400', '500', '600', '700'],
@@ -42,9 +44,11 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="stylesheet" href="/loader/loader.css" />
+        <style dangerouslySetInnerHTML={{ __html: 'html[data-skip-loader] #te-loader{display:none!important;}' }} />
         <script src="/loader/loader.js" defer />
       </head>
       <body className={readex.className} suppressHydrationWarning>
+        <TeLoader />
         <ThemeLanguageProvider>
           <LoaderProvider>
             <AppShell>{children}</AppShell>
