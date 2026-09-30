@@ -604,7 +604,7 @@ class InfiniteGridMenu {
   movementActive = false;
 
   autoTourEnabled = true;
-  isHovered = false;
+  wasDragging = false;
   targetMemberIndex = 0;
   targetVertexIndex = -1;
   dwellTimer = 0;
@@ -920,8 +920,11 @@ class InfiniteGridMenu {
       this.onMovementChange(isMoving);
     }
 
-    if (this.control.isPointerDown || this.isHovered) {
-      // Manual control: pause auto-cycle and track user's active item
+    const isDragging = this.control.isPointerDown;
+
+    if (isDragging) {
+      // Manual drag & drop: user takes over and rotates the 3D sphere
+      this.wasDragging = true;
       this.dwellTimer = 0;
       this.isTransitioning = false;
       const nearestVertexIndex = this.#findNearestVertexIndex();
@@ -929,14 +932,21 @@ class InfiniteGridMenu {
       this.targetVertexIndex = nearestVertexIndex;
       this.onActiveItemChange(this.targetMemberIndex);
 
-      if (!this.control.isPointerDown) {
-        const snapDirection = vec3.normalize(vec3.create(), this.#getVertexWorldPosition(nearestVertexIndex));
-        this.control.snapTargetDirection = snapDirection;
-      } else {
-        cameraTargetZ += this.control.rotationVelocity * 80 + 2.5;
-        damping = 7 / timeScale;
-      }
+      cameraTargetZ += this.control.rotationVelocity * 80 + 2.5;
+      damping = 7 / timeScale;
     } else {
+      // User is NOT dragging (mouse hover or idle): auto-tour keeps running smoothly without stopping!
+      if (this.wasDragging) {
+        // Just released drag & drop: snap to the chosen member and reset dwell timer
+        this.wasDragging = false;
+        const nearestVertexIndex = this.#findNearestVertexIndex();
+        this.targetMemberIndex = nearestVertexIndex % Math.max(1, this.items.length);
+        this.targetVertexIndex = nearestVertexIndex;
+        this.isTransitioning = true;
+        this.dwellTimer = 0;
+        this.onActiveItemChange(this.targetMemberIndex);
+      }
+
       // Auto-tour stepped cycle
       if (this.targetVertexIndex < 0) {
         this.targetMemberIndex = 0;
@@ -1155,8 +1165,6 @@ export default function InfiniteMenu({
   return (
     <div
       className="infinite-menu-wrapper"
-      onPointerEnter={() => { if (sketchRef.current) sketchRef.current.isHovered = true; }}
-      onPointerLeave={() => { if (sketchRef.current) sketchRef.current.isHovered = false; }}
       style={{
         position: 'relative',
         width: '100%',
