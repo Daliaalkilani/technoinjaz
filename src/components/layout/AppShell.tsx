@@ -11,7 +11,8 @@ import LanguageDropdown from './LanguageDropdown';
 import ScrollToTop from './ScrollToTop';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { getLoggedInUser } from '@/lib/auth';
-import { User } from 'lucide-react';
+import { User, Menu } from 'lucide-react';
+import MobileNavDrawer from './MobileNavDrawer';
 
 export interface AppShellProps {
   children: React.ReactNode;
@@ -25,6 +26,7 @@ export function AppShell({ children }: AppShellProps) {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [mounted, setMounted] = useState(false);
   const [isPastHero, setIsPastHero] = useState(false);
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [navHeight, setNavHeight] = useState(78);
   const navbarRef = useRef<HTMLElement | null>(null);
 
@@ -83,17 +85,18 @@ export function AppShell({ children }: AppShellProps) {
     };
   }, []);
 
+  // Handler for login requirement triggers
+  const handleRequireLogin = (e?: any) => {
+    const returnPath = e?.detail?.returnPath || (typeof window !== 'undefined' ? (window.location.pathname + window.location.search + window.location.hash) : '/');
+    try {
+      sessionStorage.setItem('techno_auth_return_path', returnPath);
+      sessionStorage.setItem('techno_auth_return_hash', returnPath);
+    } catch (err) {}
+    router.push('/login');
+  };
+
   // Listen for login requirement triggers
   useEffect(() => {
-    const handleRequireLogin = (e: any) => {
-      const returnPath = e?.detail?.returnPath || (window.location.pathname + window.location.search + window.location.hash);
-      try {
-        sessionStorage.setItem('techno_auth_return_path', returnPath);
-        sessionStorage.setItem('techno_auth_return_hash', returnPath);
-      } catch (err) {}
-      router.push('/login');
-    };
-
     window.addEventListener('techno_require_login', handleRequireLogin);
     return () => window.removeEventListener('techno_require_login', handleRequireLogin);
   }, [router]);
@@ -217,16 +220,7 @@ export function AppShell({ children }: AppShellProps) {
               <button
                 type="button"
                 className={`navbar-auth-btn ${pathname === '/login' || pathname === '/register' ? 'active' : ''}`}
-                onClick={() => {
-                  try {
-                    const currentTarget = window.location.pathname + window.location.search + window.location.hash;
-                    if (!currentTarget.startsWith('/login') && !currentTarget.startsWith('/register')) {
-                      sessionStorage.setItem('techno_auth_return_path', currentTarget);
-                      sessionStorage.setItem('techno_auth_return_hash', currentTarget);
-                    }
-                  } catch (e) {}
-                  router.push('/login');
-                }}
+                onClick={() => handleRequireLogin()}
                 title={t.nav.login}
                 aria-label={t.nav.login}
               >
@@ -238,8 +232,27 @@ export function AppShell({ children }: AppShellProps) {
                 </span>
               </button>
             )}
+
+            {/* Mobile Hamburger Menu Toggle Button */}
+            <button
+              type="button"
+              className="navbar-mobile-toggle-btn"
+              onClick={() => setIsMobileDrawerOpen(true)}
+              aria-label={lang === 'ar' ? 'فتح القائمة الرئيسية' : 'Open Navigation Menu'}
+              aria-expanded={isMobileDrawerOpen}
+            >
+              <Menu size={22} />
+            </button>
           </div>
         </nav>
+
+        {/* Mobile Slide-over Glass Navigation Drawer */}
+        <MobileNavDrawer
+          isOpen={isMobileDrawerOpen}
+          onClose={() => setIsMobileDrawerOpen(false)}
+          currentUser={currentUser}
+          onRequireLogin={() => handleRequireLogin()}
+        />
       </div>
 
       <main id="main-content">

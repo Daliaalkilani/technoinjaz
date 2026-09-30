@@ -461,6 +461,16 @@
   }
 }
 
+@media (max-width: 380px) {
+  .videos-cardswap-col {
+    min-height: 380px;
+  }
+  .videos-cardswap-col .card-swap-container {
+    top: 40%;
+    transform: scale(0.48) translate(-50%, -50%) !important;
+  }
+}
+
 /* =========================================================
    LIGHT MODE OVERRIDES FOR VIDEOS SECTION
    ========================================================= */

@@ -204,7 +204,7 @@
   }
 
   .projects-heading {
-    font-size: clamp(2rem, 7vw, 2.75rem);
+    font-size: clamp(1.85rem, 6.5vw, 2.5rem);
   }
 
   .projects-statement {
@@ -214,6 +214,22 @@
 
   .projects-spiral-wrapper {
     height: 420px;
+  }
+}
+
+@media (max-width: 479.98px) {
+  .projects-section {
+    padding: 2rem 0.75rem 2.5rem;
+  }
+
+  .projects-spiral-wrapper {
+    height: 360px;
+  }
+
+  .projects-view-all-btn {
+    min-height: 44px;
+    padding: 0.75rem 1.35rem;
+    font-size: 0.9rem;
   }
 }
 

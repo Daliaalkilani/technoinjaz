@@ -17,10 +17,14 @@ const readex = Readex_Pro({
 });
 
 export const viewport: Viewport = {
-  themeColor: '#030712',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 5
+  maximumScale: 5,
+  viewportFit: 'cover',
+  themeColor: [
+    { media: '(prefers-color-scheme: dark)', color: '#030712' },
+    { media: '(prefers-color-scheme: light)', color: '#f8fafc' }
+  ]
 };
 
 export const metadata: Metadata = buildRootMetadata();

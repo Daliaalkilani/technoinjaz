@@ -79,13 +79,61 @@ const ProjectsSection = ({
   showNavigateButton = true
 }: ProjectsSectionProps) => {
   const { lang, t } = useThemeLanguage();
-  const [isMobile, setIsMobile] = useState(false);
+  const [spiralConfig, setSpiralConfig] = useState({
+    radius: 255,
+    cardWidth: 144,
+    cardHeight: 136,
+    verticalSpacing: 72,
+    perspective: 1800,
+    cardRadius: 21,
+  });
 
   useEffect(() => {
-    setIsMobile(window.innerWidth < 640);
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 640);
+      const w = window.innerWidth;
+      if (w < 480) {
+        // Small phones & compact Androids (320px - 480px)
+        setSpiralConfig({
+          radius: 120,
+          cardWidth: 92,
+          cardHeight: 88,
+          verticalSpacing: 46,
+          perspective: 1100,
+          cardRadius: 14,
+        });
+      } else if (w < 768) {
+        // Mainstream phones & phablets (480px - 768px)
+        setSpiralConfig({
+          radius: 155,
+          cardWidth: 112,
+          cardHeight: 106,
+          verticalSpacing: 54,
+          perspective: 1400,
+          cardRadius: 16,
+        });
+      } else if (w < 1024) {
+        // Tablets (768px - 1024px)
+        setSpiralConfig({
+          radius: 195,
+          cardWidth: 128,
+          cardHeight: 122,
+          verticalSpacing: 64,
+          perspective: 1600,
+          cardRadius: 18,
+        });
+      } else {
+        // Desktop / Large screen (identical to original)
+        setSpiralConfig({
+          radius: 255,
+          cardWidth: 144,
+          cardHeight: 136,
+          verticalSpacing: 72,
+          perspective: 1800,
+          cardRadius: 21,
+        });
+      }
     };
+    handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -128,12 +176,12 @@ const ProjectsSection = ({
             items={getProjectImages(lang)}
             animationMode="all"
             speed={1.1}
-            radius={isMobile ? 190 : 255}
-            cardWidth={isMobile ? 124 : 144}
-            cardHeight={isMobile ? 118 : 136}
-            verticalSpacing={isMobile ? 62 : 72}
-            perspective={1800}
-            cardRadius={21}
+            radius={spiralConfig.radius}
+            cardWidth={spiralConfig.cardWidth}
+            cardHeight={spiralConfig.cardHeight}
+            verticalSpacing={spiralConfig.verticalSpacing}
+            perspective={spiralConfig.perspective}
+            cardRadius={spiralConfig.cardRadius}
             centerScale={1.22}
             edgeBlur={5.5}
             cardsPerTurn={9}

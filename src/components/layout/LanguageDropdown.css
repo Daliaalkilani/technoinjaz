@@ -213,3 +213,11 @@
 [data-theme="light"] .lang-check-icon {
   color: #0284c7;
 }
+
+@media (max-width: 1023.98px) {
+  .lang-dropdown-btn {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0 10px;
+  }
+}

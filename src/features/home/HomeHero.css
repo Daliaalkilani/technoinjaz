@@ -206,6 +206,7 @@
 
   .cta-button {
     width: 100%;
+    min-height: 44px;
     padding: 0.85rem 1.5rem;
     font-size: 0.95rem;
   }
@@ -217,6 +218,25 @@
   .initial-title {
     font-size: clamp(2rem, 7vw, 2.75rem);
     line-height: 1.3;
+  }
+}
+
+@media (max-width: 479.98px) {
+  .initial-title {
+    font-size: clamp(1.75rem, 6.8vw, 2.3rem);
+  }
+
+  .expanded-hero-title {
+    font-size: clamp(1.35rem, 4.5vw, 1.8rem);
+  }
+
+  .expanded-overlay-wrapper {
+    gap: 1.25rem;
+    padding: 0 0.75rem;
+  }
+
+  .cta-group {
+    max-width: 280px;
   }
 }
 
