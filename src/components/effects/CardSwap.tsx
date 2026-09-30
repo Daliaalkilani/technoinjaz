@@ -81,17 +81,17 @@ const CardSwap: React.FC<CardSwapProps> = ({
     easing === 'elastic'
       ? {
           ease: 'elastic.out(0.6,0.9)',
-          durDrop: 1.2,
-          durMove: 1.2,
-          durReturn: 1.2,
+          durDrop: 1.35,
+          durMove: 1.35,
+          durReturn: 1.35,
           promoteOverlap: 0.9,
           returnDelay: 0.05
         }
       : {
           ease: 'power1.inOut',
-          durDrop: 0.8,
-          durMove: 0.8,
-          durReturn: 0.8,
+          durDrop: 0.9,
+          durMove: 0.9,
+          durReturn: 0.9,
           promoteOverlap: 0.45,
           returnDelay: 0.2
         };
@@ -105,16 +105,62 @@ const CardSwap: React.FC<CardSwapProps> = ({
   const intervalRef = useRef<number>(0);
   const container = useRef<HTMLDivElement>(null);
 
+  const isAnimatingRef = useRef<boolean>(false);
+  const isHoveredRef = useRef<boolean>(false);
+  const isVisibleRef = useRef<boolean>(false);
+
   useEffect(() => {
     const total = refs.length;
     refs.forEach((r, i) => placeNow(r.current!, makeSlot(i, cardDistance, verticalDistance, total), skewAmount));
 
+    const setAnimatingState = (animating: boolean) => {
+      isAnimatingRef.current = animating;
+      if (container.current) {
+        if (animating) {
+          container.current.setAttribute('data-animating', 'true');
+        } else {
+          container.current.removeAttribute('data-animating');
+        }
+      }
+    };
+
+    const stopInterval = () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = 0;
+      }
+    };
+
+    const startInterval = () => {
+      stopInterval();
+      if (isVisibleRef.current && (!pauseOnHover || !isHoveredRef.current)) {
+        intervalRef.current = window.setInterval(() => {
+          if (!isAnimatingRef.current && (!pauseOnHover || !isHoveredRef.current)) {
+            swap();
+          }
+        }, delay);
+      }
+    };
+
     const swap = () => {
       if (order.current.length < 2) return;
+      if (isAnimatingRef.current) return;
+      if (pauseOnHover && isHoveredRef.current) return;
 
+      setAnimatingState(true);
       const [front, ...rest] = order.current;
       const elFront = refs[front].current!;
-      const tl = gsap.timeline();
+
+      const tl = gsap.timeline({
+        onComplete: () => {
+          setAnimatingState(false);
+          // Cards have reached resting state (ثبوتها).
+          // If mouse is still hovering, do not schedule next swap until mouse leaves.
+          if (isVisibleRef.current && (!pauseOnHover || !isHoveredRef.current)) {
+            startInterval();
+          }
+        }
+      });
       tlRef.current = tl;
 
       tl.to(elFront, {
@@ -167,21 +213,9 @@ const CardSwap: React.FC<CardSwapProps> = ({
       });
     };
 
-    let isVisible = false;
-    const startInterval = () => {
-      clearInterval(intervalRef.current);
-      if (isVisible) {
-        intervalRef.current = window.setInterval(swap, delay);
-      }
-    };
-
-    const stopInterval = () => {
-      clearInterval(intervalRef.current);
-    };
-
     const observer = new IntersectionObserver(([entry]) => {
-      isVisible = entry.isIntersecting;
-      if (isVisible) {
+      isVisibleRef.current = entry.isIntersecting;
+      if (isVisibleRef.current) {
         startInterval();
       } else {
         stopInterval();
@@ -194,27 +228,34 @@ const CardSwap: React.FC<CardSwapProps> = ({
 
     if (pauseOnHover && container.current) {
       const node = container.current;
-      const pause = () => {
-        tlRef.current?.pause();
+      const onEnter = () => {
+        isHoveredRef.current = true;
+        // When cards are resting, hovering stops the next swap from starting.
         stopInterval();
+        // If an animation has already started, we DO NOT halt tlRef.current; it continues smoothly.
       };
-      const resume = () => {
-        tlRef.current?.play();
-        startInterval();
+      const onLeave = () => {
+        isHoveredRef.current = false;
+        // When mouse leaves, resume auto-swap interval if not currently in flight
+        if (!isAnimatingRef.current) {
+          startInterval();
+        }
       };
-      node.addEventListener('mouseenter', pause);
-      node.addEventListener('mouseleave', resume);
+      node.addEventListener('mouseenter', onEnter);
+      node.addEventListener('mouseleave', onLeave);
       return () => {
         observer.disconnect();
-        node.removeEventListener('mouseenter', pause);
-        node.removeEventListener('mouseleave', resume);
+        node.removeEventListener('mouseenter', onEnter);
+        node.removeEventListener('mouseleave', onLeave);
         stopInterval();
+        tlRef.current?.kill();
       };
     }
 
     return () => {
       observer.disconnect();
       stopInterval();
+      tlRef.current?.kill();
     };
   }, [cardDistance, verticalDistance, delay, pauseOnHover, skewAmount, easing]);
 
@@ -225,6 +266,11 @@ const CardSwap: React.FC<CardSwapProps> = ({
           ref: refs[i],
           style: { width, height, ...(child.props.style ?? {}) },
           onClick: e => {
+            if (isAnimatingRef.current) {
+              e.preventDefault();
+              e.stopPropagation();
+              return;
+            }
             child.props.onClick?.(e as React.MouseEvent<HTMLDivElement>);
             onCardClick?.(i);
           }

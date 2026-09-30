@@ -161,6 +161,11 @@
   transform-origin: center center;
 }
 
+/* While animating in flight, disable pointer events on cards to prevent mid-air jitter */
+.card-swap-container[data-animating="true"] .video-card {
+  pointer-events: none !important;
+}
+
 /* Video Card Custom Styling */
 .video-card {
   background: linear-gradient(160deg, #0c1833 0%, #030712 100%) !important;

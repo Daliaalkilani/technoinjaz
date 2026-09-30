@@ -149,6 +149,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
             <iframe
               src={`https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
               title={displayTitle}
+              loading="lazy"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
               className="video-modal-iframe"
@@ -159,6 +160,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
               controls
               autoPlay
               playsInline
+              preload="metadata"
               className="video-modal-video"
             />
           ) : (

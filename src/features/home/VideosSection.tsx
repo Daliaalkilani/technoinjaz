@@ -71,7 +71,7 @@ const VideosSection: React.FC<VideosSectionProps> = ({
             <CardSwap
               cardDistance={95}
               verticalDistance={85}
-              delay={2200}
+              delay={4800}
               pauseOnHover
               width={500}
               height={425}
@@ -133,6 +133,8 @@ const VideosSection: React.FC<VideosSectionProps> = ({
                           alt={title}
                           className="video-card-thumb"
                           loading="lazy"
+                          decoding="async"
+                          fetchPriority="low"
                         />
                         <div className="video-card-screen-overlay" />
                         <div className="video-play-btn" aria-label={lang === 'ar' ? "مشاهدة الفيديو" : "Watch Video"}>

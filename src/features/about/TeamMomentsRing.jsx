@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import './TeamMomentsRing.css';
 
-export default function TeamMomentsRing({ onScrollDown }) {
+export default function TeamMomentsRing({ onScrollDown = undefined } = {}) {
   const { lang, theme } = useThemeLanguage();
   const isLight = theme === 'light';
   const canvasRef = useRef(null);
@@ -503,17 +503,6 @@ export default function TeamMomentsRing({ onScrollDown }) {
   return (
     <div className="team-moments-wrapper">
       <canvas ref={canvasRef} className="team-moments-canvas" aria-hidden="true" />
-      {onScrollDown && (
-        <button
-          type="button"
-          className="moments-scroll-indicator"
-          onClick={onScrollDown}
-          aria-label={lang === 'ar' ? 'الانتقال إلى فريق العمل' : 'Scroll to team showcase'}
-        >
-          <span className="scroll-text">{lang === 'ar' ? 'فريق العمل الهندسي' : 'Engineering Team'}</span>
-          <span className="scroll-arrow" aria-hidden="true">↓</span>
-        </button>
-      )}
     </div>
   );
 }

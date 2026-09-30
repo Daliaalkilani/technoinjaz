@@ -17,71 +17,9 @@
   outline: none;
 }
 
-/* زر التمرير إلى قسم الفريق */
-.moments-scroll-indicator {
-  position: absolute;
-  bottom: 32px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 20;
-
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 22px;
-
-  background: rgba(10, 14, 26, 0.8);
-  border: 1px solid rgba(0, 210, 255, 0.35);
-  border-radius: 999px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-
-  color: #e2e8f0;
-  font-family: var(--font-readex), sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 24px rgba(0, 210, 255, 0.25);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.moments-scroll-indicator:hover {
-  background: rgba(0, 210, 255, 0.15);
-  border-color: var(--accent-cyan);
-  color: #ffffff;
-  transform: translateX(-50%) translateY(-4px);
-  box-shadow: 0 15px 35px rgba(0, 210, 255, 0.4);
-}
-
-.scroll-text {
-  letter-spacing: 0.3px;
-}
-
-.scroll-arrow {
-  font-size: 16px;
-  animation: bounceDown 1.8s infinite ease-in-out;
-  color: var(--accent-cyan);
-}
-
-@keyframes bounceDown {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(5px);
-  }
-}
-
 @media (max-width: 768px) {
   .team-moments-wrapper {
     min-height: 480px;
-  }
-
-  .moments-scroll-indicator {
-    bottom: calc(20px + var(--safe-bottom, 0px));
-    font-size: 13px;
-    padding: 10px 20px;
-    min-height: 44px;
   }
 }
 
@@ -92,20 +30,3 @@
   background-color: #f8fafc;
 }
 
-[data-theme="light"] .moments-scroll-indicator {
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(2, 132, 199, 0.35);
-  color: #0369a1;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06), 0 0 20px rgba(2, 132, 199, 0.15);
-}
-
-[data-theme="light"] .moments-scroll-indicator:hover {
-  background: #ffffff;
-  border-color: #0284c7;
-  color: #0284c7;
-  box-shadow: 0 15px 35px rgba(2, 132, 199, 0.25);
-}
-
-[data-theme="light"] .scroll-arrow {
-  color: #0284c7;
-}

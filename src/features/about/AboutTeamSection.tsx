@@ -35,13 +35,6 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
     projects: lang === 'en' ? (m.projectsEn || m.projects) : m.projects,
   }));
 
-  const scrollToTeam = () => {
-    const el = document.getElementById('team-showcase');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   const HeadingTag = headingLevel;
 
   return (
@@ -99,7 +92,7 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
           backgroundColor: 'var(--about-bg)'
         }}
       >
-        <TeamMomentsRing onScrollDown={scrollToTeam} />
+        <TeamMomentsRing />
 
         {/* Bottom gradient fade - sleek height so front cards remain crisp and vibrant */}
         <div

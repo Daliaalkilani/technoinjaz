@@ -2,10 +2,19 @@
 
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import ScrollExpand from '@/components/effects/ScrollExpand';
 import ProjectsSection from './ProjectsSection';
-import VideosSection from './VideosSection';
-import ArticlesSection from './ArticlesSection';
+
+const VideosSection = dynamic(() => import('./VideosSection'), {
+  ssr: true,
+  loading: () => <div style={{ minHeight: '600px' }} />
+});
+
+const ArticlesSection = dynamic(() => import('./ArticlesSection'), {
+  ssr: true,
+  loading: () => <div style={{ minHeight: '600px' }} />
+});
 import im3Img from '@/assets/home/hero-dark.png';
 import im2Img from '@/assets/home/hero-light.png';
 import technoEnjazLogo from '@/assets/brand/logo.png';
