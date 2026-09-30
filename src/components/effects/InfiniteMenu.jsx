@@ -1204,7 +1204,7 @@ export default function InfiniteMenu({
                 : activeItem.id === 'abdulghani'
                 ? (isEn ? 'Team Founder & Director' : 'قائد ومؤسس الفريق')
                 : activeItem.id === 'abdulhady-alkilani'
-                ? (isEn ? 'Full-Stack Developer & AI Integration' : 'مهندس برمجيات وتكامل الذكاء الاصطناعي')
+                ? (isEn ? 'Core Team Engineer' : 'مهندس الفريق الأساسي')
                 : (isEn ? 'Team Member' : 'عضو الفريق')}
             </span>
 

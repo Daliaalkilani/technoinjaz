@@ -51,8 +51,8 @@ export const projectReelsData: ProjectReel[] = [
     coverImage: '/images/platforms/hisab-erp.jpg',
     liveUrl: 'https://hisab-erp.pages.dev/login',
     engineer: {
-      name: 'عبد الغنى',
-      nameEn: 'Abdulghani',
+      name: 'م. عبد الغني الحمدي',
+      nameEn: 'Eng. Abdulghani Alhamdi',
       role: 'مدير الفريق التقني',
       roleEn: 'Lead Tech Director',
       avatar: '/images/team/abdulghani.jpg'
@@ -99,10 +99,10 @@ export const projectReelsData: ProjectReel[] = [
     coverImage: '/images/platforms/arduino-lab.jpg',
     liveUrl: 'https://circuit-lab-7jr.pages.dev/',
     engineer: {
-      name: 'عبد الهادي الكيلاني',
-      nameEn: 'Abdulhady Alkilani',
-      role: 'مهندس برمجيات وتكامل الذكاء الاصطناعي',
-      roleEn: 'Full-Stack Developer & AI Integration',
+      name: 'م. عبد الهادي الكيلاني',
+      nameEn: 'Eng. Abdulhady Alkilani',
+      role: 'مهندس برمجيات وذكاء اصطناعي',
+      roleEn: 'Software & AI Engineer',
       avatar: '/images/team/abdulhady.jpg'
     },
     description: 'بيئة برمجية تفاعلية ثلاثية الأبعاد لمحاكاة المتحكمات الصغرية وأجهزة إنترنت الأشياء، واختبار قراءات الحساسات وتدفق الإشارات دون الحاجة للعتاد الفيزيائي.',
@@ -137,8 +137,8 @@ export const projectReelsData: ProjectReel[] = [
     coverImage: '/images/platforms/projectforge.jpg',
     liveUrl: 'https://projectforge-e3q.pages.dev/',
     engineer: {
-      name: 'عبد الغنى',
-      nameEn: 'Abdulghani',
+      name: 'م. عبد الغني الحمدي',
+      nameEn: 'Eng. Abdulghani Alhamdi',
       role: 'مدير الفريق التقني',
       roleEn: 'Lead Tech Director',
       avatar: '/images/team/abdulghani.jpg'
@@ -175,8 +175,8 @@ export const projectReelsData: ProjectReel[] = [
     coverImage: '/images/platforms/interactive-cv.jpg',
     liveUrl: 'https://cv.abdalgani.com/',
     engineer: {
-      name: 'عبد الغنى',
-      nameEn: 'Abdulghani',
+      name: 'م. عبد الغني الحمدي',
+      nameEn: 'Eng. Abdulghani Alhamdi',
       role: 'مدير الفريق وقائد التطوير',
       roleEn: 'Team Director & Lead Architect',
       avatar: '/images/team/abdulghani.jpg'
@@ -213,8 +213,8 @@ export const projectReelsData: ProjectReel[] = [
     coverImage: '/images/platforms/khazama-store.jpg',
     liveUrl: 'https://khazama.pages.dev/',
     engineer: {
-      name: 'عبد الغنى',
-      nameEn: 'Abdulghani',
+      name: 'م. عبد الغني الحمدي',
+      nameEn: 'Eng. Abdulghani Alhamdi',
       role: 'مدير الفريق التقني',
       roleEn: 'Lead Tech Director',
       avatar: '/images/team/abdulghani.jpg'
@@ -240,10 +240,10 @@ export const projectReelsData: ProjectReel[] = [
     coverImage: '/images/platforms/cablexperts.jpg',
     liveUrl: 'https://cablexperts.pages.dev/',
     engineer: {
-      name: 'عبد الهادي الكيلاني',
-      nameEn: 'Abdulhady Alkilani',
-      role: 'مهندس برمجيات وتكامل الذكاء الاصطناعي',
-      roleEn: 'Full-Stack Developer & AI Integration',
+      name: 'م. عبد الهادي الكيلاني',
+      nameEn: 'Eng. Abdulhady Alkilani',
+      role: 'مهندس برمجيات وذكاء اصطناعي',
+      roleEn: 'Software & AI Engineer',
       avatar: '/images/team/abdulhady.jpg'
     },
     description: 'بوابة متخصصة لحساب أحمال كابلات الطاقة والجهد العالي، وتصفح المواصفات الفنية المعتمدة للمشاريع الإنشائية والصناعية الضخمة.',
