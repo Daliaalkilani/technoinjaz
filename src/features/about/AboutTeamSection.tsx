@@ -10,7 +10,7 @@ import { Skiper19 } from '@/components/effects/SvgFollowScroll';
 import SafeErrorBoundary from '@/components/effects/SafeErrorBoundary';
 
 const Orb = dynamic(() => import('@/components/effects/Orb'), { ssr: false });
-const InfiniteMenu = dynamic(() => import('@/components/effects/InfiniteMenu'), { ssr: false });
+const TeamFilmstrip = dynamic(() => import('@/components/effects/TeamFilmstrip'), { ssr: false });
 const TeamMomentsRing = dynamic(() => import('./TeamMomentsRing'), { ssr: false });
 
 export interface AboutTeamSectionProps {
@@ -230,14 +230,10 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
           ))}
         </ul>
 
-        {/* 3D Circular Team Carousel */}
-        <div style={{ position: 'relative', width: '100%', height: '100%', flex: 1, zIndex: 1 }}>
+        {/* 3D Glassmorphic Character Filmstrip */}
+        <div style={{ position: 'relative', width: '100%', height: '100%', flex: 1, zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <SafeErrorBoundary>
-            <InfiniteMenu
-              items={localizedCircleSlots as any}
-              scale={1.4}
-              backgroundColor="transparent"
-            />
+            <TeamFilmstrip members={localizedCircleSlots as any} />
           </SafeErrorBoundary>
         </div>
       </div>
