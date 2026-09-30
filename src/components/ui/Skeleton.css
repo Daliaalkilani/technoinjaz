@@ -1,0 +1,110 @@
+/* ==========================================================================
+   Skeleton.css — Glassmorphic Cyber Shimmer Loaders
+   Matches Techno Enjaz aesthetic: Deep Frosted Glass with Neon Cyan Shimmer
+   ========================================================================== */
+
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: rgba(15, 23, 42, 0.65);
+  border-radius: 8px;
+  border: 1px solid rgba(56, 189, 248, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+[data-theme="light"] .skeleton-shimmer {
+  background: rgba(241, 245, 249, 0.85);
+  border: 1px solid rgba(2, 132, 199, 0.15);
+}
+
+.skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(56, 189, 248, 0.12) 35%,
+    rgba(0, 210, 255, 0.22) 50%,
+    rgba(56, 189, 248, 0.12) 65%,
+    transparent 100%
+  );
+  animation: cyber-skeleton-shimmer 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+[data-theme="light"] .skeleton-shimmer::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(2, 132, 199, 0.08) 35%,
+    rgba(14, 165, 233, 0.16) 50%,
+    rgba(2, 132, 199, 0.08) 65%,
+    transparent 100%
+  );
+}
+
+@keyframes cyber-skeleton-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Base Skeleton layouts */
+.skeleton-page-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 100px 24px 60px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .skeleton-page-container {
+    padding: 80px 16px 40px;
+  }
+}
+
+/* Detail View Layout (Articles & Projects) */
+.skeleton-detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 32px;
+  margin-top: 32px;
+}
+
+@media (max-width: 1024px) {
+  .skeleton-detail-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Grid Layout (Catalogues) */
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  margin-top: 36px;
+}
+
+@media (max-width: 640px) {
+  .skeleton-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* Single Card Skeleton */
+.skeleton-card {
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 380px;
+}
