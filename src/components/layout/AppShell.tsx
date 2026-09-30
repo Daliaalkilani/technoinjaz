@@ -49,6 +49,7 @@ export function AppShell({ children }: AppShellProps) {
   }
 
   const isDedicatedTabOrView = pathname !== '/';
+  const isArticleDetailPage = /^\/articles\/[^\/]+/.test(pathname);
 
   // Navigation Items
   const navItems = [
@@ -262,7 +263,7 @@ export function AppShell({ children }: AppShellProps) {
         {children}
       </main>
 
-      <CinematicFooter />
+      {!isArticleDetailPage && <CinematicFooter />}
     </div>
   );
 }
