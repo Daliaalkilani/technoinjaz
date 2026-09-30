@@ -35,7 +35,7 @@
   flex-direction: column;
   justify-content: flex-start;
   position: relative;
-  min-height: 330px;
+  min-height: auto;
   height: 100%;
   width: 100%;
   max-width: 100%;
@@ -193,12 +193,23 @@
   height: auto;
   border-radius: 14px;
   overflow: hidden;
+  isolation: isolate;
+  transform: translateZ(0);
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
   background: #030712;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
   margin-bottom: 0.85rem;
   flex-shrink: 0;
   z-index: 2;
+}
+
+.magic-bento-card__media-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 14px;
+  overflow: hidden;
 }
 
 [data-theme="light"] .magic-bento-card__media {
@@ -251,6 +262,11 @@
   .magic-bento-card {
     width: 100%;
     min-height: auto;
+    padding: 1.1rem;
+  }
+
+  .magic-bento-card__media {
+    max-height: 180px;
   }
 }
 
@@ -263,16 +279,90 @@
   .magic-bento-card {
     min-height: auto;
   }
+
+  .magic-bento-card:nth-child(3),
+  .magic-bento-card:nth-child(4) {
+    grid-column: span 2;
+  }
+
+  .magic-bento-card__media {
+    max-height: 160px;
+  }
+
+  .magic-bento-card:nth-child(3) .magic-bento-card__media,
+  .magic-bento-card:nth-child(4) .magic-bento-card__media {
+    max-height: 240px;
+  }
 }
 
 @media (min-width: 1024px) {
   .card-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, minmax(260px, auto));
+    gap: 1.35rem;
+    max-width: 78rem;
   }
 
   .magic-bento-card {
-    min-height: 330px;
+    min-height: auto;
+    height: 100%;
+    padding: 1.1rem 1.1rem 1.25rem 1.1rem;
+  }
+
+  /* Asymmetric Bento Layout:
+     Row 1: [Card 1] [Card 2] [ Card 3 (2x2) ]
+     Row 2: [ Card 4 (2x2) ]  [ Card 3 (cont.) ]
+     Row 3: [ Card 4 (cont.) ][Card 5] [Card 6]
+  */
+  .magic-bento-card:nth-child(3) {
+    grid-column: 3 / span 2;
+    grid-row: 1 / span 2;
+    padding: 1.35rem 1.35rem 1.5rem 1.35rem;
+  }
+
+  .magic-bento-card:nth-child(4) {
+    grid-column: 1 / span 2;
+    grid-row: 2 / span 2;
+    padding: 1.35rem 1.35rem 1.5rem 1.35rem;
+  }
+
+  .magic-bento-card:nth-child(5) {
+    grid-column: 3;
+    grid-row: 3;
+  }
+
+  .magic-bento-card:nth-child(6) {
+    grid-column: 4;
+    grid-row: 3;
+  }
+
+  /* Compact 1x1 cards media size */
+  .magic-bento-card__media {
+    max-height: 140px;
+    margin-bottom: 0.75rem;
+  }
+
+  /* Hero 2x2 cards media size */
+  .magic-bento-card:nth-child(3) .magic-bento-card__media,
+  .magic-bento-card:nth-child(4) .magic-bento-card__media {
+    max-height: 270px;
+    margin-bottom: 1rem;
+  }
+
+  /* Typography enhancement for 2x2 hero cards */
+  .magic-bento-card:nth-child(3) .magic-bento-card__title,
+  .magic-bento-card:nth-child(4) .magic-bento-card__title {
+    font-size: 1.25rem;
+    --clamp-title: 2;
+    line-height: 1.4;
+    margin-bottom: 0.25rem;
+  }
+
+  .magic-bento-card:nth-child(3) .magic-bento-card__description,
+  .magic-bento-card:nth-child(4) .magic-bento-card__description {
+    font-size: 0.95rem;
+    --clamp-desc: 3;
+    line-height: 1.6;
   }
 }
 
