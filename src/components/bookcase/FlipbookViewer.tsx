@@ -287,31 +287,56 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
     };
   }, [isOpen, pdfUrl, isEn, loadPdfJs, renderPageSlot, updateVirtualPages]);
 
-  // Keyboard navigation (Escape, Left, Right)
+  // Dynamic stage transform for centering closed book (Page 1 Cover) or back cover
+  const getStageTransform = () => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      return undefined;
+    }
+    if (currentPage <= 1) {
+      // Cover is rendered on the right half of the 2-page spread -> shift -25% to center it
+      return 'translateX(-25%)';
+    }
+    if (totalPages > 1 && currentPage >= totalPages) {
+      // Back cover is rendered on the left half of the 2-page spread -> shift +25% to center it
+      return 'translateX(25%)';
+    }
+    return 'translateX(0)';
+  };
+
+  // Keyboard navigation (Unified RTL reading: ArrowLeft, Space, PageDown to advance Right-to-Left)
   useEffect(() => {
     if (!isOpen) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         onClose();
-      } else if (e.key === 'ArrowRight') {
-        if (isEn) {
+      } else if (
+        e.key === 'ArrowLeft' ||
+        e.key === 'PageDown' ||
+        (e.key === ' ' && (e.target === document.body || (e.target as HTMLElement)?.classList.contains('flipbook-modal') || (e.target as HTMLElement)?.classList.contains('flipbook-body')))
+      ) {
+        e.preventDefault();
+        pageFlipInstanceRef.current?.flipNext();
+      } else if (e.key === 'ArrowRight' || e.key === 'PageUp') {
+        e.preventDefault();
+        // If on the cover page (page 1), pressing arrow key opens the book (flips forward RTL)
+        if (currentPage <= 1) {
           pageFlipInstanceRef.current?.flipNext();
         } else {
           pageFlipInstanceRef.current?.flipPrev();
         }
-      } else if (e.key === 'ArrowLeft') {
-        if (isEn) {
-          pageFlipInstanceRef.current?.flipPrev();
-        } else {
-          pageFlipInstanceRef.current?.flipNext();
-        }
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        pageFlipInstanceRef.current?.flip(0);
+      } else if (e.key === 'End' && totalPages > 0) {
+        e.preventDefault();
+        pageFlipInstanceRef.current?.flip(totalPages - 1);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, isEn, onClose]);
+  }, [isOpen, currentPage, totalPages, onClose]);
 
   const toggleFullscreen = () => {
     if (!containerRef.current) return;
@@ -330,6 +355,12 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
 
   const handleNext = () => {
     pageFlipInstanceRef.current?.flipNext();
+  };
+
+  const handleCoverClick = () => {
+    if (currentPage <= 1) {
+      pageFlipInstanceRef.current?.flipNext();
+    }
   };
 
   if (!isOpen) return null;
@@ -357,7 +388,7 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
             </div>
             <div className="flipbook-title-group">
               <h3>{title}</h3>
-              <span>{subtitle || (isEn ? 'Interactive Document Reader' : 'قارئ المستندات الهندسية')}</span>
+              <span>{subtitle || (isEn ? 'Interactive Document Reader (RTL)' : 'قارئ المستندات الهندسية التفاعلي (RTL)')}</span>
             </div>
           </div>
 
@@ -398,12 +429,15 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
             </div>
           )}
 
-          <div className="flipbook-stage-wrapper">
+          <div className="flipbook-stage-wrapper" onClick={handleCoverClick}>
             <div
               id="book"
               ref={bookElementRef}
               className="st-page-flip-container"
-              style={{ visibility: loading ? 'hidden' : 'visible' }}
+              style={{
+                visibility: loading ? 'hidden' : 'visible',
+                transform: getStageTransform(),
+              }}
             />
           </div>
         </div>
@@ -412,7 +446,7 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
         <footer className="flipbook-footer">
           <div className="fb-hint-text">
             <Sparkles size={14} color="#38bdf8" />
-            <span>{isEn ? 'Tip: Drag or click page corners to fold & turn pages' : 'تلميح: اسحب أو انقر زوايا الصفحات للطي والقلب التفاعلي'}</span>
+            <span>{isEn ? 'Tip: Drag page corners or click to flip Right-to-Left (RTL)' : 'تلميح: اسحب زوايا الصفحات أو انقر للتقليب من اليمين لليسار'}</span>
           </div>
 
           <div className="fb-nav-group">
@@ -423,7 +457,7 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
               disabled={currentPage <= 1 || loading}
               title={isEn ? 'Previous Page' : 'الصفحة السابقة'}
             >
-              {isEn ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
+              <ChevronRight size={18} />
               <span>{isEn ? 'Previous' : 'السابق'}</span>
             </button>
 
@@ -433,13 +467,13 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
 
             <button
               type="button"
-              className="fb-nav-btn"
+              className="fb-nav-btn fb-nav-btn-next"
               onClick={handleNext}
               disabled={currentPage >= totalPages || loading}
               title={isEn ? 'Next Page' : 'الصفحة التالية'}
             >
               <span>{isEn ? 'Next' : 'التالي'}</span>
-              {isEn ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+              <ChevronLeft size={18} />
             </button>
           </div>
         </footer>

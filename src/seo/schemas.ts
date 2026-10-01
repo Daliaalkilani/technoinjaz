@@ -5,7 +5,7 @@ import type { FaqItem } from '@/data/faqData';
 import { projectTags, plainExcerpt } from '@/lib/text';
 
 export function abdulghaniPersonSchema() {
-  const url = absoluteUrl('/team/abdulghani');
+  const url = absoluteUrl('/about#team');
   return {
     '@type': 'Person',
     '@id': `${SITE_URL}/#abdulghani-alhamdi`,

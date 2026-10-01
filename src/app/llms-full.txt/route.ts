@@ -63,7 +63,7 @@ export async function GET() {
   - أنظمة التحكم الصناعي والأتمتة ودوائر الـ PLC (Industrial Control Systems).
   - إدارة وتطوير وهيكلة المشاريع الهندسية (Engineering Project Management).
 - **المشورة الهندسية**: يقدم الدعم والمشورة الفنية للطلاب والمهندسين في مشاريع التخرج، وتطوير المهارات في البرمجة والروبوتيك والتحكم.
-- **رابط الملف الشخصي**: ${absoluteUrl('/team/abdulghani')}
+- **الملف التعريفي**: ${absoluteUrl('/about#team')}
 
 ## Live Platforms\n`;
   for (const r of projectReelsData) {
