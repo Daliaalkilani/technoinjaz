@@ -4,8 +4,10 @@
 
 .article-fullscreen-view {
   width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
   min-height: 100vh;
-  padding: 1.5rem 1rem 6rem;
+  padding: 32px 20px 80px;
   box-sizing: border-box;
   font-family: var(--font-arabic, var(--font-readex), sans-serif);
   color: #f1f5f9;
@@ -14,8 +16,8 @@
 }
 
 .article-view-top-bar {
-  max-width: 1720px;
-  margin: 0 auto 2rem;
+  width: 100%;
+  margin: 0 0 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -55,11 +57,10 @@
 .article-fullscreen-layout {
   display: flex;
   align-items: flex-start;
-  justify-content: center;
-  gap: 32px;
+  justify-content: space-between;
+  gap: 36px;
   width: 100%;
-  max-width: 1720px;
-  margin: 0 auto;
+  margin: 0;
   position: relative;
 }
 
@@ -71,7 +72,6 @@
 /* Main Reading Column */
 .article-main-container {
   flex: 1;
-  max-width: 1280px;
   width: 100%;
   min-width: 0;
   display: flex;
@@ -406,7 +406,7 @@
    RELATED ARTICLES SIDEBAR (Vertical layout on the left)
    ========================================================================== */
 .article-related-sidebar {
-  width: 320px;
+  width: 300px;
   flex-shrink: 0;
   position: sticky;
   top: calc(var(--header-h, 78px) + 16px);
@@ -722,11 +722,11 @@
 }
 
 /* Tablet & Mobile Layout for Two-Column Article View */
-@media (max-width: 992px) {
+@media (max-width: 1024px) {
   .article-fullscreen-layout {
     flex-direction: column !important;
-    align-items: center;
-    gap: 28px;
+    align-items: stretch;
+    gap: 32px;
   }
 
   .article-main-container {
@@ -744,7 +744,13 @@
   .related-sidebar-list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 14px;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .article-fullscreen-view {
+    padding: 20px 16px 60px;
   }
 }
 

@@ -189,10 +189,10 @@ export const translations: Record<'ar' | 'en', Translations> = {
         },
         'taima-alwani': {
           id: 'taima-alwani',
-          title: 'منصة تيماء علواني',
-          subtitle: 'منصة الهوية الرقمية والأعمال الإبداعية',
-          description: 'موقع شخصي ومهني أنيق بتصميم عصري يعكس الهوية الرقمية، الأعمال الإبداعية، والخبرات المتخصصة.',
-          highlights: ['هوية رقمية', 'تصميم عصري', 'معرض إبداعي']
+          title: 'منصة سكيورتي سيتي',
+          subtitle: 'منظومة الأمان الذكي والحلول التقنية المتكاملة',
+          description: 'منظومة رقمية متطورة لإدارة أنظمة الحماية والمراقبة الذكية وتأمين المنشآت والحلول التقنية المتكاملة.',
+          highlights: ['أمان ذكي', 'أنظمة مراقبة', 'حلول متكاملة']
         },
         'rebuild-dn9': {
           id: 'rebuild-dn9',
@@ -412,10 +412,10 @@ export const translations: Record<'ar' | 'en', Translations> = {
         },
         'taima-alwani': {
           id: 'taima-alwani',
-          title: 'Taima Alwani Portfolio',
-          subtitle: 'Digital Identity & Creative Works Showcase',
-          description: 'An elegant professional showcase featuring modern design, creative artwork, and specialized domain expertise.',
-          highlights: ['Digital Identity', 'Modern UI/UX', 'Showcase']
+          title: 'Security City Platform',
+          subtitle: 'Smart Security & Integrated Solutions Platform',
+          description: 'Advanced digital system for managing intelligent security, smart surveillance, facility protection, and integrated solutions.',
+          highlights: ['Smart Security', 'Surveillance', 'Integrated Solutions']
         },
         'rebuild-dn9': {
           id: 'rebuild-dn9',

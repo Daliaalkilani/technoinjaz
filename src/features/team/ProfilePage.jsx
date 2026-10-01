@@ -31,6 +31,15 @@ export default function ProfilePage({ member, onBack }) {
   const memberSkills = isEn ? (member.skillsEn || member.skills || []) : (member.skills || []);
   const memberProjects = isEn ? (member.projectsEn || member.projects || []) : (member.projects || []);
   const memberLocation = isEn ? (member.locationEn || member.location || 'Headquarters') : (member.location || 'المقر الرئيسي');
+  const memberQuote = isEn ? (member.quoteEn || member.quote) : member.quote;
+  const memberVision = isEn ? (member.visionEn || member.vision) : member.vision;
+  const memberMission = isEn ? (member.missionEn || member.mission) : member.mission;
+  const memberGoals = isEn ? (member.goalsEn || member.goals) : member.goals;
+  const memberEducation = member.education || [];
+  const memberAwards = member.awards || [];
+  const memberTrainings = member.trainings || [];
+
+  const hasVisionMission = memberVision || memberMission || memberGoals;
 
   return (
     <div className="profile-wrapper" dir={isEn ? 'ltr' : 'rtl'}>
@@ -44,7 +53,7 @@ export default function ProfilePage({ member, onBack }) {
             <span className="back-arrow">{isEn ? '←' : '→'}</span>
             <span>{isEn ? 'Back to Team' : 'العودة إلى الفريق'}</span>
           </button>
-          <div className="profile-tag">{isEn ? 'Profile' : 'ملف تعريفي'}</div>
+          <div className="profile-tag">{isEn ? 'Engineering Leadership' : 'ملف هندسي معتمد'}</div>
         </header>
 
         {/* Hero Card: Avatar, Name, Role */}
@@ -69,13 +78,103 @@ export default function ProfilePage({ member, onBack }) {
           </div>
         </section>
 
+        {/* Inspiring Personal Quote Banner */}
+        {memberQuote && (
+          <section className="profile-quote-card">
+            <span className="quote-mark">“</span>
+            <blockquote className="quote-text">{memberQuote}</blockquote>
+            <span className="quote-author">— {memberName}</span>
+          </section>
+        )}
+
+        {/* Vision, Mission, Goals */}
+        {hasVisionMission && (
+          <section className="profile-triplet-grid">
+            {memberVision && (
+              <div className="triplet-card vision-card">
+                <div className="triplet-icon">🔭</div>
+                <h3 className="triplet-title">{isEn ? 'My Vision' : 'رؤيتي'}</h3>
+                <p className="triplet-desc">{memberVision}</p>
+              </div>
+            )}
+            {memberMission && (
+              <div className="triplet-card mission-card">
+                <div className="triplet-icon">🚀</div>
+                <h3 className="triplet-title">{isEn ? 'My Mission' : 'رسالتي'}</h3>
+                <p className="triplet-desc">{memberMission}</p>
+              </div>
+            )}
+            {memberGoals && (
+              <div className="triplet-card goals-card">
+                <div className="triplet-icon">🎯</div>
+                <h3 className="triplet-title">{isEn ? 'My Goals' : 'الأهداف'}</h3>
+                <p className="triplet-desc">{memberGoals}</p>
+              </div>
+            )}
+          </section>
+        )}
+
         {/* Profile Body Grid */}
         <div className="profile-grid">
           {/* Bio Section */}
-          <article className="profile-card">
-            <h2 className="section-title">{isEn ? 'About & Biography' : 'نبذة تعريفية'}</h2>
+          <article className="profile-card full-width">
+            <h2 className="section-title">{isEn ? 'About & Background' : 'نبذة تعريفية شاملة'}</h2>
             <p className="profile-bio-text">{memberBio}</p>
           </article>
+
+          {/* Academic Background */}
+          {memberEducation.length > 0 && (
+            <article className="profile-card">
+              <h2 className="section-title">{isEn ? 'Academic Background' : 'المؤهلات والتعليم'}</h2>
+              <div className="education-list">
+                {memberEducation.map((edu, idx) => (
+                  <div key={idx} className="education-item">
+                    <div className="edu-icon">🎓</div>
+                    <div className="edu-body">
+                      <h3 className="edu-degree">{isEn ? edu.degreeEn : edu.degree}</h3>
+                      <span className="edu-institution">{isEn ? edu.institutionEn : edu.institution}</span>
+                      {(edu.honors || edu.honorsEn) && (
+                        <span className="edu-honors">🏆 {isEn ? (edu.honorsEn || edu.honors) : edu.honors}</span>
+                      )}
+                      {(edu.status || edu.statusEn) && (
+                        <span className="edu-status">⏳ {isEn ? (edu.statusEn || edu.status) : edu.status}</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </article>
+          )}
+
+          {/* Awards & Distinctions */}
+          {memberAwards.length > 0 && (
+            <article className="profile-card">
+              <h2 className="section-title">{isEn ? 'Honors & Distinctions' : 'الجوائز والتكريمات'}</h2>
+              <div className="awards-list">
+                {memberAwards.map((award, idx) => (
+                  <div key={idx} className="award-item">
+                    <span className="award-badge-icon">🏅</span>
+                    <span className="award-title">{isEn ? award.titleEn : award.title}</span>
+                  </div>
+                ))}
+              </div>
+            </article>
+          )}
+
+          {/* Training Courses */}
+          {memberTrainings.length > 0 && (
+            <article className="profile-card full-width">
+              <h2 className="section-title">{isEn ? 'Training & Technical Mentorship' : 'الدورات التدريبية والاستشارات التقنية'}</h2>
+              <div className="trainings-grid">
+                {memberTrainings.map((tr, idx) => (
+                  <div key={idx} className="training-chip">
+                    <span className="tr-dot" />
+                    <span>{isEn ? tr.nameEn : tr.name}</span>
+                  </div>
+                ))}
+              </div>
+            </article>
+          )}
 
           {/* Skills Section */}
           {memberSkills && memberSkills.length > 0 && (
@@ -94,7 +193,7 @@ export default function ProfilePage({ member, onBack }) {
           {/* Key Projects Section */}
           {memberProjects && memberProjects.length > 0 && (
             <article className="profile-card full-width">
-              <h2 className="section-title">{isEn ? 'Key Projects & Milestones' : 'المشاريع البارزة'}</h2>
+              <h2 className="section-title">{isEn ? 'Key Projects & Milestones' : 'المشاريع البارزة والإنجازات'}</h2>
               <div className="projects-grid">
                 {memberProjects.map((proj, idx) => (
                   <div key={idx} className="project-item">
@@ -105,21 +204,6 @@ export default function ProfilePage({ member, onBack }) {
               </div>
             </article>
           )}
-
-          {/* Dedicated Future Enhancements Section */}
-          <article className="profile-card full-width future-build-card">
-            <div className="placeholder-banner">
-              <div className="placeholder-icon">🛠️</div>
-              <div>
-                <h3 className="placeholder-title">{isEn ? 'Dedicated Space for Future Highlights' : 'مساحة مخصصة لإضافاتك المستقبلية'}</h3>
-                <p className="placeholder-text">
-                  {isEn
-                    ? `This section is designated for certifications, technical credentials, and portfolio media for ${memberName}.`
-                    : `هذا القسم جاهز لتضع فيه شهادات، إحصائيات، معرض أعمال (Portfolio)، أو أي تفاصيل إضافية خاصة بـ ${memberName}.`}
-                </p>
-              </div>
-            </div>
-          </article>
         </div>
 
         {/* Profile Footer */}

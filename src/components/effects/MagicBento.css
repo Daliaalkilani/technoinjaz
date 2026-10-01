@@ -228,6 +228,29 @@
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Only the two biggest cards (Card 3 & Card 4) show their full image without cropping */
+.magic-bento-card__img--full,
+.magic-bento-card:nth-child(3) .magic-bento-card__img,
+.magic-bento-card:nth-child(4) .magic-bento-card__img {
+  object-fit: contain !important;
+  object-position: center center;
+}
+
+.magic-bento-card__media--featured,
+.magic-bento-card:nth-child(3) .magic-bento-card__media,
+.magic-bento-card:nth-child(4) .magic-bento-card__media {
+  background: rgba(4, 9, 20, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+[data-theme="light"] .magic-bento-card__media--featured,
+[data-theme="light"] .magic-bento-card:nth-child(3) .magic-bento-card__media,
+[data-theme="light"] .magic-bento-card:nth-child(4) .magic-bento-card__media {
+  background: #f1f5f9;
+}
+
 .magic-bento-card:hover .magic-bento-card__img {
   transform: scale(1.04);
 }
@@ -306,14 +329,15 @@
 
   .magic-bento-card:nth-child(3) .magic-bento-card__media,
   .magic-bento-card:nth-child(4) .magic-bento-card__media {
-    max-height: 220px;
+    max-height: 210px;
+    height: 200px;
   }
 }
 
 @media (min-width: 1024px) {
   .card-grid {
     grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(3, minmax(215px, auto));
+    grid-template-rows: auto auto;
     gap: 1.35rem;
     max-width: 78rem;
   }
@@ -323,74 +347,76 @@
     height: 100%;
   }
 
-  /* Compact 1x1 Cards: Remove description under title and fit snugly */
+  /* Compact 1x1 Cards: Card 1, 2, 5, 6 */
   .magic-bento-card:not(:nth-child(3)):not(:nth-child(4)) {
-    padding: 1rem 1rem 1.15rem 1rem;
-  }
-
-  .magic-bento-card:not(:nth-child(3)):not(:nth-child(4)) .magic-bento-card__description {
-    display: none !important;
+    padding: 1.15rem;
   }
 
   .magic-bento-card:not(:nth-child(3)):not(:nth-child(4)) .magic-bento-card__media {
-    max-height: 135px;
-    height: 135px;
+    max-height: 140px;
+    height: 140px;
     margin-bottom: 0.65rem;
   }
 
   .magic-bento-card:not(:nth-child(3)):not(:nth-child(4)) .magic-bento-card__title {
-    font-size: 1.05rem;
+    font-size: 1.02rem;
     line-height: 1.4;
     --clamp-title: 2;
   }
 
-  /* Asymmetric Bento Layout:
-     Row 1: [Card 1] [Card 2] [ Card 3 (2x2) ]
-     Row 2: [ Card 4 (2x2) ]  [ Card 3 (cont.) ]
-     Row 3: [ Card 4 (cont.) ][Card 5] [Card 6]
+  .magic-bento-card:not(:nth-child(3)):not(:nth-child(4)) .magic-bento-card__description {
+    font-size: 0.82rem;
+    --clamp-desc: 2;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* Balanced Bento Grid (2 Rows):
+     Row 1: [Card 1] [Card 2] [ Card 3 (2 cols wide) ]
+     Row 2: [ Card 4 (2 cols wide) ] [Card 5] [Card 6]
   */
   .magic-bento-card:nth-child(3) {
     grid-column: 3 / span 2;
-    grid-row: 1 / span 2;
-    padding: 1.25rem 1.25rem 1.35rem 1.25rem;
+    grid-row: 1;
+    padding: 1.15rem 1.25rem 1.25rem 1.25rem;
   }
 
   .magic-bento-card:nth-child(4) {
     grid-column: 1 / span 2;
-    grid-row: 2 / span 2;
-    padding: 1.25rem 1.25rem 1.35rem 1.25rem;
+    grid-row: 2;
+    padding: 1.15rem 1.25rem 1.25rem 1.25rem;
   }
 
   .magic-bento-card:nth-child(5) {
     grid-column: 3;
-    grid-row: 3;
+    grid-row: 2;
   }
 
   .magic-bento-card:nth-child(6) {
     grid-column: 4;
-    grid-row: 3;
+    grid-row: 2;
   }
 
-  /* Featured 2x2 Hero Cards (Card 3 & Card 4): Media & Content sizing to eliminate bottom empty space */
+  /* Featured Wide Hero Cards (Card 3 & Card 4):
+     Sized so the full image appears completely without any cropping */
   .magic-bento-card:nth-child(3) .magic-bento-card__media,
   .magic-bento-card:nth-child(4) .magic-bento-card__media {
-    max-height: 250px;
-    height: 240px;
-    margin-bottom: 0.85rem;
+    max-height: 210px;
+    height: 200px;
+    margin-bottom: 0.75rem;
   }
 
   .magic-bento-card:nth-child(3) .magic-bento-card__content,
   .magic-bento-card:nth-child(4) .magic-bento-card__content {
-    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    gap: 0.45rem;
+    gap: 0.35rem;
   }
 
   .magic-bento-card:nth-child(3) .magic-bento-card__title,
   .magic-bento-card:nth-child(4) .magic-bento-card__title {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     --clamp-title: 2;
     line-height: 1.4;
     margin: 0;
@@ -398,9 +424,9 @@
 
   .magic-bento-card:nth-child(3) .magic-bento-card__description,
   .magic-bento-card:nth-child(4) .magic-bento-card__description {
-    font-size: 0.92rem;
-    --clamp-desc: 3;
-    line-height: 1.6;
+    font-size: 0.88rem;
+    --clamp-desc: 2;
+    line-height: 1.55;
     margin: 0;
   }
 }

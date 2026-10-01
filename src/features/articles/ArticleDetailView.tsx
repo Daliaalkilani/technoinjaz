@@ -246,7 +246,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               src={article.image} 
               alt={title} 
               className="article-fullscreen-banner-img" 
-              sizes="(max-width: 1023.98px) 100vw, (max-width: 1720px) calc(100vw - 420px), 1280px"
+              sizes="(max-width: 1023.98px) 100vw, (max-width: 1240px) calc(100vw - 360px), 860px"
               priority 
             />
           </div>

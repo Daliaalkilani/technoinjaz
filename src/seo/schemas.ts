@@ -4,6 +4,79 @@ import type { ProjectItem } from '@/data/projectsData';
 import type { FaqItem } from '@/data/faqData';
 import { projectTags, plainExcerpt } from '@/lib/text';
 
+export function abdulghaniPersonSchema() {
+  const url = absoluteUrl('/team/abdulghani');
+  return {
+    '@type': 'Person',
+    '@id': `${SITE_URL}/#abdulghani-alhamdi`,
+    name: 'المهندس عبد الغني الحمدي',
+    alternateName: [
+      'Eng. Abdulghani Alhamdi',
+      'م. عبد الغني الحمدي',
+      'Abdulghani Al-Hamdi',
+      'عبد الغني الحمدي'
+    ],
+    url,
+    image: absoluteUrl('/images/team/abdulghani.jpg'),
+    jobTitle: 'مستشار في المشاريع الهندسية ومدرب في المجالات التقنية',
+    description: 'المهندس عبد الغني الحمدي مهندس ومستشار هندسي متخصّص في مشاريع التخرّج التقنية، وقائد ومؤسس فريق «تكنو إنجاز». حاصل على درجة البكالوريوس في هندسة التحكّم الآلي والحواسيب من جامعة البعث، ويدرس الماجستير في هندسة التحكّم والأتمتة من جامعة حلب، وحاصل على شهادة الباسل للمرتبة الأولى في السنة الرابعة. ساهم في إنجاز والإشراف على أكثر من 500 مشروع تقني وتخرج خلال السنوات الخمس الماضية، وحصل على المركز السادس ضمن مسابقة «تميّز للإبداع والاختراع» على مستوى القطر.',
+    knowsAbout: [
+      'مشاريع التخرج الهندسية والتقنية',
+      'برمجة لوحات الأردوينو',
+      'الروبوتيك والروبوتات المتنقلة',
+      'هندسة التحكم والأتمتة',
+      'أنظمة التحكم الصناعي',
+      'استشارات المشاريع الهندسية',
+      'إدارة وتطوير المشاريع الهندسية'
+    ],
+    alumniOf: [
+      {
+        '@type': 'EducationalOrganization',
+        name: 'جامعة حلب - كلية الهندسة الميكانيكية والكهربائية (ماجستير هندسة التحكم والأتمتة)',
+        alternateName: 'University of Aleppo'
+      },
+      {
+        '@type': 'EducationalOrganization',
+        name: 'جامعة البعث - كلية الهندسة الميكانيكية والكهربائية (بكالوريوس هندسة التحكم الآلي والحواسيب)',
+        alternateName: 'Al-Baath University'
+      }
+    ],
+    award: [
+      'المركز السادس ضمن مسابقة «تميّز للإبداع والاختراع» على مستوى القطر',
+      'شهادة الباسل للمرتبة الأولى في السنة الرابعة للتفوق الدراسي',
+      'إنجاز والإشراف على أكثر من 500 مشروع تقني وتخرج'
+    ],
+    worksFor: {
+      '@id': ORG_ID
+    },
+    disambiguatingDescription: '«التغيير يبدأ من الداخل، ابدأ بنفسك ثم غير العالم» - رؤيته: تكوين مجتمع مترابط ومستقل ذو كفاءة عالية، رسالته: التطور والتقدم العلمي والعملي للرقي بجميع المجالات، أهدافه: رفع الوعي للأشخاص الطموحين ومتابعتهم عبر استقطاب المشاريع وتدريبهم عليها.',
+    sameAs: [
+      ORG.instagram,
+      ORG.whatsapp
+    ]
+  };
+}
+
+export function personSchema(member: any) {
+  if (member.id === 'abdulghani') {
+    return abdulghaniPersonSchema();
+  }
+  const url = absoluteUrl(`/team/${member.id}`);
+  return {
+    '@type': 'Person',
+    '@id': `${SITE_URL}/#member-${member.id}`,
+    name: member.name,
+    ...(member.nameEn ? { alternateName: [member.nameEn] } : {}),
+    url,
+    ...(member.image ? { image: absoluteUrl(member.image) } : {}),
+    jobTitle: member.role,
+    description: member.shortBio || member.bio,
+    worksFor: {
+      '@id': ORG_ID
+    }
+  };
+}
+
 export function organization() {
   return {
     '@type': ['Organization', 'ProfessionalService'],
@@ -15,6 +88,7 @@ export function organization() {
     telephone: ORG.telephone,
     email: ORG.email,
     sameAs: [ORG.instagram],
+    founder: abdulghaniPersonSchema(),
     contactPoint: {
       '@type': 'ContactPoint',
       telephone: ORG.telephone,

@@ -16,7 +16,6 @@ import {
   BookmarkCheck, 
   ArrowRight, 
   ArrowLeft, 
-  CheckCircle2, 
   X 
 } from 'lucide-react';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
@@ -218,11 +217,6 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
                     {cleanExcerpt}
                   </p>
 
-                  {/* Verified Role Qualifier Badge */}
-                  <div className="card-role-badge">
-                    <CheckCircle2 size={13} />
-                    <span>{isEn ? "Student Project with Tech Support" : "مشروع طلابي بدعم تقني"}</span>
-                  </div>
 
                   {/* Tags */}
                   {cleanTags.length > 0 && (

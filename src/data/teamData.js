@@ -1,42 +1,124 @@
 export const teamMembers = [
   {
     id: 'abdulghani',
-    name: 'م. عبد الغني الحمدي',
+    name: 'المهندس عبد الغني الحمدي',
     nameEn: 'Eng. Abdulghani Alhamdi',
     title: 'م. عبد الغني الحمدي',
     titleEn: 'Eng. Abdulghani Alhamdi',
-    role: 'مدير الفريق وقائد التطوير',
-    roleEn: 'Team Director & Lead Architect',
-    badge: 'قائد ومؤسس الفريق',
-    badgeEn: 'Team Founder & Director',
-    description: 'مدير الفريق وقائد المشاريع الهندسية',
-    descriptionEn: 'Team Director & Engineering Projects Lead',
-    department: 'الإدارة التقنية والقيادة',
-    departmentEn: 'Technical Leadership & Management',
-    specialization: '',
-    specializationEn: '',
+    role: 'مستشار في المشاريع الهندسية ومدرب تقني',
+    roleEn: 'Engineering Projects Consultant & Technical Trainer',
+    badge: 'مؤسس وقائد فريق تكنو إنجاز',
+    badgeEn: 'Founder & Leader of Techno Enjaz',
+    description: 'مستشار في مشاريع التخرج التقنية ومدرب في مجالات الأردوينو والروبوتيك والتحكم والأتمتة',
+    descriptionEn: 'Consultant for engineering graduation projects & trainer in Arduino, robotics, and automation',
+    department: 'الاستشارات الهندسية والتدريب التقني',
+    departmentEn: 'Engineering Consultancy & Technical Training',
+    specialization: 'هندسة التحكم والأتمتة ومشاريع التخرج التقنية',
+    specializationEn: 'Control & Automation Engineering & Technical Graduation Projects',
     image: '/images/team/abdulghani.jpg',
     link: '#team-showcase',
-    bio: 'مدير الفريق، يتولى قيادة الاستراتيجية التقنية وإدارة المهام وتوجيه مهندسي الذكاء الاصطناعي والمطورين لضمان أعلى مستويات الابتكار والإتقان في المنتجات الرقمية.',
-    bioEn: 'Team Director leading technical strategy, agile execution, and guiding AI engineers and developers to achieve excellence and innovation across digital products.',
-    shortBio: 'قيادة الاستراتيجية التقنية وإدارة المهام لضمان أعلى مستويات الابتكار والإتقان.',
-    shortBioEn: 'Leading technical strategy and execution to drive engineering excellence.',
-    skills: ['قيادة الفرق التقنية', 'الاستراتيجية التكنولوجية', 'إدارة المشاريع المرنة', 'التوجيه والإشراف', 'الحلول السحابية'],
-    skillsEn: ['Technical Leadership', 'Technology Strategy', 'Agile Management', 'Mentorship & Governance', 'Cloud Solutions'],
+    quote: 'التغيير يبدأ من الداخل، ابدأ بنفسك ثم غيّر العالم',
+    quoteEn: 'Change begins from within, start with yourself then change the world',
+    vision: 'تكوين مجتمع مترابط ومستقل ذو كفاءة عالية.',
+    visionEn: 'Building an interconnected, independent, and highly proficient community.',
+    mission: 'التطور والتقدم العلمي والعملي للرقي بجميع المجالات.',
+    missionEn: 'Scientific and practical progress and advancement to elevate all disciplines.',
+    goals: 'رفع الوعي للأشخاص الطموحين ومتابعتهم عن طريق استقطاب مشاريع وتدريبهم بها.',
+    goalsEn: 'Raising awareness for ambitious talents and guiding them through project acquisition and intensive training.',
+    bio: 'المهندس عبد الغني الحمدي مهندس ومستشار هندسي متخصّص في مشاريع التخرّج التقنية، وقائد ومؤسس فريق «تكنو إنجاز». حاصل على درجة البكالوريوس في هندسة التحكّم الآلي والحواسيب من جامعة البعث، ويدرس الماجستير في هندسة التحكّم والأتمتة من جامعة حلب، وحاصل على شهادة الباسل للمرتبة الأولى في السنة الرابعة من الجامعة. ساهم في إنجاز والإشراف على أكثر من 500 مشروع تقني وتخرج خلال السنوات الخمس الماضية، كما حصل على المركز السادس ضمن مسابقة «تميّز للإبداع والاختراع» على مستوى القطر. وهو مدرّب في مجال برمجة لوحات الأردوينو، الروبوتات المتنقّلة، التحكّم الصناعي، وإدارة المشاريع. يؤمن بأهمية التغيير من الداخل ويتبنى شعار: «التغيير يبدأ من الداخل، ابدأ بنفسك ثم غيّر العالم».',
+    bioEn: 'Eng. Abdulghani Alhamdi is an engineering consultant specializing in technical graduation projects, and the Founder and Leader of the "Techno Enjaz" team. He holds a Bachelor\'s degree in Automatic Control & Computer Engineering from Al-Baath University and is pursuing his Master\'s degree in Control & Automation Engineering from Aleppo University, having earned the Al-Bassel First Rank Academic Excellence Award in his 4th year. He has contributed to the completion and supervision of more than 500 engineering and graduation projects over the past five years, and won 6th place nationwide in the "Tamayuz for Innovation and Invention" competition. He conducts advanced training in Arduino programming, mobile robotics, industrial control, and project management. Motto: "Change begins from within, start with yourself then change the world."',
+    shortBio: 'مستشار في المشاريع الهندسية ومشاريع التخرج، ومدرب تقني في الروبوتيك والأردوينو، أشرف على أكثر من 500 مشروع تقني.',
+    shortBioEn: 'Engineering consultant & technical trainer in robotics and Arduino, supervised 500+ technical projects.',
+    education: [
+      {
+        degree: 'ماجستير في هندسة التحكم والأتمتة',
+        degreeEn: "Master's in Control Engineering & Automation",
+        institution: 'جامعة حلب',
+        institutionEn: 'University of Aleppo',
+        status: 'قيد الإنجاز',
+        statusEn: 'In Progress'
+      },
+      {
+        degree: 'بكالوريوس في هندسة التحكم الآلي والحواسيب',
+        degreeEn: "Bachelor's in Automatic Control & Computer Engineering",
+        institution: 'جامعة البعث',
+        institutionEn: 'Al-Baath University',
+        honors: 'شهادة الباسل للمرتبة الأولى للتفوق الدراسي (السنة الرابعة)',
+        honorsEn: 'Al-Bassel First Rank Academic Excellence Award (4th Year)'
+      }
+    ],
+    awards: [
+      {
+        title: 'المركز السادس في مسابقة «تميّز للإبداع والاختراع» على مستوى القطر',
+        titleEn: '6th Place in Nationwide "Tamayuz for Innovation & Invention" Competition'
+      },
+      {
+        title: 'شهادة الباسل للتفوق الدراسي - المرتبة الأولى (السنة الرابعة)',
+        titleEn: 'Al-Bassel Award for First Rank Academic Excellence'
+      },
+      {
+        title: 'إنجاز والإشراف على أكثر من 500 مشروع تقني وتخرج خلال 5 سنوات',
+        titleEn: 'Supervision & Delivery of 500+ Technical & Graduation Projects'
+      }
+    ],
+    trainings: [
+      { name: 'برمجة لوحات الأردوينو', nameEn: 'Arduino Microcontroller Programming' },
+      { name: 'الروبوتات المتنقلة والروبوتيك', nameEn: 'Mobile Robotics & Autonomous Navigation' },
+      { name: 'التحكم الصناعي والأتمتة', nameEn: 'Industrial Automation & PLC Control' },
+      { name: 'إدارة وتطوير المشاريع الهندسية', nameEn: 'Engineering Project Management' }
+    ],
+    skills: [
+      'استشارات مشاريع التخرج',
+      'برمجة الأردوينو',
+      'الروبوتيك والروبوتات المتنقلة',
+      'هندسة التحكم والأتمتة',
+      'التحكم الصناعي',
+      'إدارة المشاريع الهندسية',
+      'التدريب والتوجيه التقني'
+    ],
+    skillsEn: [
+      'Graduation Projects Consultancy',
+      'Arduino Programming',
+      'Mobile Robotics',
+      'Control & Automation',
+      'Industrial Control',
+      'Engineering Project Management',
+      'Technical Mentorship'
+    ],
     socials: {
-      linkedin: 'https://linkedin.com/in/abdulghani',
-      github: 'https://github.com/abdulghani',
-      email: 'abdulghani@company.com'
+      whatsapp: 'https://wa.me/963958794195',
+      instagram: 'https://instagram.com/TECHNO_ENJAZ',
+      email: 'info@technoenjaz.com'
     },
     projects: [
-      { name: 'استراتيجية تطوير النظام المتكامل', desc: 'إعادة هيكلة بنية الفريق التقني ورفع الإنتاجية بنسبة 50%' },
-      { name: 'قيادة إطلاق المنظومة الذكية', desc: 'إشراف مباشر على دمج نماذج الذكاء الاصطناعي مع الواجهات والخدمات السحابية' }
+      {
+        name: 'إشراف على أكثر من 500 مشروع تقني وتخرج',
+        desc: 'توجيه هندسي وتطبيقي شامل لطلاب كليات الهندسة والتقنيات مع نماذج عملية واختبارات حقيقية.'
+      },
+      {
+        name: 'مسابقة «تميّز للإبداع والاختراع» على مستوى القطر',
+        desc: 'حصد المركز السادس على مستوى سوريا عبر ابتكار تطبيقي متميز.'
+      },
+      {
+        name: 'تأسيس وقيادة منظومة «تكنو إنجاز»',
+        desc: 'بناء فريق متكامل من مهندسي الذكاء الاصطناعي والأنظمة المدمجة وتطوير البرمجيات الحديثة.'
+      }
     ],
     projectsEn: [
-      { name: 'Enterprise Modernization Strategy', desc: 'Restructuring core infrastructure, boosting overall team velocity by 50%' },
-      { name: 'Intelligent Platform Rollout', desc: 'Direct supervision of AI model integration across cloud and web services' }
+      {
+        name: '500+ Graduation & Engineering Projects Supervision',
+        desc: 'Comprehensive technical mentorship and hardware/software execution for engineering students with real prototypes.'
+      },
+      {
+        name: 'Nationwide "Tamayuz" Invention Competition',
+        desc: 'Achieved 6th place nationally with high-efficiency applied engineering innovation.'
+      },
+      {
+        name: 'Founding & Leading Techno Enjaz Bureau',
+        desc: 'Built an integrated engineering team across AI, embedded systems, and modern digital platforms.'
+      }
     ],
-    email: 'abdulghani@company.com',
+    email: 'info@technoenjaz.com',
     location: 'حماة، سوريا',
     locationEn: 'Hama, Syria'
   },

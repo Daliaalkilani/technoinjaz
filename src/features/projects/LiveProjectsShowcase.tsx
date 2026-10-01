@@ -8,7 +8,6 @@ import {
   Pause, 
   ChevronRight, 
   ChevronLeft, 
-  Sparkles, 
   Bookmark, 
   BookmarkCheck
 } from 'lucide-react';
@@ -72,15 +71,15 @@ const liveProjectsList: LiveProject[] = [
   },
   {
     id: 'taima-alwani',
-    title: 'منصة تيماء علواني',
-    subtitle: 'منصة الهوية الرقمية والأعمال الإبداعية',
-    category: 'هويات رقمية',
+    title: 'منصة سكيورتي سيتي',
+    subtitle: 'منظومة الأمان الذكي والحلول التقنية المتكاملة',
+    category: 'أنظمة ومؤسسية',
     url: 'https://taima-alwani.pages.dev/',
     displayDomain: 'taima-alwani.pages.dev',
-    description: 'موقع شخصي ومهني أنيق بتصميم عصري يعكس الهوية الرقمية، الأعمال الإبداعية، والخبرات المتخصصة.',
-    highlights: ['هوية رقمية', 'تصميم عصري', 'معرض إبداعي'],
-    color: '#ec4899',
-    iconName: 'laptop',
+    description: 'منظومة رقمية متطورة لإدارة أنظمة الحماية والمراقبة الذكية وتأمين المنشآت والحلول التقنية المتكاملة.',
+    highlights: ['أمان ذكي', 'أنظمة مراقبة', 'حلول متكاملة'],
+    color: '#38bdf8',
+    iconName: 'shield',
     image: '/images/platforms/taima-alwani.jpg'
   },
   {
@@ -218,31 +217,37 @@ export const LiveProjectsShowcase: React.FC = () => {
   const activeDescription = activeTrans?.description || activeProject.description;
   const activeHighlights = activeTrans?.highlights || activeProject.highlights;
 
-  // Seamless continuous dual-track infinite marquee with full duplicates
-  const track1Projects = [...liveProjectsList, ...liveProjectsList];
-  const track2Projects = [...[...liveProjectsList].reverse(), ...[...liveProjectsList].reverse()];
-
-  // Automatic transition timer
+  // Automatic transition timer using requestAnimationFrame with clean reset
   useEffect(() => {
     if (!isPlaying || isHovered) {
       return;
     }
 
-    const stepMs = 50;
-    const increment = (stepMs / AUTO_INTERVAL_MS) * 100;
+    let lastTime = performance.now();
+    let frameId: number;
 
-    const timer = setInterval(() => {
+    const loop = (currentTime: number) => {
+      const delta = currentTime - lastTime;
+      lastTime = currentTime;
+
       setProgress(prev => {
-        if (prev >= 100) {
+        const next = prev + (delta / AUTO_INTERVAL_MS) * 100;
+        if (next >= 100) {
           setCurrentIndex(c => (c + 1) % liveProjectsList.length);
           return 0;
         }
-        return prev + increment;
+        return next;
       });
-    }, stepMs);
 
-    return () => clearInterval(timer);
-  }, [isPlaying, isHovered]);
+      frameId = requestAnimationFrame(loop);
+    };
+
+    frameId = requestAnimationFrame(loop);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+    };
+  }, [isPlaying, isHovered, currentIndex]);
 
   const handleNext = () => {
     setProgress(0);
@@ -254,12 +259,9 @@ export const LiveProjectsShowcase: React.FC = () => {
     setCurrentIndex(c => (c - 1 + liveProjectsList.length) % liveProjectsList.length);
   };
 
-  const handleSelectProject = (project: LiveProject) => {
-    const idx = liveProjectsList.findIndex(p => p.id === project.id);
-    if (idx !== -1) {
-      setCurrentIndex(idx);
-      setProgress(0);
-    }
+  const handleSelectIndex = (idx: number) => {
+    setProgress(0);
+    setCurrentIndex(idx);
   };
 
   return (
@@ -406,91 +408,28 @@ export const LiveProjectsShowcase: React.FC = () => {
                 className="spotlight-progress-fill" 
                 style={{ 
                   width: `${progress}%`,
-                  background: `linear-gradient(90deg, #0ea5e9, ${activeProject.color})`
+                  background: `linear-gradient(90deg, #0ea5e9, ${activeProject.color})`,
+                  transition: progress === 0 ? 'none' : 'width 0.05s linear'
                 }} 
               />
             </div>
-          </div>
 
-          {/* Continuous Dual-Track Infinite Marquee */}
-          <div className="marquee-section-header">
-            <h3 className="marquee-section-title">
-              <Sparkles size={20} color="#0aeec3" />
-              <span>{t.liveProjects.marqueeTitle.replace('{count}', String(liveProjectsList.length))}</span>
-            </h3>
-          </div>
-
-          <div className="marquee-wrapper" dir="ltr">
-            {/* Track 1: Moving left */}
-            <div className="marquee-track track-left">
-              {track1Projects.map((project, idx) => {
+            {/* Direct Project Indicators / Navigation */}
+            <div className="spotlight-pagination-dots" role="tablist" aria-label="Projects indicators">
+              {liveProjectsList.map((project, idx) => {
                 const pTrans = t.liveProjects.projects[project.id];
                 const pTitle = pTrans?.title || project.title;
-                const pDesc = pTrans?.description || project.description;
+                const isActive = idx === currentIndex;
                 return (
-                  <div
-                    key={`track1-${project.id}-${idx}`}
-                    className={`marquee-card ${activeProject.id === project.id ? 'active-selected' : ''}`}
-                    onClick={() => handleSelectProject(project)}
-                    dir={lang === 'ar' ? 'rtl' : 'ltr'}
-                  >
-                    <div className="marquee-card-top">
-                      <div className="marquee-card-thumb-wrap">
-                        <ResponsiveImage src={project.image} alt={pTitle} className="marquee-card-thumb-img" />
-                      </div>
-                    </div>
-                    <h4 className="marquee-card-title">{pTitle}</h4>
-                    <p className="marquee-card-desc">{pDesc}</p>
-                    <div className="marquee-card-footer">
-                      <a
-                        href={project.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="marquee-card-link-btn"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <span>{t.liveProjects.launch}</span>
-                        <ExternalLink size={13} />
-                      </a>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Track 2: Moving right */}
-            <div className="marquee-track track-right">
-              {track2Projects.map((project, idx) => {
-                const pTrans = t.liveProjects.projects[project.id];
-                const pTitle = pTrans?.title || project.title;
-                const pDesc = pTrans?.description || project.description;
-                return (
-                  <div
-                    key={`track2-${project.id}-${idx}`}
-                    className={`marquee-card ${activeProject.id === project.id ? 'active-selected' : ''}`}
-                    onClick={() => handleSelectProject(project)}
-                    dir={lang === 'ar' ? 'rtl' : 'ltr'}
-                  >
-                    <div className="marquee-card-top">
-                      <div className="marquee-card-thumb-wrap">
-                        <img src={project.image} alt={pTitle} className="marquee-card-thumb-img" loading="lazy" />
-                      </div>
-                    </div>
-                    <h4 className="marquee-card-title">{pTitle}</h4>
-                    <p className="marquee-card-desc">{pDesc}</p>
-                    <div className="marquee-card-footer">
-                      <a
-                        href={project.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="marquee-card-link-btn"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <span>{t.liveProjects.launch}</span>
-                        <ExternalLink size={13} />
-                      </a>
-                    </div>
-                  </div>
+                  <button
+                    key={project.id}
+                    type="button"
+                    className={`spotlight-dot ${isActive ? 'active' : ''}`}
+                    onClick={() => handleSelectIndex(idx)}
+                    title={`${idx + 1}. ${pTitle}`}
+                    aria-label={`${idx + 1}. ${pTitle}`}
+                    style={isActive ? { backgroundColor: activeProject.color, boxShadow: `0 0 10px ${activeProject.color}` } : undefined}
+                  />
                 );
               })}
             </div>

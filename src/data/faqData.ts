@@ -78,6 +78,18 @@ export const faqData: FaqItem[] = [
     actionTarget: '#projects',
     actionIconKey: 'externalLink'
   },
+  {
+    id: 'q-about-4',
+    category: 'about',
+    question: 'من يقود فريق «تكنو إنجاز» ويشرف على الاستشارات والمشاريع؟',
+    questionEn: 'Who leads the Techno Enjaz team and oversees consultancy and projects?',
+    answer: 'يقود الفريق المهندس عبد الغني الحمدي، مستشار في المشاريع الهندسية ومشاريع التخرج، ومدرب في المجالات التقنية. حاصل على بكالوريوس في هندسة التحكم الآلي والحواسيب من جامعة البعث (شهادة الباسل للمرتبة الأولى) ويدرس الماجستير في هندسة التحكم والأتمتة بجامعة حلب. ساهم في إنجاز والإشراف على أكثر من 500 مشروع تقني وتخرج خلال 5 سنوات، ونال المركز السادس بمسابقة «تميّز للإبداع والاختراع» على مستوى القطر. وهو مدرب في برمجة الأردوينو والروبوتيك والتحكم الصناعي، وشعاره: «التغيير يبدأ من الداخل، ابدأ بنفسك ثم غيّر العالم».',
+    answerEn: 'The team is founded and led by Eng. Abdulghani Alhamdi, an Engineering Projects & Graduation Consultant and Technical Trainer. He holds a Bachelor\'s in Automatic Control & Computer Engineering from Al-Baath University (Al-Bassel First Rank Award) and is pursuing a Master\'s in Control & Automation at Aleppo University. Having supervised 500+ projects and achieved 6th place nationally in the "Tamayuz" Invention Competition, he trains in Arduino, robotics, and industrial control. Motto: "Change begins from within, start with yourself then change the world."',
+    actionLabel: 'الملف التعريفي للمهندس',
+    actionLabelEn: 'Founder Profile',
+    actionTarget: '/team/abdulghani',
+    actionIconKey: 'sparkles'
+  },
 
   // 2. مشاريع التخرج والمشاريع الهندسية
   {
@@ -197,13 +209,13 @@ export const faqData: FaqItem[] = [
   {
     id: 'q-comm-2',
     category: 'contact',
-    question: 'هل المقالات التقنية في الموقع مجانية؟',
-    questionEn: 'Are technical and engineering articles on the platform free?',
-    answer: 'نعم. جميع المقالات مجانية ومكتوبة بالعربية، وتغطي الذكاء الاصطناعي وإنترنت الأشياء وشبكات 5G والأنظمة المدمجة، مع قائمة مصادر موثوقة في نهاية كل مقال.',
-    answerEn: 'Yes. All published research and technical articles are completely free, authored in Arabic, and cover Artificial Intelligence, IoT, 5G networks, and Embedded Systems with verified academic citations.',
-    actionLabel: 'تصفّح المقالات',
-    actionLabelEn: 'Browse Articles',
-    actionTarget: '#articles',
-    actionIconKey: 'fileText'
+    question: 'هل تقدمون دورات تدريبية في المجالات التقنية؟',
+    questionEn: 'Do you offer training courses and workshops in tech fields?',
+    answer: 'نعم، نقدّم دورات تدريبية متخصصة ومكثفة في مجالات البرمجة، والذكاء الاصطناعي، والأنظمة المدمجة وإنترنت الأشياء، وتشمل مسارين: مسار تدريبي تفاعلي أونلاين (عبر الإنترنت)، ومسار تدريبي حضوري وتطبيقي في مقرنا.',
+    answerEn: 'Yes, we provide specialized training programs in software engineering, AI, embedded systems, and IoT with two flexible learning tracks: interactive online training, and hands-on in-person training at our headquarters.',
+    actionLabel: 'استفسر عن الدورات',
+    actionLabelEn: 'Inquire About Courses',
+    actionTarget: '#contact',
+    actionIconKey: 'messageCircle'
   }
 ];
