@@ -802,6 +802,17 @@ a:visited {
   contain-intrinsic-size: auto none auto 800px;
 }
 
+/* Home sections touch edge to edge. On high-DPR phones a sub-pixel seam between two
+   painted-contained sections showed the page canvas as a thin light line: the canvas
+   gets the theme background, and each deferred section overlaps the previous by 1px. */
+html {
+  background-color: var(--bg-main);
+}
+
+.scroll-deferred-section {
+  margin-top: -1px;
+}
+
 .gpu-accelerated {
   transform: translateZ(0);
   backface-visibility: hidden;

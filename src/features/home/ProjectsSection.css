@@ -12,6 +12,9 @@
   padding: clamp(2.5rem, 4vw, 4rem) clamp(1.5rem, 5vw, 4rem) clamp(4rem, 6vw, 6rem);
   box-sizing: border-box;
   overflow: hidden;
+  /* clip, not hidden: same clipping, but not a scroll container, so the sticky
+     background layer below can follow the viewport (fallback: hidden). */
+  overflow: clip;
 }
 
 /* Subtle architectural ambient background glow */
@@ -36,11 +39,24 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow: clip;
+  display: block;
   z-index: 0;
   pointer-events: none;
+}
+
+/* The background layer is one viewport tall and sticky: on tall mobile sections the
+   wave stays behind the content while scrolling (instead of a band in the middle
+   with black above and below). On short sections it simply equals the section. */
+.section-bg-sticky {
+  position: sticky;
+  top: 0;
+  height: min(100%, 100vh);
+  height: min(100%, 100svh);
+}
+
+.section-bg-sticky picture {
+  display: contents;
 }
 
 .projects-grid-distortion-inner {
@@ -175,6 +191,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* The cards (and their shadows) used to be cut by a hard rectangle at the wrapper's
+   edges — visible as a sharp vertical edge in light mode and a hard crop on phones.
+   A soft fade on all four sides blends them into the background instead. */
+.projects-spiral-wrapper {
+  -webkit-mask-image:
+    linear-gradient(to bottom, transparent 0, #000 9%, #000 91%, transparent 100%),
+    linear-gradient(to right, transparent 0, #000 5%, #000 95%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to bottom, transparent 0, #000 9%, #000 91%, transparent 100%),
+    linear-gradient(to right, transparent 0, #000 5%, #000 95%, transparent 100%);
+  mask-composite: intersect;
 }
 
 /* Responsive adjustments */

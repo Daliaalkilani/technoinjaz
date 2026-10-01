@@ -5,13 +5,11 @@ import Link from 'next/link';
 import React from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import MagicBento from './ArticlesBento';
-import heroBgDistortion from '@/assets/home/section-bg-dark.png';
-import im1Bg from '@/assets/home/section-bg-light.png';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
+import SectionBackground from './SectionBackground';
 import './ProjectsSection.css';
 import './ArticlesSection.css';
 
-import ThemedImage from '@/components/ui/ThemedImage';
 
 export interface ArticlesSectionProps {
   showNavigateButton?: boolean;
@@ -26,19 +24,8 @@ const ArticlesSection: React.FC<ArticlesSectionProps> = ({
 
   return (
     <section id="articles" className="articles-section" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
-      {/* Static Background Image with Gradient Blend (No Mouse Interaction) */}
-      <div className="projects-grid-distortion-wrapper" style={{ pointerEvents: 'none' }}>
-        <div className="projects-grid-distortion-inner">
-          <ThemedImage
-            dark={heroBgDistortion}
-            light={im1Bg}
-            alt=""
-            className="projects-bg-static-img"
-          />
-        </div>
-        {/* Ambient vignette and smooth dark gradient blend */}
-        <div className="projects-grid-distortion-vignette" />
-      </div>
+      {/* Wave background: compressed, sticky on tall mobile sections */}
+      <SectionBackground />
 
       <div className="articles-container">
         {/* Section Header */}

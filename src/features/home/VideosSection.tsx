@@ -5,15 +5,13 @@ import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight, Bookmark, BookmarkCheck, Play } from 'lucide-react';
 import CardSwap, { Card } from '@/features/videos/VideoCardSwap';
 import VideoPlayerModal, { type VideoModalData } from '@/features/videos/VideoPlayerModal';
-import heroBgDistortion from '@/assets/home/section-bg-dark.png';
-import im1Bg from '@/assets/home/section-bg-light.png';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
+import SectionBackground from './SectionBackground';
 import { useSavedProjects } from '@/hooks/useSavedProjects';
 import { videosList, type VideoItem } from '@/data/videosData';
 import './ProjectsSection.css';
 import './VideosSection.css';
 
-import ThemedImage from '@/components/ui/ThemedImage';
 
 export type { VideoItem };
 export { videosList };
@@ -33,19 +31,8 @@ const VideosSection: React.FC<VideosSectionProps> = ({
 
   return (
     <section id="videos" className="videos-section" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
-      {/* Static Background Image with Gradient Blend (No Mouse Interaction) */}
-      <div className="projects-grid-distortion-wrapper" style={{ pointerEvents: 'none' }}>
-        <div className="projects-grid-distortion-inner">
-          <ThemedImage
-            dark={heroBgDistortion}
-            light={im1Bg}
-            alt=""
-            className="projects-bg-static-img"
-          />
-        </div>
-        {/* Ambient vignette and smooth dark gradient blend */}
-        <div className="projects-grid-distortion-vignette" />
-      </div>
+      {/* Wave background: compressed, sticky on tall mobile sections */}
+      <SectionBackground />
 
       <div className="videos-container">
         {/* Info Column */}

@@ -12,6 +12,7 @@
   padding: clamp(2.5rem, 4vw, 4rem) clamp(1.5rem, 5vw, 4rem) clamp(4rem, 6vw, 6rem);
   box-sizing: border-box;
   overflow: hidden;
+  overflow: clip; /* sticky background (see ProjectsSection.css) */
 }
 
 [dir="rtl"] .videos-section {

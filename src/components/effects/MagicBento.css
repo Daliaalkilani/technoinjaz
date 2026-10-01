@@ -270,37 +270,63 @@
   line-clamp: var(--clamp-desc);
 }
 
+/* Phones: a horizontal swipe strip instead of a long vertical list (which made the
+   home section look like the full articles page). Each card is ~82% wide so the next
+   one peeks in as a cue; swiping snaps card by card. Bleeds to the screen edges. */
 @media (max-width: 599px) {
   .card-grid {
-    grid-template-columns: 1fr;
-    width: 100%;
-    margin: 0 auto;
-    padding: 0.5rem;
-    gap: 1.1rem;
+    display: flex;
+    grid-template-columns: none;
+    gap: 0.85rem;
+    width: auto;
+    margin: 0 -1rem;
+    padding: 0.5rem 1rem 1rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 1rem;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .magic-bento-card {
-    width: 100%;
-    min-height: auto;
-    padding: 1rem;
+  .card-grid::-webkit-scrollbar {
+    display: none;
   }
 
-  /* Non-featured cards description clamp */
-  .magic-bento-card:not(:nth-child(3)):not(:nth-child(4)) .magic-bento-card__description {
-    --clamp-desc: 2;
+  .magic-bento-card,
+  .magic-bento-card:nth-child(n) {
+    flex: 0 0 82%;
+    width: 82%;
+    max-width: 340px;
+    min-height: 0;
+    aspect-ratio: auto;
+    grid-column: auto;
+    grid-row: auto;
+    padding: 0.85rem;
+    scroll-snap-align: start;
   }
 
-  .magic-bento-card__media {
-    aspect-ratio: 16 / 9;
+  /* Same size for every card in the strip: image + title */
+  .magic-bento-card .magic-bento-card__description {
+    display: none !important;
+  }
+
+  .magic-bento-card .magic-bento-card__media,
+  .magic-bento-card:nth-child(n) .magic-bento-card__media {
+    flex: 0 0 auto;
     height: auto;
-    max-height: 180px;
-  }
-
-  .magic-bento-card:nth-child(3) .magic-bento-card__media,
-  .magic-bento-card:nth-child(4) .magic-bento-card__media {
-    aspect-ratio: 16 / 9;
-    height: auto;
+    min-height: 0;
     max-height: none;
+    aspect-ratio: 16 / 9;
+  }
+}
+
+@media (max-width: 479.98px) {
+  /* the section's inline padding is 0.75rem here */
+  .card-grid {
+    margin: 0 -0.75rem;
+    padding-inline: 0.75rem;
+    scroll-padding-inline: 0.75rem;
   }
 }
 

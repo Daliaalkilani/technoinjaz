@@ -42,6 +42,13 @@
   user-select: none;
 }
 
+/* Light mode: the dark shadow tuned for the dark theme read as a hard grey slab on
+   the light background; a soft, light shadow keeps the depth without the slab. */
+[data-theme='light'] .infinite-spiral__item {
+  border-color: rgb(15 23 42 / 0.08);
+  box-shadow: 0 10px 26px rgb(15 23 42 / 0.10);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .infinite-spiral__item {
     transition: none;

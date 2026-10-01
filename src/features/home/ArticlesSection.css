@@ -7,6 +7,7 @@
   color: var(--text-pure);
   font-family: var(--font-arabic);
   overflow: hidden;
+  overflow: clip; /* sticky background (see ProjectsSection.css) */
   box-sizing: border-box;
 }
 

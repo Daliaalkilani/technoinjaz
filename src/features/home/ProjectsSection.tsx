@@ -5,10 +5,8 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import InfiniteSpiral, { type InfiniteSpiralItem } from '@/components/effects/InfiniteSpiral';
-import heroBgDistortion from '@/assets/home/section-bg-dark.png';
-import im1Bg from '@/assets/home/section-bg-light.png';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
-import ThemedImage from '@/components/ui/ThemedImage';
+import SectionBackground from './SectionBackground';
 import { PROJECTS_DATA } from '@/data/projectsData';
 import './ProjectsSection.css';
 
@@ -140,19 +138,8 @@ const ProjectsSection = ({
 
   return (
     <section className="projects-section" id="projects" aria-label={lang === 'ar' ? "قسم المشاريع" : "Projects Section"} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
-      {/* Static Background Image with Gradient Blend (No Mouse Interaction) */}
-      <div className="projects-grid-distortion-wrapper" style={{ pointerEvents: 'none' }}>
-        <div className="projects-grid-distortion-inner">
-          <ThemedImage
-            dark={heroBgDistortion}
-            light={im1Bg}
-            alt=""
-            className="projects-bg-static-img"
-          />
-        </div>
-        {/* Ambient vignette and smooth dark gradient blend */}
-        <div className="projects-grid-distortion-vignette" />
-      </div>
+      {/* Wave background: compressed, sticky on tall mobile sections */}
+      <SectionBackground />
 
       <div className="projects-container">
         <div className="projects-intro">
