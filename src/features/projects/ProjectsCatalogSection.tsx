@@ -3,6 +3,7 @@ import ResponsiveImage from '@/components/ui/ResponsiveImage';
 
 import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { 
   Search, 
   Layers, 
@@ -29,6 +30,7 @@ interface ProjectsCatalogSectionProps {
 }
 
 export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ projects = PROJECTS_DATA }) => {
+  const router = useRouter();
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
   const { isSaved, toggleSave } = useSavedProjects();
@@ -65,13 +67,20 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
     });
   }, [projects, selectedCategory, searchTerm]);
 
+  // Prefetch top visible projects so clicking is instantaneous
+  useEffect(() => {
+    filteredProjects.slice(0, 8).forEach((p) => {
+      router.prefetch(`/projects/${p.slug}`);
+    });
+  }, [filteredProjects, router]);
+
   return (
     <section className="catalog-section" id="projects-catalog" dir={isEn ? 'ltr' : 'rtl'}>
       {/* Catalog Hero Banner */}
       <div className="catalog-hero-wrapper">
-        <h1 className="catalog-hero-title">
-          {isEn ? "Techno Enjaz Engineering Projects" : "مشاريع ومنظومات تكنو إنجاز"}
-        </h1>
+        <h2 className="catalog-hero-title">
+          {isEn ? "Graduation & Engineering Research Catalog" : "كتالوج المشاريع والأطروحات الهندسية"}
+        </h2>
 
         {/* Search Bar */}
         <div className="catalog-search-bar">
@@ -148,14 +157,30 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
             const cleanExcerpt = plainExcerpt(project.excerpt, project.metaDesc);
             const cleanTags = projectTags(project.tags);
 
+            const projectUrl = `/projects/${project.slug}`;
+
             return (
               <article 
                 key={project.slug} 
                 className="project-card"
+                onClick={(e) => {
+                  const target = e.target as HTMLElement;
+                  if (target.closest('.card-bookmark-btn') || target.closest('a')) return;
+                  router.push(projectUrl);
+                }}
+                onPointerDown={() => router.prefetch(projectUrl)}
+                onMouseEnter={() => router.prefetch(projectUrl)}
               >
                 {/* Card Thumbnail */}
                 <div className="card-thumb-wrap">
-                  <ResponsiveImage src={project.image} alt={project.altText || project.title} className="card-thumb-img" />
+                  <Link 
+                    href={projectUrl} 
+                    prefetch={true} 
+                    className="card-thumb-link"
+                    aria-label={project.title}
+                  >
+                    <ResponsiveImage src={project.image} alt={project.altText || project.title} className="card-thumb-img" />
+                  </Link>
                   <span className="card-cat-badge">{project.categoryNameAr}</span>
 
                   <button
@@ -184,7 +209,7 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
                 {/* Card Content */}
                 <div className="card-body">
                   <h3 className="card-title" title={project.title}>
-                    <Link href={`/projects/${project.slug}`} className="card-title-link">
+                    <Link href={projectUrl} prefetch={true} className="card-title-link">
                       {project.title}
                     </Link>
                   </h3>
@@ -210,10 +235,10 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
 
                   {/* Card Action Link */}
                   <div className="card-footer">
-                    <span className="card-view-link">
+                    <Link href={projectUrl} prefetch={true} className="card-view-link">
                       <span>{isEn ? "View Details" : "استعراض التفاصيل"}</span>
                       {isEn ? <ArrowRight size={15} /> : <ArrowLeft size={15} />}
-                    </span>
+                    </Link>
                   </div>
                 </div>
               </article>

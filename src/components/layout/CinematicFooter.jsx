@@ -1,13 +1,15 @@
 'use client';
 
 import * as React from "react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import CurvedInput from "./CurvedInput";
 import { useThemeLanguage } from "@/context/ThemeLanguageContext";
+import { subscribeUser, isUserSubscribed, getSubscriberEmail } from "@/lib/notifications";
 import "./CinematicFooter.css";
 
 
@@ -115,6 +117,22 @@ export function CinematicFooter() {
   const headingRef = useRef(null);
   const linksRef = useRef(null);
   const inputRef = useRef(null);
+
+  const [isSubscribedState, setIsSubscribedState] = useState(false);
+  const [subscriberEmailState, setSubscriberEmailState] = useState('');
+  const [subFeedback, setSubFeedback] = useState(null);
+
+  useEffect(() => {
+    setIsSubscribedState(isUserSubscribed());
+    setSubscriberEmailState(getSubscriberEmail() || '');
+
+    const handleSubSync = () => {
+      setIsSubscribedState(isUserSubscribed());
+      setSubscriberEmailState(getSubscriberEmail() || '');
+    };
+    window.addEventListener('techno_subscription_updated', handleSubSync);
+    return () => window.removeEventListener('techno_subscription_updated', handleSubSync);
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -275,16 +293,71 @@ export function CinematicFooter() {
                 buttonColor="var(--curved-input-btn)"
                 buttonTextColor="#ffffff"
                 shadowSize="md"
-                onSubmit={value => {
-                  if (value) {
-                    const message = lang === 'ar' 
-                      ? `مرحباً تكنو إنجاز، أود البقاء على اطلاع عبر الإيميل: ${value}`
-                      : `Hello Techno Enjaz, I would like to stay updated via email: ${value}`;
-                    window.open(`https://wa.me/963958794195?text=${encodeURIComponent(message)}`, '_blank');
+                onSubmit={async (value) => {
+                  if (!value || !value.trim()) {
+                    setSubFeedback({
+                      type: 'error',
+                      message: lang === 'en' 
+                        ? 'Please enter your email address to subscribe.' 
+                        : 'يرجى إدخال بريدك الإلكتروني للاشتراك وتفعيل الإشعارات.'
+                    });
+                    return;
+                  }
+
+                  setSubFeedback({
+                    type: 'loading',
+                    message: lang === 'en' 
+                      ? 'Activating subscription & notifications...' 
+                      : 'جاري تفعيل اشتراكك وإشعارات المنصة...'
+                  });
+
+                  const result = await subscribeUser(value, lang === 'en');
+                  if (!result.success) {
+                    setSubFeedback({
+                      type: 'error',
+                      message: result.message
+                    });
+                  } else {
+                    setIsSubscribedState(true);
+                    setSubscriberEmailState(value.trim());
+                    setSubFeedback({
+                      type: 'success',
+                      message: result.message,
+                      pushGranted: result.pushGranted
+                    });
                   }
                 }}
               />
             </div>
+
+            {/* Subscription Feedback Banner */}
+            {subFeedback && (
+              <div className={`footer-sub-feedback ${subFeedback.type}`}>
+                {subFeedback.type === 'error' && <AlertCircle size={18} className="shrink-0" />}
+                {subFeedback.type === 'loading' && <Loader2 size={18} className="animate-spin shrink-0" />}
+                {subFeedback.type === 'success' && <CheckCircle2 size={18} className="shrink-0" />}
+                <div className="footer-sub-feedback-text">
+                  <span>{subFeedback.message}</span>
+                  {subFeedback.pushGranted && (
+                    <span className="footer-push-active-tag">
+                      🔔 {lang === 'en' ? 'Browser push notifications active' : 'إشعارات المتصفح مفعلة أيضاً'}
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Already Subscribed Badge */}
+            {isSubscribedState && !subFeedback && (
+              <div className="footer-already-sub-badge">
+                <CheckCircle2 size={14} />
+                <span>
+                  {lang === 'en' 
+                    ? `Notifications active for: ${subscriberEmailState}` 
+                    : `الإشعارات مفعلة للبريد: ${subscriberEmailState}`}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Interactive Magnetic Pills Layout */}
@@ -294,6 +367,7 @@ export function CinematicFooter() {
               <MagneticButton
                 as={Link}
                 href="/projects"
+                prefetch={true}
                 className="footer-glass-pill footer-pill-btn group"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#00d2ff' }}>
@@ -307,6 +381,7 @@ export function CinematicFooter() {
               <MagneticButton
                 as={Link}
                 href="/about"
+                prefetch={true}
                 className="footer-glass-pill footer-pill-btn group"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#a855f7' }}>
@@ -321,6 +396,7 @@ export function CinematicFooter() {
               <MagneticButton
                 as={Link}
                 href="/contact"
+                prefetch={true}
                 className="footer-glass-pill footer-pill-btn group"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#38bdf8' }}>
@@ -333,16 +409,16 @@ export function CinematicFooter() {
 
             {/* Secondary Text Links */}
             <div className="footer-secondary-pills">
-              <MagneticButton as={Link} href="/" className="footer-glass-pill footer-pill-secondary">
+              <MagneticButton as={Link} href="/" prefetch={true} className="footer-glass-pill footer-pill-secondary">
                 {t.footer?.home || t.nav.home}
               </MagneticButton>
-              <MagneticButton as={Link} href="/articles" className="footer-glass-pill footer-pill-secondary">
+              <MagneticButton as={Link} href="/articles" prefetch={true} className="footer-glass-pill footer-pill-secondary">
                 {t.footer?.articles || t.nav.articles}
               </MagneticButton>
-              <MagneticButton as={Link} href="/videos" className="footer-glass-pill footer-pill-secondary">
+              <MagneticButton as={Link} href="/videos" prefetch={true} className="footer-glass-pill footer-pill-secondary">
                 {t.footer?.videos || t.nav.videos}
               </MagneticButton>
-              <MagneticButton as={Link} href="/faq" className="footer-glass-pill footer-pill-secondary">
+              <MagneticButton as={Link} href="/faq" prefetch={true} className="footer-glass-pill footer-pill-secondary">
                 {t.nav?.faq || (lang === 'en' ? 'FAQ' : 'الأسئلة الشائعة')}
               </MagneticButton>
             </div>

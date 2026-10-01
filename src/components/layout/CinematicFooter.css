@@ -225,6 +225,100 @@
   z-index: 15;
 }
 
+/* Newsletter Feedback & Badges */
+.footer-sub-feedback {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  max-width: 480px;
+  width: 100%;
+  margin-top: 14px;
+  padding: 12px 18px;
+  border-radius: 16px;
+  font-size: 0.875rem;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  animation: feedbackSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  text-align: start;
+  box-sizing: border-box;
+}
+
+.footer-sub-feedback.error {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+}
+
+.footer-sub-feedback.loading {
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: #7dd3fc;
+}
+
+.footer-sub-feedback.success {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #6ee7b7;
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.15);
+}
+
+[data-theme="light"] .footer-sub-feedback.success {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #065f46;
+}
+
+[data-theme="light"] .footer-sub-feedback.error {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.25);
+  color: #b91c1c;
+}
+
+.footer-sub-feedback-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  line-height: 1.45;
+}
+
+.footer-push-active-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #38bdf8;
+  margin-top: 4px;
+}
+
+.footer-already-sub-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #6ee7b7;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+[data-theme="light"] .footer-already-sub-badge {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.2);
+  color: #059669;
+}
+
+@keyframes feedbackSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .footer-marquee-container {
   position: relative;
   top: 0;

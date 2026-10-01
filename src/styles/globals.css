@@ -55,7 +55,8 @@ html[data-lang-pending] #app-root {
   --ring: #00d2ff;
 }
 
-[data-theme="light"] {
+[data-theme="light"],
+html.light {
   --bg-main: #f8fafc;
   --bg-surface: #ffffff;
   --bg-card: rgba(255, 255, 255, 0.9);
@@ -102,9 +103,70 @@ html[data-lang-pending] #app-root {
   --ring: #0284c7;
 }
 
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg-main: #f8fafc;
+    --bg-surface: #ffffff;
+    --bg-card: rgba(255, 255, 255, 0.9);
+    --bg-navbar: rgba(255, 255, 255, 0.9);
+    --border-subtle: rgba(0, 0, 0, 0.08);
+    --text-main: #0f172a;
+    --text-muted: #334155;
+    --text-faint: #64748b;
+    --accent-cyan: #0284c7;
+    --accent-teal: #0d9488;
+    --text-color-primary: #0f172a;
+
+    --about-bg: #f8fafc;
+    --about-fade-bottom: linear-gradient(to bottom, transparent 0%, rgba(248, 250, 252, 0.65) 60%, #f8fafc 100%);
+    --team-showcase-bg: #f8fafc;
+    --team-showcase-fade-top: linear-gradient(to bottom, #f8fafc 0%, rgba(248, 250, 252, 0.85) 45%, rgba(248, 250, 252, 0.25) 75%, transparent 100%);
+    --team-showcase-fade-bottom: linear-gradient(to bottom, transparent 0%, rgba(248, 250, 252, 0.5) 50%, #f8fafc 100%);
+    --members-badge-bg: rgba(0, 0, 0, 0.05);
+    --members-badge-border: 1px solid rgba(0, 0, 0, 0.1);
+    --footer-giant-fill: url(#footerGiantGradLight);
+    --footer-giant-stroke: rgba(2, 132, 199, 0.22);
+    --curved-input-bg: #ffffff;
+    --curved-input-text: #0f172a;
+    --curved-input-border: #0284c7;
+    --curved-input-btn: #0284c7;
+    --svg-follow-text: #0f172a;
+    --svg-follow-bg: #f8fafc;
+
+    --background: #ffffff;
+    --foreground: #0f172a;
+    --primary: #0284c7;
+    --primary-foreground: #ffffff;
+    --secondary: #f1f5f9;
+    --secondary-foreground: #0f172a;
+    --destructive: #dc2626;
+    --destructive-foreground: #ffffff;
+    --muted: #f1f5f9;
+    --muted-foreground: #64748b;
+    --accent: #f1f5f9;
+    --accent-foreground: #0f172a;
+    --input: #e2e8f0;
+    --ring: #0284c7;
+  }
+}
+
 [data-theme='light'] .themed--dark,
-:root:not([data-theme='light']) .themed--light {
+html.light .themed--dark,
+[data-theme='dark'] .themed--light,
+html.dark .themed--light {
   display: none !important;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) .themed--dark {
+    display: none !important;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .themed--light {
+    display: none !important;
+  }
 }
 
 *,

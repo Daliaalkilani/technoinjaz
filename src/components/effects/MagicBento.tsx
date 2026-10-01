@@ -611,6 +611,19 @@ const MagicBento: React.FC<MagicBentoProps> = ({
   const isMobile = useMobileDetection();
   const shouldDisableAnimations = disableAnimations || isMobile;
 
+  useEffect(() => {
+    [
+      'digital-twin',
+      'affective-computing',
+      'emotion-aware-recommendation',
+      'model-context-protocol-mcp',
+      'next-token-prediction',
+      'internet-of-things-iot'
+    ].forEach((slug) => {
+      router.prefetch(`/articles/${slug}`);
+    });
+  }, [router]);
+
   return (
     <>
       {enableSpotlight && (
@@ -639,16 +652,19 @@ const MagicBento: React.FC<MagicBentoProps> = ({
 
           const baseClassName = `magic-bento-card ${textAutoHide ? 'magic-bento-card--text-autohide' : ''} ${enableBorderGlow ? 'magic-bento-card--border-glow' : ''}`;
           
-          const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
-            const target = e.target as HTMLElement;
-            if (!target.closest('a')) {
-              router.push(`/articles/${targetSlug}`);
-            }
+          const handleCardClick = () => {
+            router.push(`/articles/${targetSlug}`);
           };
 
           const cardProps = {
             className: baseClassName,
             onClick: handleCardClick,
+            onPointerDown: () => {
+              router.prefetch(`/articles/${targetSlug}`);
+            },
+            onMouseEnter: () => {
+              router.prefetch(`/articles/${targetSlug}`);
+            },
             style: {
               backgroundColor: isLight ? '#ffffff' : (card.color || '#0d1629'),
               '--glow-color': isLight ? '2, 132, 199' : glowColor,
@@ -662,7 +678,7 @@ const MagicBento: React.FC<MagicBentoProps> = ({
             <>
               {card.image && (
                 <div className="magic-bento-card__media">
-                  <Link href={`/articles/${targetSlug}`} className="magic-bento-card__media-link block w-full h-full" tabIndex={-1}>
+                  <Link href={`/articles/${targetSlug}`} prefetch={true} className="magic-bento-card__media-link block w-full h-full" tabIndex={-1}>
                     <img
                       src={card.image}
                       alt={cardTitle}
@@ -675,7 +691,7 @@ const MagicBento: React.FC<MagicBentoProps> = ({
 
               <div className="magic-bento-card__content">
                 <h3 className="magic-bento-card__title">
-                  <Link href={`/articles/${targetSlug}`} className="magic-bento-card__link">
+                  <Link href={`/articles/${targetSlug}`} prefetch={true} className="magic-bento-card__link">
                     {cardTitle}
                   </Link>
                 </h3>

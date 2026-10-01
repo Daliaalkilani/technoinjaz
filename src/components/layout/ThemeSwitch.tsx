@@ -38,6 +38,7 @@ export function ThemeSwitch({ className = '' }: ThemeSwitchProps) {
     } else {
       const newTheme = activeTheme === 'light' ? 'dark' : 'light';
       setLocalTheme(newTheme);
+      localStorage.setItem('techno_theme_manual', 'true');
       localStorage.setItem('theme', newTheme);
       document.documentElement.classList.toggle('dark', newTheme === 'dark');
       document.documentElement.setAttribute('data-theme', newTheme);
@@ -48,6 +49,7 @@ export function ThemeSwitch({ className = '' }: ThemeSwitchProps) {
     <button
       id="theme-toggle-btn"
       type="button"
+      suppressHydrationWarning
       onClick={toggleTheme}
       title={isLight ? "تفعيل الوضع الليلي / Switch to Dark Mode" : "تفعيل الوضع النهاري / Switch to Light Mode"}
       aria-label={isLight ? "Switch to dark mode" : "Switch to light mode"}

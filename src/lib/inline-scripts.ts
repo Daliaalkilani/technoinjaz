@@ -13,19 +13,21 @@ export const LEGACY_HASH_REDIRECT = `(function(){try{
 
 export const THEME_LANG_BOOT = `(function() {
   try {
-    var isManual = localStorage.getItem('techno_theme_manual');
-    var saved = localStorage.getItem('theme') || localStorage.getItem('techno_theme');
-    var theme = 'dark';
+    var isManual = localStorage.getItem('techno_theme_manual') === 'true';
+    var saved = localStorage.getItem('techno_theme') || localStorage.getItem('theme');
+    var theme;
     if (isManual && (saved === 'light' || saved === 'dark')) {
       theme = saved;
-    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-      theme = 'light';
-    } else if (saved === 'light' || saved === 'dark') {
-      theme = saved;
+    } else {
+      var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      theme = prefersDark ? 'dark' : 'light';
     }
     document.documentElement.setAttribute('data-theme', theme);
     document.documentElement.classList.toggle('dark', theme === 'dark');
     document.documentElement.classList.toggle('light', theme === 'light');
+    if (document.documentElement.style) {
+      document.documentElement.style.colorScheme = theme;
+    }
 
     var savedLang = localStorage.getItem('techno_lang');
     if (savedLang === 'en') {

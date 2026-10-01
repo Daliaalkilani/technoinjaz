@@ -163,6 +163,7 @@ const ProjectsSection = ({
           {showNavigateButton && (
             <Link
               href="/projects"
+              prefetch={true}
               scroll={true}
               onClick={() => {
                 if (typeof window !== 'undefined') window.scrollTo(0, 0);

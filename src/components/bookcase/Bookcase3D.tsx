@@ -81,11 +81,11 @@ export const Bookcase3D: React.FC<Bookcase3DProps> = ({
 
   const [activeBook, setActiveBook] = useState<BookItem | null>(null);
 
-  const headingText = title || (isEn ? '3D Virtual Bookcase & Flipbook Reader' : 'المكتبة التفاعلية ثلاثية الأبعاد (3D Bookcase)');
+  const headingText = title || (isEn ? 'Technical Publications & Research' : 'المكتبة الهندسية والأوراق البحثية');
   const subText = subtitle || (
     isEn
-      ? 'Explore our technical documentations, research papers, and guides with real-time 3D paper folding effect.'
-      : 'تصفح التقارير الهندسية والأوراق البحثية والمناهج التطبيقية بمؤثر تقليب وطي الصفحات ثلاثي الأبعاد الواقعي.'
+      ? 'Explore technical documentations, research papers, and engineering guides.'
+      : 'تصفح الوثائق والتقارير الهندسية والأوراق البحثية والمناهج التطبيقية.'
   );
 
   return (
@@ -95,7 +95,7 @@ export const Bookcase3D: React.FC<Bookcase3DProps> = ({
         <div className="bookcase-header">
           <div className="bookcase-badge">
             <Sparkles size={15} />
-            <span>{isEn ? 'Interactive 3D Library' : 'مكتبة ثلاثية الأبعاد تفاعلية'}</span>
+            <span>{isEn ? 'Technical Library' : 'المكتبة الهندسية'}</span>
           </div>
           <h2 className="bookcase-title">{headingText}</h2>
           <p className="bookcase-subtitle">{subText}</p>
@@ -113,7 +113,7 @@ export const Bookcase3D: React.FC<Bookcase3DProps> = ({
                   key={book.id}
                   className="book-3d-wrapper"
                   onClick={() => setActiveBook(book)}
-                  title={isEn ? `Open ${bookTitle} in 3D Reader` : `فتح ${bookTitle} في القارئ ثلاثي الأبعاد`}
+                  title={isEn ? `Open ${bookTitle}` : `قراءة ${bookTitle}`}
                   tabIndex={0}
                   role="button"
                   onKeyDown={(e) => {
@@ -129,11 +129,12 @@ export const Bookcase3D: React.FC<Bookcase3DProps> = ({
                         <img src={book.coverImage} alt={bookTitle} className="book-cover-img" />
                       ) : (
                         <div className="book-cover-fallback">
-                          <div className="tag">{bookCategory || (isEn ? 'Engineering' : 'وثيقة هندسية')}</div>
                           <h4 className="title">{bookTitle}</h4>
-                          <div className="badge">{isEn ? 'Click to Flip 3D' : 'انقر للتقليب 3D'}</div>
                         </div>
                       )}
+                      {/* Realistic Spine Strip & Hinge Crease */}
+                      <div className="book-spine-strip" aria-hidden="true" />
+                      <div className="book-spine-hinge" aria-hidden="true" />
                     </div>
 
                     {/* Back Cover */}
@@ -159,7 +160,7 @@ export const Bookcase3D: React.FC<Bookcase3DProps> = ({
                   <div className="book-3d-info">
                     <span className="book-3d-title">{bookTitle}</span>
                     <span className="book-3d-action-pill">
-                      {isEn ? '📖 Read in 3D Flipbook' : '📖 تصفح بتقنية 3D'}
+                      {isEn ? 'Open Document' : 'قراءة الملف'}
                     </span>
                   </div>
                 </div>

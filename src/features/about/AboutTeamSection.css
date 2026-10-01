@@ -89,3 +89,39 @@
     min-height: 540px;
   }
 }
+
+/* Gradients for team showcase */
+.team-showcase-top-fade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 180px;
+  background: var(--team-showcase-fade-top);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.team-showcase-bottom-fade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: var(--team-showcase-fade-bottom);
+  pointer-events: none;
+  z-index: 5;
+}
+
+@media (max-width: 850px) {
+  .team-showcase-top-fade {
+    height: 50px;
+    z-index: 5;
+  }
+
+  .team-showcase-bottom-fade {
+    height: 35px;
+    opacity: 0.35;
+    z-index: 5;
+  }
+}

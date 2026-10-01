@@ -197,48 +197,64 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
           )}
 
           {/* 3D Interactive Documentation Showcase */}
-          <div className="project-bookcase-banner" style={{ margin: '2.5rem 0', padding: '2rem 1.5rem', borderRadius: '18px', background: 'radial-gradient(circle at 50% 20%, rgba(37, 99, 235, 0.12) 0%, rgba(15, 23, 42, 0.6) 100%)', border: '1px solid rgba(56, 189, 248, 0.25)', textAlign: 'center' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: '#38bdf8', fontSize: '0.85rem', fontWeight: 700, padding: '0.3rem 0.9rem', borderRadius: '9999px', background: 'rgba(56, 189, 248, 0.1)', border: '1px solid rgba(56, 189, 248, 0.25)', marginBottom: '0.85rem' }}>
-              <BookOpen size={16} />
-              <span>{isEn ? '3D Documentation & Interactive Flipbook' : 'المكتبة التوثيقية ثلاثية الأبعاد (3D Flipbook)'}</span>
-            </div>
-            <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '1.3rem', fontWeight: 800 }}>
-              {isEn ? 'Browse Project Technical Whitepaper in 3D' : 'تصفّح الوثيقة الهندسية بتقنية طي وتقليب الصفحات 3D'}
-            </h4>
-            <p style={{ margin: '0 auto 1.5rem auto', color: '#94a3b8', fontSize: '0.9rem', maxWidth: '580px', lineHeight: 1.6 }}>
-              {isEn 
-                ? 'Experience real-time interactive paper-folding physics and high-resolution architecture blueprints.'
-                : 'استكشف الوثيقة الهندسية الكاملة بتأثير فيزيائي واقعي لطي وتقليب الصفحات عبر قارئ الـ 3D التفاعلي.'}
-            </p>
-            <div style={{ display: 'flex', justifyContent: 'center', perspective: '1000px', marginBottom: '1.25rem' }}>
+          <div className="project-bookcase-banner" style={{ margin: '2.5rem 0', padding: '2.5rem 1.5rem', borderRadius: '18px', background: 'radial-gradient(circle at 50% 20%, rgba(37, 99, 235, 0.12) 0%, rgba(15, 23, 42, 0.6) 100%)', border: '1px solid rgba(56, 189, 248, 0.25)', textAlign: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', perspective: '1100px', marginBottom: '1.5rem' }}>
               <div 
                 className="book-3d-wrapper"
                 onClick={() => setIsPdfModalOpen(true)}
-                title={isEn ? "Click to open in 3D Flipbook" : "انقر للفتح في قارئ الـ 3D"}
+                title={isEn ? "Click to open reader" : "انقر لقراءة التقرير"}
                 style={{ cursor: 'pointer' }}
               >
                 <div className="book-3d">
+                  {/* Front Cover */}
                   <div className="book-face book-front">
-                    <div className="book-cover-fallback">
-                      <div className="tag">{project.categoryNameAr || 'Engineering'}</div>
-                      <h4 className="title" style={{ fontSize: '1rem' }}>{project.title}</h4>
-                      <div className="badge">{isEn ? 'Click to Flip 3D' : 'انقر للتقليب 3D'}</div>
-                    </div>
+                    {project.bookCover ? (
+                      <img
+                        src={project.bookCover}
+                        alt={project.title}
+                        className="book-cover-img"
+                      />
+                    ) : project.image ? (
+                      <div className="book-cover-img-wrapper" style={{ position: 'relative', width: '100%', height: '100%' }}>
+                        <img
+                          src={project.image}
+                          alt={project.title}
+                          className="book-cover-img"
+                        />
+                        <div className="book-cover-overlay">
+                          <h4 className="book-cover-title">{project.title}</h4>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="book-cover-fallback">
+                        <h4 className="title" style={{ fontSize: '1rem' }}>{project.title}</h4>
+                      </div>
+                    )}
+                    {/* Realistic Physical Spine Hinge & Crease */}
+                    <div className="book-spine-strip" aria-hidden="true" />
+                    <div className="book-spine-hinge" aria-hidden="true" />
                   </div>
+
+                  {/* Back Cover */}
                   <div className="book-face book-back" />
+
+                  {/* Physical 3D Spine (Casing) */}
                   <div className="book-face book-spine">
                     <span className="book-spine-text">{project.title}</span>
                   </div>
+
+                  {/* Pages Edges */}
                   <div className="book-face book-right" />
                   <div className="book-face book-top" />
                   <div className="book-face book-bottom" />
                 </div>
+
                 <div className="book-3d-info">
                   <span className="book-3d-title">{project.title}</span>
-                  <span className="book-3d-action-pill">{isEn ? '📖 Read in 3D Flipbook' : '📖 تصفح بتقنية 3D'}</span>
                 </div>
               </div>
             </div>
+
             <button
               type="button"
               className="fb-nav-btn"
@@ -246,7 +262,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
               style={{ margin: '0 auto', display: 'inline-flex' }}
             >
               <BookOpen size={16} />
-              <span>{isEn ? 'Open 3D Flipbook Reader' : 'افتح القارئ التفاعلي ثلاثي الأبعاد'}</span>
+              <span>{isEn ? 'Read Documentation' : 'قراءة ملف المشروع'}</span>
             </button>
           </div>
 

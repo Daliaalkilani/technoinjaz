@@ -311,6 +311,7 @@ const InfiniteSpiral = ({
               className="infinite-spiral__item"
               style={cardStyle}
               href={item.href}
+              prefetch={true}
               target={item.target}
               rel={item.target === '_blank' ? 'noreferrer' : undefined}
               role="listitem"

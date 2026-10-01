@@ -27,10 +27,12 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
     name: lang === 'en' ? (m.nameEn || m.name) : m.name,
     title: lang === 'en' ? (m.titleEn || m.title || m.nameEn || m.name) : (m.title || m.name),
     role: lang === 'en' ? (m.roleEn || m.role) : m.role,
+    badge: lang === 'en' ? (m.badgeEn || m.badge) : m.badge,
     description: lang === 'en' ? (m.descriptionEn || m.description) : m.description,
     department: lang === 'en' ? (m.departmentEn || m.department) : m.department,
     specialization: lang === 'en' ? (m.specializationEn || m.specialization) : m.specialization,
     bio: lang === 'en' ? (m.bioEn || m.bio) : m.bio,
+    shortBio: lang === 'en' ? (m.shortBioEn || m.shortBio || m.bioEn || m.bio) : (m.shortBio || m.bio),
     skills: lang === 'en' ? (m.skillsEn || m.skills) : m.skills,
     location: lang === 'en' ? (m.locationEn || m.location) : m.location,
     projects: lang === 'en' ? (m.projectsEn || m.projects) : m.projects,
@@ -98,18 +100,7 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
         className="team-showcase-section-wrapper"
       >
         {/* Top smooth blending gradient */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: '240px',
-            background: 'var(--team-showcase-fade-top)',
-            pointerEvents: 'none',
-            zIndex: 20
-          }}
-        />
+        <div className="team-showcase-top-fade" aria-hidden="true" />
 
         {/* Space Orb Background (deferred until loader done) */}
         <div
@@ -153,13 +144,13 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
         >
           {teamMembers.map(m => (
             <li key={m.id}>
-              <span>{m.name} — {m.role} ({m.specialization}): {m.bio}</span>
+              <span>{m.name} — {m.role}: {m.bio}</span>
             </li>
           ))}
         </ul>
 
         {/* 3D Circular Team Carousel */}
-        <div style={{ position: 'relative', width: '100%', height: '100%', flex: 1, zIndex: 1 }}>
+        <div style={{ position: 'relative', width: '100%', height: '100%', flex: 1, zIndex: 10 }}>
           <SafeErrorBoundary>
             <InfiniteMenu
               items={localizedCircleSlots as any}
@@ -170,18 +161,7 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
         </div>
 
         {/* Bottom smooth blending gradient to footer horizon */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: '200px',
-            background: 'var(--team-showcase-fade-bottom)',
-            pointerEvents: 'none',
-            zIndex: 20
-          }}
-        />
+        <div className="team-showcase-bottom-fade" aria-hidden="true" />
       </div>
     </section>
   );

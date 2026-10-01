@@ -123,7 +123,6 @@ export const FaqSection: React.FC = () => {
                 <article 
                   key={item.id} 
                   className={`faq-accordion-item ${isOpen ? 'is-open' : ''}`}
-                  onMouseEnter={() => setOpenItems({ [item.id]: true })}
                 >
                   <button
                     type="button"

@@ -305,6 +305,13 @@
   background: #090d16;
 }
 
+.card-thumb-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+}
+
 .card-thumb-img {
   width: 100%;
   height: 100%;

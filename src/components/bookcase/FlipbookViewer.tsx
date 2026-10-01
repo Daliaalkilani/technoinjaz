@@ -5,7 +5,6 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  Download,
   Maximize2,
   Minimize2,
   BookOpen,
@@ -40,7 +39,7 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
   const renderStatusRef = useRef<Record<number, { status: string; canvas: HTMLCanvasElement | null; task?: any }>>({});
 
   const [loading, setLoading] = useState(true);
-  const [loadingMessage, setLoadingMessage] = useState(isEn ? 'Loading 3D Document...' : 'جاري تهيئة الوثيقة ثلاثية الأبعاد...');
+  const [loadingMessage, setLoadingMessage] = useState(isEn ? 'Loading Document...' : 'جاري تحميل الوثيقة...');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -336,11 +335,18 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="flipbook-overlay" onClick={onClose} role="dialog" aria-modal="true">
+    <div 
+      className="flipbook-overlay" 
+      onClick={onClose} 
+      role="dialog" 
+      aria-modal="true"
+      onContextMenu={(e) => e.preventDefault()}
+    >
       <div
         className="flipbook-modal"
         ref={containerRef}
         onClick={(e) => e.stopPropagation()}
+        onContextMenu={(e) => e.preventDefault()}
         dir={isEn ? 'ltr' : 'rtl'}
       >
         {/* Top Header Toolbar */}
@@ -351,21 +357,11 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
             </div>
             <div className="flipbook-title-group">
               <h3>{title}</h3>
-              <span>{subtitle || (isEn ? 'Interactive 3D Virtual Reader' : 'قارئ تفاعلي ثلاثي الأبعاد')}</span>
+              <span>{subtitle || (isEn ? 'Interactive Document Reader' : 'قارئ المستندات الهندسية')}</span>
             </div>
           </div>
 
           <div className="flipbook-header-actions">
-            <a
-              href={pdfUrl}
-              download={`${title.replace(/\s+/g, '-').toLowerCase()}.pdf`}
-              className="fb-btn"
-              title={isEn ? 'Download Original PDF' : 'تحميل ملف PDF الأصلي'}
-            >
-              <Download size={15} />
-              <span>{isEn ? 'Download' : 'تحميل PDF'}</span>
-            </a>
-
             <button
               type="button"
               className="fb-btn"

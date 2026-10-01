@@ -57,6 +57,7 @@ const VideosSection: React.FC<VideosSectionProps> = ({
           {showNavigateButton && (
             <Link
               href="/videos"
+              prefetch={true}
               scroll={true}
               onClick={() => {
                 if (typeof window !== 'undefined') window.scrollTo(0, 0);

@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import './GooeyNav.css';
 
@@ -8,8 +9,21 @@ import './GooeyNav.css';
 
 
 
+/**
+ * @param {{
+ *   items: Array<{ label: string, href: string }>,
+ *   animationTime?: number,
+ *   particleCount?: number,
+ *   particleDistances?: number[],
+ *   particleR?: number,
+ *   timeVariance?: number,
+ *   colors?: number[],
+ *   initialActiveIndex?: number,
+ *   activeIndex?: number,
+ *   onItemSelect?: (item: any, index: number) => void
+ * }} props
+ */
 const GooeyNav = ({
-
   items,
   animationTime = 600,
   particleCount = 15,
@@ -113,13 +127,10 @@ const GooeyNav = ({
   };
 
   const handleClick = (e, index) => {
-    e?.preventDefault?.();
     const item = items[index];
 
     if (onItemSelect) {
       onItemSelect(item, index);
-    } else if (item?.href) {
-      router.push(item.href);
     }
 
     const liEl = e?.currentTarget?.closest('li') || navRef.current?.querySelectorAll('li')?.[index];
@@ -131,23 +142,18 @@ const GooeyNav = ({
     if (filterRef.current) {
       const particles = filterRef.current.querySelectorAll('.particle');
       particles.forEach(p => filterRef.current.removeChild(p));
+      makeParticles(filterRef.current);
     }
 
     if (textRef.current) {
       textRef.current.classList.remove('active');
-
       void textRef.current.offsetWidth;
       textRef.current.classList.add('active');
-    }
-
-    if (filterRef.current) {
-      makeParticles(filterRef.current);
     }
   };
 
   const handleKeyDown = (e, index) => {
     if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
       handleClick(e, index);
     }
   };
@@ -186,14 +192,16 @@ const GooeyNav = ({
         <ul ref={navRef}>
           {items.map((item, index) => (
             <li key={index} className={activeIndex === index ? 'active' : ''}>
-              <a 
+              <Link 
                 href={item.href} 
+                prefetch={true}
+                onPointerDown={() => router.prefetch(item.href)}
+                onMouseEnter={() => router.prefetch(item.href)}
                 onClick={e => handleClick(e, index)} 
                 onKeyDown={e => handleKeyDown(e, index)}
-                onMouseEnter={() => { if (item?.href) router.prefetch(item.href); }}
               >
                 {item.label}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>

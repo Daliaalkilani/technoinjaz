@@ -438,18 +438,26 @@
   }
 
   .videos-info-col {
-    align-items: center;
-    text-align: center;
+    align-items: flex-start;
+  }
+
+  [dir="rtl"] .videos-info-col {
+    text-align: right;
+    align-items: flex-start;
+  }
+
+  [dir="ltr"] .videos-info-col {
+    text-align: left;
+    align-items: flex-start;
   }
 
   .videos-info-col .projects-view-all-btn {
-    align-self: center;
-    white-space: normal;
-    text-align: center;
+    align-self: flex-start;
+    white-space: nowrap;
   }
 
   .videos-badge {
-    align-self: center;
+    align-self: flex-start;
   }
 
   .videos-subtitle {

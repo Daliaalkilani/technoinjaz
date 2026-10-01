@@ -20,6 +20,7 @@ export interface ProjectItem {
   roleQualifier?: string;
   pdfUrl?: string;
   presentationUrl?: string;
+  bookCover?: string;
 }
 
 export const PROJECTS_DATA: ProjectItem[] = [

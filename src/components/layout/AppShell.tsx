@@ -13,6 +13,8 @@ import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { getLoggedInUser } from '@/lib/auth';
 import { User, Menu, WifiOff } from 'lucide-react';
 import MobileNavDrawer from './MobileNavDrawer';
+import NotificationBell from '@/components/notifications/NotificationBell';
+import NotificationToaster from '@/components/notifications/NotificationToaster';
 
 export interface AppShellProps {
   children: React.ReactNode;
@@ -89,9 +91,8 @@ export function AppShell({ children }: AppShellProps) {
     { label: t.nav.contact, href: '/contact' },
   ];
 
-  // Prefetch primary navigation routes only in production to avoid dev-mode compilation overload
+  // Prefetch primary navigation routes so transitions are instant
   useEffect(() => {
-    if (process.env.NODE_ENV !== 'production') return;
     navItems.forEach((item) => {
       if (item.href && item.href !== pathname) {
         router.prefetch(item.href);
@@ -170,6 +171,7 @@ export function AppShell({ children }: AppShellProps) {
       </a>
       <ScrollToTop />
       <ScrollProgress className="top-0" />
+      <NotificationToaster />
 
       {/* Top Navbar with GooeyNav */}
       <div 
@@ -208,13 +210,7 @@ export function AppShell({ children }: AppShellProps) {
               particleR={100}
               initialActiveIndex={activeIndex >= 0 ? activeIndex : 0}
               activeIndex={activeIndex}
-              onItemSelect={(item: any) => {
-                if (item?.href) {
-                  React.startTransition(() => {
-                    router.push(item.href);
-                  });
-                }
-              }}
+
               animationTime={600}
               timeVariance={300}
               colors={[1, 2, 3, 1, 2, 3, 1, 4]}
@@ -229,6 +225,9 @@ export function AppShell({ children }: AppShellProps) {
             <div className="navbar-desktop-only">
               <ThemeSwitch />
             </div>
+
+            {/* Platform Notifications Bell */}
+            <NotificationBell />
 
             {/* User Profile / Auth Button */}
             <div className="navbar-desktop-only">

@@ -59,9 +59,9 @@ export default function ProfilePage({ member, onBack }) {
           </div>
 
           <div className="profile-hero-info">
-            <span className="profile-dept-badge">{memberDept}</span>
             <h1 className="profile-name">{memberName}</h1>
             <div className="profile-role-pill">{memberRole}</div>
+            <span className="profile-dept-badge">{memberDept}</span>
             {member.socials && (
               <SocialButtons socials={member.socials} size="large" />
             )}

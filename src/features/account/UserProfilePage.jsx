@@ -177,7 +177,7 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
           <div className="user-profile-back-nav">
             <button 
               type="button" 
-              onClick={onBack} 
+              onClick={handleBackNav} 
               className="user-profile-back-btn"
               title={isEn ? "Back to Home" : "العودة إلى الرئيسية"}
             >

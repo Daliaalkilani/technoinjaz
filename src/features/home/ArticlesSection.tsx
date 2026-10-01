@@ -50,6 +50,7 @@ const ArticlesSection: React.FC<ArticlesSectionProps> = ({
           {showNavigateButton && (
             <Link
               href="/articles"
+              prefetch={true}
               className="projects-view-all-btn"
             >
               <span>{t.articles.readArticles}</span>

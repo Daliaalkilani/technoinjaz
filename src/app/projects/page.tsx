@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { getAllProjects } from '@/lib/content/projects';
+import ProjectsHeader from '@/features/projects/ProjectsHeader';
+import { LiveProjectsShowcase } from '@/features/projects/LiveProjectsShowcase';
 import ProjectsCatalogSection from '@/features/projects/ProjectsCatalogSection';
 import { pageMetadata } from '@/seo/metadata';
 import { JsonLd } from '@/seo/JsonLd';
@@ -28,7 +30,14 @@ export default function ProjectsPage() {
           itemList(listItems)
         ]}
       />
-      <ProjectsCatalogSection projects={projects} />
+      <div className="tab-page-container tab-page-projects" style={{ padding: 0, maxWidth: '100%' }}>
+        {/* 1. Live Projects & Web Systems Showcase at the beginning */}
+        <ProjectsHeader />
+        <LiveProjectsShowcase />
+
+        {/* 2. Full Projects & Research Catalog */}
+        <ProjectsCatalogSection projects={projects} />
+      </div>
     </>
   );
 }

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   X,
   Home,
@@ -37,6 +37,7 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
 }) => {
   const { lang, setLang, theme, toggleTheme, t } = useThemeLanguage();
   const pathname = usePathname();
+  const router = useRouter();
   const drawerRef = useRef<HTMLDivElement>(null);
 
   // Close drawer on ESC key
@@ -75,6 +76,18 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
     { label: t.nav.contact, href: '/contact', icon: Send },
   ];
 
+  // Prefetch routes when drawer is opened for instant 0ms touch response
+  useEffect(() => {
+    if (isOpen) {
+      navItems.forEach((item) => {
+        if (item.href) {
+          router.prefetch(item.href);
+        }
+      });
+      router.prefetch('/account');
+    }
+  }, [isOpen, router]);
+
   const isRtl = lang === 'ar';
   const Chevron = isRtl ? ChevronLeft : ChevronRight;
 
@@ -100,7 +113,13 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
       >
         {/* Header */}
         <div className="mobile-drawer-header">
-          <Link href="/" className="mobile-drawer-brand" onClick={onClose}>
+          <Link 
+            href="/" 
+            prefetch={true} 
+            className="mobile-drawer-brand" 
+            onClick={onClose}
+            onPointerDown={() => router.prefetch('/')}
+          >
             <img
               src="/images/brand/techno-logo.png"
               alt={t.nav.brand}
@@ -124,8 +143,10 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
           {currentUser ? (
             <Link
               href="/account"
+              prefetch={true}
               className="mobile-drawer-user-card"
               onClick={onClose}
+              onPointerDown={() => router.prefetch('/account')}
             >
               {currentUser.avatar ? (
                 <img
@@ -176,8 +197,10 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
                 <li key={item.href} className="mobile-drawer-item">
                   <Link
                     href={item.href}
+                    prefetch={true}
                     className={`mobile-drawer-link ${isActive ? 'is-active' : ''}`}
                     onClick={onClose}
+                    onPointerDown={() => router.prefetch(item.href)}
                   >
                     <div className="mobile-drawer-link-start">
                       <span className="mobile-drawer-icon-wrap">
@@ -217,6 +240,7 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
               className="mobile-drawer-switch-btn"
               onClick={toggleTheme}
               aria-label={isRtl ? 'تبديل المظهر' : 'Toggle Theme'}
+              suppressHydrationWarning
             >
               {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
               <span>{theme === 'dark' ? (isRtl ? 'الوضع النهاري' : 'Light Mode') : (isRtl ? 'الوضع الليلي' : 'Dark Mode')}</span>

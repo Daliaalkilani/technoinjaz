@@ -124,6 +124,7 @@ export const HomeHero: React.FC<HomeHeroProps> = ({
           <div className="cta-group">
             <Link
               href="/projects"
+              prefetch={true}
               scroll={true}
               onClick={() => {
                 if (typeof window !== 'undefined') window.scrollTo(0, 0);
@@ -134,6 +135,7 @@ export const HomeHero: React.FC<HomeHeroProps> = ({
             </Link>
             <Link
               href="/contact"
+              prefetch={true}
               className="cta-button cta-secondary"
             >
               {lang === 'ar' ? 'تقديم طلب مشروع' : 'Request a Project'}

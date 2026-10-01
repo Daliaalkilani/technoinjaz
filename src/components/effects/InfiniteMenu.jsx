@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { mat4, quat, vec2, vec3 } from 'gl-matrix';
 import SocialButtons from '@/components/ui/SocialButtons';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
@@ -1056,6 +1057,7 @@ export default function InfiniteMenu({
   backgroundColor = '#000000',
   onSelectMember = undefined
 }) {
+  const router = useRouter();
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
   const canvasRef = useRef(null);
@@ -1158,7 +1160,7 @@ export default function InfiniteMenu({
     if (activeItem.link.startsWith('http')) {
       window.open(activeItem.link, '_blank');
     } else {
-      console.log('Internal route:', activeItem.link);
+      router.push(activeItem.link);
     }
   };
 
@@ -1206,16 +1208,6 @@ export default function InfiniteMenu({
           onPointerLeave={() => { if (sketchRef.current) sketchRef.current.isHovered = false; }}
         >
           <div className="active-member-content">
-            <span className="member-label">
-              {activeItem.isPlaceholder
-                ? (isEn ? 'Reserved Engineering Seat' : 'مقعد هندسي شاغر')
-                : activeItem.id === 'abdulghani'
-                ? (isEn ? 'Team Founder & Director' : 'قائد ومؤسس الفريق')
-                : activeItem.id === 'abdulhady-alkilani'
-                ? (isEn ? 'Core Team Engineer' : 'مهندس الفريق الأساسي')
-                : (isEn ? 'Team Member' : 'عضو الفريق')}
-            </span>
-
             <h2 className="member-name">
               {isEn ? (activeItem.nameEn || activeItem.titleEn || activeItem.name || activeItem.title) : (activeItem.name || activeItem.title)}
             </h2>
@@ -1224,18 +1216,18 @@ export default function InfiniteMenu({
               {isEn ? (activeItem.roleEn || activeItem.descriptionEn || activeItem.role || activeItem.description) : (activeItem.role || activeItem.description)}
             </p>
 
-            {/* Specialization tag (الاختصاص) */}
-            {(activeItem.specialization || activeItem.specializationEn) && (
-              <div className="member-spec-badge">
-                <span>⚡ {isEn ? (activeItem.specializationEn || activeItem.specialization) : activeItem.specialization}</span>
-              </div>
-            )}
-
             {/* Brief bio snippet (نبذة عنه) */}
             {(activeItem.bio || activeItem.bioEn) && (
-              <p className="member-bio-text">
-                {isEn ? (activeItem.bioEn || activeItem.bio) : activeItem.bio}
-              </p>
+              <>
+                <p className="member-bio-text member-bio-desktop">
+                  {isEn ? (activeItem.bioEn || activeItem.bio) : activeItem.bio}
+                </p>
+                <p className="member-bio-text member-bio-mobile">
+                  {isEn
+                    ? (activeItem.shortBioEn || activeItem.shortBio || activeItem.bioEn || activeItem.bio)
+                    : (activeItem.shortBio || activeItem.bio)}
+                </p>
+              </>
             )}
 
             {/* أيقونات التواصل الاجتماعي: لينكد إن، غيت هاب، فيسبوك، إيميل */}

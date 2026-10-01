@@ -148,6 +148,13 @@ export function ArticlesListing({
     return list;
   }, [filteredArticles, sortOrder, likesState]);
 
+  // Prefetch top articles so clicking is instantaneous
+  useEffect(() => {
+    displayedArticles.slice(0, 8).forEach((art) => {
+      router.prefetch(`/articles/${art.slug}`);
+    });
+  }, [displayedArticles, router]);
+
   return (
     <div className="office-blog-section" dir={isEn ? 'ltr' : 'rtl'}>
       {showHeroBanner && (
@@ -259,13 +266,21 @@ export function ArticlesListing({
               <article 
                 key={article.id} 
                 className="blog-modern-card"
-                onClick={() => router.push(`/articles/${article.slug}`)}
+                onClick={(e) => {
+                  const target = e.target as HTMLElement;
+                  if (!target.closest('button') && !target.closest('a')) {
+                    router.push(`/articles/${article.slug}`);
+                  }
+                }}
+                onPointerDown={() => router.prefetch(`/articles/${article.slug}`)}
+                onMouseEnter={() => router.prefetch(`/articles/${article.slug}`)}
+                style={{ cursor: 'pointer' }}
               >
                 {/* 1. Image Media Container */}
-                <div className="card-media-banner">
+                <Link href={`/articles/${article.slug}`} prefetch={true} className="card-media-banner block" tabIndex={-1}>
                   <ResponsiveImage src={article.image} alt={title} className="card-media-img" />
                   <div className="card-media-gradient-overlay" />
-                </div>
+                </Link>
 
                 {/* 2. Card Content Body */}
                 <div className="card-body-content">
@@ -288,7 +303,7 @@ export function ArticlesListing({
                   </div>
 
                   <h3 className="card-main-title">
-                    <Link href={`/articles/${article.slug}`} className="card-main-title-link">
+                    <Link href={`/articles/${article.slug}`} prefetch={true} className="card-main-title-link">
                       {title}
                     </Link>
                   </h3>

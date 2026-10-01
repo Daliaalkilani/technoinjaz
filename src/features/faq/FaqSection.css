@@ -151,6 +151,8 @@
   font-family: inherit;
   color: inherit;
   transition: background 0.2s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .faq-question-btn:hover {

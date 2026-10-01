@@ -18,15 +18,40 @@ const ThemeLanguageContext = createContext<ThemeLanguageContextType | undefined>
 
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
+const getInitialTheme = (): Theme => {
+  if (typeof document !== 'undefined') {
+    const attr = document.documentElement.getAttribute('data-theme') as Theme;
+    if (attr === 'light' || attr === 'dark') return attr;
+    const isManual = localStorage.getItem('techno_theme_manual') === 'true';
+    const saved = (localStorage.getItem('techno_theme') || localStorage.getItem('theme')) as Theme;
+    if (isManual && (saved === 'light' || saved === 'dark')) return saved;
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  }
+  return 'dark';
+};
+
 export const ThemeLanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Always initialize with 'dark' so initial client hydration pass matches SSR server-rendered HTML
   const [theme, setTheme] = useState<Theme>('dark');
   const [lang, setLangState] = useState<Language>('ar');
+  const isInitialMount = React.useRef(true);
 
   // Synchronize with document attributes on initial mount
   useIsomorphicLayoutEffect(() => {
-    const attr = document.documentElement.getAttribute('data-theme');
+    const attr = document.documentElement.getAttribute('data-theme') as Theme;
     if (attr === 'light' || attr === 'dark') {
       setTheme(attr);
+    } else {
+      const isManual = localStorage.getItem('techno_theme_manual') === 'true';
+      const saved = (localStorage.getItem('techno_theme') || localStorage.getItem('theme')) as Theme;
+      if (isManual && (saved === 'light' || saved === 'dark')) {
+        setTheme(saved);
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        setTheme('light');
+      }
     }
     try {
       const l = localStorage.getItem('techno_lang');
@@ -43,7 +68,7 @@ export const ThemeLanguageProvider: React.FC<{ children: React.ReactNode }> = ({
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
     const handleSystemThemeChange = (e: MediaQueryListEvent) => {
-      const isManual = localStorage.getItem('techno_theme_manual');
+      const isManual = localStorage.getItem('techno_theme_manual') === 'true';
       if (!isManual) {
         setTheme(e.matches ? 'dark' : 'light');
       }
@@ -53,12 +78,20 @@ export const ThemeLanguageProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => mediaQuery.removeEventListener('change', handleSystemThemeChange);
   }, []);
 
-  // Update HTML attributes and persistence whenever theme changes
+  // Update HTML attributes and persistence ONLY when theme changes after mount
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
     if (typeof document !== 'undefined') {
       document.documentElement.setAttribute('data-theme', theme);
       document.documentElement.classList.toggle('dark', theme === 'dark');
       document.documentElement.classList.toggle('light', theme === 'light');
+      if (document.documentElement.style) {
+        document.documentElement.style.colorScheme = theme;
+      }
       localStorage.setItem('techno_theme', theme);
       localStorage.setItem('theme', theme);
     }
@@ -87,6 +120,9 @@ export const ThemeLanguageProvider: React.FC<{ children: React.ReactNode }> = ({
         document.documentElement.setAttribute('data-theme', nextTheme);
         document.documentElement.classList.toggle('dark', nextTheme === 'dark');
         document.documentElement.classList.toggle('light', nextTheme === 'light');
+        if (document.documentElement.style) {
+          document.documentElement.style.colorScheme = nextTheme;
+        }
       }
     };
 
