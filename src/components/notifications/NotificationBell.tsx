@@ -109,6 +109,10 @@ export default function NotificationBell() {
 
   const unreadCount = unreadItems.length;
 
+  if (!subscribed) {
+    return null;
+  }
+
   return (
     <div ref={containerRef} className="navbar-notif-bell-container" dir={isEn ? 'ltr' : 'rtl'}>
       {/* Bell Trigger Button */}
@@ -158,39 +162,14 @@ export default function NotificationBell() {
           </div>
 
           {/* Subscription Status Banner */}
-          <div className={`notif-sub-banner ${subscribed ? 'is-subscribed' : 'is-unsubscribed'}`}>
-            {subscribed ? (
-              <div className="notif-sub-banner-content">
-                <span className="notif-status-dot active" />
-                <div className="notif-sub-text">
-                  <strong>{isEn ? "Notifications Active" : "الإشعارات مفعلة"}</strong>
-                  <span className="notif-sub-email">{subscriberEmail}</span>
-                </div>
+          <div className="notif-sub-banner is-subscribed">
+            <div className="notif-sub-banner-content">
+              <span className="notif-status-dot active" />
+              <div className="notif-sub-text">
+                <strong>{isEn ? "Notifications Active" : "الإشعارات مفعلة"}</strong>
+                <span className="notif-sub-email">{subscriberEmail}</span>
               </div>
-            ) : (
-              <div className="notif-sub-banner-content">
-                <span className="notif-status-dot inactive" />
-                <div className="notif-sub-text">
-                  <span>{isEn ? "Subscribe below to get instant alerts for all new releases!" : "اشترك بالأسفل لتصلك إشعارات فورية بكل جديد!"}</span>
-                  <a 
-                    href="#navbar" 
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setIsOpen(false);
-                      const el = document.querySelector('.footer-newsletter-wrap');
-                      if (el) {
-                        el.scrollIntoView({ behavior: 'smooth' });
-                      } else {
-                        router.push('/#footer');
-                      }
-                    }}
-                    className="notif-go-sub-link"
-                  >
-                    {isEn ? "Subscribe Now →" : "اشترك الآن ←"}
-                  </a>
-                </div>
-              </div>
-            )}
+            </div>
           </div>
 
           {/* Releases List */}

@@ -60,8 +60,9 @@ export default function NotificationToaster() {
   };
 
   useEffect(() => {
-    // 1. Listen for new release alerts triggered anywhere
+    // 1. Listen for new release alerts triggered anywhere (only for subscribed users)
     const handleNewRelease = (e: CustomEvent<PlatformNotificationItem>) => {
+      if (!isUserSubscribed()) return;
       const item = e.detail;
       if (!item) return;
       showToast({
