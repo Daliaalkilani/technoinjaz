@@ -8,7 +8,7 @@
 
   if (document.documentElement.hasAttribute('data-skip-loader')) {
     const existing = document.getElementById('te-loader');
-    if (existing) existing.remove();
+    if (existing) existing.style.display = 'none';
     window.dispatchEvent(new CustomEvent('techno:completed'));
     return;
   }
@@ -137,7 +137,6 @@
         el.style.display = 'none';
         destroy();
         emit('completed');
-        try { el.remove(); } catch (e) {}
       }, 420);
     }
   }

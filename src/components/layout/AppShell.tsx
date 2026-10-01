@@ -231,42 +231,44 @@ export function AppShell({ children }: AppShellProps) {
             </div>
 
             {/* User Profile / Auth Button */}
-            {mounted && currentUser ? (
-              <Link
-                href="/account"
-                className={`navbar-user-avatar-btn navbar-desktop-only ${pathname === '/account' ? 'active' : ''}`}
-                title={currentUser.name ? `${currentUser.name} - ${lang === 'en' ? 'My Profile' : 'الملف الشخصي'}` : (lang === 'en' ? 'My Profile' : 'الملف الشخصي')}
-                aria-label={lang === 'en' ? 'My Profile' : 'الملف الشخصي'}
-              >
-                {currentUser.avatar ? (
-                  <img
-                    src={currentUser.avatar}
-                    alt={currentUser.name || 'User Profile'}
-                    className="navbar-user-avatar-img"
-                  />
-                ) : (
-                  <div className="navbar-user-avatar-fallback">
-                    {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : <User size={16} />}
-                  </div>
-                )}
-                <span className="navbar-user-status-dot" aria-hidden="true" />
-              </Link>
-            ) : (
-              <button
-                type="button"
-                className={`navbar-auth-btn navbar-desktop-only ${pathname === '/login' || pathname === '/register' ? 'active' : ''}`}
-                onClick={() => handleRequireLogin()}
-                title={t.nav.login}
-                aria-label={t.nav.login}
-              >
-                <span className="navbar-auth-btn-icon" aria-hidden="true">
-                  <User size={15} />
-                </span>
-                <span className="navbar-auth-btn-label">
-                  {t.nav.login}
-                </span>
-              </button>
-            )}
+            <div className="navbar-desktop-only">
+              {mounted && currentUser ? (
+                <Link
+                  href="/account"
+                  className={`navbar-user-avatar-btn ${pathname === '/account' ? 'active' : ''}`}
+                  title={currentUser.name ? `${currentUser.name} - ${lang === 'en' ? 'My Profile' : 'الملف الشخصي'}` : (lang === 'en' ? 'My Profile' : 'الملف الشخصي')}
+                  aria-label={lang === 'en' ? 'My Profile' : 'الملف الشخصي'}
+                >
+                  {currentUser.avatar ? (
+                    <img
+                      src={currentUser.avatar}
+                      alt={currentUser.name || 'User Profile'}
+                      className="navbar-user-avatar-img"
+                    />
+                  ) : (
+                    <div className="navbar-user-avatar-fallback">
+                      {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : <User size={16} />}
+                    </div>
+                  )}
+                  <span className="navbar-user-status-dot" aria-hidden="true" />
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  className={`navbar-auth-btn ${pathname === '/login' || pathname === '/register' ? 'active' : ''}`}
+                  onClick={() => handleRequireLogin()}
+                  title={t.nav.login}
+                  aria-label={t.nav.login}
+                >
+                  <span className="navbar-auth-btn-icon" aria-hidden="true">
+                    <User size={15} />
+                  </span>
+                  <span className="navbar-auth-btn-label">
+                    {t.nav.login}
+                  </span>
+                </button>
+              )}
+            </div>
 
             {/* Mobile Hamburger Menu Toggle Button */}
             <button
