@@ -228,27 +228,24 @@
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Only the two biggest cards (Card 3 & Card 4) show their full image without cropping */
+/* Only the two biggest cards (Card 3 & Card 4) show their full image filling 100% of the 16:9 space without cropping */
 .magic-bento-card__img--full,
 .magic-bento-card:nth-child(3) .magic-bento-card__img,
 .magic-bento-card:nth-child(4) .magic-bento-card__img {
-  object-fit: contain !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
   object-position: center center;
+  display: block;
 }
 
 .magic-bento-card__media--featured,
 .magic-bento-card:nth-child(3) .magic-bento-card__media,
 .magic-bento-card:nth-child(4) .magic-bento-card__media {
-  background: rgba(4, 9, 20, 0.85);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-[data-theme="light"] .magic-bento-card__media--featured,
-[data-theme="light"] .magic-bento-card:nth-child(3) .magic-bento-card__media,
-[data-theme="light"] .magic-bento-card:nth-child(4) .magic-bento-card__media {
-  background: #f1f5f9;
+  background: transparent;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
 }
 
 .magic-bento-card:hover .magic-bento-card__img {
@@ -288,18 +285,22 @@
     padding: 1rem;
   }
 
-  /* Remove description from non-featured cards */
+  /* Non-featured cards description clamp */
   .magic-bento-card:not(:nth-child(3)):not(:nth-child(4)) .magic-bento-card__description {
-    display: none !important;
+    --clamp-desc: 2;
   }
 
   .magic-bento-card__media {
-    max-height: 150px;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    max-height: 180px;
   }
 
   .magic-bento-card:nth-child(3) .magic-bento-card__media,
   .magic-bento-card:nth-child(4) .magic-bento-card__media {
-    max-height: 200px;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    max-height: none;
   }
 }
 
@@ -318,19 +319,21 @@
     grid-column: span 2;
   }
 
-  /* Remove description from non-featured cards */
   .magic-bento-card:not(:nth-child(3)):not(:nth-child(4)) .magic-bento-card__description {
-    display: none !important;
+    --clamp-desc: 2;
   }
 
   .magic-bento-card__media {
-    max-height: 140px;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    max-height: 180px;
   }
 
   .magic-bento-card:nth-child(3) .magic-bento-card__media,
   .magic-bento-card:nth-child(4) .magic-bento-card__media {
-    max-height: 210px;
-    height: 200px;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    max-height: none;
   }
 }
 
@@ -350,24 +353,44 @@
   /* Compact 1x1 Cards: Card 1, 2, 5, 6 */
   .magic-bento-card:not(:nth-child(3)):not(:nth-child(4)) {
     padding: 1.15rem;
+    display: flex;
+    flex-direction: column;
   }
 
   .magic-bento-card:not(:nth-child(3)):not(:nth-child(4)) .magic-bento-card__media {
-    max-height: 140px;
-    height: 140px;
-    margin-bottom: 0.65rem;
+    width: 100%;
+    height: 190px;
+    max-height: 200px;
+    aspect-ratio: auto;
+    margin-bottom: 0.8rem;
+  }
+
+  .magic-bento-card:not(:nth-child(3)):not(:nth-child(4)) .magic-bento-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .magic-bento-card:not(:nth-child(3)):not(:nth-child(4)) .magic-bento-card__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
   .magic-bento-card:not(:nth-child(3)):not(:nth-child(4)) .magic-bento-card__title {
-    font-size: 1.02rem;
-    line-height: 1.4;
+    font-size: 1.05rem;
+    line-height: 1.42;
     --clamp-title: 2;
+    margin: 0;
   }
 
   .magic-bento-card:not(:nth-child(3)):not(:nth-child(4)) .magic-bento-card__description {
-    font-size: 0.82rem;
-    --clamp-desc: 2;
-    line-height: 1.5;
+    font-size: 0.85rem;
+    --clamp-desc: 3;
+    line-height: 1.6;
+    color: #94a3b8;
     margin: 0;
   }
 
@@ -398,11 +421,13 @@
   }
 
   /* Featured Wide Hero Cards (Card 3 & Card 4):
-     Sized so the full image appears completely without any cropping */
+     Sized so the full 16:9 image appears completely without any cropping and fills its space */
   .magic-bento-card:nth-child(3) .magic-bento-card__media,
   .magic-bento-card:nth-child(4) .magic-bento-card__media {
-    max-height: 210px;
-    height: 200px;
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    height: auto;
+    max-height: none;
     margin-bottom: 0.75rem;
   }
 

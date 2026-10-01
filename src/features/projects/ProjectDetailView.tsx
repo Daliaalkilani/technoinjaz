@@ -17,7 +17,8 @@ import {
   Presentation,
   Send,
   PhoneCall,
-  BookOpen
+  BookOpen,
+  Sparkles
 } from 'lucide-react';
 import type { ProjectItem } from '@/data/projectsData';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
@@ -248,22 +249,36 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
                   <div className="book-face book-top" />
                   <div className="book-face book-bottom" />
                 </div>
-
-                <div className="book-3d-info">
-                  <span className="book-3d-title">{project.title}</span>
-                </div>
               </div>
             </div>
 
-            <button
-              type="button"
-              className="fb-nav-btn"
+            {/* Clickable text prompt replacing the button */}
+            <div
+              className="project-book-read-prompt"
               onClick={() => setIsPdfModalOpen(true)}
-              style={{ margin: '0 auto', display: 'inline-flex' }}
+              role="button"
+              tabIndex={0}
+              title={isEn ? "Open 3D interactive documentation" : "انقر لتصفح ملف المشروع ثلاثي الأبعاد"}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                margin: '0.25rem auto 0',
+                padding: '0.45rem 1.15rem',
+                borderRadius: '9999px',
+                background: 'rgba(56, 189, 248, 0.08)',
+                border: '1px solid rgba(56, 189, 248, 0.28)',
+                color: '#38bdf8',
+                fontSize: '0.86rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.25s ease'
+              }}
             >
-              <BookOpen size={16} />
-              <span>{isEn ? 'Read Documentation' : 'قراءة ملف المشروع'}</span>
-            </button>
+              <Sparkles size={14} color="#38bdf8" />
+              <span>{isEn ? "Click book or here to read full 3D documentation" : "انقر على الكتاب أو هنا لتصفح ملف المشروع تفاعلياً"}</span>
+              <BookOpen size={14} color="#38bdf8" />
+            </div>
           </div>
 
           {/* Project Inquiry CTA Box */}

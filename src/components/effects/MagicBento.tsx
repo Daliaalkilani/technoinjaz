@@ -695,9 +695,7 @@ const MagicBento: React.FC<MagicBentoProps> = ({
                     {cardTitle}
                   </Link>
                 </h3>
-                {isFeatured && (
-                  <p className="magic-bento-card__description">{cardDesc}</p>
-                )}
+                <p className="magic-bento-card__description">{cardDesc}</p>
               </div>
             </>
           );
