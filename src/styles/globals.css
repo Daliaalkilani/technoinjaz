@@ -1228,3 +1228,66 @@ picture {
     width: 100%;
   }
 }
+
+/* "المصادر والمراجع" (end of articles / projects): collapsed, opens on tap */
+.md-refs {
+  margin: 32px 0 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  overflow: hidden;
+}
+
+.md-refs__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  cursor: pointer;
+  list-style: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.md-refs__summary::-webkit-details-marker {
+  display: none;
+}
+
+.md-refs__summary > h2 {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  font-size: 1.1rem !important;
+}
+
+.md-refs__chevron {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border-inline-end: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  opacity: 0.7;
+  transition: transform 0.25s ease;
+}
+
+.md-refs[open] .md-refs__chevron {
+  transform: rotate(-135deg);
+}
+
+.md-refs__summary:focus-visible {
+  outline: 2px solid #00d2ff;
+  outline-offset: -2px;
+  border-radius: 14px;
+}
+
+.md-refs__body {
+  padding: 0 18px 14px;
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+}
+
+[data-theme='light'] .md-refs {
+  border-color: #e2e8f0;
+  background: #f8fafc;
+}

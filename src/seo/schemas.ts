@@ -52,8 +52,8 @@ export function abdulghaniPersonSchema() {
     },
     disambiguatingDescription: '«التغيير يبدأ من الداخل، ابدأ بنفسك ثم غير العالم» - رؤيته: تكوين مجتمع مترابط ومستقل ذو كفاءة عالية، رسالته: التطور والتقدم العلمي والعملي للرقي بجميع المجالات، أهدافه: رفع الوعي للأشخاص الطموحين ومتابعتهم عبر استقطاب المشاريع وتدريبهم عليها.',
     sameAs: [
-      ORG.instagram,
-      ORG.whatsapp
+      'https://www.facebook.com/share/19ZeJgTRzk/',
+      'https://www.instagram.com/abdalgani_h1'
     ]
   };
 }
@@ -114,6 +114,23 @@ export function organization() {
   };
 }
 
+export const WEBSITE_DESIGNERS = [
+  {
+    '@type': 'Person',
+    name: 'داليا الكيلاني',
+    alternateName: 'Dalia Alkilani',
+    jobTitle: 'مصممة ومطوّرة موقع تكنو إنجاز',
+    url: 'https://www.linkedin.com/in/dalia-al-kilani/',
+    sameAs: ['https://github.com/Daliaalkilani', 'https://www.linkedin.com/in/dalia-al-kilani/']
+  },
+  {
+    '@type': 'Person',
+    name: 'روان هبهاب',
+    alternateName: 'Rawan Habhab',
+    jobTitle: 'مصممة ومطوّرة موقع تكنو إنجاز'
+  }
+];
+
 export function website() {
   return {
     '@type': 'WebSite',
@@ -124,7 +141,10 @@ export function website() {
     inLanguage: 'ar',
     publisher: {
       '@id': ORG_ID
-    }
+    },
+    // Website design & development credits
+    creator: WEBSITE_DESIGNERS,
+    author: WEBSITE_DESIGNERS
   };
 }
 

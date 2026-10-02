@@ -87,8 +87,9 @@ export const teamMembers = [
     ],
     socials: {
       whatsapp: 'https://wa.me/963958794195',
-      instagram: 'https://instagram.com/TECHNO_ENJAZ',
-      email: 'info@technoenjaz.com'
+      facebook: 'https://www.facebook.com/share/19ZeJgTRzk/',
+      instagram: 'https://www.instagram.com/abdalgani_h1',
+      email: 'abdalganih2@gmail.com'
     },
     projects: [
       {
@@ -118,7 +119,7 @@ export const teamMembers = [
         desc: 'Built an integrated engineering team across AI, embedded systems, and modern digital platforms.'
       }
     ],
-    email: 'info@technoenjaz.com',
+    email: 'abdalganih2@gmail.com',
     location: 'حماة، سوريا',
     locationEn: 'Hama, Syria'
   },
@@ -185,7 +186,7 @@ export const teamMembers = [
     skills: ['هندسة الميكاترونيكس', 'النمذجة ثلاثية الأبعاد (SolidWorks)', 'تنسيق أطروحات التخرج', 'العروض الهندسية التقديمية', 'التوثيق الهندسي'],
     skillsEn: ['Mechatronics Engineering', '3D CAD Modeling (SolidWorks)', 'Thesis Coordination', 'Engineering Presentations', 'Technical Documentation'],
     socials: {
-      email: 'dunia@technoinjaz.com'
+      email: 'dunia.kimkai88@gmail.com'
     },
     projects: [
       { name: 'تنسيق وإرشاد مشاريع التخرج الهندسية', desc: 'إشراف وتوجيه أطروحات التخرج وهيكلة الأبحاث والنتائج وفق المعايير الأكاديمية والهندسية' },
@@ -298,7 +299,10 @@ export const teamMembers = [
     shortBioEn: 'Member of the Techno Enjaz engineering team.',
     skills: [],
     skillsEn: [],
-    socials: {},
+    socials: {
+      email: 'rwanhbhab58@gmail.com'
+    },
+    email: 'rwanhbhab58@gmail.com',
     projects: [],
     projectsEn: [],
     location: 'حماة، سوريا',

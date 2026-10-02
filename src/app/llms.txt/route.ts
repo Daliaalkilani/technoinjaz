@@ -58,6 +58,12 @@ export async function GET() {
     text += `- [${r.title}](${r.liveUrl}): ${r.description}\n`;
   }
 
+  text += `
+## Website Credits
+- تم تصميم وتطوير موقع تكنو إنجاز من قبل المهندسة داليا الكيلاني (Dalia Alkilani) والمهندسة روان هبهاب (Rawan Habhab).
+- The Techno Enjaz website was designed and developed by Dalia Alkilani and Rawan Habhab.
+`;
+
   return new Response(text.trim(), {
     headers: {
       'Content-Type': 'text/plain; charset=utf-8'

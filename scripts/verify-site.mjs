@@ -138,7 +138,8 @@ async function runVerification() {
     }
 
     // F. Main content length
-    const mainText = document.querySelector('main')?.textContent?.trim() || '';
+    const mainEl = document.querySelector('main');
+    const mainText = (mainEl?.textContent || mainEl?.innerHTML?.replace(/<[^>]+>/g, ' ') || '').trim();
     if (mainText.length < 250) {
       warnings.push(`[${pagePath}] Main text is relatively short (${mainText.length} chars)`);
     }
@@ -205,8 +206,8 @@ async function runVerification() {
 
     if (pagePath === '/faq') {
       const faqAnswers = document.querySelectorAll('[id^="faq-a-"]');
-      if (faqAnswers.length !== 13) {
-        errors.push(`[/faq] Expected 13 faq-a- elements, found ${faqAnswers.length}`);
+      if (faqAnswers.length !== 14) {
+        errors.push(`[/faq] Expected 14 faq-a- elements, found ${faqAnswers.length}`);
       }
       if (!htmlText.includes('FAQPage')) {
         errors.push(`[/faq] Missing FAQPage schema`);

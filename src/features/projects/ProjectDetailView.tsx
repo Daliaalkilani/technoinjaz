@@ -137,7 +137,8 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
               <span className="btn-text-responsive">{copied ? (isEn ? "Copied" : "تم النسخ!") : (isEn ? "Share" : "مشاركة")}</span>
             </button>
 
-            {/* View PDF Bookcase Button */}
+            {/* View PDF Bookcase Button (only when the project has its own report) */}
+            {project.pdfUrl && (
             <button
               type="button"
               className="project-icon-btn project-action-btn--pdf"
@@ -147,10 +148,12 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
               <FileText size={18} />
               <span className="btn-text-responsive">{isEn ? "PDF Report" : "ملف المشروع PDF"}</span>
             </button>
+            )}
 
-            {/* Download PPTX Button */}
+            {/* Download PPTX Button (only when the file exists) */}
+            {project.presentationUrl && (
             <a
-              href={project.presentationUrl || `/presentations/${project.slug}.pptx`}
+              href={project.presentationUrl}
               download={`${project.slug}-presentation.pptx`}
               className="project-icon-btn project-action-btn--pptx"
               title={isEn ? "Download PowerPoint Presentation (.pptx)" : "تحميل عرض البوربوينت (.pptx)"}
@@ -158,6 +161,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
               <Presentation size={18} />
               <span className="btn-text-responsive">{isEn ? "PPTX" : "تحميل البوربوينت"}</span>
             </a>
+            )}
           </div>
         </div>
       </header>
@@ -201,7 +205,8 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
           {/* Questions & answers about this project */}
           {qa}
 
-          {/* 3D Interactive Documentation Showcase */}
+          {/* 3D Interactive Documentation Showcase (only with the project's own report) */}
+          {project.pdfUrl && (
           <div className="project-bookcase-banner">
             <div style={{ display: 'flex', justifyContent: 'center', perspective: '1100px' }}>
               <div 
@@ -265,6 +270,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
               </div>
             </div>
           </div>
+          )}
 
           {/* Project Inquiry CTA Box */}
           <div className="project-cta-card">
@@ -375,13 +381,15 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
       )}
 
       {/* Interactive 3D PDF Flipbook Reader */}
+      {project.pdfUrl && (
       <FlipbookViewer
         isOpen={isPdfModalOpen}
         onClose={() => setIsPdfModalOpen(false)}
-        pdfUrl={project.pdfUrl || '/pdf/robotics-summer-club.pdf'}
+        pdfUrl={project.pdfUrl}
         title={project.title}
         subtitle={isEn ? "Technical Documentation & 3D Interactive Whitepaper" : "التقرير التقني والمستند التوثيقي ثلاثي الأبعاد"}
       />
+      )}
     </div>
   );
 };

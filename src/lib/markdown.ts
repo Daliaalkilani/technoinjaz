@@ -115,7 +115,14 @@ export function renderMarkdown(
   const markedInstance = new Marked({ gfm: true, breaks: true, renderer });
   const html = (markedInstance.parse(src.trim()) as string)
     .replace(/<table>/g, '<div class="md-table-wrap" tabindex="0"><table>')
-    .replace(/<\/table>/g, '</table></div>');
+    .replace(/<\/table>/g, '</table></div>')
+    // "المصادر والمراجع" at the end: a collapsed section that opens on tap.
+    // The heading stays inside <summary> so its id / TOC link keep working.
+    .replace(
+      /(<h2 [^>]*>)((?:المصادر والمراجع|المراجع|المصادر|References|Sources)[^<]*)(<\/h2>)([\s\S]*?)(?=<h2 |$)/,
+      (_m, open: string, label: string, close: string, body: string) =>
+        `<details class="md-refs"><summary class="md-refs__summary">${open}${label}${close}<span class="md-refs__chevron" aria-hidden="true"></span></summary><div class="md-refs__body">${body}</div></details>`
+    );
 
   return { html, toc };
 }

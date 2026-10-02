@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { WifiOff, RotateCcw, Home, Layers, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { RotateCcw, Home, Layers, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
+import ErrorScene from './ErrorScene';
 import './ErrorPages.css';
 
 export interface ConnectionErrorViewProps {
@@ -12,73 +12,68 @@ export interface ConnectionErrorViewProps {
 }
 
 export const ConnectionErrorView: React.FC<ConnectionErrorViewProps> = ({ onRetry }) => {
-  const router = useRouter();
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
 
   const [isTesting, setIsTesting] = useState(false);
   const [testResult, setTestResult] = useState<'idle' | 'online' | 'offline'>('idle');
 
-  // Listen to browser online events
-  useEffect(() => {
-    const handleOnline = () => {
-      setTestResult('online');
-      setTimeout(() => {
-        if (onRetry) onRetry();
-        else router.refresh();
-      }, 1000);
-    };
+  // Real retry: go back to the page the visitor was trying to open (same-origin
+  // referrer / history), or home. Re-rendering /offline itself looked like nothing
+  // happened.
+  const resume = () => {
+    if (onRetry) {
+      onRetry();
+      return;
+    }
+    let target = '/';
+    try {
+      const ref = document.referrer ? new URL(document.referrer) : null;
+      if (ref && ref.origin === window.location.origin && !/^\/(offline|connection-error)/.test(ref.pathname)) {
+        target = ref.pathname + ref.search + ref.hash;
+      }
+    } catch {
+      /* ignore */
+    }
+    window.location.assign(target);
+  };
 
+  const isReachable = async () => {
+    if (typeof navigator !== 'undefined' && !navigator.onLine) return false;
+    try {
+      const controller = new AbortController();
+      const t = setTimeout(() => controller.abort(), 4000);
+      const res = await fetch(`/api/health?t=${Date.now()}`, { cache: 'no-store', signal: controller.signal });
+      clearTimeout(t);
+      return res.status < 500;
+    } catch {
+      return false;
+    }
+  };
+
+  // The connection comes back by itself → resume automatically
+  useEffect(() => {
+    const handleOnline = async () => {
+      if (await isReachable()) {
+        setTestResult('online');
+        setTimeout(resume, 900);
+      }
+    };
     window.addEventListener('online', handleOnline);
     return () => window.removeEventListener('online', handleOnline);
-  }, [onRetry, router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleTestConnection = async () => {
     setIsTesting(true);
     setTestResult('idle');
-
-    // 1. Check navigator.onLine
-    if (typeof navigator !== 'undefined' && !navigator.onLine) {
-      setTimeout(() => {
-        setIsTesting(false);
-        setTestResult('offline');
-      }, 700);
-      return;
-    }
-
-    // 2. Perform live lightweight ping test
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3500);
-
-      const res = await fetch('/api/health', {
-        method: 'HEAD',
-        cache: 'no-store',
-        signal: controller.signal
-      }).catch(() => null);
-
-      clearTimeout(timeoutId);
-
-      if (res && res.status < 500) {
-        setTestResult('online');
-        setTimeout(() => {
-          if (onRetry) onRetry();
-          else router.refresh();
-        }, 800);
-      } else if (navigator.onLine) {
-        // Fallback: network is connected
-        setTestResult('online');
-        setTimeout(() => {
-          if (onRetry) onRetry();
-          else router.refresh();
-        }, 800);
-      } else {
-        setTestResult('offline');
-      }
-    } catch {
-      setTestResult(navigator.onLine ? 'online' : 'offline');
-    } finally {
-      setIsTesting(false);
+    const ok = await isReachable();
+    setIsTesting(false);
+    if (ok) {
+      setTestResult('online');
+      setTimeout(resume, 700);
+    } else {
+      setTestResult('offline');
     }
   };
 
@@ -87,18 +82,9 @@ export const ConnectionErrorView: React.FC<ConnectionErrorViewProps> = ({ onRetr
       <div className="te-error-ambient te-error-ambient--connection" />
       <div className="te-error-grid" />
 
-      <div className="te-error-card" dir={isEn ? 'ltr' : 'rtl'}>
-        {/* Radar Visual Badge */}
-        <div className="te-error-visual-badge te-error-visual-badge--connection">
-          <div className="te-error-radar-ping" />
-          <WifiOff size={42} strokeWidth={2.2} />
-        </div>
+      <div className="te-error-card has-scene" dir={isEn ? 'ltr' : 'rtl'}>
+        <ErrorScene variant="offline" label={isEn ? 'The signal between the station and the satellite is cut' : 'الإشارة بين المحطة والقمر الصناعي مقطوعة'} />
 
-        {/* Status Pill */}
-        <div className="te-error-pill te-error-pill--connection">
-          <span className="te-error-pill-dot" />
-          <span>{isEn ? 'Network Link Severed' : 'تعذر الاتصال بالشبكة'}</span>
-        </div>
 
         <h1 className="te-error-title">
           {isEn ? 'Connection Unavailable' : 'انقطع الاتصال بالشبكة'}

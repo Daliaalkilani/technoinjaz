@@ -432,3 +432,8 @@
     width: 100%;
   }
 }
+
+/* Special-state pages stand alone: no site footer under them */
+body:has(.te-error-wrapper) .cinematic-footer-wrapper {
+  display: none;
+}

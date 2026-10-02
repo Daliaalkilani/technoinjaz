@@ -1,4 +1,5 @@
 'use client';
+import { formsConfigured, sendForm } from '@/lib/forms';
 
 import { PROJECTS_DATA, type ProjectItem } from '@/data/projectsData';
 import { blogArticlesData, type BlogArticle } from '@/data/blogArticlesData';
@@ -258,8 +259,15 @@ export async function subscribeUser(email: string, isEn = false): Promise<{
     console.error('Error writing subscription to localStorage:', err);
   }
 
-  // 2. Call backend API
-  try {
+  // 2. Deliver the subscription to the team inbox (Web3Forms) so it is really kept;
+  //    the local API ping stays as a fallback when the service is not configured.
+  if (formsConfigured()) {
+    void sendForm('اشتراك جديد في نشرة تكنو إنجاز', {
+      'البريد الإلكتروني': cleanEmail,
+      'اللغة': isEn ? 'English' : 'العربية',
+      'التاريخ': new Date().toISOString()
+    }, cleanEmail);
+  } else try {
     fetch('/api/newsletter/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

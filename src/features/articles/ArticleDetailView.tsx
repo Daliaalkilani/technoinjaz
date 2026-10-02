@@ -228,8 +228,6 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             <div className="author-capsule-text">
               <span className="author-capsule-name" style={{ whiteSpace: 'nowrap' }}>{authorName}</span>
               <span className="author-capsule-divider">|</span>
-              <span className="author-capsule-role">{article.author.role}</span>
-              <span className="author-capsule-divider">|</span>
               <time dateTime={article.publishedAt} className="author-capsule-date" style={{ whiteSpace: 'nowrap' }}>
                 {publishDate}
               </time>

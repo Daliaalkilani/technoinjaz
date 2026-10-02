@@ -2,8 +2,9 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ShieldAlert, LogIn, Home, KeyRound, Lock, Send } from 'lucide-react';
+import { LogIn, Home, Send } from 'lucide-react';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
+import ErrorScene from './ErrorScene';
 import './ErrorPages.css';
 
 export interface AccessDeniedViewProps {
@@ -23,15 +24,8 @@ export const AccessDeniedView: React.FC<AccessDeniedViewProps> = ({
       <div className="te-error-ambient te-error-ambient--access" />
       <div className="te-error-grid" />
 
-      <div className="te-error-card" dir={isEn ? 'ltr' : 'rtl'}>
-        {/* Visual Badge with Security Ring */}
-        <div className="te-error-visual-badge te-error-visual-badge--access">
-          <div className="te-error-scan-ring" />
-          <ShieldAlert size={42} strokeWidth={2.2} />
-        </div>
-
-        {/* 403 Code */}
-        <span className="te-error-code te-error-code--access">403</span>
+      <div className="te-error-card has-scene" dir={isEn ? 'ltr' : 'rtl'}>
+        <ErrorScene variant="forbidden" label={isEn ? 'The Techno Enjaz logo locked behind a shield' : 'شعار تكنو إنجاز مقفل خلف درع حماية'} />
 
         {/* Status Pill */}
         <div className="te-error-pill te-error-pill--access">

@@ -10,6 +10,7 @@ export function buildRootMetadata(): Metadata {
     },
     description: 'تكنو إنجاز - صرح هندسي رائد في تطوير الأنظمة البرمجية المتكاملة، الحلول السحابية فائقة الأداء، الأتمتة وإنترنت الأشياء، وتطبيقات الذكاء الاصطناعي في حماة، سوريا.',
     applicationName: 'تكنو إنجاز',
+    creator: 'داليا الكيلاني و روان هبهاب (Dalia Alkilani & Rawan Habhab)',
     openGraph: {
       siteName: 'تكنو إنجاز | Techno Enjaz',
       locale: 'ar_SY',
@@ -34,7 +35,8 @@ export function buildRootMetadata(): Metadata {
       'geo.region': 'SY-HM',
       'geo.placename': 'Hama, Syria',
       'geo.position': '35.128992;36.754001',
-      ICBM: '35.128992, 36.754001'
+      ICBM: '35.128992, 36.754001',
+      designer: 'داليا الكيلاني و روان هبهاب | Dalia Alkilani & Rawan Habhab'
     }
   };
 }

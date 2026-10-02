@@ -22,7 +22,6 @@ import {
   ChevronRight,
   Menu
 } from 'lucide-react';
-import { projectReelsData } from '@/data/projectReelsData';
 import type { ReelComment } from '@/data/projectReelsData';
 import { videosList } from '@/data/videosData';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
@@ -76,6 +75,7 @@ const youtubeIdFrom = (url: string): string | undefined => {
 // Deterministic pseudo like-count for real videos (no backend).
 const seedLikes = (id: string) => 90 + (id.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % 140);
 
+// Only the real YouTube videos for now (project picture reels removed by the owner).
 const FEED_REELS: FeedReel[] = [
   ...videosList.map<FeedReel>(v => ({
     id: v.id,
@@ -91,21 +91,6 @@ const FEED_REELS: FeedReel[] = [
     likes: seedLikes(v.id),
     comments: [],
     tags: [v.tag]
-  })),
-  ...projectReelsData.map<FeedReel>(r => ({
-    id: r.id,
-    kind: 'project',
-    title: r.title,
-    titleEn: r.titleEn,
-    caption: r.description,
-    captionEn: r.descriptionEn,
-    cover: r.coverImage,
-    accent: r.categoryColor,
-    liveUrl: r.liveUrl,
-    durationSec: toSeconds(r.duration),
-    likes: r.initialLikes,
-    comments: r.initialComments,
-    tags: r.tags
   }))
 ];
 
@@ -126,6 +111,12 @@ export const ProjectReelsFeed: React.FC = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [pulse, setPulse] = useState<{ id: string; type: 'play' | 'pause'; n: number } | null>(null);
+  // The YouTube iframe is created only after hydration: rendered on the server it
+  // loaded before React attached onLoad, so it never became visible.
+  const [hydrated, setHydrated] = useState(false);
+  // Instagram-style: the sound button shows while paused and for a moment after a
+  // reel starts / sound is toggled, then hides while the video plays.
+  const [peek, setPeek] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [likePopId, setLikePopId] = useState<string | null>(null);
@@ -153,6 +144,14 @@ export const ProjectReelsFeed: React.FC = () => {
   const pausedRef = useRef(false);
   mutedRef.current = isMuted;
   pausedRef.current = isPaused;
+
+  useEffect(() => setHydrated(true), []);
+
+  useEffect(() => {
+    setPeek(true);
+    const t = window.setTimeout(() => setPeek(false), 3000);
+    return () => window.clearTimeout(t);
+  }, [activeIndex, isMuted]);
 
   /* Persisted likes / comments (merged over defaults so new reels keep counts). */
   useEffect(() => {
@@ -395,7 +394,7 @@ export const ProjectReelsFeed: React.FC = () => {
               key={reel.id}
               id={reel.id}
               data-index={index}
-              className={`reel ${isActive ? 'is-active' : ''} ${playing ? 'is-playing' : 'is-paused'} reel--${reel.kind}`}
+              className={`reel ${isActive ? 'is-active' : ''} ${playing ? 'is-playing' : 'is-paused'} ${isActive && peek ? 'is-peek' : ''} reel--${reel.kind}`}
               style={{ '--reel-accent': reel.accent, '--reel-dur': `${reel.durationSec}s` } as React.CSSProperties}
             >
               <article className="reel-stage" aria-labelledby={`${reel.id}-title`}>
@@ -412,7 +411,7 @@ export const ProjectReelsFeed: React.FC = () => {
                     fetchPriority={index === 0 ? 'high' : 'auto'}
                     decoding="async"
                   />
-                  {reel.kind === 'video' && reel.youtubeId && isActive && (
+                  {reel.kind === 'video' && reel.youtubeId && isActive && hydrated && (
                     <iframe
                       ref={iframeRef}
                       className="reel-iframe"

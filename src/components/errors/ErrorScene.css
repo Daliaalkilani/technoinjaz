@@ -1,0 +1,339 @@
+/* ==========================================================================
+   ERROR SCENES — illustrated special-state pages (ErrorScene.tsx)
+   ========================================================================== */
+
+.error-scene {
+  --es-star: #e2f3ff;
+  --es-digit: rgba(38, 191, 190, 0.16);
+  --es-digit-stroke: rgba(38, 191, 190, 0.45);
+  --es-line: rgba(148, 233, 223, 0.55);
+  --es-unit: rgba(15, 23, 42, 0.85);
+  --es-unit-stroke: rgba(148, 163, 184, 0.25);
+  --es-slot: rgba(148, 163, 184, 0.35);
+  --es-ground: rgba(38, 191, 190, 0.08);
+  --es-ground-stroke: rgba(38, 191, 190, 0.35);
+  --es-smoke: rgba(203, 213, 225, 0.55);
+  --es-crater: rgba(11, 18, 32, 0.28);
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+  aspect-ratio: 520 / 420;
+  position: relative;
+}
+
+[data-theme='light'] .error-scene {
+  --es-star: #7aa7c7;
+  --es-digit: rgba(13, 124, 134, 0.1);
+  --es-digit-stroke: rgba(13, 124, 134, 0.35);
+  --es-line: rgba(13, 124, 134, 0.55);
+  --es-unit: #ffffff;
+  --es-unit-stroke: #cbd5e1;
+  --es-slot: #cbd5e1;
+  --es-ground: rgba(13, 124, 134, 0.07);
+  --es-ground-stroke: rgba(13, 124, 134, 0.3);
+  --es-smoke: rgba(100, 116, 139, 0.35);
+}
+
+.error-scene svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+/* ---------- shared ---------- */
+.es-star {
+  fill: var(--es-star);
+  opacity: 0.5;
+  animation: esTwinkle 3.6s ease-in-out infinite;
+}
+.es-star--1 { animation-duration: 4.8s; }
+.es-star--2 { animation-duration: 2.7s; opacity: 0.3; }
+
+@keyframes esTwinkle {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.85; }
+}
+
+.es-bigdigit {
+  font-family: var(--font-readex), system-ui, sans-serif;
+  font-size: 170px;
+  font-weight: 800;
+  fill: var(--es-digit);
+  stroke: var(--es-digit-stroke);
+  stroke-width: 1.5;
+  paint-order: stroke;
+}
+.es-bigdigit--bg {
+  font-size: 150px;
+  opacity: 0.7;
+}
+
+.es-ship {
+  transform-box: fill-box;
+  transform-origin: 50% 60%;
+}
+.es-logo {
+  filter: drop-shadow(0 10px 22px rgba(10, 238, 195, 0.25));
+}
+
+/* ---------- 404 ---------- */
+.es-orbit {
+  fill: none;
+  stroke: var(--es-line);
+  stroke-width: 2;
+  stroke-dasharray: 3 7;
+}
+.es-orbit--front {
+  stroke-dasharray: none;
+  stroke-width: 2.5;
+}
+.es-crater { fill: var(--es-crater); }
+.es-planet-wrap {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: esFloat 7s ease-in-out infinite;
+}
+.es-trail {
+  fill: none;
+  stroke: var(--es-line);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 2 9;
+  animation: esDash 1.6s linear infinite;
+}
+.es-ship--drift {
+  animation: esDrift 6s ease-in-out infinite;
+}
+.es-ping circle {
+  fill: rgba(93, 84, 242, 0.18);
+  stroke: rgba(122, 112, 255, 0.7);
+  stroke-width: 1.5;
+  animation: esPing 2.4s ease-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.es-ping text {
+  font: 700 17px var(--font-readex), sans-serif;
+  fill: #a5b4fc;
+}
+
+@keyframes esFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes esDrift {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(-6px, 8px) rotate(-6deg); }
+}
+@keyframes esDash {
+  to { stroke-dashoffset: -22; }
+}
+@keyframes esPing {
+  0% { transform: scale(0.85); opacity: 1; }
+  70% { transform: scale(1.25); opacity: 0.35; }
+  100% { transform: scale(0.85); opacity: 1; }
+}
+
+/* ---------- 500 ---------- */
+.es-rack-unit {
+  fill: var(--es-unit);
+  stroke: var(--es-unit-stroke);
+  stroke-width: 1.2;
+}
+.es-rack-slot { fill: var(--es-slot); }
+.es-led { animation: esBlink 1.3s steps(2, jump-none) infinite; }
+.es-led--green { fill: #10b981; }
+.es-led--amber { fill: #f59e0b; }
+.es-led--red { fill: #ef4444; animation-duration: 0.7s; }
+@keyframes esBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+.es-pad rect { fill: var(--es-unit); stroke: var(--es-ground-stroke); stroke-width: 1.5; }
+.es-pad .es-pad-base { fill: var(--es-ground); }
+.es-pad-arm { stroke: var(--es-ground-stroke); stroke-width: 4; stroke-linecap: round; fill: none; }
+.es-smoke circle {
+  fill: var(--es-smoke);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: esSmoke 2.75s ease-out infinite;
+  opacity: 0;
+}
+@keyframes esSmoke {
+  0% { transform: translate(0, 0) scale(0.4); opacity: 0; }
+  20% { opacity: 0.85; }
+  100% { transform: translate(-18px, -150px) scale(1.9); opacity: 0; }
+}
+.es-ship--wobble { animation: esWobble 2.2s ease-in-out infinite; }
+@keyframes esWobble {
+  0%, 100% { transform: rotate(-2.5deg); }
+  25% { transform: rotate(1.5deg) translateY(-2px); }
+  50% { transform: rotate(-1deg); }
+  75% { transform: rotate(2.5deg) translateY(-1px); }
+}
+.es-sparks path {
+  stroke: #fbbf24;
+  stroke-width: 3;
+  stroke-linecap: round;
+  animation: esSpark 0.9s steps(3, jump-none) infinite;
+}
+@keyframes esSpark {
+  0%, 100% { opacity: 0; }
+  40% { opacity: 1; }
+}
+.es-warning path {
+  fill: rgba(245, 158, 11, 0.15);
+  stroke: #f59e0b;
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+.es-warning text { font: 800 26px var(--font-readex), sans-serif; fill: #f59e0b; }
+.es-warning { animation: esPulse 1.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes esPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.12); opacity: 0.7; }
+}
+
+/* ---------- offline ---------- */
+.es-horizon { fill: var(--es-ground); stroke: var(--es-ground-stroke); stroke-width: 1.5; }
+.es-waves path {
+  fill: none;
+  stroke: #26bfbe;
+  stroke-width: 4;
+  stroke-linecap: round;
+  animation: esWave 2.2s ease-out infinite;
+  opacity: 0;
+}
+@keyframes esWave {
+  0% { opacity: 0; }
+  25% { opacity: 0.95; }
+  100% { opacity: 0; }
+}
+.es-signal {
+  fill: none;
+  stroke: var(--es-line);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 4 8;
+  animation: esDash 1.2s linear infinite;
+}
+.es-signal--far { opacity: 0.35; animation: none; }
+.es-break path { stroke: #ef4444; stroke-width: 4; stroke-linecap: round; }
+.es-break-glow {
+  fill: rgba(239, 68, 68, 0.14);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: esPing 1.8s ease-out infinite;
+}
+.es-satellite-body { animation: esSat 8s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes esSat {
+  0%, 100% { transform: rotate(-8deg) translateY(0); }
+  50% { transform: rotate(6deg) translateY(6px); }
+}
+.es-panel { fill: rgba(83, 97, 232, 0.35); stroke: #5361e8; stroke-width: 1.5; }
+.es-panel-line { stroke: #94a3b8; stroke-width: 2; }
+.es-sat-core { fill: var(--es-unit); stroke: #26bfbe; stroke-width: 2; }
+.es-sat-dish { fill: #14bca3; }
+
+/* ---------- 403 ---------- */
+.es-hexgrid polygon {
+  fill: none;
+  stroke: rgba(38, 191, 190, 0.22);
+  stroke-width: 1;
+  animation: esHex 4s ease-in-out infinite;
+}
+@keyframes esHex {
+  0%, 100% { stroke-opacity: 0.35; }
+  50% { stroke-opacity: 1; }
+}
+.es-scan { animation: esScan 3.4s ease-in-out infinite; }
+@keyframes esScan {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(300px); }
+  100% { transform: translateY(0); }
+}
+.es-shield { fill: none; stroke-linejoin: round; }
+.es-shield--outer {
+  stroke: #26bfbe;
+  stroke-width: 3;
+  filter: drop-shadow(0 0 12px rgba(38, 191, 190, 0.55));
+  animation: esShield 2.6s ease-in-out infinite;
+}
+.es-shield--inner { stroke: rgba(93, 84, 242, 0.55); stroke-width: 1.5; stroke-dasharray: 6 6; }
+@keyframes esShield {
+  0%, 100% { stroke-opacity: 1; }
+  50% { stroke-opacity: 0.45; }
+}
+.es-ship--hover { animation: esFloat 5s ease-in-out infinite; }
+.es-lock-shackle {
+  transform-box: fill-box;
+  transform-origin: 0% 100%;
+  animation: esShackle 4.5s ease-in-out infinite;
+}
+@keyframes esShackle {
+  0%, 70%, 100% { transform: translateY(0); }
+  78% { transform: translateY(-14px); }
+  86% { transform: translateY(0); }
+}
+
+[data-theme='light'] .es-hexgrid polygon { stroke: rgba(13, 124, 134, 0.25); }
+
+@media (prefers-reduced-motion: reduce) {
+  .error-scene * {
+    animation: none !important;
+  }
+  .es-smoke circle { opacity: 0.5; }
+  .es-waves path { opacity: 0.8; }
+}
+
+/* ==========================================================================
+   Layout: illustration + content. Desktop: two columns; phones: stacked.
+   ========================================================================== */
+.te-error-card.has-scene {
+  max-width: 1080px;
+}
+
+.te-error-card.has-scene > .error-scene {
+  margin-bottom: 8px;
+}
+
+@media (min-width: 900px) {
+  .te-error-card.has-scene {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    column-gap: 48px;
+    align-items: center;
+    align-content: center;
+    padding: 48px 52px;
+    text-align: start;
+  }
+  .te-error-card.has-scene > * {
+    grid-column: 2;
+  }
+  .te-error-card.has-scene > .error-scene {
+    grid-column: 1;
+    grid-row: 1 / span 12;
+    max-width: 500px;
+    margin: 0;
+  }
+  .te-error-card.has-scene .te-error-actions {
+    justify-content: flex-start;
+  }
+  .te-error-card.has-scene .te-error-pill {
+    justify-self: start;
+  }
+}
+
+@media (max-width: 899.98px) {
+  .te-error-card.has-scene > .error-scene {
+    max-width: 380px;
+  }
+}
+
+@media (max-width: 480px) {
+  .te-error-card.has-scene {
+    padding: 28px 18px;
+    border-radius: 22px;
+  }
+}

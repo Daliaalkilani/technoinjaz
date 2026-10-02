@@ -16,6 +16,7 @@ import {
   ArrowLeft,
   ArrowRight
 } from 'lucide-react';
+import { formsConfigured, sendForm } from '@/lib/forms';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import './ContactPage.css';
 
@@ -50,15 +51,44 @@ export default function ContactPage({ onBack } = {}) {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name.trim() || !formData.inquiry.trim()) return;
+    if (!formData.name.trim() || !formData.inquiry.trim() || sending) return;
+
+    // 1. Send directly to the team inbox (Web3Forms). Falls back to the visitor's
+    //    mail app only if the service is not configured or unreachable.
+    if (formsConfigured()) {
+      setSending(true);
+      setSendError(false);
+      const ok = await sendForm(
+        `استفسار جديد عبر الموقع من: ${formData.name}`,
+        {
+          'الاسم': formData.name,
+          'الاختصاص': formData.specialization || '—',
+          'الجامعة / جهة العمل': formData.university || '—',
+          'البريد الإلكتروني': formData.email || '—',
+          'رقم الهاتف': formData.phone || '—',
+          'نص الاستفسار': formData.inquiry
+        },
+        formData.email || undefined
+      );
+      setSending(false);
+      if (ok) {
+        setSubmitted(true);
+        return;
+      }
+      // not delivered (offline / service down): fall back to the visitor's mail app
+      // below so the inquiry is never lost
+      setSendError(true);
+    }
 
     const emailSubject = encodeURIComponent(
       isEn ? `New Website Inquiry from: ${formData.name}` : `استفسار جديد عبر الموقع من: ${formData.name}`
@@ -298,9 +328,16 @@ export default function ContactPage({ onBack } = {}) {
                 </div>
 
                 {/* Submit button */}
-                <button type="submit" className="form-submit-btn">
+                {sendError && (
+                  <p className="form-send-error" role="alert">
+                    {isEn
+                      ? 'Direct sending failed, so your mail app was opened with the message ready. You can also reach us on WhatsApp.'
+                      : 'تعذّر الإرسال المباشر، فتم فتح تطبيق البريد والرسالة جاهزة. يمكنك أيضاً التواصل معنا عبر واتساب.'}
+                  </p>
+                )}
+                <button type="submit" className="form-submit-btn" disabled={sending} aria-busy={sending}>
                   <Send size={18} />
-                  <span>{t.contact.submit}</span>
+                  <span>{sending ? (isEn ? 'Sending…' : 'جارٍ الإرسال…') : t.contact.submit}</span>
                 </button>
               </form>
             )}

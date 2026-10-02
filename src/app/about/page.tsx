@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import TestimonialsSection from '@/features/about/TestimonialsSection';
 import AboutTeamSection from '@/features/about/AboutTeamSection';
 import { pageMetadata } from '@/seo/metadata';
 import { JsonLd } from '@/seo/JsonLd';
@@ -23,6 +24,7 @@ export default function AboutPage() {
         ]}
       />
       <AboutTeamSection headingLevel="h1" />
+      <TestimonialsSection />
     </>
   );
 }

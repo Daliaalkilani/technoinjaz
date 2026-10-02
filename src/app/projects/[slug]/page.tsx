@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getAllProjects, getProjectMeta, getProjectMarkdown, getRelatedProjects } from '@/lib/content/projects';
@@ -52,6 +54,15 @@ export default async function ProjectPage({
   const related = getRelatedProjects(slug, 3);
   const qaItems = PROJECT_QA[slug] ?? [];
 
+  // Project files are picked up by slug at build time; a project without its own file
+  // shows no PDF / PPTX button and no book (never someone else's document).
+  const publicFile = (rel: string) => (fs.existsSync(path.join(process.cwd(), 'public', rel)) ? `/${rel}` : undefined);
+  const projectWithFiles = {
+    ...project,
+    pdfUrl: project.pdfUrl || publicFile(`docs/projects/${slug}.pdf`),
+    presentationUrl: project.presentationUrl || publicFile(`presentations/${slug}.pptx`)
+  };
+
   const breadcrumbItems = [
     { name: 'الرئيسية', path: '/' },
     { name: 'المشاريع', path: '/projects' },
@@ -63,7 +74,7 @@ export default async function ProjectPage({
       <JsonLd data={[projectWork(project), breadcrumb(breadcrumbItems), ...(qaItems.length ? [qaSchema(qaItems)] : [])]} />
       <div className="tab-page-container" style={{ padding: 0, maxWidth: '100%' }}>
         <ProjectDetailView
-          project={project}
+          project={projectWithFiles}
           toc={toc}
           related={related}
           qa={<ContentQA items={qaItems} title="الأسئلة الشائعة حول المشروع" />}

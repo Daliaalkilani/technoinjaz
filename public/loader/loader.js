@@ -425,7 +425,7 @@
         if (s.y > height + 20) { s.y = -10; s.x = Math.random() * width; }
       }
       ctx.moveTo(s.x + s.r, s.y);
-      ctx.arc(s.x, s.y, s.r, 0, 6.283);
+      ctx.arc(s.x, s.y, Math.max(0, s.r), 0, 6.283);
     }
     ctx.fill();
 
@@ -436,7 +436,7 @@
         w.life += dt;
         if (w.life >= w.duration) { waves.splice(i, 1); continue; }
         const progress = w.life / w.duration;
-        const r = progress * w.max;
+        const r = Math.max(0, progress * w.max);
         const alpha = (1 - progress) * 0.45;
         ctx.strokeStyle = `rgba(48, 223, 196, ${alpha})`;
         ctx.lineWidth = Math.max(0.6, (1 - progress) * 2);
