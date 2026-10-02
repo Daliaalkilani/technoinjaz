@@ -17,7 +17,10 @@ import {
   X,
   Send,
   Check,
-  User
+  User,
+  ChevronLeft,
+  ChevronRight,
+  Menu
 } from 'lucide-react';
 import { projectReelsData } from '@/data/projectReelsData';
 import type { ReelComment } from '@/data/projectReelsData';
@@ -354,6 +357,27 @@ export const ProjectReelsFeed: React.FC = () => {
       dir={isEn ? 'ltr' : 'rtl'}
       aria-label={isEn ? 'Video reels' : 'مقاطع الفيديو القصيرة'}
     >
+      {/* Phones: full-screen Instagram-style top bar (the site navbar is hidden here) */}
+      <div className="reels-topbar">
+        <button
+          type="button"
+          className="reels-topbar-btn"
+          onClick={() => (window.history.length > 1 ? window.history.back() : window.location.assign('/'))}
+          aria-label={isEn ? 'Back' : 'رجوع'}
+        >
+          {isEn ? <ChevronLeft size={26} /> : <ChevronRight size={26} />}
+        </button>
+        <span className="reels-topbar-title">{isEn ? 'Reels' : 'ريلز'}</span>
+        <button
+          type="button"
+          className="reels-topbar-btn"
+          onClick={() => (document.querySelector('.navbar-mobile-toggle-btn') as HTMLButtonElement | null)?.click()}
+          aria-label={isEn ? 'Menu' : 'القائمة'}
+        >
+          <Menu size={22} />
+        </button>
+      </div>
+
       <ol ref={feedRef} className="reels-feed" tabIndex={-1}>
         {FEED_REELS.map((reel, index) => {
           const isActive = index === activeIndex;

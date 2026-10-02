@@ -233,23 +233,6 @@ export function ArticlesListing({
                   ))}
                 </div>
               </div>
-              <div className="sfb-sheet-section" role="group" aria-labelledby="articles-sheet-cat">
-                <span id="articles-sheet-cat" className="sfb-sheet-label">{isEn ? 'Category' : 'التصنيف'}</span>
-                <div className="sfb-sheet-options">
-                  {blogCategories.map((cat) => (
-                    <button
-                      key={cat.id}
-                      type="button"
-                      className="sfb-option"
-                      aria-pressed={selectedCategory === cat.id}
-                      onClick={() => setSelectedCategory(cat.id)}
-                    >
-                      <span>{isEn ? cat.nameEn : cat.name}</span>
-                      <span className="sfb-option-count">{categoryCounts[cat.id] || 0}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
             </>
           )
         }}

@@ -790,3 +790,125 @@ body:has(.reels-shell) .cinematic-footer-wrapper {
 .reels-shell--skeleton .reel-action-icon {
   background: rgba(127, 127, 127, 0.18);
 }
+
+/* =========================================================================
+   PHONES — full-screen reels, Instagram style
+   The feed takes the whole screen (no site navbar, no blurred letterbox):
+   covers and videos fill edge to edge, actions float as plain icons with a
+   shadow, and a slim top bar gives back + menu.
+   ========================================================================= */
+.reels-topbar {
+  display: none;
+}
+
+@media (max-width: 599.98px) {
+  body:has(.reels-shell) #navbar {
+    display: none !important;
+  }
+
+  .reels-shell {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  .reels-topbar {
+    position: absolute;
+    top: 0;
+    inset-inline: 0;
+    z-index: 8;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: calc(6px + env(safe-area-inset-top, 0px)) 8px 6px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), transparent);
+    pointer-events: none;
+  }
+
+  .reels-topbar-btn {
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #fff;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.6));
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .reels-topbar-btn:active {
+    transform: scale(0.9);
+  }
+
+  .reels-topbar-title {
+    color: #fff;
+    font-size: 19px;
+    font-weight: 700;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+  }
+
+  /* media fills the screen */
+  .reel-backdrop {
+    display: none;
+  }
+
+  .reel-cover {
+    object-fit: cover;
+  }
+
+  .reel-iframe {
+    top: 50%;
+    left: 50%;
+    width: auto;
+    height: 100%;
+    aspect-ratio: 16 / 9;
+    transform: translate(-50%, -50%);
+  }
+
+  /* sound: icon only, under the top bar */
+  .reel-sound {
+    top: calc(56px + env(safe-area-inset-top, 0px));
+    padding: 0;
+    width: 36px;
+    min-width: 36px;
+    justify-content: center;
+  }
+
+  .reel-sound-label {
+    display: none;
+  }
+
+  /* side actions: plain icons with a shadow, no discs */
+  .reel-actions {
+    bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+    inset-inline-end: 6px;
+    gap: 14px;
+  }
+
+  .reel-action-icon {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.65));
+  }
+
+  .reel-action-label {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  }
+
+  .reel-action--live {
+    display: none !important;
+  }
+
+  .reel-info {
+    padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  }
+}

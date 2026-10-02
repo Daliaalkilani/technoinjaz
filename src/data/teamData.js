@@ -306,11 +306,11 @@ export const teamMembers = [
   },
   {
     // Profile details and photo pending; Dunia's photo is used temporarily (owner's request).
-    id: 'shifaa-qattaa',
+    id: 'shifaa-kataa',
     name: 'م. شفاء قطاع',
-    nameEn: 'Eng. Shifaa Qattaa',
+    nameEn: 'Eng. Shifaa Kataa',
     title: 'م. شفاء قطاع',
-    titleEn: 'Eng. Shifaa Qattaa',
+    titleEn: 'Eng. Shifaa Kataa',
     role: 'مهندسة في فريق تكنو إنجاز',
     roleEn: 'Engineer, Techno Enjaz Team',
     badge: 'مهندسة في فريق تكنو إنجاز',

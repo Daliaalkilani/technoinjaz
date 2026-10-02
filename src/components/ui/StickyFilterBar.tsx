@@ -18,7 +18,7 @@
 
 import React, { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Search, SlidersHorizontal, X, RotateCcw } from 'lucide-react';
+import { Search, SlidersHorizontal, X, RotateCcw, ChevronUp } from 'lucide-react';
 import './StickyFilterBar.css';
 
 export interface FilterChip {
@@ -91,6 +91,11 @@ export function StickyFilterBar({
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
+  // 'extra': tablet "Filter" button (sort / type only). 'all': the phone pull-up
+  // sheet with search + categories + the extra filters.
+  const [sheetMode, setSheetMode] = useState<'extra' | 'all'>('extra');
+  const pillRef = useRef<HTMLButtonElement>(null);
+  const dragRef = useRef<{ y: number; dy: number } | null>(null);
   const [mounted, setMounted] = useState(false);
 
   // Mutable scroll state lives in refs so scrolling never re-renders React.
@@ -222,6 +227,68 @@ export function StickyFilterBar({
     requestAnimationFrame(() => searchBtnRef.current?.focus());
   };
 
+  const sheetModeRef = useRef(sheetMode);
+  sheetModeRef.current = sheetMode;
+
+  const openSheet = (mode: 'extra' | 'all') => {
+    setSheetMode(mode);
+    setSheetOpen(true);
+  };
+
+  /* Phone pill: tap, or swipe it upward, to pull the sheet up */
+  const pillGesture = {
+    onPointerDown: (e: React.PointerEvent) => {
+      dragRef.current = { y: e.clientY, dy: 0 };
+    },
+    onPointerMove: (e: React.PointerEvent) => {
+      const d = dragRef.current;
+      if (!d) return;
+      d.dy = e.clientY - d.y;
+      if (d.dy < -18) {
+        dragRef.current = null;
+        openSheet('all');
+      }
+    },
+    onPointerUp: () => {
+      dragRef.current = null;
+    },
+    onPointerCancel: () => {
+      dragRef.current = null;
+    }
+  };
+
+  /* Sheet: drag the handle / header down to close */
+  const sheetDrag = {
+    onPointerDown: (e: React.PointerEvent) => {
+      if ((e.target as HTMLElement).closest('button')) return;
+      dragRef.current = { y: e.clientY, dy: 0 };
+      (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
+      sheetRef.current?.classList.add('is-dragging');
+    },
+    onPointerMove: (e: React.PointerEvent) => {
+      const d = dragRef.current;
+      if (!d || !sheetRef.current) return;
+      d.dy = Math.max(0, e.clientY - d.y);
+      sheetRef.current.style.transform = `translateY(${d.dy}px)`;
+    },
+    onPointerUp: () => {
+      const d = dragRef.current;
+      dragRef.current = null;
+      const node = sheetRef.current;
+      if (!node) return;
+      node.classList.remove('is-dragging');
+      node.style.transform = '';
+      if (d && d.dy > 90) setSheetOpen(false);
+    },
+    onPointerCancel: () => {
+      dragRef.current = null;
+      if (sheetRef.current) {
+        sheetRef.current.classList.remove('is-dragging');
+        sheetRef.current.style.transform = '';
+      }
+    }
+  };
+
   /* Sheet: focus management, Escape, scroll lock */
   useEffect(() => {
     if (!sheetOpen) return;
@@ -256,7 +323,7 @@ export function StickyFilterBar({
     return () => {
       document.removeEventListener('keydown', onKey);
       document.documentElement.style.overflow = prevOverflow;
-      filterBtnRef.current?.focus();
+      (sheetModeRef.current === 'all' ? pillRef.current : filterBtnRef.current)?.focus();
     };
   }, [sheetOpen]);
 
@@ -267,6 +334,8 @@ export function StickyFilterBar({
     closeSearch: isEn ? 'Close search' : 'إغلاق البحث',
     clearSearch: isEn ? 'Clear search' : 'مسح البحث',
     filter: isEn ? 'Filter' : 'فلترة',
+    filterAll: isEn ? 'Search & filter' : 'البحث والفلترة',
+    all: isEn ? 'All' : 'الكل',
     results: isEn ? `${resultCount} ${resultCount === 1 ? 'result' : 'results'}` : `${resultCount} نتيجة`,
     activeFilters: isEn ? `${activeCount} active` : `${activeCount} ${activeCount === 1 ? 'فلتر مفعّل' : 'فلاتر مفعّلة'}`,
     reset: isEn ? 'Clear all' : 'مسح الكل',
@@ -276,7 +345,10 @@ export function StickyFilterBar({
 
   const searchActive = searchValue.trim().length > 0;
 
-  const sheetNode = sheet && mounted && sheetOpen
+  const activeChip = chips.find((c) => c.key === activeKey);
+  const showAll = sheetMode === 'all';
+
+  const sheetNode = (sheet || showAll) && mounted && sheetOpen
     ? createPortal(
         <div className="sfb-sheet-root" dir={dir}>
           <div className="sfb-sheet-backdrop" onClick={() => setSheetOpen(false)} aria-hidden="true" />
@@ -287,9 +359,10 @@ export function StickyFilterBar({
             aria-modal="true"
             aria-labelledby={sheetTitleId}
           >
+            <div className="sfb-sheet-grab" {...sheetDrag}>
             <div className="sfb-sheet-handle" aria-hidden="true" />
             <div className="sfb-sheet-head">
-              <h2 id={sheetTitleId} className="sfb-sheet-title">{sheet.title}</h2>
+              <h2 id={sheetTitleId} className="sfb-sheet-title">{showAll ? t.filterAll : sheet?.title}</h2>
               <button
                 type="button"
                 className="sfb-icon-btn"
@@ -300,7 +373,56 @@ export function StickyFilterBar({
                 <X size={18} aria-hidden="true" />
               </button>
             </div>
-            <div className="sfb-sheet-body">{sheet.render()}</div>
+            </div>
+            <div className="sfb-sheet-body">
+              {showAll && (
+                <>
+                  <div className="sfb-search sfb-search--sheet">
+                    <Search size={17} className="sfb-search-icon" aria-hidden="true" />
+                    <label htmlFor={`${searchId}-sheet`} className="sr-only">{searchPlaceholder}</label>
+                    <input
+                      id={`${searchId}-sheet`}
+                      type="search"
+                      enterKeyHint="search"
+                      className="sfb-search-input"
+                      value={searchValue}
+                      placeholder={searchPlaceholder}
+                      onChange={(e) => onSearchChange(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+                      }}
+                    />
+                    {searchActive && (
+                      <button type="button" className="sfb-search-clear" onClick={() => onSearchChange('')} aria-label={t.clearSearch}>
+                        <X size={14} aria-hidden="true" />
+                      </button>
+                    )}
+                  </div>
+                  <div className="sfb-sheet-group">
+                    <span className="sfb-sheet-label">{t.categories}</span>
+                    <div className="sfb-chip-grid" role="group" aria-label={t.categories}>
+                      {chips.map((chip) => {
+                        const active = chip.key === activeKey;
+                        return (
+                          <button
+                            key={chip.key}
+                            type="button"
+                            className={`sfb-chip ${active ? 'is-active' : ''}`}
+                            aria-pressed={active}
+                            onClick={() => onChipChange(chip.key)}
+                          >
+                            {chip.icon && <span className="sfb-chip-icon" aria-hidden="true">{chip.icon}</span>}
+                            <span className="sfb-chip-label">{chip.label}</span>
+                            {typeof chip.count === 'number' && <span className="sfb-chip-count">{chip.count}</span>}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </>
+              )}
+              {sheet?.render()}
+            </div>
             <div className="sfb-sheet-footer">
               <button
                 type="button"
@@ -425,7 +547,7 @@ export function StickyFilterBar({
                   ref={filterBtnRef}
                   type="button"
                   className={`sfb-filter-btn ${sheet.badge > 0 ? 'is-active' : ''}`}
-                  onClick={() => setSheetOpen(true)}
+                  onClick={() => openSheet('extra')}
                   aria-haspopup="dialog"
                   aria-expanded={sheetOpen}
                   aria-label={sheet.badge > 0 ? `${t.filter} (${sheet.badge})` : t.filter}
@@ -457,6 +579,26 @@ export function StickyFilterBar({
         </div>
       </div>
       {sheetNode}
+      {mounted && !sheetOpen && createPortal(
+        <button
+          ref={pillRef}
+          type="button"
+          className={`sfb-pill ${activeCount > 0 ? 'is-active' : ''}`}
+          dir={dir}
+          onClick={() => openSheet('all')}
+          aria-haspopup="dialog"
+          aria-label={`${t.filterAll}: ${activeChip?.label || t.all}, ${t.results}`}
+          {...pillGesture}
+        >
+          <span className="sfb-pill-grip" aria-hidden="true"><ChevronUp size={14} /></span>
+          <SlidersHorizontal size={16} aria-hidden="true" />
+          <span className="sfb-pill-label">{activeChip?.label || t.all}</span>
+          <span className="sfb-pill-sep" aria-hidden="true">·</span>
+          <span className="sfb-pill-count">{t.results}</span>
+          {activeCount > 0 && <span className="sfb-badge" aria-hidden="true">{activeCount}</span>}
+        </button>,
+        document.body
+      )}
     </>
   );
 }

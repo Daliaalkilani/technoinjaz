@@ -35,7 +35,7 @@
   --sfb-chip-count-bg: #f1f5f9;
   --sfb-accent: rgb(var(--c-primary));
   --sfb-accent-strong: rgb(var(--c-primary-strong));
-  --sfb-accent-soft: #e0f2fe;
+  --sfb-accent-soft: rgb(var(--c-primary) / 0.1);
   --sfb-on-accent: #ffffff;
   --sfb-input-bg: #f1f5f9;
   --sfb-sheet-bg: #ffffff;
@@ -661,5 +661,160 @@
   }
   .sfb-strip {
     scroll-behavior: auto;
+  }
+}
+
+/* =========================================================================
+   PHONES — filters live in a pull-up sheet
+   The top bar is gone on phones; a small floating pill at the bottom shows
+   the current category + result count. Tap it or swipe it up to pull the
+   sheet (search, categories, sort/type); drag the sheet down to close it.
+   ========================================================================= */
+.sfb-pill {
+  display: none;
+}
+
+.sfb-sheet.is-dragging {
+  transition: none;
+}
+
+.sfb-sheet:not(.is-dragging) {
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sfb-sheet-grab {
+  touch-action: none;
+  cursor: grab;
+}
+
+.sfb-chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sfb-search--sheet {
+  margin-bottom: 18px;
+  min-height: 44px;
+}
+
+@media (max-width: 599.98px) {
+  .sfb,
+  .sfb-sentinel {
+    display: none !important;
+  }
+
+  .sfb-pill {
+    --pill-bg: rgba(8, 12, 20, 0.82);
+    --pill-border: rgba(255, 255, 255, 0.12);
+    --pill-text: #e2e8f0;
+    --pill-muted: #94a3b8;
+    position: fixed;
+    left: 50%;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    z-index: 950;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: calc(100vw - 32px);
+    height: 48px;
+    padding: 0 18px;
+    border-radius: 999px;
+    border: 1px solid var(--pill-border);
+    background: var(--pill-bg);
+    color: var(--pill-text);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    font-family: var(--font-readex), sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    transform: translateX(-50%);
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+    animation: sfbPillIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .sfb-pill svg {
+    color: rgb(var(--c-primary));
+    flex-shrink: 0;
+  }
+
+  .sfb-pill-grip {
+    position: absolute;
+    top: -9px;
+    left: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 16px;
+    margin-left: -17px;
+    border-radius: 999px;
+    border: 1px solid var(--pill-border);
+    background: var(--pill-bg);
+    animation: sfbGripHint 2.6s ease-in-out 1s 2;
+  }
+
+  .sfb-pill-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 46vw;
+  }
+
+  .sfb-pill-sep,
+  .sfb-pill-count {
+    color: var(--pill-muted);
+    font-weight: 500;
+  }
+
+  .sfb-pill.is-active {
+    border-color: rgb(var(--c-primary) / 0.55);
+  }
+
+  .sfb-pill:active {
+    transform: translateX(-50%) scale(0.96);
+  }
+
+  .sfb-pill:focus-visible {
+    outline: 2px solid rgb(var(--c-primary));
+    outline-offset: 3px;
+  }
+
+  [data-theme="light"] .sfb-pill {
+    --pill-bg: rgba(255, 255, 255, 0.88);
+    --pill-border: rgba(15, 23, 42, 0.1);
+    --pill-text: #0f172a;
+    --pill-muted: #64748b;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.16), inset 0 1px 0 #fff;
+  }
+
+  .sfb-sheet {
+    max-height: 82vh;
+    max-height: 82dvh;
+  }
+}
+
+@keyframes sfbPillIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 24px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes sfbGripHint {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sfb-pill,
+  .sfb-pill-grip {
+    animation: none;
   }
 }
