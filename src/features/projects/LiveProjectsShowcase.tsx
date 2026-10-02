@@ -1,7 +1,7 @@
 'use client';
 import ResponsiveImage from '@/components/ui/ResponsiveImage';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   ExternalLink, 
   Play, 
@@ -208,7 +208,6 @@ export const LiveProjectsShowcase: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [isHovered, setIsHovered] = useState<boolean>(false);
-  const [progress, setProgress] = useState<number>(0);
   const { isSaved, toggleSave } = useSavedProjects();
 
   const activeProject = liveProjectsList[currentIndex % liveProjectsList.length] || liveProjectsList[0];
@@ -217,50 +216,31 @@ export const LiveProjectsShowcase: React.FC = () => {
   const activeDescription = activeTrans?.description || activeProject.description;
   const activeHighlights = activeTrans?.highlights || activeProject.highlights;
 
-  // Automatic transition timer using requestAnimationFrame with clean reset
+  // Auto-advance. The progress bar is a CSS animation (transform: scaleX on the
+  // compositor) and its end moves to the next project. It used to update React state
+  // on every animation frame, re-rendering this whole component — marquee cards
+  // included — ~60 times a second, which made the bar stutter.
+  const spotlightRef = useRef<HTMLDivElement | null>(null);
+  const [isOnScreen, setIsOnScreen] = useState<boolean>(true);
   useEffect(() => {
-    if (!isPlaying || isHovered) {
-      return;
-    }
-
-    let lastTime = performance.now();
-    let frameId: number;
-
-    const loop = (currentTime: number) => {
-      const delta = currentTime - lastTime;
-      lastTime = currentTime;
-
-      setProgress(prev => {
-        const next = prev + (delta / AUTO_INTERVAL_MS) * 100;
-        if (next >= 100) {
-          setCurrentIndex(c => (c + 1) % liveProjectsList.length);
-          return 0;
-        }
-        return next;
-      });
-
-      frameId = requestAnimationFrame(loop);
-    };
-
-    frameId = requestAnimationFrame(loop);
-
-    return () => {
-      cancelAnimationFrame(frameId);
-    };
-  }, [isPlaying, isHovered, currentIndex]);
+    const el = spotlightRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([entry]) => setIsOnScreen(entry.isIntersecting), { threshold: 0.15 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  const progressPaused = !isPlaying || isHovered || !isOnScreen;
+  const advance = () => setCurrentIndex(c => (c + 1) % liveProjectsList.length);
 
   const handleNext = () => {
-    setProgress(0);
     setCurrentIndex(c => (c + 1) % liveProjectsList.length);
   };
 
   const handlePrev = () => {
-    setProgress(0);
     setCurrentIndex(c => (c - 1 + liveProjectsList.length) % liveProjectsList.length);
   };
 
   const handleSelectIndex = (idx: number) => {
-    setProgress(0);
     setCurrentIndex(idx);
   };
 
@@ -269,6 +249,7 @@ export const LiveProjectsShowcase: React.FC = () => {
       {/* Featured Auto-Advancing Spotlight */}
       <div 
         className="spotlight-hero"
+            ref={spotlightRef}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             style={{ borderColor: `${activeProject.color}40` }}
@@ -404,13 +385,16 @@ export const LiveProjectsShowcase: React.FC = () => {
 
             {/* Visual Progress Bar */}
             <div className="spotlight-progress-track">
-              <div 
-                className="spotlight-progress-fill" 
-                style={{ 
-                  width: `${progress}%`,
+              {/* key restarts the animation for every project */}
+              <div
+                key={currentIndex}
+                className="spotlight-progress-fill"
+                onAnimationEnd={advance}
+                style={{
                   background: `linear-gradient(90deg, #0ea5e9, ${activeProject.color})`,
-                  transition: progress === 0 ? 'none' : 'width 0.05s linear'
-                }} 
+                  animationDuration: `${AUTO_INTERVAL_MS}ms`,
+                  animationPlayState: progressPaused ? 'paused' : 'running'
+                }}
               />
             </div>
 

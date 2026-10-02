@@ -460,9 +460,27 @@
 }
 
 .spotlight-progress-fill {
+  width: 100%;
   height: 100%;
   background: linear-gradient(90deg, #0ea5e9, #0aeec3);
   border-radius: 999px;
+  /* Grows from the reading start; transform keeps it on the compositor (no layout) */
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation-name: spotlight-progress;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+  will-change: transform;
+}
+
+[dir="rtl"] .spotlight-progress-fill {
+  transform-origin: right center;
+}
+
+@keyframes spotlight-progress {
+  to {
+    transform: scaleX(1);
+  }
 }
 
 /* Spotlight Direct Pagination Indicators */
@@ -1069,4 +1087,24 @@
 [data-theme="light"] .grid-card-btn:hover {
   background: linear-gradient(135deg, #0284c7, #0d9488);
   color: #ffffff;
+}
+
+/* Light mode: the inactive dots were near-white on a near-white background */
+[data-theme="light"] .spotlight-progress-track {
+  background: rgba(15, 23, 42, 0.1);
+}
+
+[data-theme="light"] .spotlight-dot {
+  background: rgba(15, 23, 42, 0.18);
+  border-color: rgba(15, 23, 42, 0.32);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  [data-theme="light"] .spotlight-dot:hover {
+    background: rgba(15, 23, 42, 0.42);
+  }
+}
+
+[data-theme="light"] .spotlight-dot.active {
+  border-color: transparent;
 }
