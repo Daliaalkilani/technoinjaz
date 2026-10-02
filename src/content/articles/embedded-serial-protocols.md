@@ -807,6 +807,8 @@ CS2 → Display
 
 إذًا يمكن لـSPI خدمة عدة Targets.
 
+![مخطط ناقل SPI يربط متحكمًا بثلاثة أجهزة Flash وADC وDisplay عبر خطوط SCK وMOSI وMISO مشتركة، مع خط Chip Select منفصل CS0 وCS1 وCS2 لكل جهاز](/images/articles/body/embedded-serial-protocols-4.webp "SPI مع عدة Targets: خطوط SCK وMOSI وMISO مشتركة، ولكل Target خط CS خاص، فكل جهاز إضافي يكلّف Pin وتوجيهًا إضافيين — رسم توضيحي: تكنو إنجاز")
+
 المشكلة:
 
 كل Target تقليديًا يحتاج Chip Select خاصًا.
@@ -1156,6 +1158,8 @@ STOP
 - NACK.
 - Missing STOP.
 - Register خاطئ.
+
+![لقطة شاشة من برنامج PulseView تعرض إشارتي SCL وSDA وفك ترميز معاملة I²C مع ساعة DS1307: START وعنوان 0x68 للكتابة ثم Repeated START وقراءة البيانات وACK وNACK ثم STOP](/images/articles/body/embedded-serial-protocols-5.webp "فك ترميز I²C في PulseView: يظهر START والعنوان 0x68 مع W ثم Repeated START وقراءة سجلات الوقت، وكل بايت يتبعه ACK حتى NACK الأخير وSTOP — المصدر: Joelholdsworth، ويكيميديا كومنز، CC BY-SA 4.0")
 
 لكن Logic Analyzer لا يكشف دائمًا مشكلة Analog edge quality.
 

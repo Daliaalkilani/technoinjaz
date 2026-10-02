@@ -89,6 +89,8 @@ Car → box
 Traffic light → box
 ```
 
+![صورة مكتب عليه حاسوب محمول وزجاجات وكوب ووعاء وكرسي، وحول كل جسم مربع محيط ملوّن باسم فئته كما اكتشفها نموذج YOLOv3](/images/articles/body/ai-image-classification-4.webp "Object Detection بنموذج YOLOv3: الناتج ليس فئة واحدة للصورة، بل فئة ومربع محيط (Bounding Box) لكل جسم مثل laptop وbottle وcup وchair — المصدر: MTheiler، ويكيميديا كومنز، CC BY-SA 4.0")
+
 ## Image Segmentation
 
 السؤال:
@@ -672,6 +674,8 @@ melanoma → benign lesion
 ```
 
 وهذه المعلومات أهم من Accuracy واحدة.
+
+![مصفوفة التباس توضيحية لثلاث فئات هي كلب وذئب وقطة، يظهر فيها تصنيف 18 ذئبًا على أنها كلاب رغم دقة عامة 88%](/images/articles/body/ai-image-classification-5.webp "Confusion Matrix: الصفوف هي الفئة الحقيقية والأعمدة توقع النموذج؛ الخلط wolf → dog يخفض Recall فئة الذئب إلى 62% بينما تبدو Accuracy العامة جيدة (أرقام توضيحية) — رسم توضيحي: تكنو إنجاز")
 
 # ماذا عن ROC-AUC وPR-AUC؟
 

@@ -125,6 +125,8 @@ Data Network / Edge / Cloud
 
 لذلك وجود أيقونة "5G" على الهاتف لا يخبرك وحده عن نوع البنية المستخدمة.
 
+![مقارنة بين بنية NSA التي يتصل فيها الجهاز بمحطة LTE كمرساة للتحكم وبمحطة gNB للبيانات الإضافية مع EPC، وبنية SA التي يتصل فيها الجهاز بمحطة gNB مباشرة مع 5G Core](/images/articles/body/5g-nr-radio-architecture-4.webp "في NSA تبقى LTE مرساة التحكم ويُستخدم EPC، ويضيف 5G NR سعة بيانات؛ وفي SA يعمل NR مع 5G Core فتظهر قدرات مثل Network Slicing والبنية القائمة على الخدمات — رسم توضيحي: تكنو إنجاز")
+
 # كيف تستخدم 5G الطيف؟
 
 من الأخطاء الشائعة اختزال 5G في mmWave.
@@ -638,6 +640,8 @@ Backhaul
 ```
 
 المصطلحات والتقسيمات تختلف حسب Architecture، لكن الفكرة هي أن **Fronthaul أقرب إلى الراديو**.
+
+![سلسلة RAN مقسمة من وحدة الراديو RU إلى DU ثم CU ثم 5G Core، مع وصلات Fronthaul بين RU وDU وMidhaul بين DU وCU وBackhaul بين CU والشبكة الأساسية](/images/articles/body/5g-nr-radio-architecture-5.webp "Fronthaul بين RU وDU هو الأشد تطلبًا في الزمن والتزامن والسعة، ثم Midhaul بين DU وCU، ثم Backhaul نحو الـCore؛ وفي O-RAN يعرّف Open Fronthaul الواجهة بين O-RU وO-DU بتقسيم 7.2x — رسم توضيحي: تكنو إنجاز")
 
 # هل ما زال نموذج RRH + BBU كافيًا لشرح 5G؟
 
