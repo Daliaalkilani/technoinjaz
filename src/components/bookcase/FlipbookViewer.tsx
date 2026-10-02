@@ -14,6 +14,10 @@ import {
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import './Bookcase.css';
 
+// ISO A4 in PDF points (210 × 297 mm)
+const A4_W = 595.276;
+const A4_H = 841.89;
+
 export interface FlipbookViewerProps {
   pdfUrl?: string;
   title: string;
@@ -42,8 +46,11 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
   const [loadingMessage, setLoadingMessage] = useState(isEn ? 'Loading Document...' : 'جاري تحميل الوثيقة...');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  // Opens expanded (filling the whole screen) on every device; the button can shrink it
+  const [isFullscreen, setIsFullscreen] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [fitKey, setFitKey] = useState(0); // bumps on resize → sheets re-fitted to the screen
+  const [isSpread, setIsSpread] = useState(true); // two-page spread vs single page
 
   // Load PDF.js from local vendor bundle
   const loadPdfJs = useCallback(async (): Promise<any> => {
@@ -84,20 +91,31 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
       const page = await pdfDoc.getPage(pageNum);
       const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
       const baseScale = 1.35;
-      const viewport = page.getViewport({ scale: baseScale * pixelRatio });
+
+      // Every sheet is an A4 sheet (owner's rule, for current and future files): the
+      // canvas has A4 proportions and the PDF page is fitted and centred on it, so
+      // Letter / odd-sized / landscape pages still show as A4 paper.
+      const sheetW = Math.round(A4_W * baseScale * pixelRatio);
+      const sheetH = Math.round(A4_H * baseScale * pixelRatio);
+      const natural = page.getViewport({ scale: 1 });
+      const fit = Math.min(sheetW / natural.width, sheetH / natural.height);
+      const viewport = page.getViewport({ scale: fit });
 
       const canvas = document.createElement('canvas');
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
+      canvas.width = sheetW;
+      canvas.height = sheetH;
       canvas.style.width = '100%';
       canvas.style.height = '100%';
 
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, sheetW, sheetH);
 
       const renderContext = {
         canvasContext: ctx,
-        viewport
+        viewport,
+        transform: [1, 0, 0, 1, Math.round((sheetW - viewport.width) / 2), Math.round((sheetH - viewport.height) / 2)]
       };
 
       const renderTask = page.render(renderContext);
@@ -180,21 +198,21 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
         const total = pdfDoc.numPages;
         setTotalPages(total);
 
-        // Determine aspect ratio from first page
-        const page1 = await pdfDoc.getPage(1);
-        const vp = page1.getViewport({ scale: 1 });
-        const isLandscape = vp.width > vp.height;
-        const aspectRatio = vp.width / vp.height;
-
-        let bookWidth = 520;
-        let bookHeight = 720;
-        if (isLandscape) {
-          bookWidth = 620;
-          bookHeight = Math.round(620 / aspectRatio);
-        } else {
-          bookHeight = 700;
-          bookWidth = Math.round(700 * aspectRatio);
-        }
+        // The book always has A4 portrait sheets, whatever the file's page size, and a
+        // whole sheet must fit the visible area (no cropping, no scrolling): size the
+        // pages from the stage. Two-page spread when it leaves the sheets big enough,
+        // otherwise a single page (phones / narrow windows).
+        const stageEl = bookElementRef.current?.parentElement;
+        const availW = Math.max(240, (stageEl?.clientWidth || window.innerWidth) - 2);
+        const availH = Math.max(320, (stageEl?.clientHeight || window.innerHeight * 0.7) - 2);
+        const R = A4_H / A4_W;
+        const singleH = Math.min(availH, availW * R);
+        let sheetH = Math.min(availH, (availW / 2) * R);
+        const spread = sheetH >= singleH * 0.72;
+        if (!spread) sheetH = singleH;
+        setIsSpread(spread);
+        const bookHeight = Math.floor(sheetH);
+        const bookWidth = Math.floor(sheetH / R);
 
         const viewerContainer = bookElementRef.current;
         if (!viewerContainer) return;
@@ -235,11 +253,11 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
         const pageFlip = new PageFlip(viewerContainer, {
           width: bookWidth,
           height: bookHeight,
-          size: 'stretch',
-          minWidth: 320,
-          maxWidth: 960,
-          minHeight: isLandscape ? 200 : 440,
-          maxHeight: isLandscape ? 600 : 1200,
+          size: 'fixed',
+          minWidth: 100,
+          maxWidth: 4000,
+          minHeight: 100,
+          maxHeight: 4000,
           maxShadowOpacity: 0.6,
           showCover: true,
           mobileScrollSupport: false,
@@ -252,6 +270,12 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
 
         const pages = viewerContainer.querySelectorAll('.page');
         pageFlip.loadFromHTML(pages);
+        // In single-page mode the library sizes the sheet from the container width
+        // (width:100% + ratio padding), so cap the container to the fitted sheet(s):
+        // the whole A4 sheet then always fits the visible area.
+        viewerContainer.style.maxWidth = `${spread ? bookWidth * 2 : bookWidth}px`;
+        viewerContainer.style.minWidth = '0px';
+        viewerContainer.style.minHeight = '0px';
 
         // Arabic book in every UI language (the uploaded documents are Arabic): page 1
         // on the right, page 2 on the left, pages turn from left to right. page-flip
@@ -298,11 +322,34 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
       }
       renderStatusRef.current = {};
     };
-  }, [isOpen, pdfUrl, isEn, loadPdfJs, renderPageSlot, updateVirtualPages]);
+  }, [isOpen, pdfUrl, isEn, loadPdfJs, renderPageSlot, updateVirtualPages, fitKey]);
+
+  // Re-fit the A4 sheets to the screen after a resize / rotation
+  useEffect(() => {
+    if (!isOpen) return;
+    let t: number | undefined;
+    let last = `${window.innerWidth}x${window.innerHeight}`;
+    const onResize = () => {
+      window.clearTimeout(t);
+      t = window.setTimeout(() => {
+        const now = `${window.innerWidth}x${window.innerHeight}`;
+        if (now !== last) {
+          last = now;
+          setFitKey((k) => k + 1);
+        }
+      }, 350);
+    };
+    window.addEventListener('resize', onResize);
+    return () => {
+      window.clearTimeout(t);
+      window.removeEventListener('resize', onResize);
+    };
+  }, [isOpen]);
 
   // Dynamic stage transform for centering closed book (Page 1 Cover) or back cover
   const getStageTransform = () => {
-    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+    // Only a two-page spread needs the closed-cover shift; a single page is centred.
+    if (!isSpread) {
       return undefined;
     }
     // The book is mirrored (RTL): the closed front cover sits on the LEFT half of the
@@ -347,16 +394,39 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, currentPage, totalPages, onClose]);
 
+  // Expanded = the reader fills the screen (CSS, works everywhere incl. iPhone) and,
+  // where the browser allows it, real fullscreen on top. Re-fit the sheets after.
   const toggleFullscreen = () => {
-    if (!containerRef.current) return;
-    if (!document.fullscreenElement) {
-      containerRef.current.requestFullscreen().catch(() => {});
-      setIsFullscreen(true);
-    } else {
-      document.exitFullscreen().catch(() => {});
-      setIsFullscreen(false);
+    const next = !isFullscreen;
+    setIsFullscreen(next);
+    try {
+      if (next && containerRef.current && !document.fullscreenElement) {
+        containerRef.current.requestFullscreen?.().catch(() => {});
+      } else if (!next && document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
+      }
+    } catch {
+      /* fullscreen API unavailable: CSS expansion only */
     }
+    setTimeout(() => setFitKey((k) => k + 1), 60);
   };
+
+  // Every opening starts expanded (+ real fullscreen when allowed: the opening click
+  // is still a user gesture at this point)
+  useEffect(() => {
+    if (!isOpen) return;
+    setIsFullscreen(true);
+    try {
+      if (containerRef.current && !document.fullscreenElement && window.matchMedia('(pointer: coarse)').matches) {
+        containerRef.current.requestFullscreen?.().catch(() => {});
+      }
+    } catch {
+      /* ignore */
+    }
+    return () => {
+      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    };
+  }, [isOpen]);
 
   const handlePrev = () => {
     pageFlipInstanceRef.current?.flipPrev();
@@ -376,7 +446,7 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
 
   return (
     <div 
-      className="flipbook-overlay" 
+      className={`flipbook-overlay ${isFullscreen ? 'is-expanded' : ''}`}
       onClick={onClose} 
       role="dialog" 
       aria-modal="true"

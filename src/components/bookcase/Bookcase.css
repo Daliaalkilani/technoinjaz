@@ -948,3 +948,35 @@
     padding-inline: 12px;
   }
 }
+
+/* Expanded reader (default on every device): the modal is the whole screen */
+.flipbook-overlay.is-expanded {
+  padding: 0;
+}
+
+.flipbook-overlay.is-expanded .flipbook-modal {
+  width: 100vw;
+  max-width: none;
+  height: 100vh;
+  height: 100dvh;
+  max-height: none;
+  border: 0;
+  border-radius: 0;
+}
+
+/* Phones: the A4 sheet fills the reader's width (bigger, readable text) */
+@media (max-width: 640px) {
+  .flipbook-overlay.is-expanded .flipbook-body {
+    padding: 4px 2px;
+  }
+  .flipbook-overlay.is-expanded .flipbook-stage-wrapper {
+    padding: 0;
+  }
+  .flipbook-overlay.is-expanded .flipbook-header {
+    height: 52px;
+    padding: 0 0.75rem;
+  }
+  .flipbook-overlay.is-expanded .fb-hint-text {
+    display: none;
+  }
+}
