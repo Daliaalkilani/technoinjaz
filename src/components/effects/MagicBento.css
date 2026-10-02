@@ -2,10 +2,10 @@
   --hue: 27;
   --sat: 69%;
   --white: hsl(0, 0%, 100%);
-  --purple-primary: rgb(var(--c-violet) / 1);
-  --purple-glow: rgb(var(--c-violet) / 0.2);
-  --purple-border: rgb(var(--c-violet) / 0.8);
-  --border-color: rgb(var(--c-primary) / 0.22);
+  --purple-primary: rgba(132, 0, 255, 1);
+  --purple-glow: rgba(132, 0, 255, 0.2);
+  --purple-border: rgba(132, 0, 255, 0.8);
+  --border-color: rgba(56, 189, 248, 0.22);
   --background-dark: #0b1426;
   color-scheme: light dark;
 }
@@ -93,9 +93,9 @@
 .magic-bento-card__label {
   font-size: 0.8rem;
   font-weight: 600;
-  color: rgb(var(--c-primary));
-  background: rgb(var(--c-primary) / 0.12);
-  border: 1px solid rgb(var(--c-primary) / 0.25);
+  color: #38bdf8;
+  background: rgba(14, 165, 233, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.25);
   padding: 0.2rem 0.75rem;
   border-radius: 9999px;
   letter-spacing: 0.02em;
@@ -117,16 +117,16 @@
 }
 
 .article-save-btn:hover {
-  background: rgb(var(--c-primary) / 0.25);
-  border-color: rgb(var(--c-primary) / 0.6);
+  background: rgba(14, 165, 233, 0.25);
+  border-color: rgba(56, 189, 248, 0.6);
   color: #ffffff;
   transform: scale(1.08);
 }
 
 .article-save-btn.is-saved {
-  background: rgb(var(--c-primary) / 0.3);
-  border-color: rgb(var(--c-primary));
-  color: rgb(var(--c-primary));
+  background: rgba(14, 165, 233, 0.3);
+  border-color: #38bdf8;
+  color: #38bdf8;
 }
 
 [data-theme="light"] .article-save-btn {
@@ -136,15 +136,15 @@
 }
 
 [data-theme="light"] .article-save-btn:hover {
-  background: rgb(var(--c-primary) / 0.12);
-  border-color: rgb(var(--c-primary) / 0.45);
-  color: rgb(var(--c-primary));
+  background: rgba(2, 132, 199, 0.12);
+  border-color: rgba(2, 132, 199, 0.45);
+  color: #0284c7;
 }
 
 [data-theme="light"] .article-save-btn.is-saved {
-  background: rgb(var(--c-primary) / 0.18);
-  border-color: rgb(var(--c-primary));
-  color: rgb(var(--c-primary));
+  background: rgba(2, 132, 199, 0.18);
+  border-color: #0284c7;
+  color: #0284c7;
 }
 
 .magic-bento-card__title,
@@ -172,7 +172,7 @@
 }
 
 .magic-bento-card__link:hover {
-  color: rgb(var(--c-primary));
+  color: #38bdf8;
 }
 
 .magic-bento-card__description {
@@ -214,7 +214,7 @@
 
 [data-theme="light"] .magic-bento-card__media {
   background: #e2e8f0;
-  border-color: rgb(var(--c-primary) / 0.15);
+  border-color: rgba(2, 132, 199, 0.15);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
 }
 
@@ -515,7 +515,7 @@
 
 .magic-bento-card--border-glow:hover {
   box-shadow:
-    0 4px 20px rgb(var(--c-primary) / 0.2),
+    0 4px 20px rgba(14, 165, 233, 0.2),
     0 0 30px rgba(var(--glow-color, 132, 0, 255), 0.25);
 }
 
@@ -538,7 +538,7 @@
 
 .particle-container:hover {
   box-shadow:
-    0 4px 20px rgb(var(--c-primary) / 0.2),
+    0 4px 20px rgba(14, 165, 233, 0.2),
     0 0 30px rgba(var(--glow-color, 132, 0, 255), 0.25);
 }
 
@@ -565,8 +565,8 @@
 }
 
 [data-theme="light"] .magic-bento-card:hover {
-  border-color: rgb(var(--c-primary) / 0.4) !important;
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.08), 0 0 20px rgb(var(--c-primary) / 0.12) !important;
+  border-color: rgba(2, 132, 199, 0.4) !important;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.08), 0 0 20px rgba(2, 132, 199, 0.12) !important;
 }
 
 [data-theme="light"] .magic-bento-card__title {
@@ -583,9 +583,9 @@
 }
 
 [data-theme="light"] .magic-bento-card__label {
-  color: rgb(var(--c-primary));
-  background: rgb(var(--c-primary) / 0.08);
-  border: 1px solid rgb(var(--c-primary) / 0.22);
+  color: #0284c7;
+  background: rgba(2, 132, 199, 0.08);
+  border: 1px solid rgba(2, 132, 199, 0.22);
   font-weight: 700;
 }
 

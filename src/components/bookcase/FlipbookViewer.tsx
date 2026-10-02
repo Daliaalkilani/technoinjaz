@@ -456,7 +456,7 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
         {/* Bottom Interactive Navigation Toolbar */}
         <footer className="flipbook-footer">
           <div className="fb-hint-text">
-            <Sparkles size={14} color="#2DD0C8" />
+            <Sparkles size={14} color="#38bdf8" />
             <span>{isEn ? 'Arabic book: drag the left page corner or use the arrows to turn pages' : 'كتاب عربي: اسحب زاوية الصفحة اليسرى أو استخدم الأسهم لتقليب الصفحات'}</span>
           </div>
 

@@ -25,7 +25,7 @@ export function ScrollProgress({ className = '', style = {}, ...props }) {
         height: '3px',
         transformOrigin: '0%',
         zIndex: 1000,
-        background: 'linear-gradient(to right, rgb(var(--c-primary)), rgb(var(--c-blue)), rgb(var(--c-violet)), rgb(var(--c-primary)))',
+        background: 'linear-gradient(to right, #00d2ff, #3b82f6, #6366f1, #00f2fe)',
         boxShadow: '0 0 14px rgba(0, 210, 255, 0.7)',
         scaleX,
         ...style

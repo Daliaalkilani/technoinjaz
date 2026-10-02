@@ -21,7 +21,7 @@
   border-radius: 28px;
   box-shadow: 
     0 25px 60px -15px rgba(0, 0, 0, 0.9),
-    0 0 50px -10px rgb(var(--c-primary) / 0.15),
+    0 0 50px -10px rgba(0, 210, 255, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
@@ -73,8 +73,8 @@
   width: 50%;
   z-index: 20;
   overflow: hidden;
-  background: linear-gradient(135deg, #001e3d 0%, #004d80 40%, rgb(var(--c-primary)) 100%);
-  box-shadow: 0 0 40px rgb(var(--c-primary) / 0.3);
+  background: linear-gradient(135deg, #001e3d 0%, #004d80 40%, #00d2ff 100%);
+  box-shadow: 0 0 40px rgba(0, 210, 255, 0.3);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -209,7 +209,7 @@
 
 .auth-switch-social-btn:hover {
   background: rgba(255, 255, 255, 0.08);
-  border-color: rgb(var(--c-primary) / 0.4);
+  border-color: rgba(0, 210, 255, 0.4);
   color: #ffffff;
   transform: translateY(-1px);
 }
@@ -281,13 +281,13 @@
 }
 
 .auth-switch-input:focus {
-  border-color: rgb(var(--c-primary));
-  background: rgb(var(--c-primary) / 0.025);
-  box-shadow: 0 0 0 3px rgb(var(--c-primary) / 0.15);
+  border-color: #00d2ff;
+  background: rgba(0, 210, 255, 0.025);
+  box-shadow: 0 0 0 3px rgba(0, 210, 255, 0.15);
 }
 
 .auth-switch-input-wrapper:focus-within .auth-switch-input-icon {
-  color: rgb(var(--c-primary));
+  color: #00d2ff;
 }
 
 .auth-switch-eye-btn {
@@ -304,7 +304,7 @@
 }
 
 .auth-switch-eye-btn:hover {
-  color: rgb(var(--c-primary));
+  color: #00d2ff;
 }
 
 /* Extra options (Remember me, Forgot pw) */
@@ -326,12 +326,12 @@
 }
 
 .auth-switch-remember input {
-  accent-color: rgb(var(--c-primary));
+  accent-color: #00d2ff;
   cursor: pointer;
 }
 
 .auth-switch-forgot {
-  color: rgb(var(--c-primary));
+  color: #00d2ff;
   text-decoration: none;
   transition: color 0.2s ease;
 }
@@ -345,7 +345,7 @@
 .auth-switch-submit-btn {
   width: 100%;
   padding: 13px 20px;
-  background: linear-gradient(135deg, rgb(var(--c-primary)) 0%, #0066ff 100%);
+  background: linear-gradient(135deg, #00d2ff 0%, #0066ff 100%);
   border: none;
   border-radius: 12px;
   color: #ffffff;
@@ -357,13 +357,13 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: 0 4px 20px rgb(var(--c-primary) / 0.35);
+  box-shadow: 0 4px 20px rgba(0, 210, 255, 0.35);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .auth-switch-submit-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgb(var(--c-primary) / 0.5);
+  box-shadow: 0 8px 25px rgba(0, 210, 255, 0.5);
 }
 
 /* Mobile Toggle Bar (Hidden on desktop, shown on mobile) */
@@ -482,9 +482,9 @@
   gap: 12px;
   padding: 14px 28px;
   background: rgba(10, 25, 47, 0.95);
-  border: 1px solid rgb(var(--c-primary) / 0.4);
+  border: 1px solid rgba(0, 210, 255, 0.4);
   border-radius: 999px;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgb(var(--c-primary) / 0.25);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 210, 255, 0.25);
   backdrop-filter: blur(16px);
   color: #ffffff;
   font-family: var(--font-readex), sans-serif;
@@ -495,7 +495,7 @@
 }
 
 .auth-toast-icon {
-  color: rgb(var(--c-primary));
+  color: #00d2ff;
   flex-shrink: 0;
 }
 
@@ -507,7 +507,7 @@
   border-color: rgba(0, 0, 0, 0.08);
   box-shadow: 
     0 25px 60px -15px rgba(0, 0, 0, 0.08),
-    0 0 50px -10px rgb(var(--c-primary) / 0.08),
+    0 0 50px -10px rgba(2, 132, 199, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
@@ -527,8 +527,8 @@
 
 [data-theme="light"] .auth-switch-social-btn:hover {
   background: #ffffff;
-  border-color: rgb(var(--c-primary));
-  color: rgb(var(--c-primary));
+  border-color: #0284c7;
+  color: #0284c7;
 }
 
 [data-theme="light"] .auth-switch-divider-line {
@@ -551,8 +551,8 @@
 
 [data-theme="light"] .auth-switch-input:focus {
   background: #ffffff;
-  border-color: rgb(var(--c-primary));
-  box-shadow: 0 0 0 3px rgb(var(--c-primary) / 0.15);
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
 }
 
 [data-theme="light"] .auth-switch-input::placeholder {
@@ -568,7 +568,7 @@
 }
 
 [data-theme="light"] .auth-switch-eye-btn:hover {
-  color: rgb(var(--c-primary));
+  color: #0284c7;
 }
 
 [data-theme="light"] .auth-switch-remember {
@@ -576,25 +576,25 @@
 }
 
 [data-theme="light"] .auth-switch-remember input {
-  accent-color: rgb(var(--c-primary));
+  accent-color: #0284c7;
 }
 
 [data-theme="light"] .auth-switch-forgot {
-  color: rgb(var(--c-primary));
+  color: #0284c7;
 }
 
 [data-theme="light"] .auth-switch-submit-btn {
-  background: linear-gradient(135deg, rgb(var(--c-primary)) 0%, rgb(var(--c-primary-strong)) 100%);
-  box-shadow: 0 4px 20px rgb(var(--c-primary) / 0.25);
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  box-shadow: 0 4px 20px rgba(2, 132, 199, 0.25);
 }
 
 [data-theme="light"] .auth-switch-submit-btn:hover {
-  box-shadow: 0 8px 25px rgb(var(--c-primary) / 0.4);
+  box-shadow: 0 8px 25px rgba(2, 132, 199, 0.4);
 }
 
 [data-theme="light"] .auth-switch-overlay-panel {
-  background: linear-gradient(135deg, rgb(var(--c-primary)) 0%, rgb(var(--c-primary-strong)) 50%, rgb(var(--c-primary)) 100%);
-  box-shadow: 0 0 40px rgb(var(--c-primary) / 0.2);
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 50%, #0284c7 100%);
+  box-shadow: 0 0 40px rgba(2, 132, 199, 0.2);
 }
 
 [data-theme="light"] .auth-switch-mobile-tabs {
@@ -614,7 +614,7 @@
 
 [data-theme="light"] .auth-bottom-toast-content {
   background: rgba(255, 255, 255, 0.95);
-  border-color: rgb(var(--c-primary) / 0.3);
+  border-color: rgba(2, 132, 199, 0.3);
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
   color: #0f172a;
 }

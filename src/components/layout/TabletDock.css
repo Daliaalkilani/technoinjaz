@@ -25,14 +25,14 @@
     --dock-bg: rgba(10, 14, 26, 0.72);
     --dock-border: rgba(255, 255, 255, 0.12);
     --dock-highlight: rgba(255, 255, 255, 0.14);
-    --dock-shadow: 0 18px 50px rgba(0, 0, 0, 0.55), 0 0 0 1px rgb(var(--c-primary) / 0.05);
+    --dock-shadow: 0 18px 50px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 210, 255, 0.05);
     --dock-text: rgba(255, 255, 255, 0.66);
     --dock-text-hover: #ffffff;
     --dock-icon-bg-hover: rgba(255, 255, 255, 0.07);
-    --dock-active: rgb(var(--c-primary));
-    --dock-active-bg: linear-gradient(140deg, rgb(var(--c-primary) / 0.22) 0%, rgb(var(--c-mint) / 0.12) 100%);
-    --dock-active-border: rgb(var(--c-primary) / 0.45);
-    --dock-active-glow: 0 0 18px rgb(var(--c-primary) / 0.35);
+    --dock-active: #00d2ff;
+    --dock-active-bg: linear-gradient(140deg, rgba(0, 210, 255, 0.22) 0%, rgba(10, 238, 195, 0.12) 100%);
+    --dock-active-border: rgba(0, 210, 255, 0.45);
+    --dock-active-glow: 0 0 18px rgba(0, 210, 255, 0.35);
 
     display: block;
     position: fixed;
@@ -239,10 +239,10 @@
   --dock-text: #475569;
   --dock-text-hover: #0f172a;
   --dock-icon-bg-hover: rgba(15, 23, 42, 0.05);
-  --dock-active: rgb(var(--c-primary));
-  --dock-active-bg: linear-gradient(140deg, rgb(var(--c-primary) / 0.14) 0%, rgb(var(--c-mint) / 0.08) 100%);
-  --dock-active-border: rgb(var(--c-primary) / 0.32);
-  --dock-active-glow: 0 4px 14px rgb(var(--c-primary) / 0.18);
+  --dock-active: #0284c7;
+  --dock-active-bg: linear-gradient(140deg, rgba(2, 132, 199, 0.14) 0%, rgba(13, 148, 136, 0.08) 100%);
+  --dock-active-border: rgba(2, 132, 199, 0.32);
+  --dock-active-glow: 0 4px 14px rgba(2, 132, 199, 0.18);
 }
 
 @media (prefers-reduced-motion: reduce) {

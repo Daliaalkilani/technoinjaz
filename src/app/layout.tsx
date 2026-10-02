@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next';
 import { Readex_Pro } from 'next/font/google';
-import '@/styles/palette.css';
 import '@/styles/globals.css';
 import { ThemeLanguageProvider } from '@/context/ThemeLanguageContext';
 import { LoaderProvider } from '@/context/LoaderContext';

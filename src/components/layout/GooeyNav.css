@@ -256,7 +256,7 @@
 }
 
 [data-theme="light"] .gooey-nav-container nav ul li:hover {
-  color: rgb(var(--c-primary));
+  color: #0284c7;
 }
 
 [data-theme="light"] .gooey-nav-container nav ul li.active {
@@ -269,8 +269,8 @@
 }
 
 [data-theme="light"] .gooey-nav-container nav ul li.active::after {
-  background: linear-gradient(135deg, rgb(var(--c-primary)), rgb(var(--c-mint)));
-  box-shadow: 0 4px 14px rgb(var(--c-primary) / 0.35);
+  background: linear-gradient(135deg, #0284c7, #0d9488);
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
 }
 
 [data-theme="light"] .gooey-nav-container .effect.filter {

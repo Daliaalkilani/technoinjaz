@@ -327,7 +327,7 @@ export function AppShell({ children }: AppShellProps) {
           <Link
             href="/connection-error"
             style={{
-              color: 'rgb(var(--c-primary))',
+              color: '#38bdf8',
               textDecoration: 'underline',
               marginInlineStart: '4px'
             }}

@@ -412,7 +412,7 @@ export default function ContactPage({ onBack } = {}) {
             <div className="contact-map-card">
               <div className="map-card-header">
                 <div className="map-title">
-                  <MapPin size={17} style={{ color: 'rgb(var(--c-primary))' }} />
+                  <MapPin size={17} style={{ color: '#00d2ff' }} />
                   <span>{t.contact.mapTitle}</span>
                 </div>
                 <a

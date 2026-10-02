@@ -101,7 +101,7 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
           zIndex: 15
         }}
       >
-        <Skiper19 strokeColor="#2DD0C8" />
+        <Skiper19 strokeColor="#00d2ff" />
       </div>
 
       {/* 3D InfiniteMenu Team Showcase with Orb Background */}

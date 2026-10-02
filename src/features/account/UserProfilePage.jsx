@@ -210,7 +210,7 @@ export default function UserProfilePage({ onBack, onLogout, onOpenReader, onExpl
                 alignItems: 'center',
                 justifyContent: 'center',
                 margin: '0 auto 20px',
-                color: 'var(--accent-cyan, rgb(var(--c-primary)))'
+                color: 'var(--accent-cyan, #38bdf8)'
               }}
             >
               <User size={30} />
