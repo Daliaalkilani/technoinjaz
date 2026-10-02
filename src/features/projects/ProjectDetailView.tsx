@@ -2,7 +2,7 @@
 import ResponsiveImage from '@/components/ui/ResponsiveImage';
 import TableOfContents from '@/components/ui/TableOfContents';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { 
   ArrowRight, 
@@ -23,7 +23,7 @@ import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { useSavedProjects } from '@/hooks/useSavedProjects';
 import { plainExcerpt, projectTags } from '@/lib/text';
 import { SITE_URL } from '@/config/site';
-import FlipbookViewer from '@/components/bookcase/FlipbookViewer';
+import FlipbookViewer, { preloadFlipbook } from '@/components/bookcase/FlipbookViewer';
 import './ProjectDetailView.css';
 
 export interface TocHeading {
@@ -54,6 +54,15 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
 
   const [copied, setCopied] = useState(false);
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
+
+  // Warm up the PDF reader in the background so the book opens quickly
+  useEffect(() => {
+    if (!project.pdfUrl) return;
+    const w = window as Window & { requestIdleCallback?: (cb: () => void) => number };
+    const run = () => preloadFlipbook(project.pdfUrl);
+    if (w.requestIdleCallback) w.requestIdleCallback(run);
+    else setTimeout(run, 1500);
+  }, [project.pdfUrl]);
 
   const handleShare = () => {
     const url = `${SITE_URL}/projects/${project.slug}`;

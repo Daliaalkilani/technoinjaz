@@ -5,14 +5,59 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  Maximize2,
-  Minimize2,
   BookOpen,
   Sparkles,
   Info
 } from 'lucide-react';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import './Bookcase.css';
+
+// PDF.js is loaded once and shared; project pages preload it in the background so
+// the reader opens without waiting for the library.
+let pdfJsPromise: Promise<any> | null = null;
+export function loadPdfJsLib(): Promise<any> {
+  if (typeof window === 'undefined') return Promise.resolve(null);
+  if ((window as any).pdfjsLib) return Promise.resolve((window as any).pdfjsLib);
+  if (pdfJsPromise) return pdfJsPromise;
+  pdfJsPromise = new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = '/vendor/pdfjs/pdf.min.js';
+    script.async = true;
+    script.onload = () => {
+      const lib = (window as any).pdfjsLib;
+      if (lib) {
+        lib.GlobalWorkerOptions.workerSrc = '/vendor/pdfjs/pdf.worker.min.js';
+        resolve(lib);
+      } else {
+        pdfJsPromise = null;
+        reject(new Error('PDF.js library failed to initialize'));
+      }
+    };
+    script.onerror = () => {
+      pdfJsPromise = null;
+      reject(new Error('Failed to load local PDF.js script'));
+    };
+    document.head.appendChild(script);
+  });
+  return pdfJsPromise;
+}
+
+/** Warm up the reader: PDF.js + its worker + the start of the PDF file. */
+export function preloadFlipbook(pdfUrl?: string) {
+  if (typeof window === 'undefined') return;
+  loadPdfJsLib().catch(() => {});
+  const hint = (href: string, as: string) => {
+    if (document.head.querySelector(`link[data-fb-preload="${href}"]`)) return;
+    const l = document.createElement('link');
+    l.rel = 'prefetch';
+    l.href = href;
+    l.as = as;
+    l.setAttribute('data-fb-preload', href);
+    document.head.appendChild(l);
+  };
+  hint('/vendor/pdfjs/pdf.worker.min.js', 'script');
+  if (pdfUrl) hint(pdfUrl, 'fetch');
+}
 
 // ISO A4 in PDF points (210 × 297 mm)
 const A4_W = 595.276;
@@ -46,34 +91,14 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
   const [loadingMessage, setLoadingMessage] = useState(isEn ? 'Loading Document...' : 'جاري تحميل الوثيقة...');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  // Opens expanded (filling the whole screen) on every device; the button can shrink it
+  // Always expanded (filling the whole screen) on every device — no toggle (owner's request)
   const [isFullscreen, setIsFullscreen] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [fitKey, setFitKey] = useState(0); // bumps on resize → sheets re-fitted to the screen
   const [isSpread, setIsSpread] = useState(true); // two-page spread vs single page
 
   // Load PDF.js from local vendor bundle
-  const loadPdfJs = useCallback(async (): Promise<any> => {
-    if (typeof window === 'undefined') return null;
-    if ((window as any).pdfjsLib) return (window as any).pdfjsLib;
-
-    return new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src = '/vendor/pdfjs/pdf.min.js';
-      script.async = true;
-      script.onload = () => {
-        const lib = (window as any).pdfjsLib;
-        if (lib) {
-          lib.GlobalWorkerOptions.workerSrc = '/vendor/pdfjs/pdf.worker.min.js';
-          resolve(lib);
-        } else {
-          reject(new Error('PDF.js library failed to initialize'));
-        }
-      };
-      script.onerror = () => reject(new Error('Failed to load local PDF.js script'));
-      document.head.appendChild(script);
-    });
-  }, []);
+  const loadPdfJs = useCallback((): Promise<any> => loadPdfJsLib(), []);
 
   // Render a specific page onto its DOM slot
   const renderPageSlot = useCallback(async (pageNum: number, pageDiv: HTMLElement) => {
@@ -89,7 +114,7 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
 
     try {
       const page = await pdfDoc.getPage(pageNum);
-      const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      const pixelRatio = Math.min(window.devicePixelRatio || 1, window.innerWidth < 700 ? 1.75 : 2);
       const baseScale = 1.35;
 
       // Every sheet is an A4 sheet (owner's rule, for current and future files): the
@@ -188,7 +213,10 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
         const loadingTask = pdfjs.getDocument({
           url: pdfUrl,
           cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/cmaps/',
-          cMapPacked: true
+          cMapPacked: true,
+          // fetch the file in ranges as pages are needed instead of all of it first
+          disableAutoFetch: true,
+          rangeChunkSize: 262144
         });
 
         const pdfDoc = await loadingTask.promise;
@@ -235,7 +263,7 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
 
         // Pre-render the first few pages
         setLoadingMessage(isEn ? 'Rendering 3D Pages...' : 'جاري معالجة الصفحات ثلاثية الأبعاد...');
-        const initialToRender = Math.min(total, 4);
+        const initialToRender = Math.min(total, 2);
         for (let i = 1; i <= initialToRender; i++) {
           const slot = viewerContainer.querySelector(`.page[data-page-num="${i}"]`) as HTMLElement;
           if (slot) {
@@ -394,23 +422,6 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, currentPage, totalPages, onClose]);
 
-  // Expanded = the reader fills the screen (CSS, works everywhere incl. iPhone) and,
-  // where the browser allows it, real fullscreen on top. Re-fit the sheets after.
-  const toggleFullscreen = () => {
-    const next = !isFullscreen;
-    setIsFullscreen(next);
-    try {
-      if (next && containerRef.current && !document.fullscreenElement) {
-        containerRef.current.requestFullscreen?.().catch(() => {});
-      } else if (!next && document.fullscreenElement) {
-        document.exitFullscreen().catch(() => {});
-      }
-    } catch {
-      /* fullscreen API unavailable: CSS expansion only */
-    }
-    setTimeout(() => setFitKey((k) => k + 1), 60);
-  };
-
   // Every opening starts expanded (+ real fullscreen when allowed: the opening click
   // is still a user gesture at this point)
   useEffect(() => {
@@ -472,15 +483,6 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
           </div>
 
           <div className="flipbook-header-actions">
-            <button
-              type="button"
-              className="fb-btn"
-              onClick={toggleFullscreen}
-              title={isEn ? 'Toggle Fullscreen' : 'ملء الشاشة'}
-            >
-              {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-            </button>
-
             <button
               type="button"
               className="fb-btn fb-btn-close"
