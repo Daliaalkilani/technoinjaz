@@ -4,6 +4,7 @@ import React from 'react';
 import '@/components/ui/Skeleton.css';
 import { SkLine, SkLines, SkFill, SkBox, SkText } from '@/components/ui/Sk';
 import '@/features/articles/ArticlesListing.css';
+import { StickyFilterBarSkeleton } from '@/components/ui/StickyFilterBar';
 
 // Mirrors ArticlesListing: header, search, filter rows and the real card grid.
 export default function ArticlesLoading() {
@@ -14,6 +15,8 @@ export default function ArticlesLoading() {
           <div className="blog-main-title"><SkText words={4} /></div>
           <p className="blog-main-desc"><SkText words={16} /></p>
         </div>
+        {/* ≤1024px: compact sticky filter bar (desktop rows below are hidden there) */}
+        <StickyFilterBarSkeleton chipWidths={[72, 150, 130, 130, 140, 120]} withFilter />
         <div className="blog-search-bar-wrap">
           <div className="blog-search-inner-box" style={{ position: 'relative', minHeight: 47 }}><SkFill /></div>
         </div>

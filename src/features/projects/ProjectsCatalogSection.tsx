@@ -22,6 +22,7 @@ import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { useSavedProjects } from '@/hooks/useSavedProjects';
 import { PROJECTS_DATA, type ProjectItem, type ProjectCategory } from '@/data/projectsData';
 import { plainExcerpt, projectTags } from '@/lib/text';
+import StickyFilterBar from '@/components/ui/StickyFilterBar';
 import './ProjectsCatalogSection.css';
 
 interface ProjectsCatalogSectionProps {
@@ -66,6 +67,19 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
     });
   }, [projects, selectedCategory, searchTerm]);
 
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: projects.length };
+    projects.forEach((p) => { counts[p.category] = (counts[p.category] || 0) + 1; });
+    return counts;
+  }, [projects]);
+
+  const resetFilters = () => {
+    setSearchTerm('');
+    setSelectedCategory('all');
+  };
+
+  const activeFilterCount = (selectedCategory !== 'all' ? 1 : 0) + (searchTerm.trim() ? 1 : 0);
+
   // Prefetch top visible projects so clicking is instantaneous
   useEffect(() => {
     filteredProjects.slice(0, 8).forEach((p) => {
@@ -87,6 +101,7 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
           <input
             type="text"
             className="search-input"
+            aria-label={isEn ? "Search projects" : "ابحث في المشاريع"}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder={isEn ? "Search projects by title, technology, or keywords..." : "ابحث في المشاريع بالاسم، التقنية، أو الكلمات المفتاحية..."}
@@ -104,18 +119,37 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
         </div>
       </div>
 
+      {/* Mobile & tablet (≤1024px): compact sticky filter bar */}
+      <StickyFilterBar
+        chips={categories.map((cat) => ({
+          key: cat.key,
+          label: cat.key === 'all' ? (isEn ? 'All' : cat.labelAr) : (isEn ? cat.labelEn : cat.labelAr),
+          count: categoryCounts[cat.key] || 0,
+          icon: cat.icon
+        }))}
+        activeKey={selectedCategory}
+        onChipChange={(key) => setSelectedCategory(key as ProjectCategory)}
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder={isEn ? 'Search projects...' : 'ابحث في المشاريع...'}
+        isEn={isEn}
+        resultCount={filteredProjects.length}
+        activeCount={activeFilterCount}
+        onReset={resetFilters}
+        ariaLabel={isEn ? 'Project filters' : 'تصفية المشاريع'}
+      />
+
       {/* Category Filter Tabs */}
       <div className="catalog-categories-bar">
         {categories.map((cat) => {
-          const count = cat.key === 'all' 
-            ? projects.length 
-            : projects.filter(p => p.category === cat.key).length;
+          const count = categoryCounts[cat.key] || 0;
 
           return (
             <button
               key={cat.key}
               type="button"
               className={`category-pill-btn ${selectedCategory === cat.key ? 'active' : ''}`}
+              aria-pressed={selectedCategory === cat.key}
               onClick={() => setSelectedCategory(cat.key)}
             >
               <span className="cat-icon">{cat.icon}</span>
@@ -141,10 +175,7 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
           <button 
             type="button" 
             className="empty-reset-btn"
-            onClick={() => {
-              setSearchTerm('');
-              setSelectedCategory('all');
-            }}
+            onClick={resetFilters}
           >
             {isEn ? "Reset Filters" : "إعادة ضبط التصفية"}
           </button>

@@ -16,9 +16,7 @@ import {
   FileText,
   Presentation,
   Send,
-  PhoneCall,
-  BookOpen,
-  Sparkles
+  PhoneCall
 } from 'lucide-react';
 import type { ProjectItem } from '@/data/projectsData';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
@@ -204,11 +202,20 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
           {qa}
 
           {/* 3D Interactive Documentation Showcase */}
-          <div className="project-bookcase-banner" style={{ margin: '2.5rem 0', padding: '2.5rem 1.5rem', borderRadius: '18px', background: 'radial-gradient(circle at 50% 20%, rgba(37, 99, 235, 0.12) 0%, rgba(15, 23, 42, 0.6) 100%)', border: '1px solid rgba(56, 189, 248, 0.25)', textAlign: 'center' }}>
-            <div style={{ display: 'flex', justifyContent: 'center', perspective: '1100px', marginBottom: '1.5rem' }}>
+          <div className="project-bookcase-banner">
+            <div style={{ display: 'flex', justifyContent: 'center', perspective: '1100px' }}>
               <div 
                 className="book-3d-wrapper"
                 onClick={() => setIsPdfModalOpen(true)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setIsPdfModalOpen(true);
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                aria-label={isEn ? "Open the project report" : "فتح ملف المشروع"}
                 title={isEn ? "Click to open reader" : "انقر لقراءة التقرير"}
                 style={{ cursor: 'pointer' }}
               >
@@ -256,34 +263,6 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
                   <div className="book-face book-bottom" />
                 </div>
               </div>
-            </div>
-
-            {/* Clickable text prompt replacing the button */}
-            <div
-              className="project-book-read-prompt"
-              onClick={() => setIsPdfModalOpen(true)}
-              role="button"
-              tabIndex={0}
-              title={isEn ? "Open 3D interactive documentation" : "انقر لتصفح ملف المشروع ثلاثي الأبعاد"}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                margin: '0.25rem auto 0',
-                padding: '0.45rem 1.15rem',
-                borderRadius: '9999px',
-                background: 'rgba(56, 189, 248, 0.08)',
-                border: '1px solid rgba(56, 189, 248, 0.28)',
-                color: '#38bdf8',
-                fontSize: '0.86rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                transition: 'all 0.25s ease'
-              }}
-            >
-              <Sparkles size={14} color="#38bdf8" />
-              <span>{isEn ? "Click book or here to read full 3D documentation" : "انقر على الكتاب أو هنا لتصفح ملف المشروع تفاعلياً"}</span>
-              <BookOpen size={14} color="#38bdf8" />
             </div>
           </div>
 

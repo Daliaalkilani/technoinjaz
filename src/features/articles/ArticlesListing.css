@@ -191,6 +191,18 @@
   opacity: 0.8;
 }
 
+/* Mobile & tablet (≤1024px): desktop search + filter rows are replaced by the
+   compact sticky StickyFilterBar (see components/ui). */
+@media (max-width: 1024px) {
+  .office-blog-header {
+    margin-bottom: 1.25rem;
+  }
+  .blog-search-bar-wrap,
+  .blog-filters-capsule-row {
+    display: none;
+  }
+}
+
 /* 6. Empty State */
 .blog-empty-state {
   text-align: center;

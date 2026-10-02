@@ -8,7 +8,7 @@ import { webPage } from '@/seo/schemas';
 export const dynamic = 'force-static';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'تكنو إنجاز | هندسة برمجية متقدمة وحلول سحابية | Techno Enjaz',
+  title: 'تكنو إنجاز | Techno Enjaz',
   description: 'تكنو إنجاز - صرح هندسي رائد في تطوير الأنظمة البرمجية المتكاملة، الحلول السحابية فائقة الأداء، الأتمتة وإنترنت الأشياء، وتطبيقات الذكاء الاصطناعي في حماة، سوريا.',
   path: '/',
   absoluteTitle: true

@@ -32,7 +32,7 @@ export async function generateMetadata({
   const pageUrl = absoluteUrl(`/team/${member.id}`);
 
   return {
-    title: `${member.name} - ${member.role} | تكنو إنجاز`,
+    title: `${member.name} - ${member.role}`,
     description,
     alternates: {
       canonical: pageUrl

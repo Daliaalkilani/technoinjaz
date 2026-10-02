@@ -2,28 +2,33 @@
 
 import React from 'react';
 import '@/components/ui/Skeleton.css';
-import { SkLine, SkLines, SkFill, SkBox, SkText } from '@/components/ui/Sk';
+import { SkFill, SkText } from '@/components/ui/Sk';
 import '@/features/videos/ProjectReelsFeed.css';
 
-// Mirrors /videos: page header, category sidebar and the reels feed frame.
+// Mirrors /videos: the immersive reels feed (one full-height reel + side actions).
 export default function VideosLoading() {
   return (
     <div className="tab-page-container tab-page-videos" style={{ padding: 0, maxWidth: '100%' }} aria-busy="true" aria-label="جاري تحميل الفيديوهات...">
-      <div className="tab-page-header reels-page-header">
-        <div className="tab-page-title reels-page-title"><SkText words={3} /></div>
-        <p className="tab-page-subtitle reels-page-subtitle"><SkText words={14} /></p>
-      </div>
-      <section className="cinema-reels-experience">
-        <div className="cinema-reels-layout">
-          <aside className="cinema-reels-sidebar">
-            {[150, 120, 140, 110, 130].map((w, i) => <SkBox key={i} w={w} h={38} r={999} style={{ maxWidth: '100%' }} />)}
-          </aside>
-          <div className="cinema-reels-feed-stream">
-            <div className="cinema-reel-card-item">
-              <div className="cinema-reel-phone-frame" style={{ position: 'relative' }}><SkFill /></div>
+      <section className="reels-shell reels-shell--skeleton">
+        <ol className="reels-feed">
+          <li className="reel is-active">
+            <div className="reel-stage">
+              <div className="reel-media" style={{ background: 'transparent' }}><SkFill /></div>
+              <div className="reel-info">
+                <div className="reel-title"><SkText words={5} /></div>
+                <p className="reel-caption"><SkText words={14} /></p>
+              </div>
             </div>
-          </div>
-        </div>
+            <div className="reel-actions">
+              {[0, 1, 2, 3].map(i => (
+                <span key={i} className="reel-action">
+                  <span className="reel-action-icon" />
+                  <span className="reel-action-label">&nbsp;</span>
+                </span>
+              ))}
+            </div>
+          </li>
+        </ol>
       </section>
     </div>
   );

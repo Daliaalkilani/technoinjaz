@@ -3,18 +3,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import ScrollProgress from '@/components/effects/ScrollProgress';
 import GooeyNav from './GooeyNav';
 import CinematicFooter from './CinematicFooter';
 import ThemeSwitch from './ThemeSwitch';
 import LanguageDropdown from './LanguageDropdown';
 import ScrollToTop from './ScrollToTop';
-import RouteProgress from './RouteProgress';
+import ScrollProgress from '@/components/effects/ScrollProgress';
 import '@/components/ui/Skeleton.css';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { getLoggedInUser } from '@/lib/auth';
 import { User, Menu, WifiOff } from 'lucide-react';
 import MobileNavDrawer from './MobileNavDrawer';
+import TabletDock from './TabletDock';
 import NotificationBell from '@/components/notifications/NotificationBell';
 import NotificationToaster from '@/components/notifications/NotificationToaster';
 
@@ -172,7 +172,6 @@ export function AppShell({ children }: AppShellProps) {
         {lang === 'en' ? 'Skip to content' : 'تخطَّ إلى المحتوى'}
       </a>
       <ScrollToTop />
-      <RouteProgress />
       <ScrollProgress className="top-0" />
       <NotificationToaster />
 
@@ -298,12 +297,15 @@ export function AppShell({ children }: AppShellProps) {
         {children}
       </main>
 
+      {/* Tablet bottom dock (CSS shows it only on tablets; phones keep the drawer) */}
+      <TabletDock items={navItems} activeIndex={activeIndex} />
+
       {/* Floating Offline Notification */}
       {isOffline && !isErrorPage && (
         <div
           style={{
             position: 'fixed',
-            bottom: '24px',
+            bottom: 'calc(24px + var(--dock-space, 0px))',
             insetInlineStart: '24px',
             zIndex: 999999,
             background: 'rgba(15, 23, 42, 0.94)',

@@ -87,8 +87,35 @@ export function renderMarkdown(
       : img;
   };
 
+  // ```text blocks in the content are flow sketches ("A → B", "↓" chains, Arabic +
+  // English labels), not code. As monospace <pre> they were cut off on phones and
+  // their Arabic lost its shaping/direction. Render them as a flow card: one line per
+  // row, each with its own text direction, wrapping on narrow screens. Real code
+  // (a language tag) and box-drawing sketches that rely on column alignment keep <pre>.
+  renderer.code = function ({ text, lang }) {
+    const esc = (v: string) => v.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const plainText = !lang || lang === 'text' || lang === 'txt';
+    if (!plainText || /[│─┌┐└┘├┤┬┴┼═║]/.test(text)) {
+      return `<pre dir="ltr"><code${lang ? ` class="language-${esc(lang)}"` : ''}>${esc(text)}</code></pre>`;
+    }
+    const rows = text
+      .split('\n')
+      .map((line) => line.trim())
+      .map((line) => {
+        if (!line) return '<div class="md-flow__gap" aria-hidden="true"></div>';
+        if (/^[↓↑→←⇄⇅▼▲|]+$/.test(line)) return `<div class="md-flow__arrow" aria-hidden="true">${esc(line)}</div>`;
+        return `<div class="md-flow__line" dir="auto">${esc(line)}</div>`;
+      })
+      .join('');
+    return `<div class="md-flow">${rows}</div>`;
+  };
+
+  // Tables scroll sideways inside their own box on phones instead of squeezing
+  // every column down to one letter per line.
   const markedInstance = new Marked({ gfm: true, breaks: true, renderer });
-  const html = markedInstance.parse(src.trim()) as string;
+  const html = (markedInstance.parse(src.trim()) as string)
+    .replace(/<table>/g, '<div class="md-table-wrap" tabindex="0"><table>')
+    .replace(/<\/table>/g, '</table></div>');
 
   return { html, toc };
 }

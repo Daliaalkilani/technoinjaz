@@ -865,9 +865,10 @@
     padding: 1.5rem;
   }
 
+  /* Mobile: the live site is already shown in the preview frame (tap it to open),
+     so the visit + save CTAs are redundant clutter here. Kept on tablet/desktop. */
   .spotlight-cta-row {
-    flex-direction: column;
-    align-items: stretch;
+    display: none !important;
   }
 
   .spotlight-launch-btn {

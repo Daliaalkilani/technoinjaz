@@ -574,6 +574,153 @@ const useMobileDetection = () => {
   return isMobile;
 };
 
+/* Phones (<600px): the articles grid is a horizontal scroll-snap strip (MagicBento.css).
+   Auto-advance it one card every AUTO_SWIPE_INTERVAL ms, looping back to the first card.
+   Pauses while the strip is touched/dragged/focused (resumes a few seconds after release),
+   while it is off-screen or the tab is hidden, and is disabled under reduced motion.
+   Distances are measured from bounding rects and applied with scrollBy, so it is
+   direction-agnostic: works in RTL (where Chrome's scrollLeft is negative) and LTR. */
+const AUTO_SWIPE_INTERVAL = 4000;
+const AUTO_SWIPE_RESUME_DELAY = 5000;
+const STRIP_QUERY = '(max-width: 599px)';
+const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
+
+const useAutoSwipeStrip = (gridRef: React.RefObject<HTMLDivElement | null>) => {
+  useEffect(() => {
+    const grid = gridRef.current;
+    if (!grid || typeof window === 'undefined' || !window.matchMedia) return;
+
+    const stripMq = window.matchMedia(STRIP_QUERY);
+    const motionMq = window.matchMedia(REDUCED_MOTION_QUERY);
+
+    let inView = false;
+    let interacting = false;
+    let nextAt = Date.now() + AUTO_SWIPE_INTERVAL;
+    let timer: number | null = null;
+
+    const enabled = () => stripMq.matches && !motionMq.matches;
+    const canRun = () => enabled() && inView && !document.hidden;
+
+    const advance = () => {
+      const cards = Array.from(grid.children).filter(
+        (el): el is HTMLElement => el instanceof HTMLElement && el.classList.contains('magic-bento-card')
+      );
+      if (cards.length < 2) return;
+      const maxScroll = grid.scrollWidth - grid.clientWidth;
+      if (maxScroll <= 1) return;
+
+      const cs = getComputedStyle(grid);
+      const isRtl = cs.direction === 'rtl';
+      const pad = parseFloat(cs.scrollPaddingInlineStart || cs.getPropertyValue('scroll-padding-inline-start')) || 0;
+      const gridRect = grid.getBoundingClientRect();
+      const startOf = (el: HTMLElement) => {
+        const r = el.getBoundingClientRect();
+        return isRtl ? gridRect.right - pad - r.right : r.left - (gridRect.left + pad);
+      };
+
+      // card currently snapped at the strip's start edge
+      let current = 0;
+      let best = Infinity;
+      cards.forEach((c, i) => {
+        const d = Math.abs(startOf(c));
+        if (d < best) { best = d; current = i; }
+      });
+
+      const atEnd = Math.abs(grid.scrollLeft) >= maxScroll - 4;
+      const target = atEnd || current >= cards.length - 1 ? cards[0] : cards[current + 1];
+      const offset = startOf(target); // logical distance along the inline axis
+      if (Math.abs(offset) < 1) return;
+      grid.scrollBy({ left: isRtl ? -offset : offset, behavior: 'smooth' });
+    };
+
+    const tick = () => {
+      if (!canRun() || interacting) return;
+      if (Date.now() >= nextAt) {
+        advance();
+        nextAt = Date.now() + AUTO_SWIPE_INTERVAL;
+      }
+    };
+
+    const sync = () => {
+      if (canRun()) {
+        if (timer === null) {
+          nextAt = Math.max(nextAt, Date.now() + AUTO_SWIPE_INTERVAL);
+          timer = window.setInterval(tick, 250);
+        }
+      } else if (timer !== null) {
+        window.clearInterval(timer);
+        timer = null;
+      }
+    };
+
+    const pause = () => {
+      interacting = true;
+    };
+    const release = () => {
+      interacting = false;
+      nextAt = Date.now() + AUTO_SWIPE_RESUME_DELAY;
+    };
+    // wheel / trackpad has no "end" event: treat each one as a short interaction
+    const nudge = () => {
+      nextAt = Date.now() + AUTO_SWIPE_RESUME_DELAY;
+    };
+    // touch is handled by touch events (pointercancel fires as soon as the browser
+    // takes over a swipe), so pointer events only cover mouse / pen dragging
+    const onPointerDown = (e: PointerEvent) => {
+      if (e.pointerType === 'touch') return;
+      pause();
+      window.addEventListener('pointerup', release, { once: true });
+      window.addEventListener('pointercancel', release, { once: true });
+    };
+    // keyboard focus inside the strip (not the focus a tap leaves behind)
+    const onFocusIn = (e: FocusEvent) => {
+      const t = e.target as Element | null;
+      if (t?.matches?.(':focus-visible')) pause();
+    };
+    const onFocusOut = (e: FocusEvent) => {
+      if (!grid.contains(e.relatedTarget as Node | null) && interacting) release();
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        inView = entries.some((en) => en.isIntersecting && en.intersectionRatio >= 0.35);
+        if (!inView) nextAt = Date.now() + AUTO_SWIPE_INTERVAL;
+        sync();
+      },
+      { threshold: [0, 0.35, 0.6] }
+    );
+    io.observe(grid);
+
+    grid.addEventListener('touchstart', pause, { passive: true });
+    grid.addEventListener('touchend', release, { passive: true });
+    grid.addEventListener('touchcancel', release, { passive: true });
+    grid.addEventListener('pointerdown', onPointerDown, { passive: true });
+    grid.addEventListener('wheel', nudge, { passive: true });
+    grid.addEventListener('focusin', onFocusIn);
+    grid.addEventListener('focusout', onFocusOut);
+    document.addEventListener('visibilitychange', sync);
+    stripMq.addEventListener?.('change', sync);
+    motionMq.addEventListener?.('change', sync);
+
+    return () => {
+      if (timer !== null) window.clearInterval(timer);
+      io.disconnect();
+      grid.removeEventListener('touchstart', pause);
+      grid.removeEventListener('touchend', release);
+      grid.removeEventListener('touchcancel', release);
+      grid.removeEventListener('pointerdown', onPointerDown);
+      window.removeEventListener('pointerup', release);
+      window.removeEventListener('pointercancel', release);
+      grid.removeEventListener('wheel', nudge);
+      grid.removeEventListener('focusin', onFocusIn);
+      grid.removeEventListener('focusout', onFocusOut);
+      document.removeEventListener('visibilitychange', sync);
+      stripMq.removeEventListener?.('change', sync);
+      motionMq.removeEventListener?.('change', sync);
+    };
+  }, [gridRef]);
+};
+
 export interface MagicBentoProps {
   textAutoHide?: boolean;
   enableStars?: boolean;
@@ -610,6 +757,7 @@ const MagicBento: React.FC<MagicBentoProps> = ({
   const gridRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useMobileDetection();
   const shouldDisableAnimations = disableAnimations || isMobile;
+  useAutoSwipeStrip(gridRef);
 
   useEffect(() => {
     [

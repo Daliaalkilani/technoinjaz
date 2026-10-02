@@ -20,6 +20,7 @@ import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { useSavedProjects } from '@/hooks/useSavedProjects';
 import { requireAuth } from '@/lib/auth';
 import { SITE_URL } from '@/config/site';
+import StickyFilterBar from '@/components/ui/StickyFilterBar';
 import './ArticlesListing.css';
 
 interface ArticlesListingProps {
@@ -148,6 +149,30 @@ export function ArticlesListing({
     return list;
   }, [filteredArticles, sortOrder, likesState]);
 
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    blogCategories.forEach((cat) => {
+      counts[cat.id] = cat.id === 'all'
+        ? articles.length
+        : articles.filter(a => a.category.includes(cat.name) || a.categoryEn.toLowerCase().includes(cat.id)).length;
+    });
+    return counts;
+  }, [articles]);
+
+  const resetFilters = () => {
+    setSearchQuery('');
+    setSelectedCategory('all');
+    setSortOrder('latest');
+  };
+
+  const sheetBadge = (selectedCategory !== 'all' ? 1 : 0) + (sortOrder !== 'latest' ? 1 : 0);
+  const activeFilterCount = sheetBadge + (searchQuery.trim() ? 1 : 0);
+
+  const sortOptions: { key: 'latest' | 'popular'; label: string }[] = [
+    { key: 'latest', label: isEn ? 'Latest' : 'الأحدث' },
+    { key: 'popular', label: isEn ? 'Most Read' : 'الأكثر قراءة' }
+  ];
+
   // Prefetch top articles so clicking is instantaneous
   useEffect(() => {
     displayedArticles.slice(0, 8).forEach((art) => {
@@ -170,12 +195,73 @@ export function ArticlesListing({
         </div>
       )}
 
+      {/* Mobile & tablet (≤1024px): compact sticky filter bar + bottom sheet */}
+      <StickyFilterBar
+        chips={blogCategories.map((cat) => ({
+          key: cat.id,
+          label: isEn ? cat.nameEn : cat.name,
+          count: categoryCounts[cat.id] || 0
+        }))}
+        activeKey={selectedCategory}
+        onChipChange={setSelectedCategory}
+        searchValue={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder={isEn ? 'Search in articles...' : 'ابحث في المقالات...'}
+        isEn={isEn}
+        resultCount={displayedArticles.length}
+        activeCount={activeFilterCount}
+        onReset={resetFilters}
+        ariaLabel={isEn ? 'Article filters' : 'تصفية المقالات'}
+        sheet={{
+          badge: sheetBadge,
+          title: isEn ? 'Filter articles' : 'فلترة المقالات',
+          render: () => (
+            <>
+              <div className="sfb-sheet-section" role="group" aria-labelledby="articles-sheet-sort">
+                <span id="articles-sheet-sort" className="sfb-sheet-label">{isEn ? 'Sort by' : 'الترتيب حسب'}</span>
+                <div className="sfb-sheet-options is-segmented">
+                  {sortOptions.map((opt) => (
+                    <button
+                      key={opt.key}
+                      type="button"
+                      className="sfb-option"
+                      aria-pressed={sortOrder === opt.key}
+                      onClick={() => setSortOrder(opt.key)}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="sfb-sheet-section" role="group" aria-labelledby="articles-sheet-cat">
+                <span id="articles-sheet-cat" className="sfb-sheet-label">{isEn ? 'Category' : 'التصنيف'}</span>
+                <div className="sfb-sheet-options">
+                  {blogCategories.map((cat) => (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      className="sfb-option"
+                      aria-pressed={selectedCategory === cat.id}
+                      onClick={() => setSelectedCategory(cat.id)}
+                    >
+                      <span>{isEn ? cat.nameEn : cat.name}</span>
+                      <span className="sfb-option-count">{categoryCounts[cat.id] || 0}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
+          )
+        }}
+      />
+
       {/* 2. Search Bar */}
       <div className="blog-search-bar-wrap">
         <div className="blog-search-inner-box">
           <input 
             type="text"
             className="blog-search-pill-input"
+            aria-label={isEn ? "Search in articles" : "ابحث في المقالات"}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={isEn ? "Search in articles..." : "ابحث في المقالات..."}
@@ -199,6 +285,7 @@ export function ArticlesListing({
         <button
           type="button"
           className={`filter-capsule-btn ${sortOrder === 'latest' ? 'active' : ''}`}
+          aria-pressed={sortOrder === 'latest'}
           onClick={() => setSortOrder('latest')}
         >
           {isEn ? "Latest" : "الأحدث"}
@@ -206,6 +293,7 @@ export function ArticlesListing({
         <button
           type="button"
           className={`filter-capsule-btn ${sortOrder === 'popular' ? 'active' : ''}`}
+          aria-pressed={sortOrder === 'popular'}
           onClick={() => setSortOrder('popular')}
         >
           {isEn ? "Most Read" : "الأكثر قراءة"}
@@ -213,9 +301,7 @@ export function ArticlesListing({
 
         <div className="blog-category-chips-list">
           {blogCategories.map(cat => {
-            const count = cat.id === 'all' 
-              ? articles.length 
-              : articles.filter(a => a.category.includes(cat.name) || a.categoryEn.toLowerCase().includes(cat.id)).length;
+            const count = categoryCounts[cat.id] || 0;
             const isCatActive = selectedCategory === cat.id;
 
             return (
@@ -223,6 +309,7 @@ export function ArticlesListing({
                 key={cat.id}
                 type="button"
                 className={`filter-category-chip ${isCatActive ? 'active' : ''}`}
+                aria-pressed={isCatActive}
                 onClick={() => setSelectedCategory(cat.id)}
               >
                 <span>{isEn ? cat.nameEn : cat.name}</span>
@@ -242,10 +329,7 @@ export function ArticlesListing({
           <button
             type="button"
             className="blog-reset-btn"
-            onClick={() => {
-              setSearchQuery('');
-              setSelectedCategory('all');
-            }}
+            onClick={resetFilters}
           >
             {isEn ? "Show All Articles" : "عرض كافة المقالات"}
           </button>

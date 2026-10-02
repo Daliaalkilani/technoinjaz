@@ -71,7 +71,7 @@ export default function ProfilePage({ member, onBack }) {
             <h1 className="profile-name">{memberName}</h1>
             <div className="profile-role-pill">{memberRole}</div>
             <span className="profile-dept-badge">{memberDept}</span>
-            {member.socials && (
+            {member.socials && Object.keys(member.socials).length > 0 && (
               <SocialButtons socials={member.socials} size="large" />
             )}
             <p className="profile-location">📍 {memberLocation}</p>
@@ -208,9 +208,11 @@ export default function ProfilePage({ member, onBack }) {
 
         {/* Profile Footer */}
         <footer className="profile-footer">
-          <a href={`mailto:${member.email}`} className="contact-btn">
-            ✉️ {isEn ? 'Contact via Email' : 'تواصل عبر البريد'}: {member.email}
-          </a>
+          {member.email && (
+            <a href={`mailto:${member.email}`} className="contact-btn">
+              ✉️ {isEn ? 'Contact via Email' : 'تواصل عبر البريد'}: {member.email}
+            </a>
+          )}
           <button onClick={onBack} className="secondary-back-btn">
             {isEn ? 'Back to Team Carousel' : 'الرجوع إلى القائمة الدائرية'}
           </button>

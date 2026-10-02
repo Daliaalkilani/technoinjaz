@@ -7,7 +7,7 @@ import { webPage, abdulghaniPersonSchema } from '@/seo/schemas';
 export const dynamic = 'force-static';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'من نحن وفريق العمل الهندسي | تكنو إنجاز',
+  title: 'من نحن وفريق العمل الهندسي | تكنو إنجاز | Techno Enjaz',
   description: 'تعرف على رؤية تكنو إنجاز، بقيادة المهندس عبد الغني الحمدي، وبنيتنا الهندسية المتكاملة في الذكاء الاصطناعي والأنظمة المدمجة ومشاريع التخرج التقنية.',
   path: '/about',
   absoluteTitle: true

@@ -66,7 +66,7 @@ export default async function ProjectPage({
           project={project}
           toc={toc}
           related={related}
-          qa={<ContentQA items={qaItems} title="أسئلة وأجوبة حول المشروع" />}
+          qa={<ContentQA items={qaItems} title="الأسئلة الشائعة حول المشروع" />}
         >
           <ProjectBody html={html} />
         </ProjectDetailView>

@@ -219,6 +219,21 @@
   color: #ffffff;
 }
 
+/* Mobile & tablet (≤1024px): the desktop search + wrapped category pills are
+   replaced by the compact sticky StickyFilterBar (see components/ui). */
+@media (max-width: 1024px) {
+  .catalog-hero-wrapper {
+    margin-bottom: 14px;
+  }
+  .catalog-hero-title {
+    margin-bottom: 0;
+  }
+  .catalog-search-bar,
+  .catalog-categories-bar {
+    display: none;
+  }
+}
+
 /* Empty State */
 .catalog-empty-state {
   text-align: center;

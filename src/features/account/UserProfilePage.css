@@ -40,6 +40,13 @@
   transform: translateY(-1px);
 }
 
+/* Phones: no "back to home" button — the header brand already links home */
+@media (max-width: 599.98px) {
+  .user-profile-back-nav {
+    display: none;
+  }
+}
+
 /* Profile Header Card */
 .user-profile-card {
   display: flex;

@@ -187,13 +187,6 @@ export const translations: Record<'ar' | 'en', Translations> = {
           description: 'واجهة رقمية تفاعلية حديثة تستعرض المسار المهني والخبرات والمشاريع الهندسية المنجزة بأسلوب مبتكر وجذاب.',
           highlights: ['تفاعل ثلاثي الأبعاد', 'سيرة ذاتية', 'معرض أعمال']
         },
-        'taima-alwani': {
-          id: 'taima-alwani',
-          title: 'منصة سكيورتي سيتي',
-          subtitle: 'منظومة الأمان الذكي والحلول التقنية المتكاملة',
-          description: 'منظومة رقمية متطورة لإدارة أنظمة الحماية والمراقبة الذكية وتأمين المنشآت والحلول التقنية المتكاملة.',
-          highlights: ['أمان ذكي', 'أنظمة مراقبة', 'حلول متكاملة']
-        },
         'rebuild-dn9': {
           id: 'rebuild-dn9',
           title: 'بوابة الأعمال والمشاريع',
@@ -409,13 +402,6 @@ export const translations: Record<'ar' | 'en', Translations> = {
           subtitle: 'Dynamic 3D Career Portfolio & Experience',
           description: 'Next-generation digital interactive portfolio presenting professional track, skills, and engineering milestones with 3D graphics.',
           highlights: ['3D WebGL', 'Digital Resume', 'Portfolio']
-        },
-        'taima-alwani': {
-          id: 'taima-alwani',
-          title: 'Security City Platform',
-          subtitle: 'Smart Security & Integrated Solutions Platform',
-          description: 'Advanced digital system for managing intelligent security, smart surveillance, facility protection, and integrated solutions.',
-          highlights: ['Smart Security', 'Surveillance', 'Integrated Solutions']
         },
         'rebuild-dn9': {
           id: 'rebuild-dn9',

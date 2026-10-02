@@ -8,8 +8,9 @@
   position: relative;
   width: 100%;
   padding: 4rem 1.5rem;
-  background: radial-gradient(circle at 50% 30%, rgba(37, 99, 235, 0.08) 0%, transparent 70%),
-              var(--bg-dark, #070d18);
+  /* Dark mode: a lifted slate-navy stage (not near-black) so the books read clearly */
+  background: radial-gradient(circle at 50% 30%, rgba(56, 189, 248, 0.16) 0%, transparent 70%),
+              linear-gradient(180deg, #13223a 0%, #182a45 55%, #13223a 100%);
   color: var(--text-pure, #ffffff);
   box-sizing: border-box;
   overflow: hidden;
@@ -877,4 +878,73 @@
    ========================================================= */
 .st-page-flip-container.is-rtl-book .page > * {
   transform: scaleX(-1);
+}
+
+/* Phones: books stack vertically, so the shelf plank under the last book read as an
+   empty button; the reader header wraps instead of clipping the title. */
+@media (max-width: 768px) {
+  .shelf-plank {
+    display: none;
+  }
+
+  .flipbook-header {
+    height: auto;
+    min-height: 60px;
+    padding: 0.6rem 0.9rem;
+    gap: 0.6rem;
+  }
+
+  .flipbook-header-info {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .flipbook-badge-icon {
+    flex-shrink: 0;
+  }
+
+  .flipbook-title-group {
+    min-width: 0;
+  }
+
+  .flipbook-title-group h3 {
+    font-size: 0.95rem;
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .flipbook-title-group span {
+    display: none;
+  }
+
+  .flipbook-header-actions {
+    flex-shrink: 0;
+  }
+}
+
+/* /library: the section's own background runs up under the fixed navbar
+   (no dark gap between the navbar and the shelf). */
+.library-page .bookcase-section {
+  padding-top: calc(var(--header-h, 78px) + 4rem);
+}
+
+/* Phones: keep "صفحة 7 من 9" on one line between the prev / next buttons */
+.fb-page-counter,
+.fb-page-counter span {
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .fb-page-counter {
+    flex-shrink: 0;
+    padding-inline: 12px;
+    font-size: 0.82rem;
+  }
+  .fb-nav-btn {
+    min-width: 0;
+    padding-inline: 12px;
+  }
 }

@@ -684,3 +684,15 @@
 [dir="ltr"] .contact-back-btn:hover {
   transform: translateX(-4px);
 }
+
+/* Grid items default to min-width:auto, so a long unbreakable line (e.g. the email
+   address) pushed the form panel 10px past the right gutter on phones, leaving
+   uneven side margins. Let the columns shrink and wrap long strings instead. */
+.contact-main-grid > * {
+  min-width: 0;
+}
+
+.contact-form-panel a[href^="mailto:"],
+.contact-form-panel p {
+  overflow-wrap: anywhere;
+}
