@@ -353,40 +353,6 @@
 }
 
 /* Footer Actions */
-.notif-dropdown-footer {
-  padding: 10px 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  display: flex;
-  justify-content: center;
-  background: rgba(3, 7, 18, 0.4);
-}
-
-[data-theme="light"] .notif-dropdown-footer {
-  border-top-color: rgba(0, 0, 0, 0.08);
-  background: rgba(241, 245, 249, 0.6);
-}
-
-.notif-test-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: transparent;
-  border: 1px dashed rgba(56, 189, 248, 0.4);
-  color: #38bdf8;
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-
-.notif-test-btn:hover {
-  background: rgba(56, 189, 248, 0.12);
-  border-color: #38bdf8;
-  transform: translateY(-1px);
-}
-
 @keyframes bellRing {
   0% { transform: rotate(0); }
   20% { transform: rotate(15deg); }

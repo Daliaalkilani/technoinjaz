@@ -12,7 +12,6 @@ import {
   FileText, 
   Film, 
   ExternalLink,
-  Send,
   X
 } from 'lucide-react';
 import { 
@@ -22,8 +21,6 @@ import {
   getUnreadNotifications, 
   markNotificationAsRead, 
   markAllNotificationsAsRead, 
-  sendBrowserPushNotification,
-  triggerInAppNotification,
   type PlatformNotificationItem 
 } from '@/lib/notifications';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
@@ -39,7 +36,6 @@ export default function NotificationBell() {
   const [subscriberEmail, setSubscriberEmail] = useState<string | null>(null);
   const [unreadItems, setUnreadItems] = useState<PlatformNotificationItem[]>([]);
   const [allItems, setAllItems] = useState<PlatformNotificationItem[]>([]);
-  const [testSent, setTestSent] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -85,26 +81,6 @@ export default function NotificationBell() {
   const handleMarkAllRead = () => {
     markAllNotificationsAsRead();
     syncNotifications();
-  };
-
-  const handleTestNotification = () => {
-    const latest = allItems[0];
-    if (!latest) return;
-
-    // 1. Browser Push
-    sendBrowserPushNotification(
-      isEn ? `Techno Enjaz: ${latest.titleEn}` : `جديد تكنو إنجاز: ${latest.title}`,
-      {
-        body: isEn ? latest.excerptEn : latest.excerpt,
-        data: { url: latest.url }
-      }
-    );
-
-    // 2. In-App Toast
-    triggerInAppNotification(latest);
-
-    setTestSent(true);
-    setTimeout(() => setTestSent(false), 3000);
   };
 
   const unreadCount = unreadItems.length;
@@ -225,22 +201,6 @@ export default function NotificationBell() {
             })}
           </div>
 
-          {/* Dropdown Footer Actions */}
-          <div className="notif-dropdown-footer">
-            <button
-              type="button"
-              className="notif-test-btn"
-              onClick={handleTestNotification}
-              title={isEn ? "Test browser and in-app notification" : "اختبار إرسال إشعار فوري"}
-            >
-              <Send size={13} />
-              <span>
-                {testSent 
-                  ? (isEn ? "Notification Sent! 🔔" : "تم إرسال التنبيه! 🔔") 
-                  : (isEn ? "Test Notification" : "تجربة إشعار فوري")}
-              </span>
-            </button>
-          </div>
         </div>
       )}
     </div>

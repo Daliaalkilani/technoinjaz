@@ -54,15 +54,15 @@
   z-index: 10;
 }
 
-/* Directional Slide: RTL from right, LTR from left */
+/* Directional slide: Arabic (RTL) from the right, English (LTR) from the left.
+   The flex row already starts on the reading side; an auto inline margin here used
+   to push the Arabic panel to the LEFT. */
 [dir="rtl"] .mobile-drawer-panel {
-  margin-inline-start: auto;
   transform: translateX(100%);
   border-left: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 [dir="ltr"] .mobile-drawer-panel {
-  margin-inline-end: auto;
   transform: translateX(-100%);
   border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
