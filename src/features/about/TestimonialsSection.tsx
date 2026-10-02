@@ -5,7 +5,8 @@ import { Quote } from 'lucide-react';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import './TestimonialsSection.css';
 
-// Real trainees' words about Eng. Abdulghani (published with the owner's approval).
+// Real trainees' words about their training with the Techno Enjaz team, led by
+// Eng. Abdulghani (published with the owner's approval).
 // Only spelling / punctuation were touched; the content is theirs.
 const TESTIMONIALS = [
   {
@@ -49,11 +50,11 @@ export function TestimonialsSection() {
   return (
     <section className="testimonials" dir={isEn ? 'ltr' : 'rtl'} aria-labelledby="testimonials-title">
       <div className="testimonials__head">
-        <h2 id="testimonials-title" className="testimonials__title">{isEn ? 'What our trainees say' : 'آراء المتدربين'}</h2>
+        <h2 id="testimonials-title" className="testimonials__title">{isEn ? 'What our trainees say about Techno Enjaz' : 'آراء المتدربين مع فريق تكنو إنجاز'}</h2>
         <p className="testimonials__sub">
           {isEn
-            ? 'Real stories from people who trained and grew with Eng. Abdulghani, founder of Techno Enjaz.'
-            : 'تجارب حقيقية لأشخاص تدرّبوا وتطوّروا مع المهندس عبد الغني، مؤسس تكنو إنجاز.'}
+            ? 'Real stories from people who trained and grew with the Techno Enjaz team.'
+            : 'تجارب حقيقية لأشخاص تدرّبوا وتطوّروا مع فريق تكنو إنجاز.'}
         </p>
       </div>
 
