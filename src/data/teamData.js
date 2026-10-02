@@ -86,10 +86,12 @@ export const teamMembers = [
       'Technical Mentorship'
     ],
     socials: {
-      whatsapp: 'https://wa.me/963958794195',
+      // shown on his profile: X, GitHub, Facebook, email (Instagram / Telegram /
+      // WhatsApp stay in the structured data: abdulghaniPersonSchema sameAs + llms.txt)
+      x: 'https://x.com/Abdalganih2',
+      github: 'https://github.com/abdalganih1',
       facebook: 'https://www.facebook.com/share/19ZeJgTRzk/',
-      instagram: 'https://www.instagram.com/abdalgani_h1',
-      email: 'abdalganih2@gmail.com'
+      email: 'info@abdalgani.com'
     },
     projects: [
       {
@@ -119,7 +121,7 @@ export const teamMembers = [
         desc: 'Built an integrated engineering team across AI, embedded systems, and modern digital platforms.'
       }
     ],
-    email: 'abdalganih2@gmail.com',
+    email: 'info@abdalgani.com',
     location: 'حماة، سوريا',
     locationEn: 'Hama, Syria'
   },

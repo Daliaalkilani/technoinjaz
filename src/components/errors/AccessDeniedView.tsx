@@ -1,8 +1,6 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
-import { LogIn, Home, Send } from 'lucide-react';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import ErrorScene from './ErrorScene';
 import './ErrorPages.css';
@@ -27,11 +25,6 @@ export const AccessDeniedView: React.FC<AccessDeniedViewProps> = ({
       <div className="te-error-card has-scene" dir={isEn ? 'ltr' : 'rtl'}>
         <ErrorScene variant="forbidden" label={isEn ? 'The Techno Enjaz logo locked behind a shield' : 'شعار تكنو إنجاز مقفل خلف درع حماية'} />
 
-        {/* Status Pill */}
-        <div className="te-error-pill te-error-pill--access">
-          <span className="te-error-pill-dot" />
-          <span>{isEn ? 'Security Clearance Denied' : 'منطقة برمجية محمية - صلاحيات غير كافية'}</span>
-        </div>
 
         <h1 className="te-error-title">
           {isEn ? 'Access Forbidden' : 'تم رفض صلاحيات الوصول'}
@@ -75,23 +68,6 @@ export const AccessDeniedView: React.FC<AccessDeniedViewProps> = ({
           </ul>
         </div>
 
-        {/* Actions */}
-        <div className="te-error-actions">
-          <Link href="/login" className="te-error-btn te-error-btn-access">
-            <LogIn size={16} />
-            <span>{isEn ? 'Log In to Authorized Account' : 'تسجيل الدخول بحساب معتمد'}</span>
-          </Link>
-
-          <Link href="/" className="te-error-btn te-error-btn-secondary">
-            <Home size={16} />
-            <span>{isEn ? 'Return Home' : 'العودة للرئيسية'}</span>
-          </Link>
-
-          <Link href="/contact?subject=access-clearance" className="te-error-btn te-error-btn-secondary">
-            <Send size={15} />
-            <span>{isEn ? 'Request Clearance' : 'طلب ترخيص صلاحيات'}</span>
-          </Link>
-        </div>
       </div>
     </div>
   );

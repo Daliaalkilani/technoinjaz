@@ -53,8 +53,13 @@ export function abdulghaniPersonSchema() {
     disambiguatingDescription: '«التغيير يبدأ من الداخل، ابدأ بنفسك ثم غير العالم» - رؤيته: تكوين مجتمع مترابط ومستقل ذو كفاءة عالية، رسالته: التطور والتقدم العلمي والعملي للرقي بجميع المجالات، أهدافه: رفع الوعي للأشخاص الطموحين ومتابعتهم عبر استقطاب المشاريع وتدريبهم عليها.',
     sameAs: [
       'https://www.facebook.com/share/19ZeJgTRzk/',
-      'https://www.instagram.com/abdalgani_h1'
-    ]
+      'https://www.instagram.com/abdalgani_h1',
+      'https://x.com/Abdalganih2',
+      'https://github.com/abdalganih1',
+      'https://t.me/abdalganih',
+      'https://wa.me/963958794195'
+    ],
+    email: 'info@abdalgani.com'
   };
 }
 
@@ -199,7 +204,7 @@ export function blogPosting(article: BlogArticle) {
     headline: article.title.length > 110 ? article.title.slice(0, 107) + '...' : article.title,
     name: article.seoTitle || article.title,
     description: article.metaDescription || article.excerpt,
-    image: article.image.startsWith('http') ? article.image : absoluteUrl(article.image),
+    image: article.image ? (article.image.startsWith('http') ? article.image : absoluteUrl(article.image)) : absoluteUrl('/images/og-default.jpg'),
     datePublished: `${article.publishedAt}T00:00:00+03:00`,
     dateModified: `${article.modifiedAt || article.publishedAt}T00:00:00+03:00`,
     author: {

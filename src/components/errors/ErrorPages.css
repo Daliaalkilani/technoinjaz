@@ -437,3 +437,114 @@
 body:has(.te-error-wrapper) .cinematic-footer-wrapper {
   display: none;
 }
+
+/* ==========================================================================
+   Full-screen special-state pages: nothing else on screen (no navbar, side
+   drawer toggle, tablet dock or footer) and the page is exactly the viewport.
+   ========================================================================== */
+body:has(.te-error-wrapper) .top-navbar-wrapper,
+body:has(.te-error-wrapper) #navbar,
+body:has(.te-error-wrapper) .tablet-dock,
+body:has(.te-error-wrapper) .sfb-mobile,
+body:has(.te-error-wrapper) .scroll-progress-bar {
+  display: none !important;
+}
+
+body:has(.te-error-wrapper) {
+  overflow: hidden;
+}
+
+.te-error-wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  min-height: 0;
+  height: 100vh;
+  height: 100dvh;
+  padding: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--bg-main, #030508);
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+
+/* the "card" becomes the whole screen */
+.te-error-card.has-scene {
+  max-width: none;
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: max(20px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom));
+  gap: 6px;
+}
+
+[data-theme="light"] .te-error-card.has-scene {
+  background: transparent;
+  box-shadow: none;
+}
+
+.te-error-card.has-scene > .error-scene {
+  width: min(100%, 520px);
+  max-width: none;
+  max-height: 46vh;
+  max-height: 46dvh;
+}
+
+.te-error-card.has-scene .te-error-title {
+  font-size: clamp(22px, 5.5vw, 34px);
+}
+
+.te-error-card.has-scene .te-error-desc,
+.te-error-card.has-scene .te-error-diagnostics {
+  max-width: 560px;
+}
+
+/* tablets / desktop: scene and text side by side, filling the screen */
+@media (min-width: 900px) {
+  .te-error-card.has-scene {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    column-gap: clamp(32px, 5vw, 80px);
+    align-content: center;
+    padding: 40px clamp(40px, 7vw, 120px);
+  }
+  .te-error-card.has-scene > .error-scene {
+    width: 100%;
+    max-width: 640px;
+    max-height: 78vh;
+    max-height: 78dvh;
+    justify-self: center;
+  }
+  .te-error-card.has-scene .te-error-title {
+    font-size: clamp(30px, 3vw, 46px);
+  }
+}
+
+/* short landscape phones: keep everything visible */
+@media (max-height: 520px) and (orientation: landscape) {
+  .te-error-card.has-scene {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 24px;
+    align-content: center;
+  }
+  .te-error-card.has-scene > * { grid-column: 2; }
+  .te-error-card.has-scene > .error-scene {
+    grid-column: 1;
+    grid-row: 1 / span 12;
+    max-height: 86vh;
+  }
+}

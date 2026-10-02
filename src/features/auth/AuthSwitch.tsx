@@ -18,6 +18,10 @@ import { cn } from "@/lib/utils";
 import { useThemeLanguage } from "@/context/ThemeLanguageContext";
 import "./AuthSwitch.css";
 
+// Google / GitHub sign-in buttons are hidden until real OAuth is connected
+// (owner's decision); flip this once a Google Client ID / GitHub app exists.
+const SOCIAL_SIGN_IN = false;
+
 // Google Icon
 const GoogleIcon = ({ size = 17 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24">
@@ -153,6 +157,8 @@ export function AuthSwitch({
               </div>
             )}
 
+            {SOCIAL_SIGN_IN && (
+            <>
             <div className="auth-switch-social-row">
               <button
                 type="button"
@@ -177,6 +183,8 @@ export function AuthSwitch({
               <span className="auth-switch-divider-text">{isEn ? "or with email" : "أو عبر البريد"}</span>
               <div className="auth-switch-divider-line" />
             </div>
+            </>
+            )}
 
             <form onSubmit={handleSignInSubmit}>
               <div className="auth-switch-input-group">
@@ -274,6 +282,8 @@ export function AuthSwitch({
               </div>
             )}
 
+            {SOCIAL_SIGN_IN && (
+            <>
             <div className="auth-switch-social-row">
               <button
                 type="button"
@@ -298,6 +308,8 @@ export function AuthSwitch({
               <span className="auth-switch-divider-text">{isEn ? "or direct registration" : "أو التسجيل المباشر"}</span>
               <div className="auth-switch-divider-line" />
             </div>
+            </>
+            )}
 
             <form onSubmit={handleSignUpSubmit}>
               <div className="auth-switch-input-group">

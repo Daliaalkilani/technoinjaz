@@ -52,7 +52,19 @@
 }
 
 [data-theme="light"] .scroll-expand__stage::after {
-  background: linear-gradient(to bottom, transparent 0%, rgba(248, 250, 252, 0.4) 35%, #f8fafc 100%);
+  /* eased fade (no visible kink where it meets the next section) that runs 2px past
+     the stage edge, so sub-pixel positions on phones never leave a hairline */
+  bottom: -2px;
+  height: 160px;
+  background: linear-gradient(
+    to bottom,
+    rgba(248, 250, 252, 0) 0%,
+    rgba(248, 250, 252, 0.18) 25%,
+    rgba(248, 250, 252, 0.5) 50%,
+    rgba(248, 250, 252, 0.82) 72%,
+    rgba(248, 250, 252, 0.96) 88%,
+    #f8fafc 100%
+  );
 }
 
 .scroll-expand__frame {

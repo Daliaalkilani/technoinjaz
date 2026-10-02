@@ -82,7 +82,7 @@ const defaultCardData: BentoCardItem[] = [
     descriptionEn: 'Architectural layers of IoT, MQTT vs CoAP protocols, edge intelligence, and zero-trust IoT security standards.',
     label: 'إنترنت الأشياء',
     labelEn: 'Internet of Things',
-    image: '/images/articles/internet-of-things-iot.png'
+    image: '/images/articles/internet-of-things-iot.jpg'
   }
 ];
 

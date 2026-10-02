@@ -853,23 +853,8 @@ body:has(.reels-shell) .cinematic-footer-wrapper {
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
   }
 
-  /* media fills the screen */
-  .reel-backdrop {
-    display: none;
-  }
-
-  .reel-cover {
-    object-fit: cover;
-  }
-
-  .reel-iframe {
-    top: 50%;
-    left: 50%;
-    width: auto;
-    height: 100%;
-    aspect-ratio: 16 / 9;
-    transform: translate(-50%, -50%);
-  }
+  /* media keeps its real proportions inside the full-screen reel (no zoom / crop):
+     the 16:9 video sits centred, the blurred backdrop fills above and below */
 
   /* sound: icon only, under the top bar */
   .reel-sound {

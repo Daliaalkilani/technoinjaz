@@ -45,6 +45,22 @@
   background: linear-gradient(135deg, #1877f2 0%, #0056b3 100%);
 }
 
+.social-btn.instagram {
+  background: linear-gradient(135deg, #f58529 0%, #dd2a7b 50%, #8134af 100%);
+}
+
+.social-btn.x {
+  background: linear-gradient(135deg, #000000 0%, #3a3a3a 100%);
+}
+
+.social-btn.telegram {
+  background: linear-gradient(135deg, #229ed9 0%, #2aabee 100%);
+}
+
+.social-btn.whatsapp {
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+}
+
 .social-btn.email {
   background: linear-gradient(135deg, #ea4335 0%, #ff5252 100%);
 }
@@ -98,6 +114,10 @@
   box-shadow: 0 6px 20px rgba(234, 67, 53, 0.55);
 }
 
+.social-btn.x:hover {
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.18);
+}
+
 /* الحجم الكبير (داخل صفحة الملف التعريفي) */
 .social-buttons-wrapper.large .social-btn {
   width: 48px;
@@ -142,6 +162,22 @@
   color: #ea4335;
 }
 
+[data-theme="light"] .social-btn.x svg {
+  color: #0f1419;
+}
+
+[data-theme="light"] .social-btn.instagram svg {
+  color: #dd2a7b;
+}
+
+[data-theme="light"] .social-btn.telegram svg {
+  color: #229ed9;
+}
+
+[data-theme="light"] .social-btn.whatsapp svg {
+  color: #128c7e;
+}
+
 [data-theme="light"] .social-btn:hover svg {
   color: #ffffff;
 }
@@ -162,3 +198,6 @@
   box-shadow: 0 6px 20px rgba(234, 67, 53, 0.35);
 }
 
+[data-theme="light"] .social-btn.x:hover {
+  box-shadow: 0 6px 20px rgba(15, 20, 25, 0.3);
+}

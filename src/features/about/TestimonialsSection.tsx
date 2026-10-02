@@ -49,7 +49,6 @@ export function TestimonialsSection() {
   return (
     <section className="testimonials" dir={isEn ? 'ltr' : 'rtl'} aria-labelledby="testimonials-title">
       <div className="testimonials__head">
-        <span className="testimonials__eyebrow">{isEn ? 'In their words' : 'بكلماتهم'}</span>
         <h2 id="testimonials-title" className="testimonials__title">{isEn ? 'What our trainees say' : 'آراء المتدربين'}</h2>
         <p className="testimonials__sub">
           {isEn

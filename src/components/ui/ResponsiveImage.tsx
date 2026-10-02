@@ -50,6 +50,11 @@ export function ResponsiveImage({
   height,
   ...props
 }: ResponsiveImageProps) {
+  // No image (e.g. an article whose cover was removed): a branded placeholder in the
+  // same box instead of a broken image.
+  if (!src) {
+    return <span className={`${className || ''} img-placeholder`} role="img" aria-label={alt || ''} />;
+  }
   const entry = getImageEntry(src);
 
   const img = (

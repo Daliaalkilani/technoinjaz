@@ -288,7 +288,8 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
         </div>
       </header>
 
-      {/* 3. Cover image */}
+      {/* 3. Cover image (skipped when the article has none) */}
+      {article.image && (
       <div className="project-featured-image-wrapper">
         <ResponsiveImage
           src={article.image}
@@ -298,6 +299,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
           priority
         />
       </div>
+      )}
 
       {/* Table of contents (phones & tablets) */}
       <TableOfContents

@@ -51,6 +51,7 @@ export async function GET() {
   - التعليم والشهادات: ماجستير في هندسة التحكم والأتمتة من جامعة حلب، بكالوريوس في هندسة التحكم الآلي والحواسيب من جامعة البعث (حاصل على شهادة الباسل للمرتبة الأولى للتفوق الدراسي).
   - الإنجازات والجوائز: إنجاز والإشراف على أكثر من 500 مشروع تقني وتخرج خلال 5 سنوات، ونال المركز السادس ضمن مسابقة «تميّز للإبداع والاختراع» على مستوى القطر.
   - الملف التعريفي: ${absoluteUrl('/about#team')}
+  - الحسابات: X https://x.com/Abdalganih2 · GitHub https://github.com/abdalganih1 · Facebook https://www.facebook.com/share/19ZeJgTRzk/ · Instagram https://www.instagram.com/abdalgani_h1 · Telegram https://t.me/abdalganih · البريد info@abdalgani.com
 \n`;
 
   text += `\n## Live Platforms\n`;

@@ -269,6 +269,8 @@
 [data-theme="light"] .projects-section {
   background-color: var(--bg-main, #f8fafc);
   color: #0f172a;
+  /* overlap the hero by 2px: no hairline between the two on high-DPI phones */
+  margin-top: -2px;
 }
 
 [data-theme="light"] .projects-section::before {

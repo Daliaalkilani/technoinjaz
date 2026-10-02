@@ -325,7 +325,7 @@ export const blogArticlesData: BlogArticle[] = [
     category: 'إنترنت الأشياء',
     categoryEn: 'Internet of Things',
     categoryColor: '#10b981',
-    image: '/images/articles/internet-of-things-iot.png',
+    image: '/images/articles/internet-of-things-iot.jpg',
     publishDate: '21 سبتمبر 2026',
     publishDateEn: 'Sep 21, 2026',
     publishedAt: '2026-09-21',
