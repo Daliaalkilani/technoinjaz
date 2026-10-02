@@ -27,7 +27,7 @@
   font-weight: 800;
   color: #ffffff;
   letter-spacing: -0.02em;
-  text-shadow: 0 0 35px rgba(0, 210, 255, 0.25);
+  text-shadow: 0 0 35px rgb(var(--c-primary) / 0.25);
 }
 
 .blog-main-desc {
@@ -76,8 +76,8 @@
 }
 
 .blog-search-pill-input:focus {
-  border-color: #38bdf8;
-  box-shadow: 0 0 25px rgba(14, 165, 233, 0.35);
+  border-color: rgb(var(--c-primary));
+  box-shadow: 0 0 25px rgb(var(--c-primary) / 0.35);
   background: rgba(15, 23, 42, 0.85);
 }
 
@@ -176,14 +176,14 @@
 .filter-category-chip:hover {
   color: #f1f5f9;
   background: rgba(255, 255, 255, 0.09);
-  border-color: rgba(56, 189, 248, 0.3);
+  border-color: rgb(var(--c-primary) / 0.3);
 }
 
 .filter-category-chip.active {
-  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  background: linear-gradient(135deg, rgb(var(--c-primary)) 0%, rgb(var(--c-primary-strong)) 100%);
   color: #ffffff;
-  border-color: #38bdf8;
-  box-shadow: 0 0 14px rgba(14, 165, 233, 0.35);
+  border-color: rgb(var(--c-primary));
+  box-shadow: 0 0 14px rgb(var(--c-primary) / 0.35);
 }
 
 .category-chip-count {
@@ -234,7 +234,7 @@
 .blog-reset-btn {
   padding: 8px 20px;
   border-radius: 9999px;
-  background: #0284c7;
+  background: rgb(var(--c-primary));
   color: #ffffff;
   border: none;
   font-family: inherit;
@@ -267,8 +267,8 @@
 
 .blog-modern-card:hover {
   transform: translateY(-6px);
-  border-color: rgba(56, 189, 248, 0.4);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 25px rgba(14, 165, 233, 0.2);
+  border-color: rgb(var(--c-primary) / 0.4);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 25px rgb(var(--c-primary) / 0.2);
 }
 
 /* Card Media Banner */
@@ -443,7 +443,7 @@
 }
 
 .card-icon-action-btn:hover {
-  color: #38bdf8;
+  color: rgb(var(--c-primary));
   background: rgba(255, 255, 255, 0.05);
 }
 
@@ -452,7 +452,7 @@
 }
 
 .card-icon-action-btn.saved {
-  color: #38bdf8;
+  color: rgb(var(--c-primary));
 }
 
 .card-icon-action-btn.share-btn {
@@ -470,16 +470,16 @@
 [data-theme="light"] .blog-notification-banner {
   background: #e0f2fe;
   border-color: #bae6fd;
-  box-shadow: 0 4px 16px rgba(2, 132, 199, 0.08);
+  box-shadow: 0 4px 16px rgb(var(--c-primary) / 0.08);
 }
 
 [data-theme="light"] .notification-text {
-  color: #0369a1;
+  color: rgb(var(--c-primary-strong));
 }
 
 [data-theme="light"] .notification-dismiss-btn {
   background: rgba(0, 0, 0, 0.06);
-  color: #0284c7;
+  color: rgb(var(--c-primary));
 }
 
 [data-theme="light"] .blog-main-title {
@@ -500,8 +500,8 @@
 
 [data-theme="light"] .blog-search-pill-input:focus {
   background: #ffffff;
-  border-color: #0284c7;
-  box-shadow: 0 0 20px rgba(2, 132, 199, 0.25);
+  border-color: rgb(var(--c-primary));
+  box-shadow: 0 0 20px rgb(var(--c-primary) / 0.25);
 }
 
 [data-theme="light"] .blog-search-pill-icon {
@@ -534,16 +534,16 @@
 
 [data-theme="light"] .filter-category-chip:hover {
   background: #f0f9ff;
-  border-color: #0284c7;
-  color: #0369a1;
-  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.12);
+  border-color: rgb(var(--c-primary));
+  color: rgb(var(--c-primary-strong));
+  box-shadow: 0 2px 8px rgb(var(--c-primary) / 0.12);
 }
 
 [data-theme="light"] .filter-category-chip.active {
-  background: #0284c7;
-  border-color: #0284c7;
+  background: rgb(var(--c-primary));
+  border-color: rgb(var(--c-primary));
   color: #ffffff;
-  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25);
+  box-shadow: 0 4px 14px rgb(var(--c-primary) / 0.25);
 }
 
 [data-theme="light"] .category-chip-count {
@@ -551,7 +551,7 @@
 }
 
 [data-theme="light"] .filter-category-chip:hover .category-chip-count {
-  color: #0369a1;
+  color: rgb(var(--c-primary-strong));
 }
 
 [data-theme="light"] .filter-category-chip.active .category-chip-count {
@@ -581,7 +581,7 @@
 
 [data-theme="light"] .dropdown-menu-item.active {
   background: #e0f2fe;
-  color: #0284c7;
+  color: rgb(var(--c-primary));
   border-color: #bae6fd;
 }
 
@@ -593,7 +593,7 @@
 
 [data-theme="light"] .tag-pill-btn:hover {
   background: #e0f2fe;
-  color: #0284c7;
+  color: rgb(var(--c-primary));
 }
 
 [data-theme="light"] .blog-modern-card {
@@ -604,7 +604,7 @@
 
 [data-theme="light"] .blog-modern-card:hover {
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.1);
-  border-color: rgba(14, 165, 233, 0.4);
+  border-color: rgb(var(--c-primary) / 0.4);
 }
 
 [data-theme="light"] .card-main-title {
@@ -634,7 +634,7 @@
 }
 
 [data-theme="light"] .card-icon-action-btn:hover {
-  color: #0284c7;
+  color: rgb(var(--c-primary));
   background: #f1f5f9;
 }
 

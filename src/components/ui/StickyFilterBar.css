@@ -14,9 +14,9 @@
   --sfb-chip-bg: rgba(255, 255, 255, 0.05);
   --sfb-chip-border: rgba(255, 255, 255, 0.1);
   --sfb-chip-count-bg: rgba(255, 255, 255, 0.1);
-  --sfb-accent: #0284c7;
-  --sfb-accent-strong: #38bdf8;
-  --sfb-accent-soft: rgba(56, 189, 248, 0.14);
+  --sfb-accent: rgb(var(--c-primary));
+  --sfb-accent-strong: rgb(var(--c-primary));
+  --sfb-accent-soft: rgb(var(--c-primary) / 0.14);
   --sfb-on-accent: #ffffff;
   --sfb-input-bg: rgba(255, 255, 255, 0.06);
   --sfb-sheet-bg: #0b111c;
@@ -33,8 +33,8 @@
   --sfb-chip-bg: #ffffff;
   --sfb-chip-border: #e2e8f0;
   --sfb-chip-count-bg: #f1f5f9;
-  --sfb-accent: #0284c7;
-  --sfb-accent-strong: #0369a1;
+  --sfb-accent: rgb(var(--c-primary));
+  --sfb-accent-strong: rgb(var(--c-primary-strong));
   --sfb-accent-soft: #e0f2fe;
   --sfb-on-accent: #ffffff;
   --sfb-input-bg: #f1f5f9;
@@ -166,7 +166,7 @@
   background: var(--sfb-accent);
   border-color: var(--sfb-accent);
   color: var(--sfb-on-accent);
-  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+  box-shadow: 0 4px 14px rgb(var(--c-primary) / 0.35);
 }
 
 .sfb-chip-icon {
@@ -615,7 +615,7 @@
   font-size: 14.5px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.35);
+  box-shadow: 0 6px 18px rgb(var(--c-primary) / 0.35);
 }
 
 /* ---------- Skeleton variant (route loading) ---------- */

@@ -51,7 +51,7 @@
   flex-shrink: 0;
   font-size: 1.25rem;
   line-height: 1;
-  color: #38bdf8;
+  color: rgb(var(--c-primary));
   transition: transform 0.2s ease;
 }
 

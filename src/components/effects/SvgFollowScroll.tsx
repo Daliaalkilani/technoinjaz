@@ -27,10 +27,10 @@ export const LinePath = ({ className = '', scrollYProgress }: { className?: stri
     >
       <defs>
         <linearGradient id="techBlueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#00f2fe" />
-          <stop offset="40%" stopColor="#00d2ff" />
-          <stop offset="80%" stopColor="#3b82f6" />
-          <stop offset="100%" stopColor="#1d4ed8" />
+          <stop offset="0%" stopColor="#2DD0C8" />
+          <stop offset="40%" stopColor="#2DD0C8" />
+          <stop offset="80%" stopColor="#5A8CDE" />
+          <stop offset="100%" stopColor="#5A8CDE" />
         </linearGradient>
       </defs>
 
@@ -70,7 +70,7 @@ export const LinePath = ({ className = '', scrollYProgress }: { className?: stri
   );
 };
 
-export function Skiper19({ strokeColor = '#00d2ff', className = '' }: { strokeColor?: string; className?: string }) {
+export function Skiper19({ strokeColor = 'rgb(var(--c-primary))', className = '' }: { strokeColor?: string; className?: string }) {
   const containerRef = useRef<HTMLElement | null>(null);
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
@@ -136,10 +136,10 @@ export function Skiper19({ strokeColor = '#00d2ff', className = '' }: { strokeCo
             style={{
               width: '42px',
               height: '3px',
-              background: 'linear-gradient(to left, #00f2fe, #3b82f6)',
+              background: 'linear-gradient(to left, rgb(var(--c-primary)), rgb(var(--c-blue)))',
               borderRadius: '2px',
               marginTop: '8px',
-              boxShadow: '0 0 12px #00d2ff'
+              boxShadow: '0 0 12px rgb(var(--c-primary))'
             }}
           />
         </motion.div>
@@ -196,10 +196,10 @@ export function Skiper19({ strokeColor = '#00d2ff', className = '' }: { strokeCo
             style={{
               width: '42px',
               height: '3px',
-              background: 'linear-gradient(to right, #00f2fe, #3b82f6)',
+              background: 'linear-gradient(to right, rgb(var(--c-primary)), rgb(var(--c-blue)))',
               borderRadius: '2px',
               marginTop: '8px',
-              boxShadow: '0 0 12px #00d2ff'
+              boxShadow: '0 0 12px rgb(var(--c-primary))'
             }}
           />
         </motion.div>

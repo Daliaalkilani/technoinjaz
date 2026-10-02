@@ -52,8 +52,8 @@
   gap: 0.6rem;
   padding: 0.4rem 1.2rem;
   border-radius: 9999px;
-  background: rgba(132, 0, 255, 0.1);
-  border: 1px solid rgba(132, 0, 255, 0.35);
+  background: rgb(var(--c-violet) / 0.1);
+  border: 1px solid rgb(var(--c-violet) / 0.35);
   color: #c084fc;
   font-size: clamp(0.75rem, 1.4vw, 0.875rem);
   font-weight: 600;
@@ -144,12 +144,12 @@
 }
 
 [data-theme="light"] .articles-badge {
-  background: rgba(124, 58, 237, 0.08);
-  border-color: rgba(124, 58, 237, 0.25);
-  color: #7c3aed;
+  background: rgb(var(--c-violet) / 0.08);
+  border-color: rgb(var(--c-violet) / 0.25);
+  color: rgb(var(--c-violet));
 }
 
 [data-theme="light"] .articles-badge-dot {
-  background-color: #7c3aed;
-  box-shadow: 0 0 10px #7c3aed;
+  background-color: rgb(var(--c-violet));
+  box-shadow: 0 0 10px rgb(var(--c-violet));
 }

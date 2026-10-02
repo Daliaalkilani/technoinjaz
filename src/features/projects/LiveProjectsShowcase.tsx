@@ -39,7 +39,7 @@ const liveProjectsList: LiveProject[] = [
     displayDomain: 'hisab-erp.pages.dev',
     description: 'نظام متكامل لإدارة الموارد المحاسبية والإدارية للشركات، الفواتير الإلكترونية المعتمدة، وإدارة المخزون والمبيعات لحظياً.',
     highlights: ['إدارة سحابية', 'فوترة إلكترونية', 'حسابات ومخزون'],
-    color: '#0aeec3',
+    color: '#0AEEC3',
     iconName: 'database',
     image: '/images/platforms/hisab-erp.jpg'
   },
@@ -52,7 +52,7 @@ const liveProjectsList: LiveProject[] = [
     displayDomain: 'projectforge-e3q.pages.dev',
     description: 'منصة متقدمة لتنسيق فرق التطوير البرمجي والهندسي، جدولة المهام، وتتبع الإنجاز في الوقت الفعلي عبر لوحات تفاعلية.',
     highlights: ['إدارة المشاريع', 'لوحات كانبان', 'مزامنة المهام'],
-    color: '#38bdf8',
+    color: '#2DD0C8',
     iconName: 'activity',
     image: '/images/platforms/projectforge.jpg'
   },
@@ -65,7 +65,7 @@ const liveProjectsList: LiveProject[] = [
     displayDomain: 'cv.abdalgani.com',
     description: 'واجهة رقمية تفاعلية حديثة تستعرض المسار المهني والخبرات والمشاريع الهندسية المنجزة بأسلوب مبتكر وجذاب.',
     highlights: ['تفاعل ثلاثي الأبعاد', 'سيرة ذاتية', 'معرض أعمال'],
-    color: '#a855f7',
+    color: '#6D64F5',
     iconName: 'sparkles',
     image: '/images/platforms/interactive-cv.jpg'
   },
@@ -117,7 +117,7 @@ const liveProjectsList: LiveProject[] = [
     displayDomain: 'dermocean-preview.pages.dev',
     description: 'واجهة رقمية متخصصة في مستحضرات ومنتجات العناية بالبشرة، مع استعراض علمي دقيق للمكونات والحلول الجلدية.',
     highlights: ['عناية بالبشرة', 'كتالوج متقدم', 'حلول تجميلية'],
-    color: '#06b6d4',
+    color: '#2DD0C8',
     iconName: 'activity',
     image: '/images/platforms/dermocean.jpg'
   },
@@ -130,7 +130,7 @@ const liveProjectsList: LiveProject[] = [
     displayDomain: 'wpu-cover.pages.dev',
     description: 'أداة تفاعلية ذكية لتصميم وتوليد أغلفة الكتب والأبحاث والمنشورات العلمية بجودة طباعية احترافية.',
     highlights: ['أغلفة كتب', 'توليد تصاميم', 'تصدير عالي الدقة'],
-    color: '#8b5cf6',
+    color: '#6D64F5',
     iconName: 'layers',
     image: '/images/platforms/wpu-cover.jpg'
   },
@@ -143,7 +143,7 @@ const liveProjectsList: LiveProject[] = [
     displayDomain: 'md-2-pdf.pages.dev',
     description: 'محرك تحويل سريع وعالي الدقة لمستندات النصوص والماركداون إلى ملفات جاهزة للطباعة والتوزيع بمظهر احترافي.',
     highlights: ['محرك نصوص', 'تصدير وثائق', 'أدوات مكتبية'],
-    color: '#3b82f6',
+    color: '#5A8CDE',
     iconName: 'laptop',
     image: '/images/platforms/md-2-pdf.jpg'
   },
@@ -182,7 +182,7 @@ const liveProjectsList: LiveProject[] = [
     displayDomain: 'circuit-lab-7jr.pages.dev',
     description: 'بيئة محاكاة تفاعلية لتجربة وبرمجة دوائر الأردوينو والحساسات الإلكترونية واختبار الأكواد الهندسية افتراضياً.',
     highlights: ['محاكاة إلكترونية', 'حساسات ذكية', 'دوائر تفاعلية'],
-    color: '#14b8a6',
+    color: '#0AEEC3',
     iconName: 'activity',
     image: '/images/platforms/arduino-lab.jpg'
   }
@@ -378,7 +378,7 @@ export const LiveProjectsShowcase: React.FC = () => {
                 className="spotlight-progress-fill"
                 onAnimationEnd={advance}
                 style={{
-                  background: `linear-gradient(90deg, #0ea5e9, ${activeProject.color})`,
+                  background: `linear-gradient(90deg, rgb(var(--c-primary)), ${activeProject.color})`,
                   animationDuration: `${AUTO_INTERVAL_MS}ms`,
                   animationPlayState: progressPaused ? 'paused' : 'running'
                 }}

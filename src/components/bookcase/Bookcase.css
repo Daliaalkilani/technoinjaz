@@ -9,7 +9,7 @@
   width: 100%;
   padding: 4rem 1.5rem;
   /* Dark mode: a lifted slate-navy stage (not near-black) so the books read clearly */
-  background: radial-gradient(circle at 50% 30%, rgba(56, 189, 248, 0.16) 0%, transparent 70%),
+  background: radial-gradient(circle at 50% 30%, rgb(var(--c-primary) / 0.16) 0%, transparent 70%),
               linear-gradient(180deg, #13223a 0%, #182a45 55%, #13223a 100%);
   color: var(--text-pure, #ffffff);
   box-sizing: border-box;
@@ -17,7 +17,7 @@
 }
 
 [data-theme="light"] .bookcase-section {
-  background: radial-gradient(circle at 50% 30%, rgba(2, 132, 199, 0.08) 0%, transparent 70%),
+  background: radial-gradient(circle at 50% 30%, rgb(var(--c-primary) / 0.08) 0%, transparent 70%),
               #f8fafc;
   color: #0f172a;
 }
@@ -43,18 +43,18 @@
   gap: 0.5rem;
   padding: 0.35rem 1rem;
   border-radius: 9999px;
-  background: rgba(56, 189, 248, 0.12);
-  border: 1px solid rgba(56, 189, 248, 0.3);
-  color: #38bdf8;
+  background: rgb(var(--c-primary) / 0.12);
+  border: 1px solid rgb(var(--c-primary) / 0.3);
+  color: rgb(var(--c-primary));
   font-size: 0.85rem;
   font-weight: 600;
   margin-bottom: 0.75rem;
 }
 
 [data-theme="light"] .bookcase-badge {
-  background: rgba(2, 132, 199, 0.1);
-  border-color: rgba(2, 132, 199, 0.25);
-  color: #0284c7;
+  background: rgb(var(--c-primary) / 0.1);
+  border-color: rgb(var(--c-primary) / 0.25);
+  color: rgb(var(--c-primary));
 }
 
 .bookcase-title {
@@ -113,9 +113,9 @@
   margin-top: -6px;
   background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
   border-radius: 4px;
-  border: 1px solid rgba(56, 189, 248, 0.25);
+  border: 1px solid rgb(var(--c-primary) / 0.25);
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.6),
-              0 2px 8px rgba(56, 189, 248, 0.2);
+              0 2px 8px rgb(var(--c-primary) / 0.2);
   transform: rotateX(25deg);
   transform-origin: top center;
   z-index: 2;
@@ -123,9 +123,9 @@
 
 [data-theme="light"] .shelf-plank {
   background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%);
-  border-color: rgba(2, 132, 199, 0.3);
+  border-color: rgb(var(--c-primary) / 0.3);
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12),
-              0 2px 6px rgba(2, 132, 199, 0.15);
+              0 2px 6px rgb(var(--c-primary) / 0.15);
 }
 
 .shelf-plank::before {
@@ -261,9 +261,9 @@
   display: inline-block;
   font-size: 0.68rem;
   font-weight: 700;
-  color: #38bdf8;
-  background: rgba(14, 165, 233, 0.2);
-  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: rgb(var(--c-primary));
+  background: rgb(var(--c-primary) / 0.2);
+  border: 1px solid rgb(var(--c-primary) / 0.35);
   padding: 0.15rem 0.55rem;
   border-radius: 9999px;
   align-self: flex-start;
@@ -286,7 +286,7 @@
 .book-cover-fallback {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #1e3a8a 0%, #0369a1 50%, #0284c7 100%);
+  background: linear-gradient(135deg, #1e3a8a 0%, rgb(var(--c-primary-strong)) 50%, rgb(var(--c-primary)) 100%);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -329,7 +329,7 @@
   height: 260px;
   left: calc(50% - 22px);
   transform: rotateY(-90deg) translateZ(95px);
-  background: linear-gradient(90deg, #090e1a 0%, #1e3a8a 30%, #2563eb 55%, #1e40af 80%, #090e1a 100%);
+  background: linear-gradient(90deg, #090e1a 0%, #1e3a8a 30%, rgb(var(--c-blue)) 55%, #1e40af 80%, #090e1a 100%);
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.65);
   display: flex;
@@ -443,11 +443,11 @@
 .book-3d-action-pill {
   font-size: 0.72rem;
   font-weight: 600;
-  background: rgba(14, 165, 233, 0.9);
+  background: rgb(var(--c-primary) / 0.9);
   color: white;
   padding: 0.2rem 0.65rem;
   border-radius: 9999px;
-  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.35);
+  box-shadow: 0 4px 12px rgb(var(--c-primary) / 0.35);
 }
 
 /* ==========================================================================
@@ -481,10 +481,10 @@
   height: 94vh;
   max-height: 900px;
   background: #090e1a;
-  border: 1px solid rgba(56, 189, 248, 0.25);
+  border: 1px solid rgb(var(--c-primary) / 0.25);
   border-radius: 20px;
   box-shadow: 0 25px 70px rgba(0, 0, 0, 0.7),
-              0 0 40px rgba(14, 165, 233, 0.15);
+              0 0 40px rgb(var(--c-primary) / 0.15);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -493,9 +493,9 @@
 
 [data-theme="light"] .flipbook-modal {
   background: #ffffff;
-  border-color: rgba(2, 132, 199, 0.25);
+  border-color: rgb(var(--c-primary) / 0.25);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15),
-              0 0 30px rgba(2, 132, 199, 0.08);
+              0 0 30px rgb(var(--c-primary) / 0.08);
 }
 
 /* Modal Toolbar */
@@ -527,7 +527,7 @@
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+  background: linear-gradient(135deg, rgb(var(--c-primary)) 0%, rgb(var(--c-blue)) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -575,9 +575,9 @@
 }
 
 .fb-btn:hover {
-  background: rgba(14, 165, 233, 0.2);
-  border-color: rgba(56, 189, 248, 0.5);
-  color: #38bdf8;
+  background: rgb(var(--c-primary) / 0.2);
+  border-color: rgb(var(--c-primary) / 0.5);
+  color: rgb(var(--c-primary));
 }
 
 [data-theme="light"] .fb-btn {
@@ -587,9 +587,9 @@
 }
 
 [data-theme="light"] .fb-btn:hover {
-  background: rgba(2, 132, 199, 0.12);
-  border-color: rgba(2, 132, 199, 0.35);
-  color: #0284c7;
+  background: rgb(var(--c-primary) / 0.12);
+  border-color: rgb(var(--c-primary) / 0.35);
+  color: rgb(var(--c-primary));
 }
 
 .fb-btn-close {
@@ -676,8 +676,8 @@
 .page-spinner {
   width: 24px;
   height: 24px;
-  border: 2px solid rgba(14, 165, 233, 0.2);
-  border-top-color: #0ea5e9;
+  border: 2px solid rgb(var(--c-primary) / 0.2);
+  border-top-color: rgb(var(--c-primary));
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -708,8 +708,8 @@
 .flipbook-loading-cover .spinner-lg {
   width: 44px;
   height: 44px;
-  border: 3px solid rgba(56, 189, 248, 0.2);
-  border-top-color: #38bdf8;
+  border: 3px solid rgb(var(--c-primary) / 0.2);
+  border-top-color: rgb(var(--c-primary));
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -746,9 +746,9 @@
   height: 38px;
   padding: 0 1.1rem;
   border-radius: 9999px;
-  background: rgba(14, 165, 233, 0.12);
-  border: 1px solid rgba(56, 189, 248, 0.35);
-  color: #38bdf8;
+  background: rgb(var(--c-primary) / 0.12);
+  border: 1px solid rgb(var(--c-primary) / 0.35);
+  color: rgb(var(--c-primary));
   font-size: 0.85rem;
   font-weight: 700;
   cursor: pointer;
@@ -756,8 +756,8 @@
 }
 
 .fb-nav-btn:hover:not(:disabled) {
-  background: rgba(14, 165, 233, 0.25);
-  border-color: #38bdf8;
+  background: rgb(var(--c-primary) / 0.25);
+  border-color: rgb(var(--c-primary));
   color: #ffffff;
   transform: translateY(-1px);
 }
@@ -769,9 +769,9 @@
 }
 
 [data-theme="light"] .fb-nav-btn {
-  background: rgba(2, 132, 199, 0.1);
-  border-color: rgba(2, 132, 199, 0.3);
-  color: #0284c7;
+  background: rgb(var(--c-primary) / 0.1);
+  border-color: rgb(var(--c-primary) / 0.3);
+  color: rgb(var(--c-primary));
 }
 
 .fb-page-counter {

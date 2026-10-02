@@ -27,7 +27,7 @@ const THEMES = {
     textColor: '#f5f5f5',
     placeholderColor: '#a1a1aa',
     borderColor: '#392e4e',
-    buttonColor: '#A855F7',
+    buttonColor: '#6D64F5',
     buttonTextColor: '#ffffff',
     shadowColor: '#000000'
   },

@@ -93,7 +93,7 @@ export const ServerErrorView: React.FC<ServerErrorViewProps> = ({ error, reset }
           <div className="te-error-diagnostics">
             <div className="te-error-diagnostics-header">
               <span>{isEn ? 'Diagnostic Reference' : 'معرف السجل التشخيصي'}</span>
-              <span style={{ fontFamily: 'monospace', color: '#00d2ff', fontSize: '11px' }}>
+              <span style={{ fontFamily: 'monospace', color: 'rgb(var(--c-primary))', fontSize: '11px' }}>
                 {error.digest}
               </span>
             </div>

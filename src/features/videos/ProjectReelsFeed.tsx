@@ -82,7 +82,7 @@ const FEED_REELS: FeedReel[] = [
     caption: v.description,
     captionEn: v.descriptionEn,
     cover: v.cover,
-    accent: '#38bdf8',
+    accent: 'rgb(var(--c-primary))',
     youtubeId: youtubeIdFrom(v.youtubeUrl),
     durationSec: toSeconds(v.duration),
     likes: seedLikes(v.id),

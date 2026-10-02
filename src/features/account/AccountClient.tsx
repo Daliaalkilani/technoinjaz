@@ -45,7 +45,7 @@ export function AccountClient() {
               width: '48px', 
               height: '48px', 
               border: '3px solid rgba(0, 210, 255, 0.2)', 
-              borderTopColor: '#00d2ff', 
+              borderTopColor: 'rgb(var(--c-primary))', 
               borderRadius: '50%', 
               animation: 'spin 1s linear infinite',
               margin: '0 auto 16px auto'

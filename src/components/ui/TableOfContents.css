@@ -36,7 +36,7 @@
 }
 
 .te-toc__icon {
-  color: #00d2ff;
+  color: rgb(var(--c-primary));
   flex-shrink: 0;
 }
 
@@ -49,9 +49,9 @@
 .te-toc__badge {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #00d2ff;
-  background: rgba(0, 210, 255, 0.12);
-  border: 1px solid rgba(0, 210, 255, 0.25);
+  color: rgb(var(--c-primary));
+  background: rgb(var(--c-primary) / 0.12);
+  border: 1px solid rgb(var(--c-primary) / 0.25);
   padding: 2px 8px;
   border-radius: 999px;
   white-space: nowrap;
@@ -62,7 +62,7 @@
   overflow-y: auto;
   padding-inline-end: 4px;
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 210, 255, 0.3) transparent;
+  scrollbar-color: rgb(var(--c-primary) / 0.3) transparent;
   overscroll-behavior: contain;
 }
 
@@ -71,7 +71,7 @@
 }
 
 .te-toc__scroll::-webkit-scrollbar-thumb {
-  background: rgba(0, 210, 255, 0.3);
+  background: rgb(var(--c-primary) / 0.3);
   border-radius: 4px;
 }
 
@@ -128,14 +128,14 @@
 }
 
 .te-toc__item.is-active .te-toc__link {
-  color: #00d2ff;
-  background: rgba(0, 210, 255, 0.1);
+  color: rgb(var(--c-primary));
+  background: rgb(var(--c-primary) / 0.1);
   font-weight: 700;
 }
 
 .te-toc__item.is-active .te-toc__dot {
-  background-color: #00d2ff;
-  box-shadow: 0 0 8px #00d2ff;
+  background-color: rgb(var(--c-primary));
+  box-shadow: 0 0 8px rgb(var(--c-primary));
   transform: scale(1.6);
 }
 
@@ -145,7 +145,7 @@
     background: rgba(255, 255, 255, 0.05);
   }
   .te-toc__link:hover .te-toc__dot {
-    background-color: #00d2ff;
+    background-color: rgb(var(--c-primary));
     transform: scale(1.4);
   }
 }
@@ -238,8 +238,8 @@
 }
 
 [data-theme="light"] .te-toc__item.is-active .te-toc__link {
-  color: #0284c7;
-  background: rgba(2, 132, 199, 0.1);
+  color: rgb(var(--c-primary));
+  background: rgb(var(--c-primary) / 0.1);
 }
 
 @media (hover: hover) and (pointer: fine) {
