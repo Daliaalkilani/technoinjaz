@@ -5,41 +5,41 @@ import { Quote } from 'lucide-react';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import './TestimonialsSection.css';
 
-// Real trainees' words about their training with the Techno Enjaz team, led by
-// Eng. Abdulghani (published with the owner's approval).
-// Only spelling / punctuation were touched; the content is theirs.
+// Real trainees' words about their training with the Techno Enjaz team (published
+// with the owner's approval). The team — not one person — is who they refer to: the
+// owner corrected an earlier data-entry mistake that named Eng. Abdulghani.
 const TESTIMONIALS = [
   {
     name: 'م. زهراء الحمود',
     nameEn: 'Eng. Zahraa Alhamoud',
     tag: 'مطوّرة واجهات',
     tagEn: 'Front-end Developer',
-    quote: 'تحت إشراف المهندس عبد الغني، استطعت اكتساب مهارات الفرونت إند وتطبيق مفاهيم البرمجة بثقة ودقة. بفضل توجيهاته، أصبحت مطوّرة فرونت إند أكثر فعالية.',
-    quoteEn: 'Under Eng. Abdulghani’s supervision, I was able to gain front-end skills and apply programming concepts with confidence and precision. Thanks to his guidance, I became a more effective front-end developer.'
+    quote: 'تحت إشراف فريق تكنو إنجاز، استطعت اكتساب مهارات الفرونت إند وتطبيق مفاهيم البرمجة بثقة ودقة. بفضل توجيهاتهم، أصبحت مطوّرة فرونت إند أكثر فعالية.',
+    quoteEn: 'Under the Techno Enjaz team’s supervision, I was able to gain front-end skills and apply programming concepts with confidence and precision. Thanks to their guidance, I became a more effective front-end developer.'
   },
   {
     name: 'ريم قصاباشي',
     nameEn: 'Reem Kassabashi',
     tag: 'مهارات حاسوب',
     tagEn: 'Computer Skills',
-    quote: 'قدّم لي المهندس عبد الغني التدريب الذي أحتاجه لإتقان صناعة العروض التقديمية ومهارات الحاسوب الأساسية. نظرة المهندس الحمدي للتعلم والتنمية الذاتية شجّعتني على التطور المستمر.',
-    quoteEn: 'Eng. Abdulghani gave me the training I needed to master building presentations and core computer skills. His outlook on learning and self-development encouraged me to keep growing.'
+    quote: 'قدّم لي فريق تكنو إنجاز التدريب الذي أحتاجه لإتقان صناعة العروض التقديمية ومهارات الحاسوب الأساسية. نظرة الفريق للتعلم والتنمية الذاتية شجّعتني على التطور المستمر.',
+    quoteEn: 'The Techno Enjaz team gave me the training I needed to master building presentations and core computer skills. The team’s outlook on learning and self-development encouraged me to keep growing.'
   },
   {
     name: 'علي بلال',
     nameEn: 'Ali Bilal',
     tag: 'توجيه وإرشاد',
     tagEn: 'Mentoring',
-    quote: 'قابلت المهندس عبد الغني في مرحلة كنت فيها على حافة الهاوية، لم أكن أملك أهدافًا واضحة ولا بوصلة توجّهني. لكن بفضل توجيهاته ونصائحه القيّمة، تحوّلت حياتي من العشوائية إلى الابتكار والهدفية.',
-    quoteEn: 'I met Eng. Abdulghani at a point when I was on the edge — I had no clear goals and no compass to guide me. Thanks to his guidance and valuable advice, my life turned from randomness to innovation and purpose.'
+    quote: 'تعرّفت على فريق تكنو إنجاز في مرحلة كنت فيها على حافة الهاوية، لم أكن أملك أهدافًا واضحة ولا بوصلة توجّهني. لكن بفضل توجيهاتهم ونصائحهم القيّمة، تحوّلت حياتي من العشوائية إلى الابتكار والهدفية.',
+    quoteEn: 'I met the Techno Enjaz team at a point when I was on the edge — I had no clear goals and no compass to guide me. Thanks to their guidance and valuable advice, my life turned from randomness to innovation and purpose.'
   },
   {
     name: 'راما حلو',
     nameEn: 'Rama Helou',
     tag: 'تخطيط استراتيجي',
     tagEn: 'Strategic Planning',
-    quote: 'عبر دورات التخطيط الاستراتيجي الشخصي التي قدّمها المهندس عبد الغني، اكتشفت مدى الحكمة والوعي التي يتمتّع بها. هذه الخبرة أثّرت بشكل كبير على حياتي المهنية.',
-    quoteEn: 'Through the personal strategic planning courses Eng. Abdulghani gave, I discovered how much wisdom and awareness he has. This experience has greatly influenced my professional life.'
+    quote: 'عبر دورات التخطيط الاستراتيجي الشخصي التي قدّمها فريق تكنو إنجاز، اكتشفت مدى الحكمة والوعي التي يتمتّع بها الفريق. هذه الخبرة أثّرت بشكل كبير على حياتي المهنية.',
+    quoteEn: 'Through the personal strategic planning courses the Techno Enjaz team gave, I discovered how much wisdom and awareness the team has. This experience has greatly influenced my professional life.'
   }
 ];
 
