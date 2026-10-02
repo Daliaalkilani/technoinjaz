@@ -867,3 +867,14 @@
     border-radius: 12px;
   }
 }
+
+/* =========================================================
+   ARABIC (RTL) BOOK — page-flip has no RTL mode: the whole book is mirrored and each
+   page's content is mirrored back, so page 1 is on the right, page 2 on the left and
+   pages turn from left to right. The mirror itself is part of the inline transform
+   in FlipbookViewer (with the cover-centering translate); pointer coordinates are
+   mirrored there too.
+   ========================================================= */
+.st-page-flip-container.is-rtl-book .page > * {
+  transform: scaleX(-1);
+}

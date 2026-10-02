@@ -253,6 +253,19 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
         const pages = viewerContainer.querySelectorAll('.page');
         pageFlip.loadFromHTML(pages);
 
+        // Arabic book in every UI language (the uploaded documents are Arabic): page 1
+        // on the right, page 2 on the left, pages turn from left to right. page-flip
+        // has no RTL mode, so the book container is mirrored in CSS (.is-rtl-book) and
+        // each page's content is mirrored back. Pointer/touch coordinates are mirrored
+        // here so dragging a corner or swiping follows the finger on the mirrored book.
+        const ui = pageFlip.getUI?.();
+        if (ui && typeof ui.getMousePos === 'function') {
+          ui.getMousePos = (clientX: number, clientY: number) => {
+            const rect = ui.distElement.getBoundingClientRect();
+            return { x: rect.right - clientX, y: clientY - rect.top };
+          };
+        }
+
         pageFlip.on('flip', (e: any) => {
           const pageIndexZero = e.data;
           setCurrentPage(pageIndexZero + 1);
@@ -292,13 +305,13 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
     if (typeof window !== 'undefined' && window.innerWidth < 768) {
       return undefined;
     }
+    // The book is mirrored (RTL): the closed front cover sits on the LEFT half of the
+    // spread and the back cover on the RIGHT half, so they shift the other way.
     if (currentPage <= 1) {
-      // Cover is rendered on the right half of the 2-page spread -> shift -25% to center it
-      return 'translateX(-25%)';
+      return 'translateX(25%)';
     }
     if (totalPages > 1 && currentPage >= totalPages) {
-      // Back cover is rendered on the left half of the 2-page spread -> shift +25% to center it
-      return 'translateX(25%)';
+      return 'translateX(-25%)';
     }
     return 'translateX(0)';
   };
@@ -318,13 +331,9 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
         e.preventDefault();
         pageFlipInstanceRef.current?.flipNext();
       } else if (e.key === 'ArrowRight' || e.key === 'PageUp') {
+        // Arabic book: the right arrow goes back a page, in both UI languages.
         e.preventDefault();
-        // If on the cover page (page 1), pressing arrow key opens the book (flips forward RTL)
-        if (currentPage <= 1) {
-          pageFlipInstanceRef.current?.flipNext();
-        } else {
-          pageFlipInstanceRef.current?.flipPrev();
-        }
+        pageFlipInstanceRef.current?.flipPrev();
       } else if (e.key === 'Home') {
         e.preventDefault();
         pageFlipInstanceRef.current?.flip(0);
@@ -433,10 +442,12 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
             <div
               id="book"
               ref={bookElementRef}
-              className="st-page-flip-container"
+              className="st-page-flip-container is-rtl-book"
               style={{
                 visibility: loading ? 'hidden' : 'visible',
-                transform: getStageTransform(),
+                // Mirror for the Arabic (RTL) book; the translate is applied after the
+                // mirror, so its sign is the visual direction.
+                transform: `${getStageTransform() ?? ''} scaleX(-1)`.trim(),
               }}
             />
           </div>
@@ -446,10 +457,11 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
         <footer className="flipbook-footer">
           <div className="fb-hint-text">
             <Sparkles size={14} color="#38bdf8" />
-            <span>{isEn ? 'Tip: Drag page corners or click to flip Right-to-Left (RTL)' : 'تلميح: اسحب زوايا الصفحات أو انقر للتقليب من اليمين لليسار'}</span>
+            <span>{isEn ? 'Arabic book: drag the left page corner or use the arrows to turn pages' : 'كتاب عربي: اسحب زاوية الصفحة اليسرى أو استخدم الأسهم لتقليب الصفحات'}</span>
           </div>
 
-          <div className="fb-nav-group">
+          {/* Always right-to-left (Arabic book): previous on the right, next on the left */}
+          <div className="fb-nav-group" dir="rtl">
             <button
               type="button"
               className="fb-nav-btn"
