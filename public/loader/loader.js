@@ -271,7 +271,7 @@
     state.runId += 1;
     state.demo = true;
     state.duration = Number(options.duration || 2500);
-    state.active = true; state.startedAt = performance.now();
+    state.active = true; state.startedAt = performance.now(); state.elapsed = 0;
     setPhase('charging');
     audio.start(); audio.chirp(); addWave(point(.489, .834));
     emit('launch');
@@ -289,7 +289,11 @@
 
   /* Simulated flight trajectory */
   function simulate(now) {
-    const elapsed = state.active ? now - state.startedAt : 0;
+    // Timeline = time actually animated (see frame()), not wall-clock time: while the
+    // page hydrates the main thread can stall for 1–2s; with wall-clock time the
+    // first frame after the stall jumped straight to the fade and the launch was
+    // never seen. Now the full launch always plays, then the fade.
+    const elapsed = state.active ? state.elapsed : 0;
     if (!state.active) {
       state.engine = 0; state.warp *= .93;
       state.pose = { x: 0, y: Math.sin(now * .0013) * 2.3, s: 1, r: 0, opacity: 1 };
@@ -497,6 +501,7 @@
   function frame(now) {
     if (state.destroyed) return;
     rafId = window.requestAnimationFrame(frame);
+    if (state.active) state.elapsed = (state.elapsed || 0) + Math.min(now - lastFrame, 50);
     const dt = Math.min((now - lastFrame) / 1000, .04); lastFrame = now;
     simulate(now); applyPose(); emitParticles(dt); draw(now, dt); audio.update(state.engine, state.charge);
   }
