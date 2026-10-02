@@ -4,7 +4,7 @@ import AccountClient from '@/features/account/AccountClient';
 export const dynamic = 'force-static';
 
 export const metadata: Metadata = {
-  title: 'حسابي والملف الشخصي | تكنو إنجاز',
+  title: 'حسابي والملف الشخصي',
   robots: {
     index: false,
     follow: false

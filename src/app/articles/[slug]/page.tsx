@@ -67,7 +67,7 @@ export default async function ArticlePage({
           article={article}
           toc={toc}
           related={related}
-          qa={<ContentQA items={qaItems} title="أسئلة وأجوبة حول المقال" />}
+          qa={<ContentQA items={qaItems} title="الأسئلة الشائعة حول المقال" />}
         >
           <ArticleBody html={html} />
         </ArticleDetailView>

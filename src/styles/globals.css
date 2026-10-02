@@ -1143,3 +1143,88 @@ html {
 picture {
   display: contents;
 }
+
+/* Flow sketches from ```text blocks (see renderMarkdown): a light card, one row per
+   line, each line in its own direction, wrapping on phones. */
+.md-flow {
+  margin: 24px 0;
+  padding: 18px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(56, 189, 248, 0.22);
+  background: rgba(56, 189, 248, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+  font-size: 14.5px;
+  line-height: 1.7;
+}
+
+.md-flow__line {
+  unicode-bidi: plaintext;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  font-weight: 600;
+  color: var(--text-main, #e2e8f0);
+}
+
+.md-flow__arrow {
+  color: #38bdf8;
+  font-size: 15px;
+  line-height: 1.1;
+}
+
+.md-flow__gap {
+  height: 8px;
+}
+
+[data-theme='light'] .md-flow {
+  background: #f1f7fd;
+  border-color: rgba(2, 132, 199, 0.2);
+}
+
+[data-theme='light'] .md-flow__line {
+  color: #0f172a;
+}
+
+[data-theme='light'] .md-flow__arrow {
+  color: #0284c7;
+}
+
+/* Tables: horizontal scroll inside the box; columns keep a readable width. */
+.md-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 24px 0;
+  border-radius: 10px;
+}
+
+.md-table-wrap > table {
+  margin: 0 !important;
+  min-width: 100%;
+  width: max-content;
+  max-width: none;
+  overflow: visible !important;
+}
+
+.md-table-wrap th,
+.md-table-wrap td {
+  min-width: 7.5em;
+  max-width: 18em;
+  overflow-wrap: normal !important;
+  word-break: normal;
+  vertical-align: top;
+}
+
+.md-table-wrap code {
+  overflow-wrap: normal !important;
+  white-space: nowrap;
+}
+
+@media (min-width: 900px) {
+  .md-table-wrap > table {
+    width: 100%;
+  }
+}

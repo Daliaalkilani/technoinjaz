@@ -4,7 +4,7 @@ import AuthPage from '@/features/auth/AuthPage';
 export const dynamic = 'force-static';
 
 export const metadata: Metadata = {
-  title: 'إنشاء حساب جديد | تكنو إنجاز',
+  title: 'إنشاء حساب جديد',
   robots: {
     index: false,
     follow: false

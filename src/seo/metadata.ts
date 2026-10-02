@@ -5,8 +5,8 @@ export function buildRootMetadata(): Metadata {
   return {
     metadataBase: new URL(SITE_URL),
     title: {
-      default: 'تكنو إنجاز | هندسة برمجية متقدمة وحلول سحابية | Techno Enjaz',
-      template: '%s | تكنو إنجاز'
+      default: 'تكنو إنجاز | Techno Enjaz',
+      template: '%s | تكنو إنجاز | Techno Enjaz'
     },
     description: 'تكنو إنجاز - صرح هندسي رائد في تطوير الأنظمة البرمجية المتكاملة، الحلول السحابية فائقة الأداء، الأتمتة وإنترنت الأشياء، وتطبيقات الذكاء الاصطناعي في حماة، سوريا.',
     applicationName: 'تكنو إنجاز',

@@ -3,12 +3,14 @@
 import React from 'react';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 
+// Visually hidden: the /videos page is an immersive reels feed, but it keeps a
+// single <h1> + description for SEO and screen readers.
 export function VideosHeader() {
   const { lang, t } = useThemeLanguage();
   const isEn = lang === 'en';
 
   return (
-    <div className="tab-page-header reels-page-header">
+    <div className="sr-only">
       <h1 className="tab-page-title reels-page-title">
         {isEn ? t.videos?.pageTitle || "Engineering Reels & Live Demos" : t.videos?.pageTitle || "المشاريع الحية ومقاطع الفيديو"}
       </h1>

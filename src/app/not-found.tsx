@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { Home, BookOpen, Layers, PhoneCall } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'الصفحة غير موجودة (404) | تكنو إنجاز',
+  title: 'الصفحة غير موجودة (404)',
   robots: {
     index: false,
     follow: false

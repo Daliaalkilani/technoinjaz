@@ -1,0 +1,283 @@
+/* =========================================================================
+   TABLET DOCK — floating glass bottom navigation for tablets
+   Active range (keep in sync everywhere below):
+     (min-width: 600px) and (max-width: 1023.98px)
+     (min-width: 1024px) and (max-width: 1366px) and (orientation: portrait)
+   Phones keep the hamburger drawer, desktop keeps the GooeyNav.
+   ========================================================================= */
+
+:root {
+  /* space the dock occupies at the bottom of the viewport (0 outside tablets) */
+  --dock-space: 0px;
+}
+
+.tablet-dock {
+  display: none;
+}
+
+@media (min-width: 600px) and (max-width: 1023.98px),
+       (min-width: 1024px) and (max-width: 1366px) and (orientation: portrait) {
+  :root {
+    --dock-space: calc(96px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .tablet-dock {
+    --dock-bg: rgba(10, 14, 26, 0.72);
+    --dock-border: rgba(255, 255, 255, 0.12);
+    --dock-highlight: rgba(255, 255, 255, 0.14);
+    --dock-shadow: 0 18px 50px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 210, 255, 0.05);
+    --dock-text: rgba(255, 255, 255, 0.66);
+    --dock-text-hover: #ffffff;
+    --dock-icon-bg-hover: rgba(255, 255, 255, 0.07);
+    --dock-active: #00d2ff;
+    --dock-active-bg: linear-gradient(140deg, rgba(0, 210, 255, 0.22) 0%, rgba(10, 238, 195, 0.12) 100%);
+    --dock-active-border: rgba(0, 210, 255, 0.45);
+    --dock-active-glow: 0 0 18px rgba(0, 210, 255, 0.35);
+
+    display: block;
+    position: fixed;
+    inset-inline: 0;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    z-index: 990; /* under the navbar (1000), modals and the drawer */
+    width: max-content;
+    max-width: calc(100vw - 24px);
+    margin-inline: auto;
+    padding: 7px 8px;
+    box-sizing: border-box;
+    border-radius: 26px;
+    background: var(--dock-bg);
+    border: 1px solid var(--dock-border);
+    box-shadow: var(--dock-shadow), inset 0 1px 0 var(--dock-highlight);
+    backdrop-filter: blur(22px) saturate(160%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
+    font-family: var(--font-readex), sans-serif;
+    animation: tabletDockIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  /* reserve room so page bottoms / footers are never hidden behind the dock */
+  #app-root {
+    padding-bottom: var(--dock-space);
+  }
+
+  /* full-viewport immersive feeds (videos reels) must end above the dock */
+  #app-root .reels-shell {
+    height: calc(100vh - var(--reels-top, 72px) - var(--dock-space));
+    height: calc(100dvh - var(--reels-top, 72px) - var(--dock-space));
+  }
+
+  /* the hamburger + drawer are phone-only now */
+  .top-navbar-container .navbar-mobile-toggle-btn {
+    display: none !important;
+  }
+}
+
+/* 600–768px: globals hides language / theme / account in the header (they lived in
+   the drawer). With the drawer gone on tablets, bring them back into the header. */
+@media (min-width: 600px) and (max-width: 768px) {
+  .top-navbar-container .navbar-desktop-only {
+    display: inline-flex !important;
+  }
+}
+
+/* Large portrait tablets (iPad Pro 1024×1366): the dock replaces the GooeyNav */
+@media (min-width: 1024px) and (max-width: 1366px) and (orientation: portrait) {
+  .top-navbar-container .navbar-center-menu {
+    display: none !important;
+  }
+}
+
+.tablet-dock__list {
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tablet-dock__item {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.tablet-dock__link {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-width: 64px;
+  max-width: 96px;
+  min-height: 60px;
+  padding: 6px 8px 8px;
+  box-sizing: border-box;
+  border-radius: 18px;
+  color: var(--dock-text);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.25s ease, background-color 0.25s ease;
+}
+
+.tablet-dock__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 32px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  transform-origin: 50% 100%;
+  transition:
+    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.tablet-dock__label {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+}
+
+.tablet-dock__dot {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  border-radius: 50%;
+  background: var(--dock-active);
+  box-shadow: 0 0 8px var(--dock-active);
+  opacity: 0;
+  transform: scale(0);
+  transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* narrow tablets (≈600–720px): tighten so seven labels fit without truncation */
+@media (max-width: 720px) {
+  .tablet-dock {
+    padding-inline: 5px;
+  }
+  .tablet-dock__list {
+    gap: 0;
+  }
+  .tablet-dock__link {
+    min-width: 54px;
+    padding-inline: 4px;
+  }
+  .tablet-dock__label {
+    font-size: 11px;
+    letter-spacing: 0;
+  }
+}
+
+/* macOS-style magnification on real hover (mouse / trackpad on tablets) */
+@media (hover: hover) and (pointer: fine) {
+  .tablet-dock__link:hover {
+    color: var(--dock-text-hover);
+  }
+  .tablet-dock__link:hover .tablet-dock__icon {
+    transform: translateY(-4px) scale(1.16);
+    background: var(--dock-icon-bg-hover);
+  }
+}
+
+.tablet-dock__link:active .tablet-dock__icon {
+  transform: scale(0.9);
+  transition-duration: 0.12s;
+}
+
+.tablet-dock__link:focus-visible {
+  outline: 2px solid var(--dock-active);
+  outline-offset: 1px;
+}
+
+.tablet-dock__link.is-active {
+  color: var(--dock-active);
+}
+
+.tablet-dock__link.is-active .tablet-dock__icon {
+  background: var(--dock-active-bg);
+  border-color: var(--dock-active-border);
+  box-shadow: var(--dock-active-glow);
+}
+
+.tablet-dock__link.is-active .tablet-dock__label {
+  font-weight: 700;
+}
+
+.tablet-dock__link.is-active .tablet-dock__dot {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@keyframes tabletDockIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ---------- Light theme ---------- */
+[data-theme="light"] .tablet-dock {
+  --dock-bg: rgba(255, 255, 255, 0.78);
+  --dock-border: rgba(15, 23, 42, 0.1);
+  --dock-highlight: rgba(255, 255, 255, 0.9);
+  --dock-shadow: 0 16px 44px rgba(15, 23, 42, 0.16), 0 2px 6px rgba(15, 23, 42, 0.06);
+  --dock-text: #475569;
+  --dock-text-hover: #0f172a;
+  --dock-icon-bg-hover: rgba(15, 23, 42, 0.05);
+  --dock-active: #0284c7;
+  --dock-active-bg: linear-gradient(140deg, rgba(2, 132, 199, 0.14) 0%, rgba(13, 148, 136, 0.08) 100%);
+  --dock-active-border: rgba(2, 132, 199, 0.32);
+  --dock-active-glow: 0 4px 14px rgba(2, 132, 199, 0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tablet-dock {
+    animation: none;
+  }
+  .tablet-dock__icon,
+  .tablet-dock__dot {
+    transition: none;
+  }
+}
+
+/* Pointer-following magnification (--mag 0…1 set by TabletDock.tsx) */
+.tablet-dock__item {
+  --mag: 0;
+}
+
+.tablet-dock__item .tablet-dock__icon {
+  transform: translateY(calc(var(--mag) * -7px)) scale(calc(1 + var(--mag) * 0.32));
+}
+
+.tablet-dock__item .tablet-dock__label {
+  transition: transform 0.25s ease;
+  transform: translateY(calc(var(--mag) * -2px));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tablet-dock__link:hover .tablet-dock__icon {
+    transform: translateY(calc(-4px + var(--mag) * -7px)) scale(calc(1.16 + var(--mag) * 0.16));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tablet-dock__item .tablet-dock__icon,
+  .tablet-dock__item .tablet-dock__label {
+    transform: none;
+  }
+}

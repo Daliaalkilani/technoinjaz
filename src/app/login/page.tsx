@@ -4,7 +4,7 @@ import AuthPage from '@/features/auth/AuthPage';
 export const dynamic = 'force-static';
 
 export const metadata: Metadata = {
-  title: 'تسجيل الدخول | تكنو إنجاز',
+  title: 'تسجيل الدخول',
   robots: {
     index: false,
     follow: false

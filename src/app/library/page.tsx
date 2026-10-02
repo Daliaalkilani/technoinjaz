@@ -11,7 +11,7 @@ export const metadata: Metadata = pageMetadata({
 
 export default function LibraryPage() {
   return (
-    <div style={{ paddingTop: '80px', minHeight: '85vh' }}>
+    <div className="library-page" style={{ minHeight: '85vh' }}>
       {/* The page's single main heading (the bookcase UI itself is visual) */}
       <h1 className="sr-only">المكتبة التفاعلية للتقارير والمناهج الهندسية | تكنو إنجاز</h1>
       <Bookcase3D />

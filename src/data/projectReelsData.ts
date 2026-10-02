@@ -21,7 +21,8 @@ export interface ProjectReel {
   categoryIcon: string;
   coverImage: string;
   liveUrl: string;
-  engineer: {
+  /** Optional credit; not every reel has one. */
+  engineer?: {
     name: string;
     nameEn: string;
     role: string;
@@ -266,13 +267,6 @@ export const projectReelsData: ProjectReel[] = [
     categoryIcon: 'heart-pulse',
     coverImage: '/images/platforms/dermocean.jpg',
     liveUrl: 'https://dermocean.pages.dev/',
-    engineer: {
-      name: 'تيماء علواني',
-      nameEn: 'Taima Alwani',
-      role: 'مهندسة واجهات وتجربة مستخدم',
-      roleEn: 'Senior UI/UX Engineer',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80'
-    },
     description: 'واجهة رقمية طبية تستعرض المنتجات الجلدية والتركيبات المعتمدة، مع محرك بحث تخصصي يتيح تصفية المنتجات حسب نوع البشرة والمكونات الفعالة.',
     descriptionEn: 'Specialized clinical dermatology platform featuring active ingredient databases, interactive skin compatibility selectors, and verified regimens.',
     tags: ['#حلول_طبية', '#واجهات_تفاعلية', '#كتالوج_طبي', '#تجربة_مستخدم'],

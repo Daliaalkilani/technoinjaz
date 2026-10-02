@@ -159,9 +159,6 @@ export const Bookcase3D: React.FC<Bookcase3DProps> = ({
                   {/* Hover Info Card */}
                   <div className="book-3d-info">
                     <span className="book-3d-title">{bookTitle}</span>
-                    <span className="book-3d-action-pill">
-                      {isEn ? 'Open Document' : 'قراءة الملف'}
-                    </span>
                   </div>
                 </div>
               );

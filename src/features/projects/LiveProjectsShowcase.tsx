@@ -70,19 +70,6 @@ const liveProjectsList: LiveProject[] = [
     image: '/images/platforms/interactive-cv.jpg'
   },
   {
-    id: 'taima-alwani',
-    title: 'منصة سكيورتي سيتي',
-    subtitle: 'منظومة الأمان الذكي والحلول التقنية المتكاملة',
-    category: 'أنظمة ومؤسسية',
-    url: 'https://taima-alwani.pages.dev/',
-    displayDomain: 'taima-alwani.pages.dev',
-    description: 'منظومة رقمية متطورة لإدارة أنظمة الحماية والمراقبة الذكية وتأمين المنشآت والحلول التقنية المتكاملة.',
-    highlights: ['أمان ذكي', 'أنظمة مراقبة', 'حلول متكاملة'],
-    color: '#38bdf8',
-    iconName: 'shield',
-    image: '/images/platforms/taima-alwani.jpg'
-  },
-  {
     id: 'rebuild-dn9',
     title: 'بوابة الأعمال والمشاريع',
     subtitle: 'بوابة شاملة لتطبيقات الويب الحديثة',

@@ -1,670 +1,617 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { 
-  Play, 
-  Pause, 
-  Volume2, 
-  VolumeX, 
-  Heart, 
-  MessageSquare, 
-  Bookmark, 
-  BookmarkCheck, 
-  Share2, 
-  CheckCircle2, 
-  X, 
-  Send, 
-  Layers, 
-  Eye, 
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import {
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
+  Heart,
+  MessageCircle,
+  Bookmark,
+  BookmarkCheck,
+  Share2,
+  ExternalLink,
+  ChevronUp,
+  ChevronDown,
+  X,
+  Send,
   Check,
   User
 } from 'lucide-react';
-import { projectReelsData, reelCategories } from '@/data/projectReelsData';
-import type { ProjectReel, ReelComment } from '@/data/projectReelsData';
+import { projectReelsData } from '@/data/projectReelsData';
+import type { ReelComment } from '@/data/projectReelsData';
+import { videosList } from '@/data/videosData';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { useSavedProjects } from '@/hooks/useSavedProjects';
 import { getLoggedInUser, requireAuth } from '@/lib/auth';
 import './ProjectReelsFeed.css';
+
+/* ---------------------------------------------------------------------------
+   Reels / Shorts style feed.
+   - One reel per viewport (CSS scroll-snap, snap-stop: always).
+   - The visible reel is tracked with a single IntersectionObserver; React state
+     only changes when the active reel changes (never per frame).
+   - Real videos (YouTube) autoplay muted; only the active reel mounts its
+     iframe, off-screen reels are unmounted (= paused, zero cost).
+   - Project reels are animated covers (Ken Burns) + CSS progress bar.
+   --------------------------------------------------------------------------- */
+
+interface FeedReel {
+  id: string;
+  kind: 'video' | 'project';
+  title: string;
+  titleEn: string;
+  caption: string;
+  captionEn: string;
+  cover: string;
+  accent: string;
+  youtubeId?: string;
+  liveUrl?: string;
+  durationSec: number;
+  likes: number;
+  comments: ReelComment[];
+  tags: string[];
+}
+
+const toSeconds = (d: string) => {
+  const parts = d.split(':').map(n => parseInt(n, 10) || 0);
+  const s = parts.reduce((acc, n) => acc * 60 + n, 0);
+  return s > 4 ? s : 30;
+};
+
+const youtubeIdFrom = (url: string): string | undefined => {
+  try {
+    const u = new URL(url);
+    if (u.hostname.includes('youtu.be')) return u.pathname.slice(1) || undefined;
+    return u.searchParams.get('v') || u.pathname.split('/').filter(Boolean).pop() || undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+// Deterministic pseudo like-count for real videos (no backend).
+const seedLikes = (id: string) => 90 + (id.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % 140);
+
+const FEED_REELS: FeedReel[] = [
+  ...videosList.map<FeedReel>(v => ({
+    id: v.id,
+    kind: 'video',
+    title: v.title,
+    titleEn: v.titleEn,
+    caption: v.description,
+    captionEn: v.descriptionEn,
+    cover: v.cover,
+    accent: '#38bdf8',
+    youtubeId: youtubeIdFrom(v.youtubeUrl),
+    durationSec: toSeconds(v.duration),
+    likes: seedLikes(v.id),
+    comments: [],
+    tags: [v.tag]
+  })),
+  ...projectReelsData.map<FeedReel>(r => ({
+    id: r.id,
+    kind: 'project',
+    title: r.title,
+    titleEn: r.titleEn,
+    caption: r.description,
+    captionEn: r.descriptionEn,
+    cover: r.coverImage,
+    accent: r.categoryColor,
+    liveUrl: r.liveUrl,
+    durationSec: toSeconds(r.duration),
+    likes: r.initialLikes,
+    comments: r.initialComments,
+    tags: r.tags
+  }))
+];
+
+const ytCommand = (iframe: HTMLIFrameElement | null, func: string) => {
+  try {
+    iframe?.contentWindow?.postMessage(JSON.stringify({ event: 'command', func, args: [] }), '*');
+  } catch {
+    /* cross-origin not ready yet */
+  }
+};
 
 export const ProjectReelsFeed: React.FC = () => {
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
   const { isSaved, toggleSave } = useSavedProjects();
 
-  // Category Filter State
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-
-  // Filtered Reels
-  const filteredReels = useMemo(() => {
-    if (selectedCategory === 'all') return projectReelsData;
-    const catObj = reelCategories.find(c => c.id === selectedCategory);
-    if (!catObj) return projectReelsData;
-    return projectReelsData.filter(r => 
-      r.category.includes(catObj.name) || 
-      r.categoryEn.toLowerCase().includes(catObj.nameEn.toLowerCase()) ||
-      r.categoryEn.toLowerCase().includes(catObj.id.toLowerCase())
-    );
-  }, [selectedCategory]);
-
-  // Active Reel Tracked via Intersection Observer
-  const [activeReelId, setActiveReelId] = useState<string>(filteredReels[0]?.id || 'reel-hisab-erp');
-
-  // Playback & Sound State
-  const [isPlaying, setIsPlaying] = useState<boolean>(true);
-  const [isMuted, setIsMuted] = useState<boolean>(true);
-  const [progress, setProgress] = useState<number>(0);
-  const [expandedDescId, setExpandedDescId] = useState<string | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const [pulse, setPulse] = useState<{ id: string; type: 'play' | 'pause'; n: number } | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [likePopId, setLikePopId] = useState<string | null>(null);
 
-  // Comments Drawer State
-  const [activeCommentReel, setActiveCommentReel] = useState<ProjectReel | null>(null);
-  const [commentInput, setCommentInput] = useState<string>('');
+  const [commentReelId, setCommentReelId] = useState<string | null>(null);
+  const [commentInput, setCommentInput] = useState('');
 
-  // Center Play/Pause pulse
-  const [pulseReelId, setPulseReelId] = useState<string | null>(null);
-  const [pulseType, setPulseType] = useState<'play' | 'pause'>('play');
+  const [likesState, setLikesState] = useState<Record<string, { count: number; isLiked: boolean }>>(() => {
+    const init: Record<string, { count: number; isLiked: boolean }> = {};
+    FEED_REELS.forEach(r => { init[r.id] = { count: r.likes, isLiked: false }; });
+    return init;
+  });
+  const [commentsState, setCommentsState] = useState<Record<string, ReelComment[]>>(() => {
+    const init: Record<string, ReelComment[]> = {};
+    FEED_REELS.forEach(r => { init[r.id] = r.comments; });
+    return init;
+  });
 
-  const feedContainerRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<Map<string, HTMLElement>>(new Map());
+  const shellRef = useRef<HTMLElement>(null);
+  const feedRef = useRef<HTMLOListElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const activeIndexRef = useRef(0);
+  const targetIndexRef = useRef(0); // where keyboard / button navigation is heading
+  const mutedRef = useRef(true);
+  const pausedRef = useRef(false);
+  mutedRef.current = isMuted;
+  pausedRef.current = isPaused;
 
-  // Helper to build initial likes from data
-  const getInitialLikes = () => {
-    const initial: Record<string, { count: number; isLiked: boolean }> = {};
-    projectReelsData.forEach(r => {
-      initial[r.id] = { count: r.initialLikes, isLiked: false };
-    });
-    return initial;
-  };
-
-  // Helper to build initial comments from data
-  const getInitialComments = () => {
-    const initial: Record<string, ReelComment[]> = {};
-    projectReelsData.forEach(r => {
-      initial[r.id] = r.initialComments;
-    });
-    return initial;
-  };
-
-  // Likes state: initial from data, sync with localStorage on mount
-  const [likesState, setLikesState] = useState<Record<string, { count: number; isLiked: boolean }>>(getInitialLikes);
-
-  // Comments state: initial from data, sync with localStorage on mount
-  const [commentsState, setCommentsState] = useState<Record<string, ReelComment[]>>(getInitialComments);
-
+  /* Persisted likes / comments (merged over defaults so new reels keep counts). */
   useEffect(() => {
     try {
-      const storedLikes = localStorage.getItem('techno_reels_likes');
-      if (storedLikes) {
-        setLikesState(JSON.parse(storedLikes));
-      }
-    } catch (e) {
-      console.error('Error loading reels likes:', e);
-    }
-
+      const l = localStorage.getItem('techno_reels_likes');
+      if (l) setLikesState(prev => ({ ...prev, ...JSON.parse(l) }));
+    } catch { /* ignore */ }
     try {
-      const storedComments = localStorage.getItem('techno_reels_comments');
-      if (storedComments) {
-        setCommentsState(JSON.parse(storedComments));
-      }
-    } catch (e) {
-      console.error('Error loading reels comments:', e);
-    }
+      const c = localStorage.getItem('techno_reels_comments');
+      if (c) setCommentsState(prev => ({ ...prev, ...JSON.parse(c) }));
+    } catch { /* ignore */ }
   }, []);
 
-  // Reset active reel when category changes
+  /* Fit the feed exactly under the site navbar: writes a CSS var, no React state. */
   useEffect(() => {
-    if (filteredReels.length > 0) {
-      setActiveReelId(filteredReels[0].id);
-      setProgress(0);
-      setIsPlaying(true);
-      const firstEl = itemRefs.current.get(filteredReels[0].id);
-      if (firstEl && feedContainerRef.current) {
-        firstEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }
-  }, [selectedCategory, filteredReels]);
+    const shell = shellRef.current;
+    const nav = document.getElementById('navbar');
+    if (!shell || !nav) return;
+    const apply = () => shell.style.setProperty('--reels-top', `${Math.round(nav.getBoundingClientRect().height)}px`);
+    apply();
+    const ro = new ResizeObserver(apply);
+    ro.observe(nav);
+    return () => ro.disconnect();
+  }, []);
 
-  // Set up IntersectionObserver to detect which reel is active in the continuous stream
+  /* Active reel detection. */
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.55) {
-            const reelId = entry.target.getAttribute('data-reel-id');
-            if (reelId && reelId !== activeReelId) {
-              setActiveReelId(reelId);
-              setProgress(0);
-              setIsPlaying(true);
+    const feed = feedRef.current;
+    if (!feed) return;
+    const io = new IntersectionObserver(
+      entries => {
+        for (const e of entries) {
+          if (e.isIntersecting && e.intersectionRatio >= 0.6) {
+            const idx = Number((e.target as HTMLElement).dataset.index);
+            if (!Number.isNaN(idx) && idx !== activeIndexRef.current) {
+              activeIndexRef.current = idx;
+              targetIndexRef.current = idx;
+              setActiveIndex(idx);
+              setIsPaused(false);
+              setExpandedId(null);
             }
           }
-        });
-      },
-      {
-        root: null,
-        rootMargin: '0px',
-        threshold: [0.55]
-      }
-    );
-
-    itemRefs.current.forEach((el) => {
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, [filteredReels, activeReelId]);
-
-  // Simulated video playback progress for active reel
-  useEffect(() => {
-    if (!isPlaying) return;
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          return 0; // Loop seamlessly
         }
-        return prev + 1.25;
-      });
-    }, 120);
+      },
+      { root: feed, threshold: [0.6] }
+    );
+    feed.querySelectorAll<HTMLElement>('.reel').forEach(el => io.observe(el));
+    return () => io.disconnect();
+  }, []);
 
-    return () => clearInterval(interval);
-  }, [isPlaying, activeReelId]);
-
-  // Keyboard navigation (ArrowUp, ArrowDown, Space)
+  /* Deep link: /videos#<reel-id> */
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    if (!id) return;
+    const idx = FEED_REELS.findIndex(r => r.id === id);
+    const feed = feedRef.current;
+    if (idx > 0 && feed) feed.scrollTo({ top: idx * feed.clientHeight, behavior: 'auto' });
+  }, []);
 
-      if (e.code === 'ArrowDown') {
-        e.preventDefault();
-        scrollToNext();
-      } else if (e.code === 'ArrowUp') {
-        e.preventDefault();
-        scrollToPrev();
-      } else if (e.code === 'Space') {
-        e.preventDefault();
-        togglePlayPause(activeReelId);
+  const goTo = useCallback((idx: number) => {
+    const feed = feedRef.current;
+    if (!feed) return;
+    const clamped = Math.max(0, Math.min(FEED_REELS.length - 1, idx));
+    targetIndexRef.current = clamped;
+    feed.scrollTo({ top: clamped * feed.clientHeight, behavior: 'smooth' });
+  }, []);
+
+  const togglePause = useCallback((id: string) => {
+    const next = !pausedRef.current;
+    pausedRef.current = next;
+    setIsPaused(next);
+    setPulse(p => ({ id, type: next ? 'pause' : 'play', n: (p?.n || 0) + 1 }));
+  }, []);
+
+  /* Sync the YouTube player with paused / muted state. */
+  useEffect(() => {
+    ytCommand(iframeRef.current, isPaused ? 'pauseVideo' : 'playVideo');
+  }, [isPaused]);
+  useEffect(() => {
+    ytCommand(iframeRef.current, isMuted ? 'mute' : 'unMute');
+  }, [isMuted]);
+
+  const onIframeLoad = (e: React.SyntheticEvent<HTMLIFrameElement>) => {
+    const el = e.currentTarget;
+    el.classList.add('is-loaded');
+    // The embedded player needs a moment after `load` before it accepts commands.
+    [250, 900, 2000].forEach(ms =>
+      setTimeout(() => {
+        if (iframeRef.current !== el) return;
+        if (!mutedRef.current) ytCommand(el, 'unMute');
+        if (pausedRef.current) ytCommand(el, 'pauseVideo');
+      }, ms)
+    );
+  };
+
+  /* Pause when the tab is hidden. */
+  useEffect(() => {
+    const onVis = () => {
+      if (document.hidden) ytCommand(iframeRef.current, 'pauseVideo');
+      else if (!pausedRef.current) ytCommand(iframeRef.current, 'playVideo');
+    };
+    document.addEventListener('visibilitychange', onVis);
+    return () => document.removeEventListener('visibilitychange', onVis);
+  }, []);
+
+  /* Keyboard: ↑/↓ (PageUp/PageDown, k/j) navigate, Space pauses, M mutes. */
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (commentReelId || e.altKey || e.ctrlKey || e.metaKey) return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+      const idx = targetIndexRef.current;
+      switch (e.key) {
+        case 'ArrowDown':
+        case 'PageDown':
+        case 'j':
+          e.preventDefault();
+          goTo(idx + 1);
+          break;
+        case 'ArrowUp':
+        case 'PageUp':
+        case 'k':
+          e.preventDefault();
+          goTo(idx - 1);
+          break;
+        case ' ':
+          if (t && t.tagName === 'BUTTON') return;
+          e.preventDefault();
+          togglePause(FEED_REELS[activeIndexRef.current].id);
+          break;
+        case 'm':
+        case 'M':
+          setIsMuted(m => !m);
+          break;
       }
     };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [commentReelId, goTo, togglePause]);
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeReelId, filteredReels]);
-
-  // Navigation helpers
-  const activeIndex = useMemo(() => {
-    return filteredReels.findIndex(r => r.id === activeReelId);
-  }, [filteredReels, activeReelId]);
-
-  const scrollToNext = () => {
-    if (activeIndex < filteredReels.length - 1) {
-      const nextId = filteredReels[activeIndex + 1].id;
-      const el = itemRefs.current.get(nextId);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  };
-
-  const scrollToPrev = () => {
-    if (activeIndex > 0) {
-      const prevId = filteredReels[activeIndex - 1].id;
-      const el = itemRefs.current.get(prevId);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  };
-
-  // Toggle Play / Pause with center pulse
-  const togglePlayPause = (reelId: string) => {
-    const nextState = !isPlaying;
-    setIsPlaying(nextState);
-    setPulseType(nextState ? 'play' : 'pause');
-    setPulseReelId(reelId);
-    setTimeout(() => setPulseReelId(null), 700);
-  };
-
-  // Toggle Like
-  const handleToggleLike = (reelId: string) => {
+  const handleLike = (id: string) => {
     if (!requireAuth()) return;
-
     setLikesState(prev => {
-      const current = prev[reelId] || { count: 0, isLiked: false };
-      const isLiked = !current.isLiked;
-      const count = isLiked ? current.count + 1 : Math.max(0, current.count - 1);
-      const updated = { ...prev, [reelId]: { count, isLiked } };
-      try {
-        localStorage.setItem('techno_reels_likes', JSON.stringify(updated));
-      } catch (e) {
-        console.error('Error saving reel likes:', e);
+      const cur = prev[id] || { count: 0, isLiked: false };
+      const isLiked = !cur.isLiked;
+      const updated = { ...prev, [id]: { isLiked, count: isLiked ? cur.count + 1 : Math.max(0, cur.count - 1) } };
+      try { localStorage.setItem('techno_reels_likes', JSON.stringify(updated)); } catch { /* ignore */ }
+      if (isLiked) {
+        setLikePopId(id);
+        setTimeout(() => setLikePopId(p => (p === id ? null : p)), 650);
       }
       return updated;
     });
   };
 
-  // Add Comment
+  const handleShare = async (reel: FeedReel) => {
+    const url = `${window.location.origin}/videos#${reel.id}`;
+    const title = isEn ? reel.titleEn : reel.title;
+    try {
+      if (navigator.share && window.matchMedia('(pointer: coarse)').matches) {
+        await navigator.share({ title, url });
+        return;
+      }
+      await navigator.clipboard?.writeText(url);
+      setCopiedId(reel.id);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch { /* user cancelled */ }
+  };
+
   const handleAddComment = (e: React.FormEvent) => {
     e.preventDefault();
     if (!requireAuth()) return;
-    if (!commentInput.trim() || !activeCommentReel) return;
-
-    const loggedUser = getLoggedInUser();
-    const authorName = loggedUser?.name || (isEn ? 'Techno User' : 'مستخدم تكنو');
-
-    const newComment: ReelComment = {
+    if (!commentInput.trim() || !commentReelId) return;
+    const user = getLoggedInUser();
+    const author = user?.name || (isEn ? 'Techno User' : 'مستخدم تكنو');
+    const c: ReelComment = {
       id: 'rc-' + Date.now(),
-      author: authorName,
-      authorEn: authorName,
-      avatar: loggedUser?.avatar || '',
+      author,
+      authorEn: author,
+      avatar: user?.avatar || '',
       timeAgo: isEn ? 'Just now' : 'الآن',
       timeAgoEn: 'Just now',
       content: commentInput.trim(),
       contentEn: commentInput.trim()
     };
-
     setCommentsState(prev => {
-      const currentList = prev[activeCommentReel.id] || [];
-      const updated = {
-        ...prev,
-        [activeCommentReel.id]: [newComment, ...currentList]
-      };
-      try {
-        localStorage.setItem('techno_reels_comments', JSON.stringify(updated));
-      } catch (err) {
-        console.error('Error saving reel comments:', err);
-      }
+      const updated = { ...prev, [commentReelId]: [c, ...(prev[commentReelId] || [])] };
+      try { localStorage.setItem('techno_reels_comments', JSON.stringify(updated)); } catch { /* ignore */ }
       return updated;
     });
-
     setCommentInput('');
   };
 
-  // Share link
-  const handleShare = (reelId: string, e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(`${window.location.origin}/#videos`);
-      setCopiedId(reelId);
-      setTimeout(() => setCopiedId(null), 2000);
-    }
-  };
+  const commentReel = commentReelId ? FEED_REELS.find(r => r.id === commentReelId) : null;
+  const commentList = commentReelId ? commentsState[commentReelId] || [] : [];
+  const loggedUser = commentReel ? getLoggedInUser() : null;
 
   return (
-    <section className="cinema-reels-experience" dir={isEn ? 'ltr' : 'rtl'}>
-      <div className="cinema-reels-layout">
-        {/* 1. Category Filter Sidebar on the side */}
-        <aside className="cinema-reels-sidebar">
-          <div className="cinema-sidebar-header">
-            <Layers size={16} className="sidebar-header-icon" />
-            <span className="sidebar-header-title">{isEn ? "Categories" : "التصنيفات"}</span>
-          </div>
-
-          <div className="cinema-sidebar-category-list">
-            {reelCategories.map(cat => {
-              const count = cat.id === 'all' 
-                ? projectReelsData.length 
-                : projectReelsData.filter(r => r.category.includes(cat.name) || r.categoryEn.toLowerCase().includes(cat.id)).length;
-              const isActive = selectedCategory === cat.id;
-
-              return (
-                <button
-                  key={cat.id}
-                  type="button"
-                  className={`cinema-sidebar-category-item ${isActive ? 'active' : ''}`}
-                  onClick={() => setSelectedCategory(cat.id)}
-                >
-                  <span className="category-item-name">{isEn ? cat.nameEn : cat.name}</span>
-                  <span className="category-item-badge">{count}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="cinema-counter-badge">
-            <Layers size={14} />
-            <span>{activeIndex + 1} / {filteredReels.length}</span>
-          </div>
-        </aside>
-
-        {/* 2. Continuous Vertical Cinema Stream */}
-        <div className="cinema-reels-feed-stream" ref={feedContainerRef}>
-        {filteredReels.map((reel, index) => {
-          const isActive = activeReelId === reel.id;
-          const isSavedItem = isSaved(reel.id);
-          const currentLike = likesState[reel.id] || { count: reel.initialLikes, isLiked: false };
-          const currentComments = commentsState[reel.id] || reel.initialComments;
-          const isDescExpanded = expandedDescId === reel.id;
-          const reelTitle = isEn ? reel.titleEn : reel.title;
-          const reelCategory = isEn ? reel.categoryEn : reel.category;
-          const reelEngineer = isEn ? reel.engineer.nameEn : reel.engineer.name;
-          const reelEngineerRole = isEn ? reel.engineer.roleEn : reel.engineer.role;
-          const reelDesc = isEn ? reel.descriptionEn : reel.description;
+    <section
+      ref={shellRef}
+      className="reels-shell"
+      dir={isEn ? 'ltr' : 'rtl'}
+      aria-label={isEn ? 'Video reels' : 'مقاطع الفيديو القصيرة'}
+    >
+      <ol ref={feedRef} className="reels-feed" tabIndex={-1}>
+        {FEED_REELS.map((reel, index) => {
+          const isActive = index === activeIndex;
+          const isNear = Math.abs(index - activeIndex) <= 1;
+          const title = isEn ? reel.titleEn : reel.title;
+          const caption = isEn ? reel.captionEn : reel.caption;
+          const like = likesState[reel.id] || { count: reel.likes, isLiked: false };
+          const commentsCount = (commentsState[reel.id] || reel.comments).length;
+          const saved = isSaved(reel.id);
+          const expanded = expandedId === reel.id;
+          const playing = isActive && !isPaused;
 
           return (
-            <article
+            <li
               key={reel.id}
-              ref={(el) => {
-                if (el) itemRefs.current.set(reel.id, el);
-                else itemRefs.current.delete(reel.id);
-              }}
-              data-reel-id={reel.id}
-              className={`cinema-reel-card-item ${isActive ? 'active-stage' : 'inactive-stage'}`}
-              style={{ '--reel-accent': reel.categoryColor } as React.CSSProperties}
+              id={reel.id}
+              data-index={index}
+              className={`reel ${isActive ? 'is-active' : ''} ${playing ? 'is-playing' : 'is-paused'} reel--${reel.kind}`}
+              style={{ '--reel-accent': reel.accent, '--reel-dur': `${reel.durationSec}s` } as React.CSSProperties}
             >
-              {/* Cinema Frame Wrapper */}
-              <div className="cinema-reel-phone-frame">
-                {/* Ambient Colored Backlight Halo */}
-                <div 
-                  className="cinema-ambient-halo" 
-                  style={{ backgroundColor: reel.categoryColor }} 
+              <article className="reel-stage" aria-labelledby={`${reel.id}-title`}>
+                {/* Ambient halo (desktop / tablet column glow) */}
+                <div className="reel-halo" aria-hidden="true" />
+
+                <div className="reel-media">
+                  <img src={reel.cover} alt="" aria-hidden="true" className="reel-backdrop" loading={isNear ? 'eager' : 'lazy'} decoding="async" />
+                  <img
+                    src={reel.cover}
+                    alt={title}
+                    className="reel-cover"
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    fetchPriority={index === 0 ? 'high' : 'auto'}
+                    decoding="async"
+                  />
+                  {reel.kind === 'video' && reel.youtubeId && isActive && (
+                    <iframe
+                      ref={iframeRef}
+                      className="reel-iframe"
+                      src={`https://www.youtube-nocookie.com/embed/${reel.youtubeId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${reel.youtubeId}&playsinline=1&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&enablejsapi=1`}
+                      title={title}
+                      allow="autoplay; encrypted-media; picture-in-picture"
+                      tabIndex={-1}
+                      onLoad={onIframeLoad}
+                    />
+                  )}
+                  <div className="reel-vignette" aria-hidden="true" />
+                </div>
+
+                {/* Tap layer: play / pause */}
+                <button
+                  type="button"
+                  className="reel-tap"
+                  onClick={() => togglePause(reel.id)}
+                  aria-label={playing ? (isEn ? 'Pause' : 'إيقاف مؤقت') : (isEn ? 'Play' : 'تشغيل')}
+                  tabIndex={isActive ? 0 : -1}
                 />
 
-                {/* Video / Visual Simulation Canvas */}
-                <div 
-                  className="cinema-media-canvas" 
-                  onClick={() => togglePlayPause(reel.id)}
-                >
-                  {/* Media Layer */}
-                  <div className={`cinema-media-inner ${isActive && isPlaying ? 'is-animating' : 'is-paused'}`}>
-                    {/* Blurred backdrop image for wide/different aspect ratios */}
-                    <img 
-                      src={reel.coverImage} 
-                      alt="" 
-                      className="cinema-backdrop-blur" 
-                      aria-hidden="true" 
-                    />
-                    <img 
-                      src={reel.coverImage} 
-                      alt={reelTitle}
-                      className="cinema-cover-image"
-                      loading={index === 0 ? "eager" : "lazy"}
-                    />
-                    {/* Vignette Overlay */}
-                    <div className="cinema-video-vignette" />
-
-                    {/* Live Telemetry Pill: Only Views Count */}
-                    <div className="cinema-live-telemetry">
-                      <Eye size={13} />
-                      <span>{reel.initialViews}</span>
-                    </div>
-
-                    {/* Sound Mute / Unmute Toggle */}
-                    <button
-                      type="button"
-                      className="cinema-sound-toggle-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsMuted(prev => !prev);
-                      }}
-                      title={isMuted ? (isEn ? "Unmute" : "تشغيل الصوت") : (isEn ? "Mute" : "كتم الصوت")}
-                      aria-label="Toggle Sound"
-                    >
-                      {isMuted ? <VolumeX size={17} /> : <Volume2 size={17} />}
-                    </button>
-
-                    {/* Center Play/Pause Pulse Icon */}
-                    {pulseReelId === reel.id && (
-                      <div className="cinema-center-pulse">
-                        {pulseType === 'play' ? <Play size={36} fill="#fff" /> : <Pause size={36} fill="#fff" />}
-                      </div>
-                    )}
+                {pulse && pulse.id === reel.id && (
+                  <div key={pulse.n} className="reel-pulse" aria-hidden="true">
+                    {pulse.type === 'play' ? <Play size={34} fill="#fff" /> : <Pause size={34} fill="#fff" />}
                   </div>
-                </div>
+                )}
 
-                {/* Bottom Overlay Information on the Video */}
-                <div className="cinema-bottom-overlay">
-                  {/* Engineer Identity Pill */}
-                  <div className="cinema-engineer-pill">
-                    <img 
-                      src={reel.engineer.avatar} 
-                      alt={reelEngineer}
-                      className="engineer-pill-avatar" 
-                    />
-                    <div className="engineer-pill-text">
-                      <span className="engineer-pill-name">
-                        {reelEngineer}
-                        <CheckCircle2 size={13} className="verified-check" />
-                      </span>
-                      <span className="engineer-pill-role">{reelEngineerRole}</span>
-                    </div>
-                  </div>
-
-                  {/* Category Badge */}
-                  <div 
-                    className="cinema-category-badge"
-                    style={{ 
-                      backgroundColor: `${reel.categoryColor}25`,
-                      color: reel.categoryColor,
-                      borderColor: `${reel.categoryColor}55`
-                    }}
-                  >
-                    <span>{reelCategory}</span>
-                  </div>
-
-                  {/* Project Title */}
-                  <h2 className="cinema-project-title">{reelTitle}</h2>
-
-                  {/* Project Description */}
-                  <p className={`cinema-project-desc ${isDescExpanded ? 'expanded' : ''}`}>
-                    {reelDesc}
-                  </p>
-
+                {/* Tap-to-unmute (real videos only) */}
+                {reel.kind === 'video' && (
                   <button
                     type="button"
-                    className="cinema-desc-toggle"
-                    onClick={() => setExpandedDescId(isDescExpanded ? null : reel.id)}
+                    className={`reel-sound ${isMuted ? 'is-muted' : ''}`}
+                    onClick={() => setIsMuted(m => !m)}
+                    aria-pressed={!isMuted}
+                    aria-label={isMuted ? (isEn ? 'Unmute' : 'تشغيل الصوت') : (isEn ? 'Mute' : 'كتم الصوت')}
+                    tabIndex={isActive ? 0 : -1}
                   >
-                    {isDescExpanded ? (isEn ? "Less" : "أقل") : (isEn ? "...more" : "...المزيد")}
+                    {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                    <span className="reel-sound-label">{isEn ? 'Tap to unmute' : 'اضغط لتشغيل الصوت'}</span>
                   </button>
+                )}
 
-                  {/* Tags Row */}
-                  <div className="cinema-tags-row">
-                    {reel.tags.map((tag, tIdx) => (
-                      <span key={tIdx} className="cinema-tag-chip">
-                        {tag.startsWith('#') ? tag : `#${tag}`}
-                      </span>
-                    ))}
-                  </div>
+                {/* Minimal caption */}
+                <div className="reel-info">
+                  <h2 id={`${reel.id}-title`} className="reel-title">{title}</h2>
+                  <p className={`reel-caption ${expanded ? 'is-expanded' : ''}`}>
+                    {caption}
+                  </p>
+                  <button
+                    type="button"
+                    className="reel-more"
+                    onClick={() => setExpandedId(expanded ? null : reel.id)}
+                    tabIndex={isActive ? 0 : -1}
+                  >
+                    {expanded ? (isEn ? 'less' : 'أقل') : (isEn ? 'more' : 'المزيد')}
+                  </button>
                 </div>
 
-                {/* Progress Bar at the bottom */}
-                <div className="cinema-progress-track">
-                  <div 
-                    className="cinema-progress-bar"
-                    style={{ 
-                      width: isActive ? `${progress}%` : '0%',
-                      backgroundColor: reel.categoryColor 
-                    }}
-                  />
-                </div>
-              </div>
+                <div className="reel-progress" aria-hidden="true"><span /></div>
+              </article>
 
-              {/* 4. Floating Side Action Bar (Outside or overlapping gracefully) */}
-              <div className="cinema-side-actions-bar" onClick={(e) => e.stopPropagation()}>
-                {/* Like Button */}
+              {/* Side actions */}
+              <div className="reel-actions">
                 <button
                   type="button"
-                  className={`cinema-action-btn ${currentLike.isLiked ? 'liked' : ''}`}
-                  onClick={() => handleToggleLike(reel.id)}
-                  title={currentLike.isLiked ? (isEn ? "Liked" : "معجب") : (isEn ? "Like" : "إعجاب")}
+                  className={`reel-action ${like.isLiked ? 'is-liked' : ''} ${likePopId === reel.id ? 'is-popping' : ''}`}
+                  onClick={() => handleLike(reel.id)}
+                  aria-pressed={like.isLiked}
+                  aria-label={isEn ? 'Like' : 'إعجاب'}
+                  tabIndex={isActive ? 0 : -1}
                 >
-                  <div className="action-circle-icon">
-                    <Heart 
-                      size={20} 
-                      fill={currentLike.isLiked ? "#ef4444" : "none"} 
-                      color={currentLike.isLiked ? "#ef4444" : "currentColor"} 
-                    />
-                  </div>
-                  <span className="action-label-count">{currentLike.count}</span>
+                  <span className="reel-action-icon"><Heart size={22} fill={like.isLiked ? 'currentColor' : 'none'} /></span>
+                  <span className="reel-action-label">{like.count}</span>
                 </button>
 
-                {/* Comments Button */}
                 <button
                   type="button"
-                  className="cinema-action-btn"
-                  onClick={() => setActiveCommentReel(reel)}
-                  title={isEn ? "Comments" : "التعليقات"}
+                  className="reel-action"
+                  onClick={() => setCommentReelId(reel.id)}
+                  aria-label={isEn ? 'Comments' : 'التعليقات'}
+                  tabIndex={isActive ? 0 : -1}
                 >
-                  <div className="action-circle-icon">
-                    <MessageSquare size={19} />
-                  </div>
-                  <span className="action-label-count">{currentComments.length}</span>
+                  <span className="reel-action-icon"><MessageCircle size={22} /></span>
+                  <span className="reel-action-label">{commentsCount}</span>
                 </button>
 
-                {/* Bookmark / Save Button */}
                 <button
                   type="button"
-                  className={`cinema-action-btn ${isSavedItem ? 'saved' : ''}`}
-                  onClick={() => {
+                  className={`reel-action ${saved ? 'is-saved' : ''}`}
+                  onClick={() =>
                     toggleSave({
                       id: reel.id,
                       title: reel.title,
                       titleEn: reel.titleEn,
                       category: 'فيديوهات تقنية',
-                      categoryLabel: reelCategory,
-                      description: reel.description,
-                      descriptionEn: reel.descriptionEn,
+                      categoryLabel: isEn ? 'Videos' : 'فيديوهات',
+                      description: reel.caption,
+                      descriptionEn: reel.captionEn,
                       type: 'video',
+                      url: reel.liveUrl,
+                      image: reel.cover,
                       tags: reel.tags
-                    });
-                  }}
-                  title={isSavedItem ? (isEn ? "Saved" : "محفوظ") : (isEn ? "Save" : "حفظ")}
+                    })
+                  }
+                  aria-pressed={saved}
+                  aria-label={saved ? (isEn ? 'Saved' : 'محفوظ') : (isEn ? 'Save' : 'حفظ')}
+                  tabIndex={isActive ? 0 : -1}
                 >
-                  <div className="action-circle-icon">
-                    {isSavedItem ? <BookmarkCheck size={20} /> : <Bookmark size={20} />}
-                  </div>
-                  <span className="action-label-count">{isSavedItem ? (isEn ? "Saved" : "محفوظ") : (isEn ? "Save" : "حفظ")}</span>
+                  <span className="reel-action-icon">{saved ? <BookmarkCheck size={22} /> : <Bookmark size={22} />}</span>
+                  <span className="reel-action-label">{saved ? (isEn ? 'Saved' : 'محفوظ') : (isEn ? 'Save' : 'حفظ')}</span>
                 </button>
 
-                {/* Share Button */}
                 <button
                   type="button"
-                  className="cinema-action-btn"
-                  onClick={(e) => handleShare(reel.id, e)}
-                  title={isEn ? "Share" : "مشاركة"}
+                  className="reel-action"
+                  onClick={() => handleShare(reel)}
+                  aria-label={isEn ? 'Share' : 'مشاركة'}
+                  tabIndex={isActive ? 0 : -1}
                 >
-                  <div className="action-circle-icon">
-                    {copiedId === reel.id ? <Check size={19} color="#10b981" /> : <Share2 size={19} />}
-                  </div>
-                  <span className="action-label-count">{copiedId === reel.id ? (isEn ? "Copied" : "تم") : (isEn ? "Share" : "مشاركة")}</span>
+                  <span className="reel-action-icon">{copiedId === reel.id ? <Check size={22} /> : <Share2 size={21} />}</span>
+                  <span className="reel-action-label">{copiedId === reel.id ? (isEn ? 'Copied' : 'تم النسخ') : (isEn ? 'Share' : 'مشاركة')}</span>
                 </button>
 
+                {reel.liveUrl && (
+                  <a
+                    className="reel-action reel-action--live"
+                    href={reel.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={isEn ? 'Open live site' : 'فتح الموقع الحي'}
+                    tabIndex={isActive ? 0 : -1}
+                  >
+                    <span className="reel-action-icon"><ExternalLink size={20} /></span>
+                    <span className="reel-action-label">{isEn ? 'Live' : 'مباشر'}</span>
+                  </a>
+                )}
               </div>
-            </article>
+            </li>
           );
         })}
-        </div>
+      </ol>
+
+      {/* Desktop up / down navigation (keyboard ↑/↓ also works) */}
+      <div className="reels-nav">
+        <button
+          type="button"
+          className="reels-nav-btn"
+          onClick={() => goTo(targetIndexRef.current - 1)}
+          disabled={activeIndex === 0}
+          aria-label={isEn ? 'Previous video' : 'الفيديو السابق'}
+        >
+          <ChevronUp size={22} />
+        </button>
+        <button
+          type="button"
+          className="reels-nav-btn"
+          onClick={() => goTo(targetIndexRef.current + 1)}
+          disabled={activeIndex === FEED_REELS.length - 1}
+          aria-label={isEn ? 'Next video' : 'الفيديو التالي'}
+        >
+          <ChevronDown size={22} />
+        </button>
       </div>
 
-      {/* 5. Comments Slide-up Drawer */}
-      {activeCommentReel && (
-        <div className="cinema-comments-overlay" onClick={() => setActiveCommentReel(null)}>
-          <div className="cinema-comments-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="comments-modal-header">
-              <div className="comments-header-title">
-                <MessageSquare size={18} style={{ color: 'var(--accent-cyan, #00d2ff)' }} />
-                <h3>{isEn ? `Project Comments (${(commentsState[activeCommentReel.id] || []).length})` : `تعليقات المشروع (${(commentsState[activeCommentReel.id] || []).length})`}</h3>
-              </div>
-              <button 
-                type="button" 
-                className="comments-close-btn"
-                onClick={() => setActiveCommentReel(null)}
-              >
+      {/* Comments drawer */}
+      {commentReel && (
+        <div className="reels-comments-overlay" onClick={() => setCommentReelId(null)}>
+          <div
+            className="reels-comments-sheet"
+            role="dialog"
+            aria-modal="true"
+            aria-label={isEn ? 'Comments' : 'التعليقات'}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="reels-comments-header">
+              <h3>{isEn ? `Comments (${commentList.length})` : `التعليقات (${commentList.length})`}</h3>
+              <button type="button" className="reels-comments-close" onClick={() => setCommentReelId(null)} aria-label={isEn ? 'Close' : 'إغلاق'}>
                 <X size={18} />
               </button>
             </div>
 
-            {/* Comments List */}
-            <div className="comments-modal-list">
-              {(commentsState[activeCommentReel.id] || []).length === 0 ? (
-                <div className="empty-comments-state">
-                  <p>{isEn ? "No comments yet. Share your feedback!" : "لا توجد تعليقات بعد. كن أول من يشارك برأيه!"}</p>
-                </div>
+            <div className="reels-comments-list">
+              {commentList.length === 0 ? (
+                <p className="reels-comments-empty">
+                  {isEn ? 'No comments yet. Share your feedback!' : 'لا توجد تعليقات بعد. كن أول من يشارك برأيه!'}
+                </p>
               ) : (
-                (commentsState[activeCommentReel.id] || []).map((c) => (
-                  <div key={c.id} className="comment-list-item">
-                    <div className="comment-author-avatar">
-                      {c.author.charAt(0).toUpperCase()}
-                    </div>
-                    <div className="comment-content-box">
-                      <div className="comment-top-row">
-                        <span className="comment-author">{isEn ? (c.authorEn || c.author) : c.author}</span>
-                        <span className="comment-date">{isEn ? (c.timeAgoEn || c.timeAgo) : c.timeAgo}</span>
+                commentList.map(c => (
+                  <div key={c.id} className="reels-comment">
+                    <div className="reels-comment-avatar">{c.author.charAt(0).toUpperCase()}</div>
+                    <div className="reels-comment-body">
+                      <div className="reels-comment-top">
+                        <span className="reels-comment-author">{isEn ? c.authorEn || c.author : c.author}</span>
+                        <span className="reels-comment-date">{isEn ? c.timeAgoEn || c.timeAgo : c.timeAgo}</span>
                       </div>
-                      <p className="comment-text">{isEn ? (c.contentEn || c.content) : c.content}</p>
+                      <p className="reels-comment-text">{isEn ? c.contentEn || c.content : c.content}</p>
                     </div>
                   </div>
                 ))
               )}
             </div>
 
-            {/* Add Comment Bar */}
-            <form className="comments-input-bar" onSubmit={handleAddComment}>
-              {(() => {
-                const logged = getLoggedInUser();
-                return logged ? (
-                  <div
-                    className="reel-commenter-badge"
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      padding: '4px 10px',
-                      marginBottom: '8px',
-                      borderRadius: '16px',
-                      background: 'rgba(14, 165, 233, 0.12)',
-                      border: '1px solid rgba(56, 189, 248, 0.25)',
-                      color: 'var(--accent-cyan, #38bdf8)',
-                      fontSize: '0.8rem',
-                      fontWeight: 600,
-                      width: 'fit-content'
-                    }}
-                  >
-                    {logged.avatar ? (
-                      <img
-                        src={logged.avatar}
-                        alt=""
-                        style={{ width: '16px', height: '16px', borderRadius: '50%', objectFit: 'cover' }}
-                      />
-                    ) : (
-                      <User size={13} />
-                    )}
-                    <span>{logged.name}</span>
-                  </div>
-                ) : (
-                  <div
-                    className="reel-commenter-prompt"
-                    onClick={() => requireAuth()}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      padding: '4px 10px',
-                      marginBottom: '8px',
-                      borderRadius: '16px',
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      border: '1px dashed rgba(255, 255, 255, 0.2)',
-                      color: '#94a3b8',
-                      fontSize: '0.8rem',
-                      cursor: 'pointer',
-                      width: 'fit-content'
-                    }}
-                  >
-                    <User size={13} />
-                    <span>{isEn ? 'Sign in to comment as yourself' : 'سجل الدخول للتعليق باسمك'}</span>
-                  </div>
-                );
-              })()}
-              <div className="comment-input-row">
-                <input 
+            <form className="reels-comments-form" onSubmit={handleAddComment}>
+              {!loggedUser && (
+                <button type="button" className="reels-comments-signin" onClick={() => requireAuth()}>
+                  <User size={13} />
+                  <span>{isEn ? 'Sign in to comment as yourself' : 'سجل الدخول للتعليق باسمك'}</span>
+                </button>
+              )}
+              <div className="reels-comments-row">
+                <input
                   type="text"
-                  placeholder={getLoggedInUser() 
-                    ? (isEn ? "Add your engineering feedback..." : "أضف رأيك أو استفسارك الهندسي...")
-                    : (isEn ? "Please sign in to write a comment..." : "يرجى تسجيل الدخول للتعليق...")}
                   value={commentInput}
-                  onChange={(e) => setCommentInput(e.target.value)}
-                  onFocus={() => {
-                    if (!getLoggedInUser()) requireAuth();
-                  }}
-                  className="comment-text-input"
+                  onChange={e => setCommentInput(e.target.value)}
+                  onFocus={() => { if (!getLoggedInUser()) requireAuth(); }}
+                  placeholder={loggedUser
+                    ? (isEn ? 'Add a comment...' : 'أضف تعليقاً...')
+                    : (isEn ? 'Please sign in to write a comment...' : 'يرجى تسجيل الدخول للتعليق...')}
+                  className="reels-comments-input"
                   required
                 />
-                <button type="submit" className="comment-send-btn">
+                <button type="submit" className="reels-comments-send" aria-label={isEn ? 'Send' : 'إرسال'}>
                   <Send size={16} />
                 </button>
               </div>

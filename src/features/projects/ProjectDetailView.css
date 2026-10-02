@@ -1255,3 +1255,56 @@
     display: none;
   }
 }
+
+/* Phones: the action row (save / share / PDF / PPTX, or the article's like / save /
+   comments / share) overflowed the screen and wrapped labels inside the buttons.
+   Lay it out as an even 2-column grid with single-line labels. */
+@media (max-width: 640px) {
+  .project-meta-action-bar {
+    justify-content: stretch;
+  }
+
+  .project-action-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+  }
+
+  .project-action-buttons > .project-icon-btn {
+    justify-content: center;
+    min-height: 42px;
+    padding: 8px 10px;
+    white-space: nowrap;
+    min-width: 0;
+  }
+
+  .project-action-buttons > .project-icon-btn .btn-text-responsive {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* Book banner above the inquiry box: the book itself opens the reader. Dark mode
+   uses a lifted slate-navy panel instead of a near-black one. */
+.project-bookcase-banner {
+  margin: 2.5rem 0;
+  padding: 2.5rem 1.5rem;
+  border-radius: 18px;
+  text-align: center;
+  background: radial-gradient(circle at 50% 25%, rgba(56, 189, 248, 0.18) 0%, transparent 70%),
+              linear-gradient(180deg, #172840 0%, #1c304d 100%);
+  border: 1px solid rgba(56, 189, 248, 0.28);
+}
+
+[data-theme="light"] .project-bookcase-banner {
+  background: radial-gradient(circle at 50% 25%, rgba(2, 132, 199, 0.12) 0%, transparent 70%),
+              #f1f5f9;
+  border-color: rgba(2, 132, 199, 0.22);
+}
+
+.project-bookcase-banner .book-3d-wrapper:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 8px;
+  border-radius: 6px;
+}

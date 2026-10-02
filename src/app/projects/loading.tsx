@@ -5,6 +5,7 @@ import '@/components/ui/Skeleton.css';
 import { SkLine, SkLines, SkFill, SkBox, SkText } from '@/components/ui/Sk';
 import '@/features/projects/LiveProjectsShowcase.css';
 import '@/features/projects/ProjectsCatalogSection.css';
+import { StickyFilterBarSkeleton } from '@/components/ui/StickyFilterBar';
 
 // Mirrors /projects: page header, live-projects spotlight, then the catalog grid.
 export default function ProjectsLoading() {
@@ -36,6 +37,8 @@ export default function ProjectsLoading() {
           <div className="catalog-hero-title"><SkText words={5} /></div>
           <div className="catalog-search-bar" style={{ position: 'relative', minHeight: 49 }}><SkFill /></div>
         </div>
+        {/* ≤1024px: compact sticky filter bar (desktop rows below are hidden there) */}
+        <StickyFilterBarSkeleton chipWidths={[96, 150, 150, 170, 160, 140]} />
         <div className="catalog-categories-bar">
           {[125, 178, 178, 239, 227, 191].map((w, i) => <SkBox key={i} w={w} h={39} r={999} />)}
         </div>
