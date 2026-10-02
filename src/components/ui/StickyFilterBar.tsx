@@ -18,7 +18,7 @@
 
 import React, { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Search, SlidersHorizontal, X, RotateCcw, ChevronUp } from 'lucide-react';
+import { Search, SlidersHorizontal, X, RotateCcw } from 'lucide-react';
 import './StickyFilterBar.css';
 
 export interface FilterChip {
@@ -91,10 +91,10 @@ export function StickyFilterBar({
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
-  // 'extra': tablet "Filter" button (sort / type only). 'all': the phone pull-up
-  // sheet with search + categories + the extra filters.
+  // 'extra': tablet "Filter" button (sort / type only). 'all': the phone bottom
+  // sheet (search + categories + the extra filters), opened by the "تصفية" button.
   const [sheetMode, setSheetMode] = useState<'extra' | 'all'>('extra');
-  const pillRef = useRef<HTMLButtonElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const dragRef = useRef<{ y: number; dy: number } | null>(null);
   const [mounted, setMounted] = useState(false);
 
@@ -235,28 +235,6 @@ export function StickyFilterBar({
     setSheetOpen(true);
   };
 
-  /* Phone pill: tap, or swipe it upward, to pull the sheet up */
-  const pillGesture = {
-    onPointerDown: (e: React.PointerEvent) => {
-      dragRef.current = { y: e.clientY, dy: 0 };
-    },
-    onPointerMove: (e: React.PointerEvent) => {
-      const d = dragRef.current;
-      if (!d) return;
-      d.dy = e.clientY - d.y;
-      if (d.dy < -18) {
-        dragRef.current = null;
-        openSheet('all');
-      }
-    },
-    onPointerUp: () => {
-      dragRef.current = null;
-    },
-    onPointerCancel: () => {
-      dragRef.current = null;
-    }
-  };
-
   /* Sheet: drag the handle / header down to close */
   const sheetDrag = {
     onPointerDown: (e: React.PointerEvent) => {
@@ -323,7 +301,7 @@ export function StickyFilterBar({
     return () => {
       document.removeEventListener('keydown', onKey);
       document.documentElement.style.overflow = prevOverflow;
-      (sheetModeRef.current === 'all' ? pillRef.current : filterBtnRef.current)?.focus();
+      (sheetModeRef.current === 'all' ? triggerRef.current : filterBtnRef.current)?.focus();
     };
   }, [sheetOpen]);
 
@@ -453,6 +431,23 @@ export function StickyFilterBar({
   return (
     <>
       <div ref={sentinelRef} className="sfb-sentinel" aria-hidden="true" />
+      {/* Phones: one filter-icon button; the bottom sheet opens only when it is pressed */}
+      <div className="sfb-mobile" dir={dir}>
+        <span className="sfb-mobile-count" aria-live="polite">{t.results}</span>
+        <button
+          ref={triggerRef}
+          type="button"
+          className={`sfb-mobile-btn ${activeCount > 0 ? 'is-active' : ''}`}
+          onClick={() => openSheet('all')}
+          aria-haspopup="dialog"
+          aria-expanded={sheetOpen && sheetMode === 'all'}
+          aria-label={activeCount > 0 ? `${t.filterAll} (${activeCount})` : t.filterAll}
+          title={t.filterAll}
+        >
+          <SlidersHorizontal size={19} aria-hidden="true" />
+          {activeCount > 0 && <span className="sfb-badge" aria-hidden="true">{activeCount}</span>}
+        </button>
+      </div>
       <div
         ref={barRef}
         className="sfb"
@@ -579,26 +574,6 @@ export function StickyFilterBar({
         </div>
       </div>
       {sheetNode}
-      {mounted && !sheetOpen && createPortal(
-        <button
-          ref={pillRef}
-          type="button"
-          className={`sfb-pill ${activeCount > 0 ? 'is-active' : ''}`}
-          dir={dir}
-          onClick={() => openSheet('all')}
-          aria-haspopup="dialog"
-          aria-label={`${t.filterAll}: ${activeChip?.label || t.all}, ${t.results}`}
-          {...pillGesture}
-        >
-          <span className="sfb-pill-grip" aria-hidden="true"><ChevronUp size={14} /></span>
-          <SlidersHorizontal size={16} aria-hidden="true" />
-          <span className="sfb-pill-label">{activeChip?.label || t.all}</span>
-          <span className="sfb-pill-sep" aria-hidden="true">·</span>
-          <span className="sfb-pill-count">{t.results}</span>
-          {activeCount > 0 && <span className="sfb-badge" aria-hidden="true">{activeCount}</span>}
-        </button>,
-        document.body
-      )}
     </>
   );
 }

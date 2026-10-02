@@ -665,12 +665,11 @@
 }
 
 /* =========================================================================
-   PHONES — filters live in a pull-up sheet
-   The top bar is gone on phones; a small floating pill at the bottom shows
-   the current category + result count. Tap it or swipe it up to pull the
-   sheet (search, categories, sort/type); drag the sheet down to close it.
+   PHONES — a single filter-icon button; the bottom sheet (search,
+   categories, sort) opens only when it is pressed. Drag the sheet down
+   or tap outside to close it.
    ========================================================================= */
-.sfb-pill {
+.sfb-mobile {
   display: none;
 }
 
@@ -704,119 +703,99 @@
     display: none !important;
   }
 
-  .sfb-pill {
-    --pill-bg: rgba(8, 12, 20, 0.82);
-    --pill-border: rgba(255, 255, 255, 0.12);
-    --pill-text: #e2e8f0;
-    --pill-muted: #94a3b8;
-    --sfb-accent: #00d2ff;
-    position: fixed;
-    left: 50%;
-    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-    z-index: 950;
-    display: inline-flex;
+  .sfb-mobile {
+    display: flex;
     align-items: center;
-    gap: 8px;
-    max-width: calc(100vw - 32px);
-    height: 48px;
-    padding: 0 18px;
-    border-radius: 999px;
-    border: 1px solid var(--pill-border);
-    background: var(--pill-bg);
-    color: var(--pill-text);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(18px) saturate(160%);
-    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    justify-content: space-between;
+    gap: 12px;
+    margin: 4px 0 16px;
     font-family: var(--font-readex), sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    white-space: nowrap;
-    transform: translateX(-50%);
-    touch-action: none;
-    -webkit-tap-highlight-color: transparent;
-    animation: sfbPillIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
-  .sfb-pill svg {
-    color: var(--sfb-accent);
-    flex-shrink: 0;
-  }
-
-  .sfb-pill-grip {
-    position: absolute;
-    top: -9px;
-    left: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 16px;
-    margin-left: -17px;
-    border-radius: 999px;
-    border: 1px solid var(--pill-border);
-    background: var(--pill-bg);
-    animation: sfbGripHint 2.6s ease-in-out 1s 2;
-  }
-
-  .sfb-pill-label {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 46vw;
-  }
-
-  .sfb-pill-sep,
-  .sfb-pill-count {
-    color: var(--pill-muted);
+  .sfb-mobile-count {
+    color: var(--text-faint, #94a3b8);
+    font-size: 13.5px;
     font-weight: 500;
   }
 
-  .sfb-pill.is-active {
-    border-color: rgba(0, 210, 255, 0.55);
+  .sfb-mobile-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-main, #e2e8f0);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
   }
 
-  .sfb-pill:active {
-    transform: translateX(-50%) scale(0.96);
+  .sfb-mobile-btn svg {
+    color: #00d2ff;
   }
 
-  .sfb-pill:focus-visible {
-    outline: 2px solid var(--sfb-accent);
-    outline-offset: 3px;
+  .sfb-mobile-btn:active {
+    transform: scale(0.97);
   }
 
-  [data-theme="light"] .sfb-pill {
-    --pill-bg: rgba(255, 255, 255, 0.88);
-    --pill-border: rgba(15, 23, 42, 0.1);
-    --pill-text: #0f172a;
-    --pill-muted: #64748b;
-    --sfb-accent: #0284c7;
-    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.16), inset 0 1px 0 #fff;
+  .sfb-mobile-btn.is-active {
+    border-color: rgba(0, 210, 255, 0.5);
+    background: rgba(0, 210, 255, 0.08);
+  }
+
+  .sfb-mobile-btn:focus-visible {
+    outline: 2px solid #00d2ff;
+    outline-offset: 2px;
+  }
+
+  .sfb-mobile-btn .sfb-badge {
+    position: absolute;
+    top: -6px;
+    inset-inline-end: -6px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    background: #00d2ff;
+    color: #020617;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 18px;
+    text-align: center;
+    box-shadow: none;
+  }
+
+  [data-theme="light"] .sfb-mobile-btn {
+    border-color: #e2e8f0;
+    background: #ffffff;
+    color: #0f172a;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+  }
+
+  [data-theme="light"] .sfb-mobile-btn svg {
+    color: #0284c7;
+  }
+
+  [data-theme="light"] .sfb-mobile-btn.is-active {
+    border-color: rgba(2, 132, 199, 0.45);
+    background: #f0f9ff;
+  }
+
+  [data-theme="light"] .sfb-mobile-btn .sfb-badge {
+    background: #0284c7;
+    color: #ffffff;
   }
 
   .sfb-sheet {
     max-height: 82vh;
     max-height: 82dvh;
-  }
-}
-
-@keyframes sfbPillIn {
-  from {
-    opacity: 0;
-    transform: translate(-50%, 24px);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-}
-
-@keyframes sfbGripHint {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .sfb-pill,
-  .sfb-pill-grip {
-    animation: none;
   }
 }
