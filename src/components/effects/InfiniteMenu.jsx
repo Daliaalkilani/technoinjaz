@@ -443,6 +443,9 @@ class ArcballControl {
   rotationAxis = vec3.fromValues(1, 0, 0);
   snapDirection = vec3.fromValues(0, 0, -1);
   snapTargetDirection;
+  // Per-frame rotation supplied by the auto-tour (a scripted "hand" drag). It feeds the
+  // same velocity smoothing as a real drag, so the motion-stretch and info fade react.
+  tourRotation = null;
   EPSILON = 0.1;
   IDENTITY_QUAT = quat.create();
 
@@ -510,7 +513,9 @@ class ArcballControl {
       const INTENSITY = 0.1 * timeScale;
       quat.slerp(this.pointerRotation, this.pointerRotation, this.IDENTITY_QUAT, INTENSITY);
 
-      if (this.snapTargetDirection) {
+      if (this.tourRotation) {
+        quat.copy(snapRotation, this.tourRotation);
+      } else if (this.snapTargetDirection) {
         const a = this.snapTargetDirection;
         const b = this.snapDirection;
         const sqrDist = vec3.squaredDistance(a, b);
@@ -609,13 +614,20 @@ class InfiniteGridMenu {
   targetMemberIndex = 0;
   targetVertexIndex = -1;
   dwellTimer = 0;
-  DWELL_DURATION = 4500;
+  dwellDuration = 4800;
   isTransitioning = false;
   microDriftAngle = 0;
+  // Scripted hand-drag between members: start direction, elapsed/total time, arc side.
+  tourStart = vec3.create();
+  tourElapsed = 0;
+  tourDuration = 1;
+  tourBow = 0.22;
 
   constructor(canvas, items, onActiveItemChange, onMovementChange, onInit = null, scale = 1.0) {
     this.canvas = canvas;
     this.items = items || [];
+    const real = this.items.map((it, i) => (it && !it.isPlaceholder ? i : -1)).filter(i => i >= 0);
+    this.tourMembers = real.length ? real : this.items.map((_, i) => i);
     this.onActiveItemChange = onActiveItemChange || (() => {});
     this.onMovementChange = onMovementChange || (() => {});
     this.scaleFactor = scale;
@@ -928,6 +940,7 @@ class InfiniteGridMenu {
       this.wasDragging = true;
       this.dwellTimer = 0;
       this.isTransitioning = false;
+      this.control.tourRotation = null;
       const nearestVertexIndex = this.#findNearestVertexIndex();
       this.targetMemberIndex = nearestVertexIndex % Math.max(1, this.items.length);
       this.targetVertexIndex = nearestVertexIndex;
@@ -943,28 +956,42 @@ class InfiniteGridMenu {
         const nearestVertexIndex = this.#findNearestVertexIndex();
         this.targetMemberIndex = nearestVertexIndex % Math.max(1, this.items.length);
         this.targetVertexIndex = nearestVertexIndex;
-        this.isTransitioning = true;
+        // Settle onto the released member (classic snap), then dwell there.
+        this.isTransitioning = false;
         this.dwellTimer = 0;
         this.onActiveItemChange(this.targetMemberIndex);
       }
 
-      // Auto-tour stepped cycle
+      // Auto-tour: glide to the first real member, then hop between real members only
       if (this.targetVertexIndex < 0) {
-        this.targetMemberIndex = 0;
-        this.targetVertexIndex = this.#findBestVertexForMember(0);
-        this.onActiveItemChange(0);
+        this.targetMemberIndex = this.tourMembers[0] ?? 0;
+        this.targetVertexIndex = this.#findBestVertexForMember(this.targetMemberIndex);
+        this.#beginTourMove();
+        this.onActiveItemChange(this.targetMemberIndex);
       }
 
       if (this.isTransitioning) {
-        const targetWorldPos = vec3.normalize(vec3.create(), this.#getVertexWorldPosition(this.targetVertexIndex));
-        this.control.snapTargetDirection = targetWorldPos;
-        const sqrDist = vec3.squaredDistance(targetWorldPos, this.control.snapDirection);
-        if (sqrDist < 0.035) {
+        this.tourElapsed += deltaTime;
+        const t = Math.min(1, this.tourElapsed / this.tourDuration);
+        const vertexDir = vec3.normalize(vec3.create(), this.#getVertexWorldPosition(this.targetVertexIndex));
+        const desired = this.#tourPathPoint(t);
+        // Rotate so the target vertex sits exactly where the hand has dragged it to.
+        const rot = quat.create();
+        if (vec3.squaredDistance(vertexDir, desired) > 1e-10) this.control.quatFromVectors(vertexDir, desired, rot, 1);
+        this.control.tourRotation = rot;
+        this.control.snapTargetDirection = undefined;
+        // A hand pulling the sphere eases the camera back mid-swipe, like a manual drag.
+        cameraTargetZ += Math.sin(Math.PI * t) * 1.4 * this.scaleFactor;
+
+        if (t >= 1) {
           this.isTransitioning = false;
+          this.control.tourRotation = null;
           this.dwellTimer = 0;
+          this.dwellDuration = 4200 + Math.random() * 1400;
           this.onActiveItemChange(this.targetMemberIndex);
         }
       } else {
+        this.control.tourRotation = null;
         this.dwellTimer += deltaTime;
         const snapDirection = vec3.normalize(vec3.create(), this.#getVertexWorldPosition(this.targetVertexIndex));
 
@@ -975,12 +1002,16 @@ class InfiniteGridMenu {
         vec3.normalize(snapDirection, snapDirection);
         this.control.snapTargetDirection = snapDirection;
 
-        if (this.dwellTimer >= this.DWELL_DURATION) {
-          const nextIndex = (this.targetMemberIndex + 1) % Math.max(1, this.items.length);
+        if (this.dwellTimer >= this.dwellDuration) {
+          const members = this.tourMembers;
+          const pos = members.indexOf(this.targetMemberIndex);
+          // After a manual drag onto a vacant seat, resume with the next real member.
+          const nextIndex = pos >= 0
+            ? members[(pos + 1) % members.length]
+            : (members.find(i => i > this.targetMemberIndex) ?? members[0]);
           this.targetMemberIndex = nextIndex;
           this.targetVertexIndex = this.#findBestVertexForMember(nextIndex);
-          this.isTransitioning = true;
-          this.dwellTimer = 0;
+          this.#beginTourMove();
           this.onActiveItemChange(this.targetMemberIndex);
         }
       }
@@ -988,6 +1019,33 @@ class InfiniteGridMenu {
 
     this.camera.position[2] += (cameraTargetZ - this.camera.position[2]) / damping;
     this.#updateCameraMatrix();
+  }
+
+  // Starts a hand-like swipe from the target vertex's current spot to the front.
+  #beginTourMove() {
+    vec3.normalize(this.tourStart, this.#getVertexWorldPosition(this.targetVertexIndex));
+    const angle = Math.acos(Math.max(-1, Math.min(1, vec3.dot(this.tourStart, this.control.snapDirection))));
+    // Longer hops take longer, but a hand never crawls: ~1.1s for a short hop, ~2.3s max.
+    this.tourDuration = Math.min(2300, 1100 + angle * 650);
+    this.tourElapsed = 0;
+    // Alternate the side of the arc so consecutive swipes don't look mechanical.
+    this.tourBow = (this.tourBow > 0 ? -1 : 1) * (0.16 + Math.random() * 0.12);
+    this.isTransitioning = true;
+    this.control.snapTargetDirection = undefined;
+  }
+
+  // Point on a bowed arc from tourStart to the front, with ease-in-out timing:
+  // the "hand" accelerates, sweeps through a slight curve and decelerates into place.
+  #tourPathPoint(t) {
+    const e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    const a = this.tourStart;
+    const b = this.control.snapDirection;
+    const p = vec3.lerp(vec3.create(), a, b, e);
+    const side = vec3.cross(vec3.create(), a, b);
+    if (vec3.squaredLength(side) < 1e-8) vec3.set(side, 0, 1, 0);
+    vec3.normalize(side, side);
+    vec3.scaleAndAdd(p, p, side, Math.sin(Math.PI * e) * this.tourBow);
+    return vec3.normalize(p, p);
   }
 
   #findBestVertexForMember(memberIndex) {
