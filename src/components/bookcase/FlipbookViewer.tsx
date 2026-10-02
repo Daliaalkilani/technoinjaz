@@ -96,6 +96,8 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [fitKey, setFitKey] = useState(0); // bumps on resize → sheets re-fitted to the screen
   const [isSpread, setIsSpread] = useState(true); // two-page spread vs single page
+  const sheetCssWidthRef = useRef(0); // on-screen width of one sheet (CSS px)
+  const [subpixelFix, setSubpixelFix] = useState(0); // keeps the book on whole pixels
 
   // Load PDF.js from local vendor bundle
   const loadPdfJs = useCallback((): Promise<any> => loadPdfJsLib(), []);
@@ -114,8 +116,14 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
 
     try {
       const page = await pdfDoc.getPage(pageNum);
-      const pixelRatio = Math.min(window.devicePixelRatio || 1, window.innerWidth < 700 ? 1.75 : 2);
-      const baseScale = 1.35;
+      // Render at the sheet's real on-screen size × device pixel density (sharp text on
+      // any screen); at least 1.5× for zoom headroom, capped to keep canvases light.
+      const dpr = Math.min(Math.max(window.devicePixelRatio || 1, 1), 3);
+      const shownW = sheetCssWidthRef.current || A4_W;
+      // exactly 1 canvas pixel per device pixel: no up/down-sampling softening the text
+      const targetW = Math.min(Math.round(shownW * dpr), 2400);
+      const pixelRatio = 1;
+      const baseScale = targetW / A4_W;
 
       // Every sheet is an A4 sheet (owner's rule, for current and future files): the
       // canvas has A4 proportions and the PDF page is fitted and centred on it, so
@@ -241,6 +249,7 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
         setIsSpread(spread);
         const bookHeight = Math.floor(sheetH);
         const bookWidth = Math.floor(sheetH / R);
+        sheetCssWidthRef.current = bookWidth;
 
         const viewerContainer = bookElementRef.current;
         if (!viewerContainer) return;
@@ -304,6 +313,15 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
         viewerContainer.style.maxWidth = `${spread ? bookWidth * 2 : bookWidth}px`;
         viewerContainer.style.minWidth = '0px';
         viewerContainer.style.minHeight = '0px';
+        // centring can leave the book on a half pixel: measure and compensate
+        requestAnimationFrame(() => {
+          const stage = viewerContainer.parentElement?.getBoundingClientRect();
+          if (!stage) return;
+          const w = spread ? bookWidth * 2 : bookWidth;
+          const left = stage.left + (stage.width - w) / 2;
+          const frac = left - Math.floor(left);
+          setSubpixelFix(frac > 0.01 ? -frac : 0);
+        });
 
         // Arabic book in every UI language (the uploaded documents are Arabic): page 1
         // on the right, page 2 on the left, pages turn from left to right. page-flip
@@ -382,13 +400,17 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
     }
     // The book is mirrored (RTL): the closed front cover sits on the LEFT half of the
     // spread and the back cover on the RIGHT half, so they shift the other way.
+    // whole pixels only (25% of an odd width lands on a half pixel → blurry pages),
+    // plus the correction that puts the book on an exact pixel boundary
+    const half = Math.round((sheetCssWidthRef.current || 0) / 2);
+    const fix = subpixelFix;
     if (currentPage <= 1) {
-      return 'translateX(25%)';
+      return `translateX(${half + fix}px)`;
     }
     if (totalPages > 1 && currentPage >= totalPages) {
-      return 'translateX(-25%)';
+      return `translateX(${-half + fix}px)`;
     }
-    return 'translateX(0)';
+    return `translateX(${fix}px)`;
   };
 
   // Keyboard navigation (Unified RTL reading: ArrowLeft, Space, PageDown to advance Right-to-Left)
