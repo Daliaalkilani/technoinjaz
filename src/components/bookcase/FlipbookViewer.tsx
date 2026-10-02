@@ -536,10 +536,11 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
           <div className="fb-nav-group" dir="rtl">
             <button
               type="button"
-              className="fb-nav-btn"
+              className="fb-nav-btn fb-nav-btn-prev"
               onClick={handlePrev}
               disabled={currentPage <= 1 || loading}
               title={isEn ? 'Previous Page' : 'الصفحة السابقة'}
+              aria-label={isEn ? 'Previous Page' : 'الصفحة السابقة'}
             >
               <ChevronRight size={18} />
               <span>{isEn ? 'Previous' : 'السابق'}</span>
@@ -555,6 +556,7 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
               onClick={handleNext}
               disabled={currentPage >= totalPages || loading}
               title={isEn ? 'Next Page' : 'الصفحة التالية'}
+              aria-label={isEn ? 'Next Page' : 'الصفحة التالية'}
             >
               <span>{isEn ? 'Next' : 'التالي'}</span>
               <ChevronLeft size={18} />

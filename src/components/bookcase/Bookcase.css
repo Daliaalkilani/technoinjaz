@@ -980,3 +980,176 @@
     display: none;
   }
 }
+
+/* =========================================================================
+   Expanded reader: the sheet takes the whole space — no title bar, no bottom
+   bar, no margins. Floating close button; prev / next on the sides (desktop)
+   or in the bottom corners (phones); small page counter at the bottom.
+   ========================================================================= */
+.flipbook-overlay.is-expanded .flipbook-modal {
+  position: relative;
+  background: #0b1120;
+}
+
+[data-theme="light"] .flipbook-overlay.is-expanded .flipbook-modal {
+  background: #e2e8f0;
+}
+
+/* title bar → just a floating close button */
+.flipbook-overlay.is-expanded .flipbook-header {
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  height: auto;
+  padding: 10px;
+  border: 0;
+  background: transparent;
+  z-index: 60;
+  pointer-events: none;
+  justify-content: flex-end;
+}
+
+.flipbook-overlay.is-expanded .flipbook-header-info {
+  display: none;
+}
+
+.flipbook-overlay.is-expanded .flipbook-header-actions {
+  pointer-events: auto;
+}
+
+.flipbook-overlay.is-expanded .fb-btn-close {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fff;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* the stage is the whole screen */
+.flipbook-overlay.is-expanded .flipbook-body {
+  flex: 1;
+  padding: 0;
+  background: transparent;
+}
+
+.flipbook-overlay.is-expanded .flipbook-stage-wrapper {
+  padding: 0;
+}
+
+.flipbook-overlay.is-expanded .page {
+  border: 0;
+  border-radius: 0;
+}
+
+/* bottom bar → floating controls */
+.flipbook-overlay.is-expanded .flipbook-footer {
+  position: absolute;
+  inset: 0;
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  pointer-events: none;
+  z-index: 55;
+}
+
+.flipbook-overlay.is-expanded .fb-hint-text {
+  display: none;
+}
+
+.flipbook-overlay.is-expanded .fb-nav-group {
+  display: contents;
+}
+
+.flipbook-overlay.is-expanded .fb-nav-btn {
+  position: absolute;
+  pointer-events: auto;
+  width: 52px;
+  height: 52px;
+  min-width: 0;
+  padding: 0;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fff;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.flipbook-overlay.is-expanded .fb-nav-btn span {
+  display: none;
+}
+
+.flipbook-overlay.is-expanded .fb-nav-btn svg {
+  width: 26px;
+  height: 26px;
+}
+
+.flipbook-overlay.is-expanded .fb-nav-btn:disabled {
+  opacity: 0.25;
+}
+
+.flipbook-overlay.is-expanded .fb-page-counter {
+  position: absolute;
+  pointer-events: none;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.72);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.75rem;
+}
+
+/* desktop / tablets: previous on the right side, next on the left side */
+@media (min-width: 641px) {
+  .flipbook-overlay.is-expanded .fb-nav-btn-prev {
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .flipbook-overlay.is-expanded .fb-nav-btn-next {
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  /* keep the sheets clear of the side arrows */
+  .flipbook-overlay.is-expanded .flipbook-body {
+    padding: 0 80px;
+  }
+}
+
+/* phones: the sheet fills the width, controls sit in the bottom corners */
+@media (max-width: 640px) {
+  .flipbook-overlay.is-expanded .fb-nav-btn {
+    width: 46px;
+    height: 46px;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  }
+  .flipbook-overlay.is-expanded .fb-nav-btn-prev {
+    right: 14px;
+  }
+  .flipbook-overlay.is-expanded .fb-nav-btn-next {
+    left: 14px;
+  }
+  .flipbook-overlay.is-expanded .fb-page-counter {
+    bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+  }
+  .flipbook-overlay.is-expanded .flipbook-body {
+    padding: 0 0 calc(70px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+[data-theme="light"] .flipbook-overlay.is-expanded .fb-nav-btn,
+[data-theme="light"] .flipbook-overlay.is-expanded .fb-btn-close,
+[data-theme="light"] .flipbook-overlay.is-expanded .fb-page-counter {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(15, 23, 42, 0.12);
+  color: #0f172a;
+}
