@@ -4,15 +4,6 @@
 
 اعتمد النموذج في مرحلة التنفيذ على **YOLOv8** للكشف عن الأشخاص و**DeepSORT** لتتبعهم عبر إطارات الفيديو، مع منطق برمجي لحساب مدة التواجد وربط النتائج ببيانات منظمة يمكن تصديرها إلى ملف Excel. أُجريت التجربة على مقطع فيديو يحاكي بيئة مكتبية، ولذلك تمثل النتائج **إثباتًا وظيفيًا لنموذج أولي** وليست تشغيلًا إنتاجيًا داخل شركة فعلية.
 
-<!-- IMAGE SLOT 1 — Featured image
-Primary source: Figure 4-2 from the project report: "تتبع الحضور الفعلي للموظفين داخل مناطق العمل المحددة"
-Source location: https://docs.google.com/document/d/1c6qrzLOwrhmDy2D607XDKhh_9sqhuNyr/edit#heading=h.8cwc8rvwo17v
-Suggested filename: employee-presence-tracking-work-zones.webp
-Alt: تتبع الأشخاص داخل مناطق عمل محددة باستخدام الرؤية الحاسوبية
-Caption: لقطة من التجربة توضح اكتشاف الأشخاص وتتبعهم داخل مناطق العمل المعرفة مسبقًا واحتساب زمن التواجد.
-IMPORTANT: use the original project screenshot after privacy/rights review; do not replace it with a generic stock image if the original is available.
--->
-
 ## حقائق المشروع
 
 | العنصر | البيانات |
@@ -49,28 +40,11 @@ IMPORTANT: use the original project screenshot after privacy/rights review; do n
 6. تسجيل البيانات المرتبطة بالمعرف والمنطقة والمدة والتاريخ.
 7. إخراج البيانات في صورة قابلة للمراجعة، بما في ذلك تصديرها إلى Excel في النموذج الموثق.
 
-<!-- IMAGE SLOT 2 — Workflow diagram
-Primary source: Figure 4-1 from the project report: "مخطط خوارزمية العمل للنظام"
-Source location: https://docs.google.com/document/d/1c6qrzLOwrhmDy2D607XDKhh_9sqhuNyr/edit#heading=h.9dwiuv9qliud
-Suggested filename: employee-tracking-system-workflow.webp
-Alt: مخطط سير عمل نظام كشف الأشخاص وتتبعهم وحساب زمن التواجد
-Caption: المسار العام للنظام من إدخال الفيديو إلى الكشف والتتبع ومنطق مناطق العمل وحساب الزمن وتسجيل النتائج.
--->
-
 ## التحديات التقنية
 
 من التحديات التي تناولها المشروع **تراكب الأشخاص داخل المشهد وفقدان التتبع بصورة مؤقتة**، وهي من المشكلات المعروفة في أنظمة التتبع متعدد الأجسام. كما أن الانتقال من نموذج تجريبي إلى تطبيق حقيقي يحتاج إلى التعامل مع متغيرات إضافية، مثل اختلاف الإضاءة، كثافة الأشخاص، تعدد الكاميرات، واستمرار هوية المتتبع عند خروجه من المشهد وعودته.
 
 ومن الجوانب المهمة أيضًا التمييز بين **معرف التتبع** و**هوية الموظف الفعلية**. النسخة الموثقة من المشروع تتبع الأشخاص داخل الفيديو، لكنها لا تقدم دليلًا على تنفيذ طبقة تحقق شخصية مستقلة مثل التعرف على الوجه أو بطاقات تعريف الموظفين.
-
-<!-- IMAGE SLOT 3 — Zone exit state
-Primary source: Figure 4-3 from the project report: "رصد مغادرة أحد الموظفين لمنطقة العمل المحددة"
-Source location: https://docs.google.com/document/d/1c6qrzLOwrhmDy2D607XDKhh_9sqhuNyr/edit#heading=h.xwz7p18c0al6
-Suggested filename: work-zone-exit-detection.webp
-Alt: رصد خروج شخص من منطقة العمل المحددة في النموذج التجريبي
-Caption: لقطة توضح تغير حالة منطقة العمل عند خروج المتتبع منها في سيناريو الاختبار.
-Editorial note: avoid wording that accuses the person of "التهرب من العمل"; describe only the observed exit from the defined zone.
--->
 
 ## النتائج الموثقة من النموذج الأولي
 
@@ -85,24 +59,6 @@ Editorial note: avoid wording that accuses the person of "التهرب من ال
 - تصدير البيانات إلى ملف Excel للمراجعة.
 
 تعبر هذه النتائج عن **نجاح وظيفي للنموذج الأولي**، ولا تمثل قياسًا لدقة نظام إنتاجي. لم يعرض المصدر قيمًا كمية خاصة بالمشروع مثل Precision أو Recall أو mAP أو FPS أو IDF1 أو معدل تبدل المعرفات، لذلك لا تُنسب للنسخة الحالية نسب دقة أو سرعة غير موثقة.
-
-<!-- IMAGE SLOT 4 — Data record
-Primary source: Figure 4-4 from the project report: "قاعدة بيانات النظام يظهر فيها ID الموظفين، أرقام المكاتب، مدة العمل والتاريخ"
-Source document: https://docs.google.com/document/d/1c6qrzLOwrhmDy2D607XDKhh_9sqhuNyr/edit
-Suggested filename: employee-tracking-time-database.webp
-Alt: سجل تجريبي لمعرفات التتبع ومناطق العمل ومدة التواجد والتاريخ
-Caption: مثال على تنظيم البيانات الزمنية الناتجة عن تجربة التتبع.
-Privacy note: blur or replace any identifiers that can be linked to real people before publication.
--->
-
-<!-- IMAGE SLOT 5 — Excel export
-Primary source: Figure 4-5 from the project report: "استخراج قاعدة البيانات في ملف إكسل"
-Source document: https://docs.google.com/document/d/1c6qrzLOwrhmDy2D607XDKhh_9sqhuNyr/edit
-Suggested filename: employee-presence-time-excel-report.webp
-Alt: تقرير Excel تجريبي لبيانات زمن التواجد داخل مناطق العمل
-Caption: نموذج من إخراج البيانات إلى Excel لتسهيل مراجعة السجلات الزمنية.
-Privacy note: use demo data or anonymized identifiers.
--->
 
 ## التقنيات المستخدمة
 
@@ -152,7 +108,7 @@ Privacy note: use demo data or anonymized identifiers.
 
 ## ملاحظة حول الخصوصية
 
-لأن هذا النوع من الأنظمة يعالج فيديو لأشخاص داخل بيئة عمل، فإن أي استخدام فعلي يحتاج إلى ضوابط واضحة تتعلق بالموافقة، والغرض من المراقبة، وصلاحيات الوصول، وفترة الاحتفاظ بالبيانات، وحماية الصور والسجلات. كما يُنصح باستخدام بيانات تجريبية أو مجهلة الهوية في الصور المنشورة على الموقع.
+لأن هذا النوع من الأنظمة يعالج فيديو لأشخاص داخل بيئة عمل، فإن أي استخدام فعلي يحتاج إلى ضوابط واضحة تتعلق بالموافقة، والغرض من المراقبة، وصلاحيات الوصول، وفترة الاحتفاظ بالبيانات، وحماية الصور والسجلات.
 
 ## هل تخطط لمشروع يعتمد على الرؤية الحاسوبية؟
 

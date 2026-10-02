@@ -4,16 +4,6 @@
 
 يعكس المشروع تجربة عملية في دمج تتبع اليد ومعالجة الفيديو مع واجهة تفاعلية واحدة، مع اختبار حالات استخدام فعلية مثل الرسم، تغيير اللون، الإيقاف المؤقت للتفاعل، والمسح الجزئي أو الكامل.
 
-<!-- FEATURED IMAGE
-Source: Project report, Figure 3-5 candidate (drawing on the virtual board)
-Original source URL: https://docs.google.com/drawings/u/0/d/1jzJJlNF-vSIqfE-_lqsvAB05-zNUklGz559XvvzKjBT4AY02SC9j-BvdERM42mgFzB80rITLLMWMxWx0-pzBETYvFwPFx9BuHw/image?w=529&h=1&rev=1&drawingRevisionAccessToken=mYX1eMPgo-Jq7A&ac=1&fmt=svg&parent=1QSATwthqPnApIHaQZ-MTrJQxFdwp15QR
-Suggested local asset: /images/projects/virtual-board/virtual-board-hand-drawing.webp
--->
-
-![تجربة الرسم على اللوح الافتراضي باستخدام حركة اليد](/images/projects/virtual-board/virtual-board-hand-drawing.webp)
-
-*تجربة عملية للرسم على اللوح الافتراضي من خلال تتبع حركة اليد أمام الكاميرا.*
-
 ## معلومات المشروع
 
 | العنصر | البيانات |
@@ -42,31 +32,11 @@ Suggested local asset: /images/projects/virtual-board/virtual-board-hand-drawing
 - **المسح الجزئي:** حذف جزء محدد من الكتابة أو الرسم باستخدام الإيماءة المخصصة للمسح.
 - **المسح الكامل:** استخدام أمر **Clear** لإزالة محتوى اللوح والبدء من جديد.
 
-<!-- IMAGE SLOT: No-interaction/open-hand state
-Source: Project report, Figure 3-3 candidate
-Original source URL: https://docs.google.com/drawings/u/0/d/1e7pyyLOioz_BuWBCd-c958a6BUY7HZjKEscpUB1CiJ18zI-j9EXpSMth2AjRmabslg6273sKKSxPY-WiSkfheGQAD6jm0BIZxQ/image?w=529&h=1&rev=1&drawingRevisionAccessToken=CjBmqIaoRdTgPw&ac=1&fmt=svg&parent=1QSATwthqPnApIHaQZ-MTrJQxFdwp15QR
-Suggested local asset: /images/projects/virtual-board/virtual-board-open-hand-pause.webp
--->
-
-![حالة إيقاف التفاعل عند بسط اليد أمام الكاميرا](/images/projects/virtual-board/virtual-board-open-hand-pause.webp)
-
-*إحدى حالات التحكم في النموذج؛ بسط اليد بالكامل يمنع تنفيذ أوامر غير مقصودة أثناء التوقف عن الرسم.*
-
 ## البيئة التقنية المستخدمة
 
 اعتمد النموذج على **Python** كلغة برمجة رئيسية، مع استخدام **Anaconda** لإدارة بيئة المشروع. كما جرى تثبيت واستخدام مكتبات **MediaPipe** لتتبع اليد، و**OpenCV** لمعالجة الصور والفيديو، و**NumPy** ضمن عمليات معالجة البيانات.
 
 تسمح هذه البنية بالتعامل مع تدفق الفيديو من الكاميرا وتحليل حركة اليد ثم تحديث واجهة اللوح وفق الإيماءة المكتشفة.
-
-<!-- OPTIONAL EXPLANATORY IMAGE — NOT A PROJECT SCREENSHOT
-Official MediaPipe source image:
-https://developers.google.com/static/mediapipe/images/solutions/hand-landmarks.png
-Suggested local asset after checking attribution requirements: /images/projects/virtual-board/mediapipe-hand-landmarks-reference.png
--->
-
-![مخطط توضيحي لنقاط تتبع اليد في MediaPipe](/images/projects/virtual-board/mediapipe-hand-landmarks-reference.png)
-
-*صورة توضيحية من وثائق MediaPipe تبين نقاط اليد المستخدمة في التتبع؛ لا تمثل لقطة من واجهة المشروع.*
 
 ## التحديات التقنية
 
@@ -75,16 +45,6 @@ Suggested local asset after checking attribution requirements: /images/projects/
 كما يمكن أن تسبب الحركات العشوائية أو وجود أشخاص وعناصر أخرى داخل مجال رؤية الكاميرا تشويشًا على عملية التتبع. وظهر أيضًا تأخير طفيف في تنفيذ بعض الأوامر عند تشغيل النموذج على أجهزة منخفضة المواصفات، إضافة إلى الحاجة إلى ضبط التوافق بين بيانات تتبع اليد وواجهة العرض الرقمية.
 
 هذه التحديات كانت جزءًا مهمًا من التجربة، لأنها أوضحت العوامل التي ينبغي مراعاتها عند الانتقال من نموذج تجريبي إلى تطبيق أكثر استقرارًا للاستخدام اليومي.
-
-<!-- IMAGE SLOT: Partial erase
-Source: Project report, Figure 3-6
-Original source URL: https://docs.google.com/drawings/u/0/d/1pgWwN1ddVO68aBe4wejfaP5AQVQ6z9MfHzSQJ588pPRvJorJwgmZUWES-nCu_zcf8ONxXK9d33Jig_n5nuLWvOmyRR7MrRNnVw/image?w=529&h=1&rev=1&drawingRevisionAccessToken=YzQgdmS1Yop9mw&ac=1&fmt=svg&parent=1QSATwthqPnApIHaQZ-MTrJQxFdwp15QR
-Suggested local asset: /images/projects/virtual-board/virtual-board-partial-erase.webp
--->
-
-![تجربة مسح جزء من الكتابة على اللوح الافتراضي](/images/projects/virtual-board/virtual-board-partial-erase.webp)
-
-*تجربة وظيفة المسح الجزئي لتعديل المحتوى دون حذف اللوح بالكامل.*
 
 ## نتائج النموذج الأولي
 
