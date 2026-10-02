@@ -1,6 +1,6 @@
-import droneNanoImg from '../assets/videos/video-drone-nano.png';
-import armWeldingImg from '../assets/videos/video-arm-welding.png';
-import armVisionImg from '../assets/videos/video-arm-vision.png';
+const droneNanoImg = '/images/videos/video-drone-nano.png';
+const armWeldingImg = '/images/videos/video-arm-welding.png';
+const armVisionImg = '/images/videos/video-arm-vision.png';
 
 export interface VideoItem {
   id: string;

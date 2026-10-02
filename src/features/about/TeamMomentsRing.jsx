@@ -128,18 +128,22 @@ export default function TeamMomentsRing({ onScrollDown = undefined } = {}) {
     photoUrls.forEach((url, idx) => {
       const img = new Image();
       img.crossOrigin = 'anonymous';
+      // Build textures on the first photo (something to show at once) and once all
+      // have settled, not on every arrival (each build redraws 24 tile canvases).
+      const settle = () => {
+        const valid = loadedImages.filter(Boolean).length;
+        if (valid > 0 && (valid === 1 || loadedCount === photoUrls.length)) buildPhotoTextures();
+      };
       img.onload = () => {
         if (!isMounted) return;
         loadedImages[idx] = img;
         loadedCount++;
-        buildPhotoTextures();
+        settle();
       };
       img.onerror = () => {
         if (!isMounted) return;
         loadedCount++;
-        if (loadedImages.filter(Boolean).length > 0) {
-          buildPhotoTextures();
-        }
+        settle();
       };
       img.src = url;
     });
@@ -220,6 +224,88 @@ export default function TeamMomentsRing({ onScrollDown = undefined } = {}) {
       }
 
       textures = { front, back };
+      scheduleBake();
+    }
+
+    /* ── Pre-baked tiles (performance) ─────────────────────────────────────
+       The ring used to draw every card each frame with shadowBlur, a rounded clip,
+       ctx.filter (light mode) and a stroke — 12 cards × 60 fps of the canvas'
+       most expensive operations on the main thread. The card (background, photo,
+       filter, border) is now drawn once into a canvas sized for its on-screen
+       size, and the shadow is one shared pre-blurred sprite; each frame only does
+       two drawImage calls per card with the same transform. Rebaked on resize
+       and theme change. */
+    let tiles = null;
+    let bakeHandle = 0;
+
+    // Photos arrive one by one and resize can fire repeatedly: coalesce into a single
+    // bake at the next idle moment instead of re-baking 24 cards each time.
+    function scheduleBake() {
+      if (bakeHandle) return;
+      const run = () => {
+        bakeHandle = 0;
+        if (isMounted) bakeTiles();
+      };
+      bakeHandle = window.requestIdleCallback
+        ? window.requestIdleCallback(run, { timeout: 400 })
+        : window.setTimeout(run, 120);
+    }
+
+    function bakeTiles() {
+      if (!textures.front.length || !K) return;
+      // on-screen card width ≈ K × RING.tile (device px); bake at ~1.6× that
+      const screenTile = K * RING.tile;
+      const TB = Math.max(256, Math.min(TS, Math.round(screenTile * 1.6)));
+      const u = TB / TS; // baked px per tile unit
+      const R = TS * RING.radius * u;
+      const pxPerTB = screenTile / TB; // screen px per baked px
+
+      const bake = (src, facing) => {
+        const c = mkc(TB, TB);
+        const x = c.getContext('2d');
+        x.translate(TB / 2, TB / 2);
+        roundRectPath(x, TB, TB, R);
+        x.clip();
+        x.fillStyle = isLight ? '#ffffff' : '#05070e';
+        x.fillRect(-TB / 2, -TB / 2, TB, TB);
+        if (isLight && facing) x.filter = 'contrast(1.08) saturate(1.06)';
+        x.drawImage(src, -TB / 2, -TB / 2, TB, TB);
+        x.filter = 'none';
+        const strokeW = (facing ? 6 : 3.5) * u;
+        x.strokeStyle = isLight
+          ? (facing ? 'rgba(2, 132, 199, 0.6)' : 'rgba(15, 23, 42, 0.18)')
+          : (facing ? 'rgba(0, 210, 255, 0.65)' : 'rgba(255, 255, 255, 0.25)');
+        x.lineWidth = strokeW;
+        roundRectPath(x, TB - strokeW, TB - strokeW, R);
+        x.stroke();
+        return c;
+      };
+
+      // Shadow sprite: blur/offset converted from screen px to baked px
+      const shadowSprite = (facing) => {
+        const blur = (isLight ? (facing ? 32 : 16) : (facing ? 28 : 12)) / pxPerTB;
+        const offY = (isLight ? (facing ? 14 : 6) : (facing ? 10 : 4)) / pxPerTB;
+        const pad = Math.ceil(blur * 1.6 + offY + 4);
+        const c = mkc(TB + pad * 2, TB + pad * 2);
+        const x = c.getContext('2d');
+        x.translate(c.width / 2, c.height / 2);
+        x.shadowColor = isLight
+          ? (facing ? 'rgba(15, 23, 42, 0.28)' : 'rgba(15, 23, 42, 0.1)')
+          : (facing ? 'rgba(0, 210, 255, 0.45)' : 'rgba(0, 0, 0, 0.8)');
+        x.shadowBlur = blur;
+        x.shadowOffsetY = offY;
+        x.fillStyle = isLight ? '#ffffff' : '#05070e';
+        roundRectPath(x, TB, TB, R);
+        x.fill();
+        return { c, pad: pad / u }; // pad in tile units
+      };
+
+      tiles = {
+        front: textures.front.map((t) => bake(t, true)),
+        back: textures.back.map((t) => bake(t, false)),
+        shadowFront: shadowSprite(true),
+        shadowBack: shadowSprite(false)
+      };
     }
 
     /* أبعاد الكانفاس والطبقات */
@@ -322,6 +408,9 @@ export default function TeamMomentsRing({ onScrollDown = undefined } = {}) {
       OY = (H - DH * K) / 2;
       buildHead();
       buildLabels();
+      bgLayer = null;
+      tiles = null;
+      scheduleBake();
     }
 
     function project(p) {
@@ -348,6 +437,18 @@ export default function TeamMomentsRing({ onScrollDown = undefined } = {}) {
       const facing = C[2] > 0;
       const img = (facing ? textures.front : textures.back)[i % textures.front.length];
       if (!img) return;
+
+      // Fast path: pre-baked shadow + card, same transform as below
+      if (tiles) {
+        const tile = (facing ? tiles.front : tiles.back)[i % tiles.front.length];
+        const sh = facing ? tiles.shadowFront : tiles.shadowBack;
+        ctx.setTransform((-ex * 2) / TS, (-ey * 2) / TS, (-fx * 2) / TS, (-fy * 2) / TS, p0[0], p0[1]);
+        const half = TS / 2 + sh.pad;
+        ctx.drawImage(sh.c, -half, -half, half * 2, half * 2);
+        ctx.drawImage(tile, -TS / 2, -TS / 2, TS, TS);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        return;
+      }
 
       ctx.save();
       // تعديل اتجاه المحاور لضبط الصور لتظهر بالاتجاه الصحيح والمعتدل (Upright)
@@ -400,8 +501,21 @@ export default function TeamMomentsRing({ onScrollDown = undefined } = {}) {
       ctx.setTransform(1, 0, 0, 1, 0, 0);
     }
 
+    // Background gradients are static: drawn once per size/theme, then copied.
+    let bgLayer = null;
+    function buildBackground() {
+      bgLayer = mkc(Math.max(1, W), Math.max(1, H));
+      paintBackground(bgLayer.getContext('2d'));
+    }
+
     function render(t) {
       ctx.setTransform(1, 0, 0, 1, 0, 0);
+      if (!bgLayer || bgLayer.width !== W || bgLayer.height !== H) buildBackground();
+      ctx.drawImage(bgLayer, 0, 0);
+      drawRing(t);
+    }
+
+    function paintBackground(ctx) {
       if (isLight) {
         // Luxury Tech Light Gradient Background
         const bgGrad = ctx.createRadialGradient(W / 2, H * 0.45, 100 * K, W / 2, H / 2, Math.max(W, H) * 0.85);
@@ -431,6 +545,9 @@ export default function TeamMomentsRing({ onScrollDown = undefined } = {}) {
         ctx.fillStyle = darkAura;
         ctx.fillRect(0, 0, W, H);
       }
+    }
+
+    function drawRing(t) {
       ctx.imageSmoothingQuality = 'high';
 
       const spin = (t / DUR) * Math.PI * 2;

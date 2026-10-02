@@ -15,12 +15,13 @@ const ArticlesSection = dynamic(() => import('./ArticlesSection'), {
   ssr: true,
   loading: () => <div style={{ minHeight: '600px' }} />
 });
-import im3Img from '@/assets/home/hero-dark.png';
-import im2Img from '@/assets/home/hero-light.png';
-import technoEnjazLogo from '@/assets/brand/logo.png';
+const im3Img = '/images/home/hero-dark.png';
+const im2Img = '/images/home/hero-light.png';
+const technoEnjazLogo = '/images/brand/logo-full.png';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import ThemedImage from '@/components/ui/ThemedImage';
 import './HomeHero.css';
+import ResponsiveImage from '@/components/ui/ResponsiveImage';
 
 interface ResponsiveConfig {
   startWidth: number;
@@ -114,10 +115,11 @@ export const HomeHero: React.FC<HomeHeroProps> = ({
       >
         <div className="expanded-overlay-wrapper" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
           <div className="expanded-logo-wrapper">
-            <img
-              src={(technoEnjazLogo as any)?.src || technoEnjazLogo}
+            <ResponsiveImage
+              src={technoEnjazLogo}
               alt={t.nav.brand}
               className="expanded-logo"
+              sizes="140px"
             />
           </div>
           <h2 className="expanded-hero-title">{t.hero.title}</h2>

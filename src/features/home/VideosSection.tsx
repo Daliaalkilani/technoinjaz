@@ -11,6 +11,7 @@ import { useSavedProjects } from '@/hooks/useSavedProjects';
 import { videosList, type VideoItem } from '@/data/videosData';
 import './ProjectsSection.css';
 import './VideosSection.css';
+import ResponsiveImage from '@/components/ui/ResponsiveImage';
 
 
 export type { VideoItem };
@@ -120,10 +121,11 @@ const VideosSection: React.FC<VideosSectionProps> = ({
 
                       {/* Video Cover Image */}
                       <div className="video-card-screen">
-                        <img
+                        <ResponsiveImage
                           src={vid.cover}
                           alt={title}
                           className="video-card-thumb"
+                          sizes="(max-width: 767px) 80vw, 500px"
                           loading="lazy"
                           decoding="async"
                           fetchPriority="low"

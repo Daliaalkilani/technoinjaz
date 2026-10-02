@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, type CSSProperties, type PointerEvent as Re
 import Link from 'next/link';
 import type { StaticImageData } from 'next/image';
 import './InfiniteSpiral.css';
+import ResponsiveImage from '@/components/ui/ResponsiveImage';
 
 export interface InfiniteSpiralItem {
   id?: string | number;
@@ -177,9 +178,14 @@ const InfiniteSpiral = ({
         const visualScale = scale * depthScale;
         const depth = (z / Math.max(responsiveRadius, 1) + 1) / 2;
         card.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${offset * verticalSpacing * fit}px, 0) rotateZ(${cardTilt}deg) scale(${visualScale})`;
-        card.style.opacity = opacity.toFixed(3);
-        card.style.zIndex = String(Math.round(depth * 100000) + index);
-        card.style.pointerEvents = opacity > 0.25 ? 'auto' : 'none';
+        // Only touch properties whose value changed: rewriting z-index/pointer-events on
+        // every card every frame forced a style recalculation each frame.
+        const op = opacity.toFixed(3);
+        if (card.style.opacity !== op) card.style.opacity = op;
+        const zi = String(Math.round(depth * 1000) + index);
+        if (card.style.zIndex !== zi) card.style.zIndex = zi;
+        const pe = opacity > 0.25 ? 'auto' : 'none';
+        if (card.style.pointerEvents !== pe) card.style.pointerEvents = pe;
       });
       frameId = requestAnimationFrame(render);
     };
@@ -294,10 +300,12 @@ const InfiniteSpiral = ({
       <div className="infinite-spiral__stage" role="list" aria-label="أرشيف المشاريع ثلاثي الأبعاد">
         {normalizedItems.map((item, index) => {
           const content = (
-            <img
+            <ResponsiveImage
               className="infinite-spiral__image"
               src={item.src}
               alt={item.alt}
+              // cards are ~cardWidth CSS px: the browser picks the 320/640 copy
+              sizes={`${cardWidth}px`}
               loading={index < 6 ? 'eager' : 'lazy'}
               draggable={false}
               style={imageStyle}

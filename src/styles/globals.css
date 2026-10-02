@@ -1137,3 +1137,9 @@ html {
 [data-theme='light'] .md-figure img {
   border-color: rgba(15, 23, 42, 0.1);
 }
+
+/* <ResponsiveImage> wraps <img> in <picture>; display: contents keeps the <img> laid
+   out as a direct child, so existing `.card > img` rules keep working. */
+picture {
+  display: contents;
+}

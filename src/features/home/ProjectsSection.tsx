@@ -10,20 +10,20 @@ import SectionBackground from './SectionBackground';
 import { PROJECTS_DATA } from '@/data/projectsData';
 import './ProjectsSection.css';
 
-import proj01 from '@/assets/showcase/project-01.png';
-import proj02 from '@/assets/showcase/project-02.png';
-import proj03 from '@/assets/showcase/project-03.png';
-import proj04 from '@/assets/showcase/project-04.png';
-import proj05 from '@/assets/showcase/project-05.png';
-import proj06 from '@/assets/showcase/project-06.png';
-import proj07 from '@/assets/showcase/project-07.png';
-import proj08 from '@/assets/showcase/project-08.png';
-import proj09 from '@/assets/showcase/project-09.jpg';
-import proj10 from '@/assets/showcase/project-10.jpg';
-import proj11 from '@/assets/showcase/project-11.jpg';
-import proj12 from '@/assets/showcase/project-12.jpg';
-import proj13 from '@/assets/showcase/project-13.jpg';
-import proj14 from '@/assets/showcase/project-14.jpg';
+const proj01 = '/images/showcase/project-01.png';
+const proj02 = '/images/showcase/project-02.png';
+const proj03 = '/images/showcase/project-03.png';
+const proj04 = '/images/showcase/project-04.png';
+const proj05 = '/images/showcase/project-05.png';
+const proj06 = '/images/showcase/project-06.png';
+const proj07 = '/images/showcase/project-07.png';
+const proj08 = '/images/showcase/project-08.png';
+const proj09 = '/images/showcase/project-09.jpg';
+const proj10 = '/images/showcase/project-10.jpg';
+const proj11 = '/images/showcase/project-11.jpg';
+const proj12 = '/images/showcase/project-12.jpg';
+const proj13 = '/images/showcase/project-13.jpg';
+const proj14 = '/images/showcase/project-14.jpg';
 
 const getProjectImages = (lang: string): InfiniteSpiralItem[] => {
   const images = [proj01, proj02, proj03, proj04, proj05, proj06, proj07, proj08, proj09, proj10, proj11, proj12, proj13, proj14];

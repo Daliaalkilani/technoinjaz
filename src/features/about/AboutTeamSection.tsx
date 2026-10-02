@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useRef } from 'react';
+import { useInView } from '@/hooks/useInView';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
@@ -21,6 +22,14 @@ export interface AboutTeamSectionProps {
 export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps) {
   const { lang, theme, t } = useThemeLanguage();
   const { isLoaderDone } = useLoader();
+  // Heavy effects (canvas ring, WebGL sphere + Orb) start only when their section is
+  // about to scroll into view: on the home page (where this section is at the very
+  // bottom) they no longer compile shaders and build textures during page load and
+  // navigation. Once started they stay mounted (same look and motion as before).
+  const momentsRef = useRef<HTMLDivElement | null>(null);
+  const showcaseRef = useRef<HTMLDivElement | null>(null);
+  const momentsNear = useInView(momentsRef, { rootMargin: '800px 0px' });
+  const showcaseNear = useInView(showcaseRef, { rootMargin: '800px 0px' });
 
   const localizedCircleSlots = teamCircleSlots.map((m: any) => ({
     ...m,
@@ -62,8 +71,9 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
       <div
         id="team-moments-section"
         className="team-moments-section-wrapper"
+        ref={momentsRef}
       >
-        <TeamMomentsRing />
+        {momentsNear && <TeamMomentsRing />}
 
         {/* Bottom gradient fade - sleek height so front cards remain crisp and vibrant */}
         <div
@@ -98,6 +108,7 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
       <div
         id="team-showcase"
         className="team-showcase-section-wrapper"
+        ref={showcaseRef}
       >
         {/* Top smooth blending gradient */}
         <div className="team-showcase-top-fade" aria-hidden="true" />
@@ -114,7 +125,7 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
             overflow: 'hidden'
           }}
         >
-          {isLoaderDone && (
+          {isLoaderDone && showcaseNear && (
             <SafeErrorBoundary>
               <Orb
                 hoverIntensity={0.24}
@@ -151,13 +162,13 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
 
         {/* 3D Circular Team Carousel */}
         <div style={{ position: 'relative', width: '100%', height: '100%', flex: 1, zIndex: 10 }}>
-          <SafeErrorBoundary>
+          {showcaseNear && <SafeErrorBoundary>
             <InfiniteMenu
               items={localizedCircleSlots as any}
               scale={1.4}
               backgroundColor="transparent"
             />
-          </SafeErrorBoundary>
+          </SafeErrorBoundary>}
         </div>
 
         {/* Bottom smooth blending gradient to footer horizon */}

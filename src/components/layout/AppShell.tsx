@@ -9,6 +9,8 @@ import CinematicFooter from './CinematicFooter';
 import ThemeSwitch from './ThemeSwitch';
 import LanguageDropdown from './LanguageDropdown';
 import ScrollToTop from './ScrollToTop';
+import RouteProgress from './RouteProgress';
+import '@/components/ui/Skeleton.css';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { getLoggedInUser } from '@/lib/auth';
 import { User, Menu, WifiOff } from 'lucide-react';
@@ -170,6 +172,7 @@ export function AppShell({ children }: AppShellProps) {
         {lang === 'en' ? 'Skip to content' : 'تخطَّ إلى المحتوى'}
       </a>
       <ScrollToTop />
+      <RouteProgress />
       <ScrollProgress className="top-0" />
       <NotificationToaster />
 
