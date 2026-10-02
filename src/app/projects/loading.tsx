@@ -1,124 +1,58 @@
 'use client';
 
 import React from 'react';
-import { Skeleton } from '@/components/ui/Skeleton';
 import '@/components/ui/Skeleton.css';
+import { SkLine, SkLines, SkFill, SkBox, SkText } from '@/components/ui/Sk';
+import '@/features/projects/LiveProjectsShowcase.css';
+import '@/features/projects/ProjectsCatalogSection.css';
 
+// Mirrors /projects: page header, live-projects spotlight, then the catalog grid.
 export default function ProjectsLoading() {
   return (
-    <main
-      className="skeleton-page-container"
-      aria-label="جاري تحميل المشاريع والمنظومات..."
-      style={{
-        minHeight: '85vh',
-        padding: '120px 24px 60px',
-        maxWidth: '1300px',
-        margin: '0 auto'
-      }}
-    >
-      {/* 1. Page Header (matching ProjectsHeader) */}
-      <div style={{ textAlign: 'center', maxWidth: '780px', margin: '0 auto 36px' }}>
-        <Skeleton width="55%" height={42} borderRadius={10} style={{ margin: '0 auto 16px' }} />
-        <Skeleton width="82%" height={18} borderRadius={6} style={{ margin: '0 auto 10px' }} />
-        <Skeleton width="50%" height={16} borderRadius={6} style={{ margin: '0 auto' }} />
+    <div className="tab-page-container tab-page-projects" style={{ padding: 0, maxWidth: '100%' }} aria-busy="true" aria-label="جاري تحميل المشاريع...">
+      <div className="tab-page-header projects-page-header">
+        <h1 className="tab-page-title projects-page-title"><SkText words={4} /></h1>
+        <p className="tab-page-subtitle projects-page-subtitle"><SkText words={12} /></p>
       </div>
-
-      {/* 2. Live Projects Showcase Spotlight Hero Skeleton */}
-      <div
-        className="skeleton-shimmer"
-        style={{
-          maxWidth: '1200px',
-          margin: '0 auto 50px',
-          padding: '36px',
-          borderRadius: '24px',
-          border: '1px solid rgba(56, 189, 248, 0.25)',
-          background: 'linear-gradient(165deg, rgba(15, 23, 42, 0.8) 0%, rgba(3, 7, 18, 0.95) 100%)',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-          gap: '32px',
-          alignItems: 'center'
-        }}
-      >
-        {/* Spotlight Details */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Skeleton width={120} height={24} borderRadius={999} />
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <Skeleton width={32} height={32} borderRadius="50%" />
-              <Skeleton width={32} height={32} borderRadius="50%" />
+      <div className="live-projects-container">
+        <div className="spotlight-hero">
+          <div className="spotlight-top-controls"><SkBox w={180} h={32} r={999} /><SkBox w={120} h={36} r={999} /></div>
+          <div className="spotlight-content-grid">
+            <div>
+              <SkLine w="70%" style={{ fontSize: 30 }} />
+              <SkLines n={3} last="65%" />
+              <div style={{ display: 'flex', gap: 10, marginTop: 18 }}><SkBox w={140} h={44} r={12} /><SkBox w={120} h={44} r={12} /></div>
             </div>
+            <div style={{ position: 'relative', aspectRatio: '16 / 10', borderRadius: 16 }}><SkFill /></div>
           </div>
-          <Skeleton width="85%" height={32} borderRadius={8} />
-          <Skeleton width="100%" height={16} borderRadius={4} />
-          <Skeleton width="90%" height={16} borderRadius={4} />
-
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '8px' }}>
-            <Skeleton width={90} height={26} borderRadius={999} />
-            <Skeleton width={110} height={26} borderRadius={999} />
-            <Skeleton width={95} height={26} borderRadius={999} />
-          </div>
-
-          <div style={{ display: 'flex', gap: '12px', marginTop: '14px' }}>
-            <Skeleton width={160} height={42} borderRadius={12} />
-            <Skeleton width={42} height={42} borderRadius={12} />
+          <div className="spotlight-progress-track" />
+          <div className="spotlight-pagination-dots">
+            {Array.from({ length: 13 }, (_, i) => <SkBox key={i} w={10} h={10} r={999} />)}
           </div>
         </div>
-
-        {/* Spotlight Image Preview */}
-        <div style={{ height: '280px', borderRadius: '18px', overflow: 'hidden' }}>
-          <Skeleton width="100%" height={280} borderRadius={18} />
+      </div>
+      <section className="catalog-section">
+        <div className="catalog-hero-wrapper">
+          <h2 className="catalog-hero-title"><SkText words={5} /></h2>
+          <div className="catalog-search-bar" style={{ position: 'relative', minHeight: 49 }}><SkFill /></div>
         </div>
-      </div>
-
-      {/* 3. Catalog Section Title & Search */}
-      <div style={{ textAlign: 'center', maxWidth: '620px', margin: '0 auto 28px' }}>
-        <Skeleton width="60%" height={32} borderRadius={8} style={{ margin: '0 auto 20px' }} />
-        <Skeleton width="100%" height={48} borderRadius={999} />
-      </div>
-
-      {/* 4. Category Filter Pills */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          gap: '12px',
-          flexWrap: 'wrap',
-          marginBottom: '36px'
-        }}
-      >
-        {[100, 140, 130, 160, 145, 135].map((w, idx) => (
-          <Skeleton key={idx} width={w} height={38} borderRadius={999} />
-        ))}
-      </div>
-
-      {/* 5. Projects Catalog Grid */}
-      <div className="skeleton-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
-        {[1, 2, 3, 4, 5, 6].map((i) => (
-          <div
-            key={i}
-            className="skeleton-card skeleton-shimmer"
-            style={{
-              padding: '0',
-              overflow: 'hidden',
-              borderRadius: '18px',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              display: 'flex',
-              flexDirection: 'column'
-            }}
-          >
-            <Skeleton width="100%" height={200} borderRadius={0} />
-            <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
-              <Skeleton width="88%" height={24} borderRadius={6} />
-              <Skeleton width="100%" height={14} borderRadius={4} />
-              <Skeleton width="75%" height={14} borderRadius={4} />
-              <div style={{ display: 'flex', gap: '6px', marginTop: 'auto', paddingTop: '10px' }}>
-                <Skeleton width={60} height={22} borderRadius={6} />
-                <Skeleton width={75} height={22} borderRadius={6} />
+        <div className="catalog-categories-bar">
+          {[125, 178, 178, 239, 227, 191].map((w, i) => <SkBox key={i} w={w} h={39} r={999} />)}
+        </div>
+        <div className="catalog-grid">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <article key={i} className="project-card">
+              <div className="card-thumb-wrap" style={{ position: 'relative' }}><SkFill /></div>
+              <div className="card-body">
+                <h3 className="card-title"><SkText words={6} /></h3>
+                <p className="card-excerpt"><SkLines n={3} last="70%" /></p>
+                <div className="card-tags">{[90, 82, 64].map((w, j) => <SkBox key={j} w={w} h={21} r={4} />)}</div>
+                <div className="card-footer"><SkBox w={148} h={17} /></div>
               </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </main>
+            </article>
+          ))}
+        </div>
+      </section>
+    </div>
   );
 }

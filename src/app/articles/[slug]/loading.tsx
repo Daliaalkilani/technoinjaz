@@ -1,104 +1,61 @@
 'use client';
 
 import React from 'react';
-import { Skeleton } from '@/components/ui/Skeleton';
 import '@/components/ui/Skeleton.css';
+import { SkLine, SkLines, SkFill, SkBox, SkText } from '@/components/ui/Sk';
+import '@/features/projects/ProjectDetailView.css';
+import '@/features/articles/ArticleDetailView.css';
 
-export default function ArticleDetailLoading() {
+// Mirrors ArticleDetailView: same containers/classes, so the geometry matches at
+// every breakpoint (sidebar hidden ≤960px exactly like the page).
+export default function ArticleLoading() {
   return (
-    <main className="skeleton-page-container" aria-label="جاري تحميل المقال...">
-      {/* Top Bar Navigation & Back Button */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <Skeleton width={120} height={38} borderRadius={999} />
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <Skeleton width={38} height={38} borderRadius="50%" />
-          <Skeleton width={38} height={38} borderRadius="50%" />
-        </div>
-      </div>
-
-      {/* Breadcrumbs */}
-      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '20px' }}>
-        <Skeleton width={60} height={16} borderRadius={4} />
-        <Skeleton width={12} height={16} borderRadius={4} />
-        <Skeleton width={70} height={16} borderRadius={4} />
-        <Skeleton width={12} height={16} borderRadius={4} />
-        <Skeleton width={140} height={16} borderRadius={4} />
-      </div>
-
-      {/* Article Title */}
-      <Skeleton width="85%" height={44} borderRadius={10} style={{ marginBottom: '16px' }} />
-      <Skeleton width="60%" height={44} borderRadius={10} style={{ marginBottom: '24px' }} />
-
-      {/* Meta Bar */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px' }}>
-        <Skeleton width={44} height={44} borderRadius="50%" />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          <Skeleton width={120} height={16} borderRadius={4} />
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <Skeleton width={80} height={14} borderRadius={4} />
-            <Skeleton width={70} height={14} borderRadius={4} />
+    <div className="tab-page-container tab-page-article-detail" style={{ padding: 0, maxWidth: '100%' }} aria-busy="true" aria-label="جاري تحميل المقال...">
+      <div className="project-detail-container article-detail-container">
+        <nav className="project-breadcrumbs" aria-hidden="true">
+          <SkBox w={70} h={14} /><SkBox w={70} h={14} /><SkBox w={90} h={14} /><SkBox w={200} h={14} />
+        </nav>
+        <header className="project-detail-header">
+          <div className="article-lead-category-wrap">
+            <SkBox w={120} h={28} r={999} /><SkBox w={90} h={16} />
           </div>
-        </div>
-      </div>
-
-      {/* Hero Featured Image */}
-      <Skeleton width="100%" height={440} borderRadius={18} style={{ marginBottom: '40px' }} />
-
-      {/* Two-Column Detail Layout: Content + TOC Sidebar */}
-      <div className="skeleton-detail-layout">
-        {/* Main Content Column */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-          <Skeleton width="100%" height={20} borderRadius={4} />
-          <Skeleton width="98%" height={20} borderRadius={4} />
-          <Skeleton width="94%" height={20} borderRadius={4} />
-          <Skeleton width="90%" height={20} borderRadius={4} />
-
-          <Skeleton width="50%" height={32} borderRadius={8} style={{ marginTop: '24px', marginBottom: '8px' }} />
-
-          <Skeleton width="100%" height={20} borderRadius={4} />
-          <Skeleton width="96%" height={20} borderRadius={4} />
-          <Skeleton width="92%" height={20} borderRadius={4} />
-          <Skeleton width="85%" height={20} borderRadius={4} />
-
-          {/* Code or Quote Block Skeleton */}
-          <Skeleton width="100%" height={160} borderRadius={12} style={{ margin: '16px 0' }} />
-
-          <Skeleton width="98%" height={20} borderRadius={4} />
-          <Skeleton width="95%" height={20} borderRadius={4} />
-          <Skeleton width="70%" height={20} borderRadius={4} />
-        </div>
-
-        {/* Sidebar Column: TOC & Related */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          {/* Table of Contents Skeleton */}
-          <div className="skeleton-shimmer" style={{ padding: '20px', borderRadius: '16px' }}>
-            <Skeleton width={140} height={24} borderRadius={6} style={{ marginBottom: '18px' }} />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <Skeleton width="90%" height={16} borderRadius={4} />
-              <Skeleton width="75%" height={16} borderRadius={4} style={{ marginRight: '16px' }} />
-              <Skeleton width="85%" height={16} borderRadius={4} />
-              <Skeleton width="70%" height={16} borderRadius={4} style={{ marginRight: '16px' }} />
-              <Skeleton width="80%" height={16} borderRadius={4} />
+          <h1 className="project-detail-title"><SkText words={8} /></h1>
+          <p className="project-detail-lead"><SkLines n={3} last="62%" /></p>
+          <div className="article-author-capsule-row"><SkBox w={320} h={40} r={999} style={{ maxWidth: '100%' }} /></div>
+          <div className="project-meta-action-bar">
+            <div className="project-action-buttons">
+              {[62, 70, 52, 86].map((w, i) => <SkBox key={i} w={w} h={36} r={8} />)}
             </div>
           </div>
-
-          {/* Related Articles Box Skeleton */}
-          <div className="skeleton-shimmer" style={{ padding: '20px', borderRadius: '16px' }}>
-            <Skeleton width={120} height={22} borderRadius={6} style={{ marginBottom: '16px' }} />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              {[1, 2, 3].map((r) => (
-                <div key={r} style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                  <Skeleton width={56} height={56} borderRadius={8} style={{ flexShrink: 0 }} />
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <Skeleton width="95%" height={14} borderRadius={4} />
-                    <Skeleton width="60%" height={12} borderRadius={4} />
-                  </div>
+        </header>
+        <div className="project-featured-image-wrapper" style={{ position: 'relative', aspectRatio: '16 / 9', background: 'transparent', boxShadow: 'none' }}><SkFill /></div>
+        <div className="project-content-grid">
+          <div className="project-markdown-body">
+            <div className="article-fullscreen-markdown-body">
+              <SkLines n={4} last="55%" />
+              <h2 style={{ margin: '2.2rem 0 1rem' }}><SkLine w="48%" /></h2>
+              <SkLines n={5} last="70%" />
+              <h2 style={{ margin: '2.2rem 0 1rem' }}><SkLine w="40%" /></h2>
+              <SkLines n={4} last="45%" />
+            </div>
+          </div>
+          <aside className="project-sidebar">
+            <div className="sidebar-related-card">
+              <SkLine w="45%" style={{ fontSize: 20 }} />
+              {[90, 76, 84, 70, 80, 66].map((w, i) => <SkLine key={i} w={`${w}%`} style={{ fontSize: 14, margin: '14px 0' }} />)}
+            </div>
+            <div className="sidebar-related-card">
+              <SkLine w="55%" style={{ fontSize: 20 }} />
+              {[1, 2, 3].map((i) => (
+                <div key={i} style={{ display: 'flex', gap: 12, marginTop: 14, alignItems: 'center' }}>
+                  <SkBox w={56} h={56} r={10} />
+                  <div style={{ flex: 1, fontSize: 13 }}><SkLine w="40%" /><SkLine w="90%" /></div>
                 </div>
               ))}
             </div>
-          </div>
+          </aside>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

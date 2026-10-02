@@ -1,63 +1,37 @@
 'use client';
 
 import React from 'react';
-import { Skeleton } from '@/components/ui/Skeleton';
 import '@/components/ui/Skeleton.css';
+import { SkLine, SkLines, SkFill, SkBox, SkText } from '@/components/ui/Sk';
+import '@/features/team/ProfilePage.css';
 
+// Mirrors ProfilePage: top bar, hero card (avatar + info), quote, triplet, cards.
 export default function TeamMemberLoading() {
   return (
-    <main className="skeleton-page-container" aria-label="جاري تحميل ملف العضو...">
-      {/* Back button */}
-      <Skeleton width={110} height={36} borderRadius={999} style={{ marginBottom: '32px' }} />
-
-      {/* Member Profile Header Glass Card */}
-      <div
-        className="skeleton-shimmer"
-        style={{
-          padding: '36px',
-          borderRadius: '20px',
-          display: 'flex',
-          gap: '32px',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          marginBottom: '36px'
-        }}
-      >
-        {/* Avatar */}
-        <Skeleton width={130} height={130} borderRadius="50%" style={{ flexShrink: 0 }} />
-
-        {/* Info */}
-        <div style={{ flex: 1, minWidth: '240px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <Skeleton width={200} height={32} borderRadius={8} />
-          <Skeleton width={160} height={20} borderRadius={6} />
-          <Skeleton width={120} height={16} borderRadius={4} />
-
-          <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-            <Skeleton width={36} height={36} borderRadius="50%" />
-            <Skeleton width={36} height={36} borderRadius="50%" />
-            <Skeleton width={36} height={36} borderRadius="50%" />
+    <div className="profile-wrapper" aria-busy="true" aria-label="جاري تحميل ملف العضو...">
+      <div className="profile-container">
+        <header className="profile-top-bar"><SkBox w={190} h={45} r={999} /><SkBox w={140} h={29} r={999} /></header>
+        <section className="profile-hero-card">
+          <div className="profile-avatar-wrapper"><SkBox w={140} h={140} r="50%" /></div>
+          <div className="profile-hero-info">
+            <h1 className="profile-name"><SkText words={3} /></h1>
+            <SkLine w="45%" />
+            <SkLine w="70%" />
+            <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>{[0, 1, 2, 3].map((i) => <SkBox key={i} w={40} h={40} r={999} />)}</div>
           </div>
+        </section>
+        <section className="profile-quote-card"><SkLine w="80%" center /><SkLine w="30%" center /></section>
+        <section className="profile-triplet-grid">
+          {['vision-card', 'mission-card', 'goals-card'].map((c) => (
+            <div key={c} className={`triplet-card ${c}`}><SkBox w={40} h={40} r={12} /><h3 className="triplet-title"><SkLine w="50%" /></h3><SkLines n={2} last="75%" /></div>
+          ))}
+        </section>
+        <div className="profile-grid">
+          <article className="profile-card full-width"><SkLine w="25%" /><SkLines n={3} last="60%" /></article>
+          <article className="profile-card"><SkLine w="40%" /><SkLines n={5} last="55%" /></article>
+          <article className="profile-card"><SkLine w="40%" /><SkLines n={5} last="55%" /></article>
         </div>
       </div>
-
-      {/* Bio & Skills */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
-        <div className="skeleton-shimmer" style={{ padding: '24px', borderRadius: '16px' }}>
-          <Skeleton width={120} height={24} borderRadius={6} style={{ marginBottom: '16px' }} />
-          <Skeleton width="100%" height={16} borderRadius={4} style={{ marginBottom: '10px' }} />
-          <Skeleton width="95%" height={16} borderRadius={4} style={{ marginBottom: '10px' }} />
-          <Skeleton width="80%" height={16} borderRadius={4} />
-        </div>
-
-        <div className="skeleton-shimmer" style={{ padding: '24px', borderRadius: '16px' }}>
-          <Skeleton width={110} height={24} borderRadius={6} style={{ marginBottom: '16px' }} />
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            {[80, 100, 70, 95, 85, 110].map((w, idx) => (
-              <Skeleton key={idx} width={w} height={30} borderRadius={999} />
-            ))}
-          </div>
-        </div>
-      </div>
-    </main>
+    </div>
   );
 }

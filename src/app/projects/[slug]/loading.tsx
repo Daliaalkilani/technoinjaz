@@ -1,97 +1,56 @@
 'use client';
 
 import React from 'react';
-import { Skeleton } from '@/components/ui/Skeleton';
 import '@/components/ui/Skeleton.css';
+import { SkLine, SkLines, SkFill, SkBox, SkText } from '@/components/ui/Sk';
+import '@/features/projects/ProjectDetailView.css';
 
-export default function ProjectDetailLoading() {
+// Mirrors ProjectDetailView (same containers/classes ⇒ same geometry everywhere).
+export default function ProjectLoading() {
   return (
-    <main className="skeleton-page-container" aria-label="جاري تحميل المشروع...">
-      {/* Top Bar Navigation & Back Button */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <Skeleton width={120} height={38} borderRadius={999} />
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <Skeleton width={38} height={38} borderRadius="50%" />
-          <Skeleton width={38} height={38} borderRadius="50%" />
-        </div>
-      </div>
-
-      {/* Breadcrumbs */}
-      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '20px' }}>
-        <Skeleton width={60} height={16} borderRadius={4} />
-        <Skeleton width={12} height={16} borderRadius={4} />
-        <Skeleton width={70} height={16} borderRadius={4} />
-        <Skeleton width={12} height={16} borderRadius={4} />
-        <Skeleton width={130} height={16} borderRadius={4} />
-      </div>
-
-      {/* Project Title */}
-      <Skeleton width="80%" height={44} borderRadius={10} style={{ marginBottom: '16px' }} />
-
-      {/* Category and Tech Stack Badges */}
-      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '32px' }}>
-        <Skeleton width={90} height={28} borderRadius={999} />
-        <Skeleton width={70} height={28} borderRadius={999} />
-        <Skeleton width={80} height={28} borderRadius={999} />
-        <Skeleton width={65} height={28} borderRadius={999} />
-      </div>
-
-      {/* Hero Showcase Image */}
-      <Skeleton width="100%" height={460} borderRadius={18} style={{ marginBottom: '40px' }} />
-
-      {/* Two-Column Detail Layout: Details + Metadata Sidebar */}
-      <div className="skeleton-detail-layout">
-        {/* Main Content Column */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-          <Skeleton width="100%" height={20} borderRadius={4} />
-          <Skeleton width="96%" height={20} borderRadius={4} />
-          <Skeleton width="92%" height={20} borderRadius={4} />
-
-          <Skeleton width="45%" height={30} borderRadius={8} style={{ marginTop: '24px', marginBottom: '8px' }} />
-
-          <Skeleton width="100%" height={20} borderRadius={4} />
-          <Skeleton width="98%" height={20} borderRadius={4} />
-          <Skeleton width="94%" height={20} borderRadius={4} />
-
-          {/* Architectural Feature Cards Grid Skeleton */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', margin: '20px 0' }}>
-            {[1, 2, 3].map((f) => (
-              <div key={f} className="skeleton-shimmer" style={{ padding: '18px', borderRadius: '14px' }}>
-                <Skeleton width={40} height={40} borderRadius={10} style={{ marginBottom: '12px' }} />
-                <Skeleton width="80%" height={20} borderRadius={6} style={{ marginBottom: '8px' }} />
-                <Skeleton width="100%" height={14} borderRadius={4} />
-                <Skeleton width="65%" height={14} borderRadius={4} style={{ marginTop: '4px' }} />
-              </div>
-            ))}
+    <div className="tab-page-container" style={{ padding: 0, maxWidth: '100%' }} aria-busy="true" aria-label="جاري تحميل المشروع...">
+      <div className="project-detail-container">
+        <nav className="project-breadcrumbs" aria-hidden="true">
+          <SkBox w={70} h={14} /><SkBox w={70} h={14} /><SkBox w={110} h={14} /><SkBox w={200} h={14} />
+        </nav>
+        <header className="project-detail-header">
+          <div className="project-category-badge" style={{ border: 0, background: 'none', padding: 0 }}><SkBox w={150} h={28} r={999} /></div>
+          <h1 className="project-detail-title"><SkText words={6} /></h1>
+          <p className="project-detail-lead"><SkLines n={2} last="58%" /></p>
+          <div className="project-meta-action-bar">
+            <div className="project-action-buttons">
+              {[62, 78, 118, 124].map((w, i) => <SkBox key={i} w={w} h={36} r={8} />)}
+            </div>
           </div>
-
-          <Skeleton width="100%" height={20} borderRadius={4} />
-          <Skeleton width="85%" height={20} borderRadius={4} />
-        </div>
-
-        {/* Sidebar Column: Project Specs & Links */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div className="skeleton-shimmer" style={{ padding: '24px', borderRadius: '16px' }}>
-            <Skeleton width={130} height={22} borderRadius={6} style={{ marginBottom: '20px' }} />
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {[
-                { label: 70, val: 100 },
-                { label: 55, val: 90 },
-                { label: 80, val: 120 },
-                { label: 60, val: 85 }
-              ].map((item, idx) => (
-                <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Skeleton width={item.label} height={14} borderRadius={4} />
-                  <Skeleton width={item.val} height={16} borderRadius={6} />
+        </header>
+        <div className="project-featured-image-wrapper" style={{ position: 'relative', aspectRatio: '16 / 9', maxHeight: 520, background: 'transparent', boxShadow: 'none' }}><SkFill /></div>
+        <div className="project-content-grid">
+          <div className="project-markdown-body">
+            <div className="markdown-prose">
+              <SkLines n={3} last="60%" />
+              <h2 style={{ margin: '2rem 0 1rem' }}><SkLine w="42%" /></h2>
+              <SkLines n={4} last="72%" />
+              <h2 style={{ margin: '2rem 0 1rem' }}><SkLine w="36%" /></h2>
+              <SkLines n={3} last="50%" />
+            </div>
+          </div>
+          <aside className="project-sidebar">
+            <div className="sidebar-related-card">
+              <SkLine w="45%" style={{ fontSize: 20 }} />
+              {[88, 72, 80, 66, 84].map((w, i) => <SkLine key={i} w={`${w}%`} style={{ fontSize: 14, margin: '14px 0' }} />)}
+            </div>
+            <div className="sidebar-related-card">
+              <SkLine w="55%" style={{ fontSize: 20 }} />
+              {[1, 2, 3].map((i) => (
+                <div key={i} style={{ display: 'flex', gap: 12, marginTop: 14, alignItems: 'center' }}>
+                  <SkBox w={64} h={48} r={8} />
+                  <div style={{ flex: 1, fontSize: 13 }}><SkLine w="45%" /><SkLine w="90%" /></div>
                 </div>
               ))}
             </div>
-
-            <Skeleton width="100%" height={44} borderRadius={10} style={{ marginTop: '28px' }} />
-          </div>
+          </aside>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
