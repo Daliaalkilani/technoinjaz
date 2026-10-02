@@ -5,8 +5,10 @@ import { renderMarkdown } from '@/lib/markdown';
 import ArticleDetailView from '@/features/articles/ArticleDetailView';
 import ArticleBody from '@/features/articles/ArticleBody';
 import { pageMetadata } from '@/seo/metadata';
+import ContentQA from '@/components/content/ContentQA';
+import { ARTICLE_QA } from '@/data/qa/articles';
 import { JsonLd } from '@/seo/JsonLd';
-import { blogPosting, breadcrumb } from '@/seo/schemas';
+import { blogPosting, breadcrumb, qaSchema } from '@/seo/schemas';
 
 export const dynamic = 'force-static';
 export const dynamicParams = false;
@@ -49,6 +51,7 @@ export default async function ArticlePage({
   const md = await getArticleMarkdown(slug);
   const { html, toc } = renderMarkdown(md, { stripLeadingH1: true, variant: 'article' });
   const related = getRelatedArticles(slug, 3);
+  const qaItems = ARTICLE_QA[slug] ?? [];
 
   const breadcrumbItems = [
     { name: 'الرئيسية', path: '/' },
@@ -58,9 +61,14 @@ export default async function ArticlePage({
 
   return (
     <>
-      <JsonLd data={[blogPosting(article), breadcrumb(breadcrumbItems)]} />
+      <JsonLd data={[blogPosting(article), breadcrumb(breadcrumbItems), ...(qaItems.length ? [qaSchema(qaItems)] : [])]} />
       <div className="tab-page-container tab-page-article-detail" style={{ padding: 0, maxWidth: '100%' }}>
-        <ArticleDetailView article={article} toc={toc} related={related}>
+        <ArticleDetailView
+          article={article}
+          toc={toc}
+          related={related}
+          qa={<ContentQA items={qaItems} title="أسئلة وأجوبة حول المقال" />}
+        >
           <ArticleBody html={html} />
         </ArticleDetailView>
       </div>

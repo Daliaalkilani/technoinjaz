@@ -207,6 +207,8 @@ Suggested Slug: next-token-prediction
 
 نظريًا يسمح ذلك للسياق السابق كله بالتأثير على التنبؤ. لكن عمليًا، الحفاظ على المعلومات البعيدة كان صعبًا.
 
+![مخطط شبكة عصبية متكررة RNN قبل فردها عبر الزمن وبعده، تنتقل فيه الحالة المخفية h من خطوة إلى التالية](/images/articles/body/next-token-prediction-1.webp "فرد شبكة RNN عبر الزمن: في كل خطوة تدخل x_t وتُحدَّث الحالة المخفية h_t اعتمادًا على h_{t-1} — المصدر: fdeloche، ويكيميديا كومنز، CC BY-SA 4.0")
+
 ## ما مشكلة تلاشي التدرج؟
 
 تُدرَّب RNN عادةً باستخدام Backpropagation Through Time.
@@ -251,6 +253,8 @@ Suggested Slug: next-token-prediction
 **Transformer الأصلي في الورقة كان Encoder-Decoder موجهًا أساسًا لمهام مثل الترجمة.**
 
 أما النماذج التوليدية من عائلة GPT، فتستخدم تصميمًا **Decoder-only Transformer** أو تصميمات مشتقة منه، مع Causal Masking لمنع كل موضع من رؤية الـTokens المستقبلية أثناء التدريب التوليدي.
+
+![مخطط معمارية GPT من نوع Decoder-only Transformer يوضح طبقات Embedding وكتل Transformer وتفاصيل Multi-Head Attention مع خطوة Mask ثم Softmax في المخرجات](/images/articles/body/next-token-prediction-2.webp "معمارية GPT (Decoder-only): كتل Transformer متتالية، داخل كل منها Multi-Head Attention مع Mask سببي، ثم Linear وSoftmax لتوقع الـToken التالي — المصدر: Marxav وMrmw، ويكيميديا كومنز، CC0")
 
 هذه النقطة مهمة لأن عبارة "Transformers تتنبأ بالكلمة التالية" صحيحة في سياق النماذج السببية الحديثة، لكنها ليست وصفًا دقيقًا لكل Transformer موجود.
 

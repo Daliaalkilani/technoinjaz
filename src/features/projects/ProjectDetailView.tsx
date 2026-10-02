@@ -39,13 +39,16 @@ interface ProjectDetailViewProps {
   toc?: TocHeading[];
   related?: ProjectItem[];
   children?: React.ReactNode;
+  /** Server-rendered questions & answers block (ContentQA) */
+  qa?: React.ReactNode;
 }
 
 export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
   project,
   toc = [],
   related = [],
-  children
+  children,
+  qa
 }) => {
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
@@ -196,6 +199,9 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
               </div>
             </div>
           )}
+
+          {/* Questions & answers about this project */}
+          {qa}
 
           {/* 3D Interactive Documentation Showcase */}
           <div className="project-bookcase-banner" style={{ margin: '2.5rem 0', padding: '2.5rem 1.5rem', borderRadius: '18px', background: 'radial-gradient(circle at 50% 20%, rgba(37, 99, 235, 0.12) 0%, rgba(15, 23, 42, 0.6) 100%)', border: '1px solid rgba(56, 189, 248, 0.25)', textAlign: 'center' }}>
@@ -350,7 +356,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
 
       {/* Bottom Related Projects Grid */}
       {related.length > 0 && (
-        <section className="bottom-related-section">
+        <section className="bottom-related-section bottom-related--no-sidebar">
           <div className="section-header">
             <h2 className="section-title">
               {isEn ? "Explore More Projects" : "استكشف المزيد من مشاريع تكنو إنجاز"}

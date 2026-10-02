@@ -25,6 +25,7 @@ import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { useSavedProjects } from '@/hooks/useSavedProjects';
 import { getLoggedInUser, requireAuth } from '@/lib/auth';
 import { SITE_URL } from '@/config/site';
+import '@/features/projects/ProjectDetailView.css';
 import './ArticleDetailView.css';
 
 export interface TocHeading {
@@ -38,13 +39,16 @@ interface ArticleDetailViewProps {
   toc?: TocHeading[];
   related?: BlogArticle[];
   children?: React.ReactNode;
+  /** Server-rendered questions & answers block (ContentQA) */
+  qa?: React.ReactNode;
 }
 
 export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   article,
   toc = [],
   related = [],
-  children
+  children,
+  qa
 }) => {
   const router = useRouter();
   const { lang } = useThemeLanguage();
@@ -151,119 +155,168 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   const authorName = isEn ? article.author.nameEn : article.author.name;
   const excerpt = isEn ? article.excerptEn : article.excerpt;
 
+  const saveArticle = () => toggleSave({
+    id: article.id,
+    title: article.title,
+    titleEn: article.titleEn,
+    category: 'مقالات تقنية',
+    categoryLabel: category,
+    description: article.excerpt,
+    descriptionEn: article.excerptEn,
+    type: 'article',
+    image: article.image,
+    tags: article.tags
+  });
+
+  // Same layout as a project page (shared project-* layout classes): breadcrumbs,
+  // full-width header with the action bar, full-width cover, then content + sticky
+  // sidebar (TOC, related) on desktop. "Related" appears once: in the sidebar on
+  // desktop, as the bottom grid only where the sidebar is hidden (tablet/phone).
   return (
-    <article className="article-fullscreen-view" dir={isEn ? 'ltr' : 'rtl'}>
-      {/* 1. Top Breadcrumb & Control Bar */}
-      <div className="article-view-top-bar">
-        <nav className="article-breadcrumbs" aria-label="Breadcrumb">
-          <ol className="breadcrumb-list">
-            <li className="breadcrumb-item">
-              <Link href="/" className="breadcrumb-link-btn">
-                <Home size={14} />
-                <span>{isEn ? "Home" : "الرئيسية"}</span>
-              </Link>
-              <span className="breadcrumb-sep">/</span>
-            </li>
-            <li className="breadcrumb-item">
-              <Link href="/articles" className="breadcrumb-link-btn">
-                <BookOpen size={14} />
-                <span>{isEn ? "Articles" : "المقالات"}</span>
-              </Link>
-              <span className="breadcrumb-sep">/</span>
-            </li>
-            <li className="breadcrumb-item">
-              <span 
-                className="breadcrumb-category-pill" 
-                style={{ 
-                  borderColor: `${article.categoryColor}40`, 
-                  color: article.categoryColor,
-                  backgroundColor: `${article.categoryColor}15`
-                }}
-              >
-                {category}
-              </span>
-              <span className="breadcrumb-sep">/</span>
-            </li>
-            <li className="breadcrumb-item breadcrumb-current" aria-current="page">
-              <span>{title}</span>
-            </li>
-          </ol>
-        </nav>
+    <article className="project-detail-container article-detail-container" dir={isEn ? 'ltr' : 'rtl'}>
+      {/* 1. Breadcrumbs */}
+      <nav className="project-breadcrumbs" aria-label={isEn ? "Breadcrumb navigation" : "مسار التصفح"}>
+        <Link href="/" className="breadcrumb-link">
+          <Home size={14} />
+          <span>{isEn ? "Home" : "الرئيسية"}</span>
+        </Link>
+        <span className="breadcrumb-separator">/</span>
+        <Link href="/articles" className="breadcrumb-link">
+          <BookOpen size={14} />
+          <span>{isEn ? "Articles" : "المقالات"}</span>
+        </Link>
+        <span className="breadcrumb-separator">/</span>
+        <span className="breadcrumb-category" style={{ color: article.categoryColor }}>{category}</span>
+        <span className="breadcrumb-separator">/</span>
+        <span className="breadcrumb-current" aria-current="page" title={title}>
+          {title}
+        </span>
+      </nav>
 
-      </div>
+      {/* 2. Header */}
+      <header className="project-detail-header">
+        <div className="article-lead-category-wrap">
+          <span
+            className="project-category-badge"
+            style={{
+              backgroundColor: `${article.categoryColor}18`,
+              color: article.categoryColor,
+              borderColor: `${article.categoryColor}40`
+            }}
+          >
+            <BookOpen size={14} />
+            <span>{category}</span>
+          </span>
+          <span className="article-lead-readtime">
+            <Clock size={13} />
+            <span>{readTime}</span>
+          </span>
+        </div>
 
-      <div className="article-fullscreen-layout">
-        {/* Main Reading Column */}
-        <div className="article-main-container">
-          <div className="article-lead-category-wrap">
-            <span 
-              className="article-lead-category-pill"
-              style={{ 
-                backgroundColor: `${article.categoryColor}18`, 
-                color: article.categoryColor,
-                borderColor: `${article.categoryColor}35`
-              }}
-            >
-              {category}
-            </span>
-            <span className="article-lead-readtime">
-              <Clock size={13} />
-              <span>{readTime}</span>
-            </span>
-          </div>
+        <h1 className="project-detail-title">{title}</h1>
 
-          <h1 className="article-fullscreen-title">
-            {title}
-          </h1>
+        <p className="project-detail-lead">{excerpt}</p>
 
-          <p className="article-fullscreen-excerpt">
-            {excerpt}
-          </p>
-
-          {/* Author Capsule Row */}
-          <div className="article-author-capsule-row">
-            <div className="article-author-capsule-pill">
-              <img 
-                src={article.author.avatar} 
-                alt={authorName} 
-                className="author-capsule-avatar" 
-              />
-              <div className="author-capsule-text">
-                <span className="author-capsule-name" style={{ whiteSpace: 'nowrap' }}>{authorName}</span>
-                <span className="author-capsule-divider">|</span>
-                <span className="author-capsule-role">{article.author.role}</span>
-                <span className="author-capsule-divider">|</span>
-                <time dateTime={article.publishedAt} className="author-capsule-date" style={{ whiteSpace: 'nowrap' }}>
-                  {publishDate}
-                </time>
-              </div>
+        {/* Author */}
+        <div className="article-author-capsule-row">
+          <div className="article-author-capsule-pill">
+            <img
+              src={article.author.avatar}
+              alt={authorName}
+              className="author-capsule-avatar"
+            />
+            <div className="author-capsule-text">
+              <span className="author-capsule-name" style={{ whiteSpace: 'nowrap' }}>{authorName}</span>
+              <span className="author-capsule-divider">|</span>
+              <span className="author-capsule-role">{article.author.role}</span>
+              <span className="author-capsule-divider">|</span>
+              <time dateTime={article.publishedAt} className="author-capsule-date" style={{ whiteSpace: 'nowrap' }}>
+                {publishDate}
+              </time>
             </div>
           </div>
+        </div>
 
-          {/* High-Definition Featured Banner */}
-          <div className="article-fullscreen-banner-wrap">
-            <ResponsiveImage 
-              src={article.image} 
-              alt={title} 
-              className="article-fullscreen-banner-img" 
-              sizes="(max-width: 1023.98px) 100vw, (max-width: 1240px) calc(100vw - 360px), 860px"
-              priority 
-            />
+        {/* Actions bar (same place as on a project page) */}
+        <div className="project-meta-action-bar">
+          <div className="project-action-buttons">
+            <button
+              type="button"
+              className={`project-icon-btn like-btn ${isLiked ? 'active' : ''}`}
+              onClick={handleToggleLike}
+              title={isLiked ? (isEn ? "Unlike" : "إلغاء الإعجاب") : (isEn ? "Like" : "إعجاب")}
+              aria-label={isLiked ? (isEn ? "Unlike" : "إلغاء الإعجاب") : (isEn ? "Like" : "إعجاب")}
+              aria-pressed={isLiked}
+            >
+              <Heart size={18} fill={isLiked ? '#ef4444' : 'none'} color={isLiked ? '#ef4444' : 'currentColor'} />
+              <span>{likes}</span>
+            </button>
+
+            <button
+              type="button"
+              className={`project-icon-btn ${isItemSaved ? 'active' : ''}`}
+              onClick={saveArticle}
+              title={isItemSaved ? (isEn ? "Remove from Saved" : "إزالة من المحفوظات") : (isEn ? "Save Article" : "حفظ المقال")}
+              aria-pressed={isItemSaved}
+            >
+              {isItemSaved ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
+              <span className="btn-text-responsive">{isItemSaved ? (isEn ? "Saved" : "محفوظ") : (isEn ? "Save" : "حفظ")}</span>
+            </button>
+
+            <button
+              type="button"
+              className="project-icon-btn"
+              onClick={() => {
+                document.getElementById('article-discussion')?.scrollIntoView({ behavior: 'smooth' });
+                document.querySelector<HTMLTextAreaElement>('.comment-textarea')?.focus({ preventScroll: true });
+              }}
+              title={isEn ? "Comments" : "التعليقات"}
+              aria-label={isEn ? `Comments (${comments.length})` : `التعليقات (${comments.length})`}
+            >
+              <MessageSquare size={17} />
+              <span>{comments.length}</span>
+            </button>
+
+            <button
+              type="button"
+              className="project-icon-btn"
+              onClick={handleShare}
+              title={isEn ? "Share Article" : "مشاركة المقال"}
+            >
+              {copied ? <Check size={18} style={{ color: '#10b981' }} /> : <Share2 size={18} />}
+              <span className="btn-text-responsive">{copied ? (isEn ? "Copied" : "تم النسخ!") : (isEn ? "Share" : "مشاركة")}</span>
+            </button>
           </div>
+        </div>
+      </header>
 
-          {/* Table of contents (phones & tablets) */}
-          <TableOfContents
-            variant="accordion"
-            items={toc}
-            title={isEn ? "Table of Contents" : "فهرس محتويات المقال"}
-          />
+      {/* 3. Cover image */}
+      <div className="project-featured-image-wrapper">
+        <ResponsiveImage
+          src={article.image}
+          alt={title}
+          className="project-featured-image"
+          sizes="(max-width: 1279.98px) calc(100vw - 32px), 1200px"
+          priority
+        />
+      </div>
 
-          {/* Server-Rendered Markdown Body passed as children */}
+      {/* Table of contents (phones & tablets) */}
+      <TableOfContents
+        variant="accordion"
+        items={toc}
+        title={isEn ? "Table of Contents" : "فهرس محتويات المقال"}
+      />
+
+      {/* 4. Content + sidebar */}
+      <div className="project-content-grid">
+        <div className="project-markdown-body article-body-column">
+          {/* Server-rendered markdown body */}
           <div onClick={handleContentClick}>
             {children}
           </div>
 
-          {/* Tags Row */}
+          {/* Tags */}
           {article.tags && article.tags.length > 0 && (
             <div className="article-tags-wrap">
               {article.tags.map((tag, idx) => (
@@ -274,78 +327,17 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             </div>
           )}
 
-          {/* Interactive Engagement Bar */}
-          <div className="article-engagement-bar">
-            <div className="engagement-left-actions">
-              <button
-                type="button"
-                className={`article-action-btn like-btn ${isLiked ? 'active' : ''}`}
-                onClick={handleToggleLike}
-                title={isLiked ? (isEn ? "Unlike" : "إلغاء الإعجاب") : (isEn ? "Like" : "إعجاب")}
-                aria-label={isLiked ? (isEn ? "Unlike" : "إلغاء الإعجاب") : (isEn ? "Like" : "إعجاب")}
-              >
-                <Heart size={18} fill={isLiked ? '#ef4444' : 'none'} color={isLiked ? '#ef4444' : 'currentColor'} />
-                <span>{likes}</span>
-              </button>
+          {/* Questions & answers about this article */}
+          {qa}
 
-              <button
-                type="button"
-                className={`article-action-btn save-btn ${isItemSaved ? 'active' : ''}`}
-                onClick={() => toggleSave({
-                  id: article.id,
-                  title: article.title,
-                  titleEn: article.titleEn,
-                  category: 'مقالات تقنية',
-                  categoryLabel: category,
-                  description: article.excerpt,
-                  descriptionEn: article.excerptEn,
-                  type: 'article',
-                  image: article.image,
-                  tags: article.tags
-                })}
-                title={isItemSaved ? (isEn ? "Remove from Saved" : "إزالة من المحفوظات") : (isEn ? "Save Article" : "حفظ المقال")}
-                aria-label={isItemSaved ? (isEn ? "Remove from Saved" : "إزالة من المحفوظات") : (isEn ? "Save Article" : "حفظ المقال")}
-              >
-                {isItemSaved ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
-                <span>{isItemSaved ? (isEn ? "Saved" : "محفوظ") : (isEn ? "Save" : "حفظ")}</span>
-              </button>
-              <button
-                type="button"
-                className="article-action-btn comment-action-btn"
-                onClick={() => {
-                  const el = document.getElementById('article-discussion');
-                  el?.scrollIntoView({ behavior: 'smooth' });
-                  const textarea = document.querySelector<HTMLTextAreaElement>('.comment-textarea');
-                  textarea?.focus();
-                }}
-                title={isEn ? "Comments" : "التعليقات"}
-                aria-label={isEn ? "Comments" : "التعليقات"}
-              >
-                <MessageSquare size={17} />
-                <span>{comments.length}</span>
-              </button>
-            </div>
-
-            <button
-              type="button"
-              className="article-action-btn share-action-btn"
-              onClick={handleShare}
-              title={isEn ? "Share Article" : "مشاركة المقال"}
-              aria-label={isEn ? "Share Article" : "مشاركة المقال"}
-            >
-              {copied ? <Check size={17} color="#10b981" /> : <Share2 size={17} />}
-              <span>{copied ? (isEn ? "Link Copied" : "تم نسخ الرابط") : (isEn ? "Share" : "مشاركة")}</span>
-            </button>
-          </div>
-
-          {/* Interactive Discussion Section */}
+          {/* Discussion */}
           <section className="article-discussion-section" id="article-discussion">
             <div className="discussion-header">
               <div className="discussion-title-wrap">
                 <MessageSquare size={20} className="discussion-icon" />
-                <h3 className="discussion-title">
+                <h2 className="discussion-title">
                   {isEn ? `Technical Discussion (${comments.length})` : `النقاش الهندسي والملاحظات (${comments.length})`}
-                </h3>
+                </h2>
               </div>
             </div>
 
@@ -401,17 +393,17 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             </div>
           </section>
 
-          {/* End-of-article navigation: where readers decide what to do next */}
-          <nav className="article-end-nav" aria-label={isEn ? "Article navigation" : "التنقل بين المقالات"}>
-            <Link href="/articles" className="article-back-nav-btn">
+          {/* End-of-article navigation */}
+          <nav className="project-end-nav" aria-label={isEn ? "Article navigation" : "التنقل بين المقالات"}>
+            <Link href="/articles" className="project-back-link">
               {isEn ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
               <span>{isEn ? "Browse all articles" : "تصفّح كل المقالات"}</span>
             </Link>
           </nav>
         </div>
 
-        {/* Sidebar: Table of Contents & Related Articles */}
-        <aside className="article-related-sidebar">
+        {/* Desktop sticky sidebar: TOC + related articles */}
+        <aside className="project-sidebar">
           <TableOfContents
             variant="card"
             items={toc}
@@ -419,39 +411,26 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
           />
 
           {related.length > 0 && (
-            <div className="article-related-card">
-              <div className="related-sidebar-header">
-                <h3 className="related-sidebar-title">{isEn ? "Related Articles" : "مقالات ذات صلة"}</h3>
-              </div>
-
-              <div className="related-sidebar-list">
+            <div className="sidebar-related-card">
+              <h2 className="related-title">{isEn ? "Related Articles" : "مقالات ذات صلة"}</h2>
+              <div className="related-list">
                 {related.map((relArt) => (
                   <Link
                     key={relArt.id}
                     href={`/articles/${relArt.slug}`}
-                    className="related-sidebar-card"
+                    className="related-project-item"
                   >
-                    <div className="related-sidebar-media">
-                      <ResponsiveImage src={relArt.image} alt={relArt.title} className="related-sidebar-img" sizes="(max-width: 1023.98px) 50vw, 300px" />
-                      <div className="related-sidebar-overlay" />
-                    </div>
-                    <div className="related-sidebar-body">
-                      <span 
-                        className="related-sidebar-category"
-                        style={{ color: relArt.categoryColor }}
-                      >
+                    <ResponsiveImage
+                      src={relArt.image}
+                      alt={isEn ? relArt.titleEn : relArt.title}
+                      className="related-project-img"
+                      sizes="96px"
+                    />
+                    <div className="related-project-info">
+                      <span className="related-project-cat" style={{ color: relArt.categoryColor }}>
                         {isEn ? relArt.categoryEn : relArt.category}
                       </span>
-                      <h4 className="related-sidebar-item-title">
-                        {isEn ? relArt.titleEn : relArt.title}
-                      </h4>
-                      <div className="related-sidebar-author-row">
-                        <span className="related-sidebar-author-name">{isEn ? relArt.author.nameEn : relArt.author.name}</span>
-                        <span className="related-sidebar-time">
-                          <Clock size={11} />
-                          <span>{isEn ? relArt.readTimeEn : relArt.readTime}</span>
-                        </span>
-                      </div>
+                      <h3 className="related-project-name">{isEn ? relArt.titleEn : relArt.title}</h3>
                     </div>
                   </Link>
                 ))}
@@ -460,6 +439,47 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
           )}
         </aside>
       </div>
+
+      {/* Related grid: only where the sidebar is hidden (tablet/phone) */}
+      {related.length > 0 && (
+        <section className="bottom-related-section bottom-related--no-sidebar">
+          <div className="section-header">
+            <h2 className="section-title">
+              {isEn ? "Related Articles & Studies" : "مقالات ودراسات ذات صلة"}
+            </h2>
+          </div>
+
+          <div className="bottom-related-grid">
+            {related.map((relArt) => (
+              <Link
+                key={relArt.id}
+                href={`/articles/${relArt.slug}`}
+                className="bottom-related-card"
+              >
+                <div className="related-card-img-wrap">
+                  <ResponsiveImage
+                    src={relArt.image}
+                    alt={isEn ? relArt.titleEn : relArt.title}
+                    className="bottom-card-img"
+                    sizes="(max-width: 639.98px) 100vw, 50vw"
+                  />
+                  <span className="bottom-card-badge">{isEn ? relArt.categoryEn : relArt.category}</span>
+                </div>
+                <div className="bottom-card-body">
+                  <h3 className="bottom-card-title">{isEn ? relArt.titleEn : relArt.title}</h3>
+                  <p className="bottom-card-desc">{isEn ? relArt.excerptEn : relArt.excerpt}</p>
+                  <div className="bottom-card-footer">
+                    <span className="bottom-card-link">
+                      <span>{isEn ? "Read article" : "اقرأ المقال"}</span>
+                      {isEn ? <ArrowRight size={14} /> : <ArrowLeft size={14} />}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </article>
   );
 };

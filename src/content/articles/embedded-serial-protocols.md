@@ -175,6 +175,8 @@ Stop
 
 ويمكن إضافة Parity في إعدادات أخرى.
 
+![مخطط توقيت إطار UART يوضح حالة الخمول وبت البداية وبتات البيانات وبت التكافؤ الاختياري وبت التوقف](/images/articles/body/embedded-serial-protocols-1.webp "إطار UART: بت بداية ثم بتات البيانات ثم Parity اختيارية وبت توقف، وزمن البت يساوي 1 / Baud Rate — المصدر: AmenophisIII، ويكيميديا كومنز، CC0")
+
 # ما دور Start وStop Bits؟
 
 لأن الطرفين لا يملكان Clock مشتركة على السلك، يحتاج المستقبل إلى اكتشاف بداية الحرف ثم أخذ Samples وفق Baud Rate المتفق عليها.
@@ -523,6 +525,8 @@ SDA -------- devices
 
 وهذا يسمح لعدة أجهزة بمشاركة الخط دون صراع Push-pull مباشر.
 
+![مخطط ناقل I²C يضم متحكمًا واحدًا وثلاثة أجهزة Target على خطي SDA وSCL مع مقاومتي Pull-up إلى Vdd](/images/articles/body/embedded-serial-protocols-2.webp "ناقل I²C: Controller وعدة Targets تشترك في خطي SDA وSCL، مع مقاومتي Pull-up ترفعان الخطين إلى Vdd — المصدر: Tim Mathias، ويكيميديا كومنز، CC BY-SA 4.0")
+
 # هل اختيار Pull-up مجرد "4.7 kΩ دائمًا"؟
 
 لا.
@@ -840,6 +844,8 @@ Mode 3
 لهذا أول ما تراجعه عند SPI لا تعمل:
 
 > CPOL/CPHA + bit order + CS timing.
+
+![مخطط توقيت SPI يقارن قطبية الساعة CPOL=0 وCPOL=1 ولحظات أخذ عينات MOSI وMISO عند CPHA=0 وCPHA=1](/images/articles/body/embedded-serial-protocols-3.webp "توقيت SPI: تحدد CPOL حالة الساعة في الخمول، وتحدد CPHA الحافة التي تُقرأ عندها بتات MOSI وMISO — المصدر: Cburnett، ويكيميديا كومنز، CC BY-SA 4.0")
 
 # هل SPI تحتوي ACK أو Addressing؟
 

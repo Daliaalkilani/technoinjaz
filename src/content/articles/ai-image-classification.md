@@ -204,6 +204,8 @@ Image → learned features → classifier
 
 ومع زيادة العمق تصبح التمثيلات أكثر ارتباطًا ببنية الكائنات.
 
+![مخطط شبكة عصبية التفافية نموذجية: صورة مدخلة ثم طبقات التفاف وتجميع ثم طبقة متصلة بالكامل للمخرجات](/images/articles/body/ai-image-classification-1.webp "بنية CNN نموذجية: طبقات التفاف تنتج خرائط خصائص، يتبعها تقليص ثم طبقة تصنيف — المصدر: Aphex34، ويكيميديا كومنز، CC BY-SA 4.0")
+
 لكن يجب الحذر من الجملة المبسطة:
 
 > "الطبقة الأولى تتعرف على الحواف والثانية على العيون والثالثة على الوجه."
@@ -218,6 +220,8 @@ Pooling تقلل الأبعاد المكانية لبعض Feature Maps.
 
 - Max Pooling.
 - Average Pooling.
+
+![مثال عددي على Max Pooling بنافذة 2×2 يحوّل مصفوفة 6×6 إلى 3×3 بأخذ القيمة العظمى من كل نافذة](/images/articles/body/ai-image-classification-2.webp "مثال على Max Pooling بنافذة 2×2: تؤخذ أكبر قيمة من كل نافذة فتصغر الخريطة من 6×6 إلى 3×3 — المصدر: Daniel Voigt Godoy، ويكيميديا كومنز، CC BY 4.0")
 
 قد تساعد في:
 
@@ -302,6 +306,8 @@ Classifier
 إلى:
 
 > CNN وTransformers وغيرها يمكن أن تتعلم Visual Representations فعالة.
+
+![مخطط Vision Transformer: تقسيم الصورة إلى رقع وتضمينها مع الترميز الموضعي ثم تمريرها عبر طبقات الانتباه إلى رأس التصنيف](/images/articles/body/ai-image-classification-3.webp "بنية Vision Transformer: تُقسَّم الصورة إلى رقع تُعامل كسلسلة Tokens ثم يصنّفها رمز cls — المصدر: Aston Zhang وآخرون (Dive into Deep Learning)، ويكيميديا كومنز، CC BY-SA 4.0")
 
 # هل Vision Transformer أفضل من CNN دائمًا؟
 

@@ -1599,3 +1599,50 @@
 .article-main-container {
   min-width: 0;
 }
+
+/* ==========================================================================
+   ARTICLE ON THE PROJECT LAYOUT (shared project-* classes from
+   ProjectDetailView.css; only the article-specific bits are here)
+   ========================================================================== */
+.article-detail-container .article-lead-category-wrap {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.article-detail-container .article-lead-category-wrap .project-category-badge {
+  margin-bottom: 0;
+  border: 1px solid;
+}
+
+.article-detail-container .article-author-capsule-row {
+  margin: 0 0 20px;
+}
+
+.article-detail-container .project-meta-action-bar .like-btn.active {
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.article-detail-container .article-body-column .article-fullscreen-markdown-body {
+  margin-bottom: 2rem;
+}
+
+.article-detail-container .article-tags-wrap {
+  margin: 0 0 2rem;
+}
+
+.article-detail-container .article-discussion-section {
+  margin-top: 2.5rem;
+}
+
+/* Article covers carry their title/subtitle inside the artwork: never crop them
+   (the project cover is capped at 520px with object-fit: cover). */
+.article-detail-container .project-featured-image {
+  max-height: none;
+  height: auto;
+  object-fit: contain;
+}

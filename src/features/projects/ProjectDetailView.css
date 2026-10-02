@@ -1247,3 +1247,11 @@
   color: var(--text-muted);
 }
 
+
+/* "Related" appears once per page: in the sticky sidebar where it is visible, and as
+   the bottom grid only where the sidebar is hidden (≤960px). Shared by articles. */
+@media (min-width: 961px) {
+  .bottom-related--no-sidebar {
+    display: none;
+  }
+}

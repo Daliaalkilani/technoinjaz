@@ -77,8 +77,14 @@ export function renderMarkdown(
     if (href.includes('docs.google.com')) {
       return '';
     }
-    const t = title ? ` title="${title}"` : '';
-    return `<img src="${href}" alt="${text || ''}"${t} loading="lazy" />`;
+    // Draft placeholders (IMAGE_01_URL…) would ship as broken images: real paths only.
+    if (!href.startsWith('/') && !/^https?:\/\//.test(href)) return '';
+    const esc = (v: string) => v.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    const img = `<img src="${href}" alt="${esc(text || '')}" loading="lazy" decoding="async" />`;
+    // The markdown title is the visible caption (what the image shows + source credit).
+    return title
+      ? `<figure class="md-figure">${img}<figcaption>${esc(title)}</figcaption></figure>`
+      : img;
   };
 
   const markedInstance = new Marked({ gfm: true, breaks: true, renderer });

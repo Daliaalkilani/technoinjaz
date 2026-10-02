@@ -2,6 +2,7 @@ import { SITE_URL, ORG_ID, WEBSITE_ID, ORG, absoluteUrl } from '@/config/site';
 import type { BlogArticle } from '@/data/blogArticlesData';
 import type { ProjectItem } from '@/data/projectsData';
 import type { FaqItem } from '@/data/faqData';
+import type { QAItem } from '@/data/qa/types';
 import { projectTags, plainExcerpt } from '@/lib/text';
 
 export function abdulghaniPersonSchema() {
@@ -242,6 +243,19 @@ export function faqPageSchema(items: FaqItem[]) {
         '@type': 'Answer',
         text: item.answer
       }
+    }))
+  };
+}
+
+// Questions & answers shown on an article/project page (ContentQA).
+export function qaSchema(items: QAItem[]) {
+  return {
+    '@type': 'FAQPage',
+    inLanguage: 'ar',
+    mainEntity: items.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: { '@type': 'Answer', text: item.a }
     }))
   };
 }
