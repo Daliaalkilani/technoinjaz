@@ -11,7 +11,7 @@ export default function ProjectsLoading() {
   return (
     <div className="tab-page-container tab-page-projects" style={{ padding: 0, maxWidth: '100%' }} aria-busy="true" aria-label="جاري تحميل المشاريع...">
       <div className="tab-page-header projects-page-header">
-        <h1 className="tab-page-title projects-page-title"><SkText words={4} /></h1>
+        <div className="tab-page-title projects-page-title"><SkText words={4} /></div>
         <p className="tab-page-subtitle projects-page-subtitle"><SkText words={12} /></p>
       </div>
       <div className="live-projects-container">
@@ -33,7 +33,7 @@ export default function ProjectsLoading() {
       </div>
       <section className="catalog-section">
         <div className="catalog-hero-wrapper">
-          <h2 className="catalog-hero-title"><SkText words={5} /></h2>
+          <div className="catalog-hero-title"><SkText words={5} /></div>
           <div className="catalog-search-bar" style={{ position: 'relative', minHeight: 49 }}><SkFill /></div>
         </div>
         <div className="catalog-categories-bar">
@@ -44,7 +44,7 @@ export default function ProjectsLoading() {
             <article key={i} className="project-card">
               <div className="card-thumb-wrap" style={{ position: 'relative' }}><SkFill /></div>
               <div className="card-body">
-                <h3 className="card-title"><SkText words={6} /></h3>
+                <div className="card-title"><SkText words={6} /></div>
                 <p className="card-excerpt"><SkLines n={3} last="70%" /></p>
                 <div className="card-tags">{[90, 82, 64].map((w, j) => <SkBox key={j} w={w} h={21} r={4} />)}</div>
                 <div className="card-footer"><SkBox w={148} h={17} /></div>

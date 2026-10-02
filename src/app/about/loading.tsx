@@ -11,7 +11,7 @@ export default function AboutLoading() {
   return (
     <section className="about-team-section" aria-busy="true" aria-label="جاري تحميل صفحة من نحن...">
       <div className="about-header-container">
-        <h1 className="about-header-title"><SkText words={3} /></h1>
+        <div className="about-header-title"><SkText words={3} /></div>
         <p className="about-header-subtitle"><SkText words={10} /></p>
       </div>
       <div className="team-moments-section-wrapper">

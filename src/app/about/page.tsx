@@ -9,7 +9,8 @@ export const dynamic = 'force-static';
 export const metadata: Metadata = pageMetadata({
   title: 'من نحن وفريق العمل الهندسي | تكنو إنجاز',
   description: 'تعرف على رؤية تكنو إنجاز، بقيادة المهندس عبد الغني الحمدي، وبنيتنا الهندسية المتكاملة في الذكاء الاصطناعي والأنظمة المدمجة ومشاريع التخرج التقنية.',
-  path: '/about'
+  path: '/about',
+  absoluteTitle: true
 });
 
 export default function AboutPage() {

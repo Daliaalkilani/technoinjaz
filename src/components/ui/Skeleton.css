@@ -226,3 +226,8 @@
 @media (prefers-reduced-motion: reduce) {
   .sk-text { animation: none; }
 }
+
+/* SkText placeholder words come from data-sk (not text content) */
+.sk-text::before {
+  content: attr(data-sk);
+}

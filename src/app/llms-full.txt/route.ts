@@ -2,6 +2,8 @@ import { getAllArticles } from '@/lib/content/articles';
 import { getAllProjects } from '@/lib/content/projects';
 import { projectReelsData } from '@/data/projectReelsData';
 import { faqData } from '@/data/faqData';
+import { ARTICLE_QA } from '@/data/qa/articles';
+import { PROJECT_QA } from '@/data/qa/projects';
 import { ORG, absoluteUrl } from '@/config/site';
 
 export const dynamic = 'force-static';
@@ -36,11 +38,13 @@ export async function GET() {
 
   for (const a of articles) {
     text += `### ${a.title}\n- URL: ${absoluteUrl('/articles/' + a.slug)}\n- Category: ${a.category} (${a.categoryEn})\n- Published: ${a.publishedAt}\n- Summary: ${a.metaDescription || a.excerpt}\n\n`;
+    for (const qa of ARTICLE_QA[a.slug] ?? []) text += `Q: ${qa.q}\nA: ${qa.a}\n\n`;
   }
 
   text += `## Engineering Projects & Prototypes\n`;
   for (const p of projects) {
     text += `### ${p.title}\n- URL: ${absoluteUrl('/projects/' + p.slug)}\n- Category: ${p.categoryNameAr}\n- Overview: ${p.excerpt}\n\n`;
+    for (const qa of PROJECT_QA[p.slug] ?? []) text += `Q: ${qa.q}\nA: ${qa.a}\n\n`;
   }
 
   text += `## Leadership & Founder

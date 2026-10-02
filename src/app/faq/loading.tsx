@@ -10,7 +10,7 @@ export default function FAQLoading() {
   return (
     <section className="faq-section-container" aria-busy="true" aria-label="جاري تحميل الأسئلة الشائعة...">
       <div className="faq-header-wrapper">
-        <h1 className="faq-page-main-title"><SkText words={2} /></h1>
+        <div className="faq-page-main-title"><SkText words={2} /></div>
         <p className="faq-page-lead-desc"><SkText words={16} /></p>
       </div>
       <div className="faq-categories-chips-wrap">

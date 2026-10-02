@@ -10,7 +10,7 @@ export default function VideosLoading() {
   return (
     <div className="tab-page-container tab-page-videos" style={{ padding: 0, maxWidth: '100%' }} aria-busy="true" aria-label="جاري تحميل الفيديوهات...">
       <div className="tab-page-header reels-page-header">
-        <h1 className="tab-page-title reels-page-title"><SkText words={3} /></h1>
+        <div className="tab-page-title reels-page-title"><SkText words={3} /></div>
         <p className="tab-page-subtitle reels-page-subtitle"><SkText words={14} /></p>
       </div>
       <section className="cinema-reels-experience">

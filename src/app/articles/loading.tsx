@@ -11,7 +11,7 @@ export default function ArticlesLoading() {
     <div className="tab-page-container tab-page-articles" style={{ padding: 0, maxWidth: '100%' }} aria-busy="true" aria-label="جاري تحميل المقالات...">
       <div className="office-blog-section">
         <div className="office-blog-header">
-          <h1 className="blog-main-title"><SkText words={4} /></h1>
+          <div className="blog-main-title"><SkText words={4} /></div>
           <p className="blog-main-desc"><SkText words={16} /></p>
         </div>
         <div className="blog-search-bar-wrap">
@@ -31,7 +31,7 @@ export default function ArticlesLoading() {
               <div className="card-media-banner" style={{ position: 'relative', aspectRatio: '449 / 252' }}><SkFill /></div>
               <div className="card-body-content">
                 <div className="card-meta-category-row"><SkBox w={120} h={25} r={999} /><SkBox w={90} h={14} /></div>
-                <h3 className="card-main-title"><SkText words={9} /></h3>
+                <div className="card-main-title"><SkText words={9} /></div>
                 <p className="card-main-excerpt"><SkLines n={2} last="80%" /></p>
                 <div className="card-footer-capsule-row"><SkBox w="70%" h={32} r={999} /></div>
               </div>

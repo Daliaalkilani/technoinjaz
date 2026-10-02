@@ -19,7 +19,7 @@ export default function ArticleLoading() {
           <div className="article-lead-category-wrap">
             <SkBox w={120} h={28} r={999} /><SkBox w={90} h={16} />
           </div>
-          <h1 className="project-detail-title"><SkText words={8} /></h1>
+          <div className="project-detail-title"><SkText words={8} /></div>
           <p className="project-detail-lead"><SkLines n={3} last="62%" /></p>
           <div className="article-author-capsule-row"><SkBox w={320} h={40} r={999} style={{ maxWidth: '100%' }} /></div>
           <div className="project-meta-action-bar">
@@ -33,9 +33,9 @@ export default function ArticleLoading() {
           <div className="project-markdown-body">
             <div className="article-fullscreen-markdown-body">
               <SkLines n={4} last="55%" />
-              <h2 style={{ margin: '2.2rem 0 1rem' }}><SkLine w="48%" /></h2>
+              <div style={{ margin: '2.2rem 0 1rem' }}><SkLine w="48%" /></div>
               <SkLines n={5} last="70%" />
-              <h2 style={{ margin: '2.2rem 0 1rem' }}><SkLine w="40%" /></h2>
+              <div style={{ margin: '2.2rem 0 1rem' }}><SkLine w="40%" /></div>
               <SkLines n={4} last="45%" />
             </div>
           </div>

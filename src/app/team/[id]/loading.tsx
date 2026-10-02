@@ -14,7 +14,7 @@ export default function TeamMemberLoading() {
         <section className="profile-hero-card">
           <div className="profile-avatar-wrapper"><SkBox w={140} h={140} r="50%" /></div>
           <div className="profile-hero-info">
-            <h1 className="profile-name"><SkText words={3} /></h1>
+            <div className="profile-name"><SkText words={3} /></div>
             <SkLine w="45%" />
             <SkLine w="70%" />
             <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>{[0, 1, 2, 3].map((i) => <SkBox key={i} w={40} h={40} r={999} />)}</div>
@@ -23,7 +23,7 @@ export default function TeamMemberLoading() {
         <section className="profile-quote-card"><SkLine w="80%" center /><SkLine w="30%" center /></section>
         <section className="profile-triplet-grid">
           {['vision-card', 'mission-card', 'goals-card'].map((c) => (
-            <div key={c} className={`triplet-card ${c}`}><SkBox w={40} h={40} r={12} /><h3 className="triplet-title"><SkLine w="50%" /></h3><SkLines n={2} last="75%" /></div>
+            <div key={c} className={`triplet-card ${c}`}><SkBox w={40} h={40} r={12} /><div className="triplet-title"><SkLine w="50%" /></div><SkLines n={2} last="75%" /></div>
           ))}
         </section>
         <div className="profile-grid">

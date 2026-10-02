@@ -14,12 +14,12 @@ export default function ContactLoading() {
     <div className="contact-page-wrapper" aria-busy="true" aria-label="جاري تحميل صفحة التواصل...">
       <div className="contact-container">
         <section className="contact-hero">
-          <h1 className="contact-hero-title"><SkText words={3} /></h1>
+          <div className="contact-hero-title"><SkText words={3} /></div>
           <p className="contact-hero-desc"><SkText words={12} /></p>
         </section>
         <div className="contact-main-grid">
           <section className="contact-form-panel">
-            <h2 className="contact-panel-title"><SkText words={4} /></h2>
+            <div className="contact-panel-title"><SkText words={4} /></div>
             <p className="contact-panel-subtitle"><SkLines n={2} last="70%" /></p>
             <div className="contact-form">
               {field(0)}

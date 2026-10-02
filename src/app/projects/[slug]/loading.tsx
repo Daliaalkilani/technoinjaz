@@ -15,7 +15,7 @@ export default function ProjectLoading() {
         </nav>
         <header className="project-detail-header">
           <div className="project-category-badge" style={{ border: 0, background: 'none', padding: 0 }}><SkBox w={150} h={28} r={999} /></div>
-          <h1 className="project-detail-title"><SkText words={6} /></h1>
+          <div className="project-detail-title"><SkText words={6} /></div>
           <p className="project-detail-lead"><SkLines n={2} last="58%" /></p>
           <div className="project-meta-action-bar">
             <div className="project-action-buttons">
@@ -28,9 +28,9 @@ export default function ProjectLoading() {
           <div className="project-markdown-body">
             <div className="markdown-prose">
               <SkLines n={3} last="60%" />
-              <h2 style={{ margin: '2rem 0 1rem' }}><SkLine w="42%" /></h2>
+              <div style={{ margin: '2rem 0 1rem' }}><SkLine w="42%" /></div>
               <SkLines n={4} last="72%" />
-              <h2 style={{ margin: '2rem 0 1rem' }}><SkLine w="36%" /></h2>
+              <div style={{ margin: '2rem 0 1rem' }}><SkLine w="36%" /></div>
               <SkLines n={3} last="50%" />
             </div>
           </div>

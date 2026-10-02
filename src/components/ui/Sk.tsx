@@ -16,9 +16,14 @@ export function SkLine({ w = '100%', center = false, style }: { w?: string | num
  */
 export function SkText({ words = 8 }: { words?: number }) {
   return (
-    <span className="sk-text" aria-hidden="true">
-      {Array.from({ length: words }, (_, i) => (i % 3 === 0 ? 'كلمات ' : i % 3 === 1 ? 'نص ' : 'محتوى ')).join('')}
-    </span>
+    // The placeholder words live in a data attribute rendered by CSS (::before), so
+    // they wrap like text but are not part of the page's text content (search engines
+    // and screen readers never see them).
+    <span
+      className="sk-text"
+      aria-hidden="true"
+      data-sk={Array.from({ length: words }, (_, i) => (i % 3 === 0 ? 'mmmmmm ' : i % 3 === 1 ? 'mmm ' : 'mmmmm ')).join('')}
+    />
   );
 }
 

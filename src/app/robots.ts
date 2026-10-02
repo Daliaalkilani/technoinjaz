@@ -8,7 +8,18 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: '*',
-        allow: '/'
+        allow: '/',
+        // Personal / transactional / error routes carry no searchable content.
+        disallow: [
+          '/account',
+          '/login',
+          '/register',
+          '/api/',
+          '/offline',
+          '/access-denied',
+          '/connection-error',
+          '/server-error'
+        ]
       }
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
