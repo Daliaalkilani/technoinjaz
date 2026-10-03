@@ -16,7 +16,8 @@
     ],
     "readTimeEn": "16 min read",
     "publishDateEn": "Sep 21, 2026",
-    "categoryEn": "Networks & Telecom"
+    "categoryEn": "Networks & Telecom",
+    "slug": "5g-nr-radio-architecture"
   },
   "ai-image-classification": {
     "titleEn": "AI Image Classification: From Convolutional Neural Networks to Vision Transformers",
@@ -33,7 +34,8 @@
     ],
     "readTimeEn": "19 min read",
     "publishDateEn": "Sep 21, 2026",
-    "categoryEn": "Computer Vision"
+    "categoryEn": "Computer Vision",
+    "slug": "ai-image-classification"
   },
   "embedded-serial-protocols": {
     "titleEn": "UART vs I2C vs SPI vs RS-232: Embedded Serial Communication Protocols Guide",
@@ -51,7 +53,8 @@
     ],
     "readTimeEn": "20 min read",
     "publishDateEn": "Sep 21, 2026",
-    "categoryEn": "Embedded Systems"
+    "categoryEn": "Embedded Systems",
+    "slug": "embedded-serial-protocols"
   },
   "smart-ai-ride-pooling": {
     "titleEn": "Smart AI Ride-Pooling: Algorithms, Dynamic Routing, and Urban Congestion Reduction",
@@ -68,7 +71,8 @@
     ],
     "readTimeEn": "22 min read",
     "publishDateEn": "Sep 21, 2026",
-    "categoryEn": "Smart Mobility & AI"
+    "categoryEn": "Smart Mobility & AI",
+    "slug": "smart-ai-ride-pooling"
   },
   "affective-computing": {
     "slug": "affective-computing",
@@ -160,7 +164,8 @@
     ],
     "readTimeEn": "17 min read",
     "publishDateEn": "Sep 21, 2026",
-    "categoryEn": "Internet of Things"
+    "categoryEn": "Internet of Things",
+    "slug": "internet-of-things-iot"
   },
   "model-context-protocol-mcp": {
     "titleEn": "Model Context Protocol (MCP): Standardizing AI Tool & Data Integration",
@@ -178,7 +183,8 @@
     ],
     "readTimeEn": "16 min read",
     "publishDateEn": "Sep 20, 2026",
-    "categoryEn": "Systems Architecture"
+    "categoryEn": "Systems Architecture",
+    "slug": "model-context-protocol-mcp"
   },
   "next-token-prediction": {
     "titleEn": "Next Token Prediction: From N-grams to Transformers and Arabic LLMs",
@@ -195,7 +201,8 @@
     ],
     "readTimeEn": "15 min read",
     "publishDateEn": "Sep 20, 2026",
-    "categoryEn": "NLP & LLMs"
+    "categoryEn": "NLP & LLMs",
+    "slug": "next-token-prediction"
   },
   "5g-iot": {
     "titleEn": "How 5G Transforms the Internet of Things: Speed, Latency, Massive IoT, and 5G-Advanced",
@@ -214,6 +221,7 @@
     ],
     "readTimeEn": "15 min read",
     "publishDateEn": "Sep 21, 2026",
-    "categoryEn": "Networks & Telecom"
+    "categoryEn": "Networks & Telecom",
+    "slug": "5g-iot"
   }
 }
