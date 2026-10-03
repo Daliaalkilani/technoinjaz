@@ -37,6 +37,8 @@ export interface TocHeading {
 interface ArticleDetailViewProps {
   article: BlogArticle;
   toc?: TocHeading[];
+  /** English TOC headings — used when the site language is English */
+  tocEn?: TocHeading[] | null;
   related?: BlogArticle[];
   children?: React.ReactNode;
   /** Server-rendered questions & answers block (ContentQA) */
@@ -46,6 +48,7 @@ interface ArticleDetailViewProps {
 export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   article,
   toc = [],
+  tocEn = null,
   related = [],
   children,
   qa
@@ -53,6 +56,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   const router = useRouter();
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
+  const tocItems = isEn && tocEn && tocEn.length ? tocEn : toc;
   const { isSaved, toggleSave } = useSavedProjects();
 
   const [commentText, setCommentText] = useState('');
@@ -304,7 +308,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
       {/* Table of contents (phones & tablets) */}
       <TableOfContents
         variant="accordion"
-        items={toc}
+        items={tocItems}
         title={isEn ? "Table of Contents" : "فهرس محتويات المقال"}
       />
 
@@ -317,15 +321,19 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
           </div>
 
           {/* Tags */}
-          {article.tags && article.tags.length > 0 && (
-            <div className="article-tags-wrap">
-              {article.tags.map((tag, idx) => (
-                <span key={idx} className="article-tag-chip">
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          )}
+          {(() => {
+            const tags = (isEn && article.tagsEn?.length ? article.tagsEn : article.tags) || [];
+            if (!tags.length) return null;
+            return (
+              <div className="article-tags-wrap">
+                {tags.map((tag, idx) => (
+                  <span key={idx} className="article-tag-chip">
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            );
+          })()}
 
           {/* Questions & answers about this article */}
           {qa}
@@ -406,7 +414,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
         <aside className="project-sidebar">
           <TableOfContents
             variant="card"
-            items={toc}
+            items={tocItems}
             title={isEn ? "Table of Contents" : "فهرس المقال"}
           />
 

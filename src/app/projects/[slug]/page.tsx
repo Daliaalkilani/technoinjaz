@@ -53,7 +53,8 @@ export default async function ProjectPage({
   const { html, toc } = renderMarkdown(md, { stripLeadingH1: true, variant: 'project' });
   // English body: shipped in parallel so the client can flip languages without a reload.
   const mdEn = await getProjectMarkdownEn(slug);
-  const htmlEn = mdEn ? renderMarkdown(mdEn, { stripLeadingH1: true, variant: 'project' }).html : null;
+  const mdEnRendered = mdEn ? renderMarkdown(mdEn, { stripLeadingH1: true, variant: 'project' }) : null;
+  const htmlEn = mdEnRendered ? mdEnRendered.html : null;
   const related = getRelatedProjects(slug, 3);
   const qaItems = PROJECT_QA[slug] ?? [];
 
@@ -79,8 +80,9 @@ export default async function ProjectPage({
         <ProjectDetailView
           project={projectWithFiles}
           toc={toc}
+          tocEn={mdEnRendered ? mdEnRendered.toc : null}
           related={related}
-          qa={<ContentQA items={qaItems} title="الأسئلة الشائعة حول المشروع" />}
+          qa={<ContentQA items={qaItems} title="الأسئلة الشائعة حول المشروع"  titleEn="Frequently Asked Questions" />}
         >
           <ProjectBody html={html} htmlEn={htmlEn} />
         </ProjectDetailView>

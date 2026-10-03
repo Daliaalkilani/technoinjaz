@@ -52,7 +52,8 @@ export default async function ArticlePage({
   const { html, toc } = renderMarkdown(md, { stripLeadingH1: true, variant: 'article' });
   // English body: shipped in parallel so the client can flip languages without a reload.
   const mdEn = await getArticleMarkdownEn(slug);
-  const htmlEn = mdEn ? renderMarkdown(mdEn, { stripLeadingH1: true, variant: 'article' }).html : null;
+  const mdEnRendered = mdEn ? renderMarkdown(mdEn, { stripLeadingH1: true, variant: 'article' }) : null;
+  const htmlEn = mdEnRendered ? mdEnRendered.html : null;
   const related = getRelatedArticles(slug, 3);
   const qaItems = ARTICLE_QA[slug] ?? [];
 
@@ -69,8 +70,9 @@ export default async function ArticlePage({
         <ArticleDetailView
           article={article}
           toc={toc}
+          tocEn={mdEnRendered ? mdEnRendered.toc : null}
           related={related}
-          qa={<ContentQA items={qaItems} title="الأسئلة الشائعة حول المقال" />}
+          qa={<ContentQA items={qaItems} title="الأسئلة الشائعة حول المقال"  titleEn="Frequently Asked Questions" />}
         >
           <ArticleBody html={html} htmlEn={htmlEn} />
         </ArticleDetailView>

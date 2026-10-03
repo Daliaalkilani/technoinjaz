@@ -37,6 +37,8 @@ export interface BlogArticle {
   content: string[];
   contentEn: string[];
   tags: string[];
+  /** English hashtag chips — shown in English mode */
+  tagsEn?: string[];
   initialLikes: number;
   initialComments: BlogComment[];
 }
@@ -78,6 +80,7 @@ export const blogArticlesData: BlogArticle[] = [
       'It goes beyond 3D visualization to enable continuous monitoring, what-if scenario simulations, anomaly detection, and operational optimization.'
     ],
     tags: ['التوأم_الرقمي', 'إنترنت_الأشياء', 'التحول_الرقمي', 'المحاكاة', 'أنظمة_ذكية', 'Digital_Twin'],
+    tagsEn: ["Digital Twin", "Internet of Things", "Digital Transformation", "Simulation", "Smart Systems"],
     initialLikes: 184,
     initialComments: []
   },
@@ -117,6 +120,7 @@ export const blogArticlesData: BlogArticle[] = [
       'Modern scientific consensus emphasizes measuring expressions and physiological markers as contextual cues rather than deterministic emotional ground truth.'
     ],
     tags: ['الحوسبة_العاطفية', 'الذكاء_الاصطناعي', 'التفاعل_البشري_الحاسوبي', 'الرؤية_الحاسوبية', 'Affective_AI'],
+    tagsEn: ["Affective Computing", "Artificial Intelligence", "Human-Computer Interaction", "Computer Vision", "Affective AI"],
     initialLikes: 215,
     initialComments: []
   },
@@ -156,6 +160,7 @@ export const blogArticlesData: BlogArticle[] = [
       'Robust architectures combine facial cues with explicit user history and privacy-preserving local on-device inference.'
     ],
     tags: ['أنظمة_التوصية', 'تعابير_الوجه', 'الرؤية_الحاسوبية', 'الحوسبة_العاطفية', 'تخصيص_المحتوى', 'Recommender_Systems'],
+    tagsEn: ["Recommender Systems", "Facial Expressions", "Computer Vision", "Affective Computing", "Content Personalization"],
     initialLikes: 168,
     initialComments: []
   },
@@ -195,6 +200,7 @@ export const blogArticlesData: BlogArticle[] = [
       'It solves the M×N integration problem by standardizing tool definitions, prompts, and resources across heterogeneous AI platforms.'
     ],
     tags: ['بروتوكول_MCP', 'وكلاء_الذكاء_الاصطناعي', 'تكامل_البيانات', 'LLM_Tools', 'Anthropic', 'Model_Context_Protocol'],
+    tagsEn: ["MCP", "Model Context Protocol", "AI Agents", "Data Integration", "LLM Tools", "Anthropic", "AI Protocols"],
     initialLikes: 290,
     initialComments: []
   },
@@ -234,6 +240,7 @@ export const blogArticlesData: BlogArticle[] = [
       'Understanding tokenization granularity, causal masking, and decoding heuristics is fundamental to engineering with modern LLMs like Jais and ALLaM.'
     ],
     tags: ['معالجة_اللغات_الطبيعية', 'النماذج_اللغوية', 'Transformers', 'Next_Token_Prediction', 'الذكاء_الاصطناعي', 'اللغة_العربية'],
+    tagsEn: ["NLP", "Language Models", "Transformers", "Next Token Prediction", "Artificial Intelligence", "Arabic Language"],
     initialLikes: 230,
     initialComments: []
   },
@@ -273,6 +280,7 @@ export const blogArticlesData: BlogArticle[] = [
       '3GPP architecture divides 5G into eMBB, URLLC, and mMTC, supported by 5G-Advanced (Release 18/19) and RedCap technologies.'
     ],
     tags: ['شبكات_5G', 'إنترنت_الأشياء', 'اتصالات_لاسلكية', 'RedCap', 'URLLC', 'mMTC', 'IoT'],
+    tagsEn: ["5G", "Internet of Things", "URLLC", "eMBB", "mMTC", "RedCap", "NB-IoT", "5G-Advanced"],
     initialLikes: 215,
     initialComments: []
   },
@@ -312,6 +320,7 @@ export const blogArticlesData: BlogArticle[] = [
       'Modern pipelines combine facial landmark detection with spatial-temporal CNNs and Vision Transformers while maintaining ethical and privacy boundaries.'
     ],
     tags: ['رؤية_حاسوبية', 'تعابير_الوجه', 'FER', 'FACS', 'CNN', 'ذكاء_اصطناعي', 'Vision_Transformers'],
+    tagsEn: ["Computer Vision", "Facial Expressions", "FER", "FACS", "CNN", "Artificial Intelligence", "Vision Transformers"],
     initialLikes: 278,
     initialComments: []
   },
@@ -351,6 +360,7 @@ export const blogArticlesData: BlogArticle[] = [
       'This engineering guide compares transport technologies (LoRaWAN, NB-IoT) with messaging protocols (MQTT, CoAP, Matter) and NISTIR 8259 security baselines.'
     ],
     tags: ['إنترنت_الأشياء', 'IoT', 'MQTT', 'CoAP', 'LoRaWAN', 'أنظمة_ذكية', 'Matter'],
+    tagsEn: ["Internet of Things", "IoT", "MQTT", "CoAP", "LoRaWAN", "NB-IoT", "LTE-M", "Matter", "Edge Computing", "AIoT", "IoT Security"],
     initialLikes: 340,
     initialComments: []
   },
@@ -390,6 +400,7 @@ export const blogArticlesData: BlogArticle[] = [
       'Detailed analysis covering asynchronous UART, 2-wire multi-device I2C, high-throughput synchronous SPI, and industrial RS-232/RS-485 transceivers.'
     ],
     tags: ['أنظمة_مدمجة', 'UART', 'I2C', 'SPI', 'RS232', 'متحكمات_دقيقة', 'إلكترونيات'],
+    tagsEn: ["Embedded Systems", "UART", "I2C", "SPI", "RS232", "Microcontrollers", "Electronics"],
     initialLikes: 310,
     initialComments: []
   },
@@ -429,6 +440,7 @@ export const blogArticlesData: BlogArticle[] = [
       'Covers structural evolution from spatial convolutions and residual networks to Vision Transformers and contrastive language-image pre-training (CLIP).'
     ],
     tags: ['تصنيف_الصور', 'رؤية_حاسوبية', 'CNN', 'Vision_Transformers', 'ResNet', 'ذكاء_اصطناعي'],
+    tagsEn: ["Image Classification", "Computer Vision", "CNN", "Vision Transformers", "ResNet", "Artificial Intelligence"],
     initialLikes: 265,
     initialComments: []
   },
@@ -468,6 +480,7 @@ export const blogArticlesData: BlogArticle[] = [
       'In-depth study of Massive MIMO spatial multiplexing, digital beamforming, and Open RAN 7.2x functional split fronthaul synchronization.'
     ],
     tags: ['شبكات_5G', '5G_NR', 'اتصالات', 'MIMO', 'Beamforming', 'OFDM', 'Open_RAN'],
+    tagsEn: ["5G Networks", "5G NR", "Telecommunications", "MIMO", "Beamforming", "OFDM", "Open RAN"],
     initialLikes: 195,
     initialComments: []
   },
@@ -507,6 +520,7 @@ export const blogArticlesData: BlogArticle[] = [
       'Covers computational formulations for Dial-a-Ride problems (DARP), real-time spatio-temporal batching, SUMO simulations, and fleet rebalancing.'
     ],
     tags: ['أنظمة_ذكية', 'نقل_ذكي', 'ذكاء_اصطناعي', 'مشاركة_الرحلات', 'توجيه_المسارات', 'مدن_ذكية'],
+    tagsEn: ["Smart Systems", "Smart Mobility", "Artificial Intelligence", "Ride-Pooling", "Route Optimization", "Smart Cities"],
     initialLikes: 245,
     initialComments: []
   }

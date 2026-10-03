@@ -35,6 +35,8 @@ export interface TocHeading {
 interface ProjectDetailViewProps {
   project: ProjectItem;
   toc?: TocHeading[];
+  /** English TOC headings — used in English mode */
+  tocEn?: TocHeading[] | null;
   related?: ProjectItem[];
   children?: React.ReactNode;
   /** Server-rendered questions & answers block (ContentQA) */
@@ -44,12 +46,14 @@ interface ProjectDetailViewProps {
 export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
   project,
   toc = [],
+  tocEn = null,
   related = [],
   children,
   qa
 }) => {
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
+  const tocItems = isEn && tocEn && tocEn.length ? tocEn : toc;
   const { isSaved, toggleSave } = useSavedProjects();
 
   const [copied, setCopied] = useState(false);
@@ -188,7 +192,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
       {/* Table of contents (phones & tablets) */}
       <TableOfContents
         variant="accordion"
-        items={toc}
+        items={tocItems}
         title={isEn ? "Project contents" : "فهرس محتويات المشروع"}
       />
 
@@ -239,23 +243,23 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
                     {project.bookCover ? (
                       <img
                         src={project.bookCover}
-                        alt={project.title}
+                        alt={(isEn ? (project.titleEn || project.title) : project.title)}
                         className="book-cover-img"
                       />
                     ) : project.image ? (
                       <div className="book-cover-img-wrapper" style={{ position: 'relative', width: '100%', height: '100%' }}>
                         <img
                           src={project.image}
-                          alt={project.title}
+                          alt={(isEn ? (project.titleEn || project.title) : project.title)}
                           className="book-cover-img"
                         />
                         <div className="book-cover-overlay">
-                          <h4 className="book-cover-title">{project.title}</h4>
+                          <h4 className="book-cover-title">{isEn ? (project.titleEn || project.title) : project.title}</h4>
                         </div>
                       </div>
                     ) : (
                       <div className="book-cover-fallback">
-                        <h4 className="title" style={{ fontSize: '1rem' }}>{project.title}</h4>
+                        <h4 className="title" style={{ fontSize: '1rem' }}>{isEn ? (project.titleEn || project.title) : project.title}</h4>
                       </div>
                     )}
                     {/* Realistic Physical Spine Hinge & Crease */}
@@ -315,7 +319,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
         <aside className="project-sidebar">
           <TableOfContents
             variant="card"
-            items={toc}
+            items={tocItems}
             title={isEn ? "Project contents" : "فهرس المشروع"}
           />
 
@@ -332,13 +336,13 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
                   >
                     <img
                       src={rel.image}
-                      alt={rel.altText || rel.title}
+                      alt={(isEn ? (rel.altTextEn || rel.altText) : rel.altText) || (isEn ? (rel.titleEn || rel.title) : rel.title)}
                       className="related-project-img"
                       loading="lazy"
                     />
                     <div className="related-project-info">
                       <span className="related-project-cat">{isEn ? (rel.categoryNameEn || rel.categoryNameAr) : rel.categoryNameAr}</span>
-                      <h4 className="related-project-name">{rel.title}</h4>
+                      <h4 className="related-project-name">{isEn ? (rel.titleEn || rel.title) : rel.title}</h4>
                     </div>
                   </Link>
                 ))}
@@ -370,12 +374,12 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
                 className="bottom-related-card"
               >
                 <div className="related-card-img-wrap">
-                  <ResponsiveImage src={rel.image} alt={rel.altText || rel.title} className="bottom-card-img" sizes="(max-width: 639.98px) 100vw, (max-width: 1023.98px) 50vw, 400px" />
-                  <span className="bottom-card-badge">{rel.categoryNameAr}</span>
+                  <ResponsiveImage src={rel.image} alt={(isEn ? (rel.altTextEn || rel.altText) : rel.altText) || (isEn ? (rel.titleEn || rel.title) : rel.title)} className="bottom-card-img" sizes="(max-width: 639.98px) 100vw, (max-width: 1023.98px) 50vw, 400px" />
+                  <span className="bottom-card-badge">{isEn ? (rel.categoryNameEn || rel.categoryNameAr) : rel.categoryNameAr}</span>
                 </div>
                 <div className="bottom-card-body">
-                  <h3 className="bottom-card-title">{rel.title}</h3>
-                  <p className="bottom-card-desc">{plainExcerpt(rel.excerpt, rel.metaDesc)}</p>
+                  <h3 className="bottom-card-title">{isEn ? (rel.titleEn || rel.title) : rel.title}</h3>
+                  <p className="bottom-card-desc">{plainExcerpt(isEn ? (rel.excerptEn || rel.excerpt) : rel.excerpt, rel.metaDesc)}</p>
                   <div className="bottom-card-footer">
                     <span className="bottom-card-link">
                       <span>{isEn ? "View Case Study" : "استعراض المشروع"}</span>
@@ -395,7 +399,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
         isOpen={isPdfModalOpen}
         onClose={() => setIsPdfModalOpen(false)}
         pdfUrl={project.pdfUrl}
-        title={project.title}
+        title={isEn ? (project.titleEn || project.title) : project.title}
         subtitle={isEn ? "Technical Documentation & 3D Interactive Whitepaper" : "التقرير التقني والمستند التوثيقي ثلاثي الأبعاد"}
       />
       )}
