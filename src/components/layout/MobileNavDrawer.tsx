@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { ResponsiveImage } from '@/components/ui/ResponsiveImage';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   X,
@@ -120,10 +121,11 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
             onClick={onClose}
             onPointerDown={() => router.prefetch('/')}
           >
-            <img
+            <ResponsiveImage
               src="/images/brand/techno-logo.png"
-              alt={t.nav.brand}
+              alt=""
               className="mobile-drawer-brand-logo"
+              sizes="96px"
             />
             <span className="mobile-drawer-brand-text">{t.nav.brand}</span>
           </Link>

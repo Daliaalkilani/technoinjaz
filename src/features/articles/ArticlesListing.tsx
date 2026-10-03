@@ -173,11 +173,26 @@ export function ArticlesListing({
     { key: 'popular', label: isEn ? 'Most Read' : 'الأكثر قراءة' }
   ];
 
-  // Prefetch top articles so clicking is instantaneous
+  // Prefetch top articles so clicking is instantaneous — deferred to browser idle
+  // time so it never competes with first paint (LCP/TBT), saves ~300KiB of
+  // bandwidth during page load (Lighthouse: Fetch 325KiB).
   useEffect(() => {
-    displayedArticles.slice(0, 8).forEach((art) => {
-      router.prefetch(`/articles/${art.slug}`);
-    });
+    const slugs = displayedArticles.slice(0, 8).map((art) => `/articles/${art.slug}`);
+    let i = 0;
+    let timer: number | undefined;
+    const step = () => {
+      if (i >= slugs.length) return;
+      router.prefetch(slugs[i++]);
+      timer = window.setTimeout(step, 350);
+    };
+    const idle =
+      (window as unknown as { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number })
+        .requestIdleCallback;
+    if (idle) idle(step, { timeout: 3000 });
+    else timer = window.setTimeout(step, 1200);
+    return () => {
+      if (timer !== undefined) clearTimeout(timer);
+    };
   }, [displayedArticles, router]);
 
   return (

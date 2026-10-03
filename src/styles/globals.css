@@ -1300,7 +1300,7 @@ picture {
   min-height: 100%;
   aspect-ratio: 16 / 9;
   background:
-    url('/images/brand/techno-logo.png') center / 18% auto no-repeat,
+    url('/_img/images/brand/techno-logo.320.webp') center / 18% auto no-repeat,
     radial-gradient(circle at 30% 20%, rgba(0, 210, 255, 0.18), transparent 60%),
     linear-gradient(135deg, #0b1426 0%, #10213a 55%, #0d1b2e 100%);
   opacity: 0.95;
@@ -1308,7 +1308,7 @@ picture {
 
 [data-theme='light'] .img-placeholder {
   background:
-    url('/images/brand/techno-logo.png') center / 18% auto no-repeat,
+    url('/_img/images/brand/techno-logo.320.webp') center / 18% auto no-repeat,
     radial-gradient(circle at 30% 20%, rgba(2, 132, 199, 0.12), transparent 60%),
     linear-gradient(135deg, #eef6fb 0%, #e3eef7 100%);
 }

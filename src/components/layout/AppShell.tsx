@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { ResponsiveImage } from '@/components/ui/ResponsiveImage';
 import { usePathname, useRouter } from 'next/navigation';
 import GooeyNav from './GooeyNav';
 import dynamic from 'next/dynamic';
@@ -21,7 +22,7 @@ import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { getLoggedInUser } from '@/lib/auth';
 import { User, Menu, WifiOff } from 'lucide-react';
 import MobileNavDrawer from './MobileNavDrawer';
-import TabletDock from './TabletDock';
+const TabletDock = dynamic(() => import('./TabletDock'), { ssr: false });
 
 export interface AppShellProps {
   children: React.ReactNode;
@@ -199,10 +200,12 @@ export function AppShell({ children }: AppShellProps) {
             className="navbar-brand-link"
             title={`${t.nav.brand} | ${t.nav.home}`}
           >
-            <img
+            <ResponsiveImage
               src="/images/brand/techno-logo.png"
               alt={t.nav.brand}
               className="navbar-brand-logo"
+              sizes="48px"
+              priority
             />
             <span className="navbar-brand-text">{t.nav.brand}</span>
           </Link>
