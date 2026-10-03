@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { getAllProjects } from '@/lib/content/projects';
 import { getAllArticles } from '@/lib/content/articles';
+import { teamMembers } from '@/data/teamData';
 import { absoluteUrl } from '@/config/site';
 
 export const dynamic = 'force-static';
@@ -24,6 +25,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     s('/library'),
     s('/faq'),
     s('/about'),
-    s('/contact')
+    s('/contact'),
+    // Real team member profiles (placeholders like "team-slot-5" are excluded —
+    // they're unfilled seats, not searchable content).
+    ...teamMembers
+      .filter((m) => !m.isPlaceholder)
+      .map((m) => ({ ...s(`/team/${m.id}`), ...(m.avatar ? img(m.avatar) : {}) }))
   ];
 }

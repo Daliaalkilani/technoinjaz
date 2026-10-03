@@ -218,7 +218,7 @@ async function runVerification() {
   }
 
   // 2. Check noindex pages
-  const noindexPages = ['/login', '/register', '/account', '/team/abdulghani'];
+  const noindexPages = ['/login', '/register', '/account'];
   for (const nip of noindexPages) {
     if (sitemapUrls.includes(`https://technoenjaz.com${nip}`)) {
       errors.push(`[${nip}] Noindex page should NOT be in sitemap.xml`);

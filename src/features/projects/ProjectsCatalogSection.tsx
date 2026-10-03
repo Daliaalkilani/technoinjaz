@@ -58,8 +58,8 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
       if (!term) return matchesCategory;
 
       const matchesSearch = 
-        p.title.toLowerCase().includes(term) ||
-        p.excerpt.toLowerCase().includes(term) ||
+        (isEn && p.titleEn ? p.titleEn.toLowerCase() : p.title.toLowerCase()).includes(term) ||
+        (isEn && p.excerptEn ? p.excerptEn.toLowerCase() : p.excerpt.toLowerCase()).includes(term) ||
         p.tags.some(t => t.toLowerCase().includes(term)) ||
         p.categoryNameAr.toLowerCase().includes(term);
 
@@ -184,7 +184,7 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
         <div className="catalog-grid">
           {filteredProjects.map((project) => {
             const saved = isSaved(project.slug);
-            const cleanExcerpt = plainExcerpt(project.excerpt, project.metaDesc);
+            const cleanExcerpt = plainExcerpt(isEn ? (project.excerptEn || project.excerpt) : project.excerpt, project.metaDesc);
             const cleanTags = projectTags(project.tags);
 
             const projectUrl = `/projects/${project.slug}`;
@@ -207,9 +207,9 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
                     href={projectUrl} 
                     prefetch={true} 
                     className="card-thumb-link"
-                    aria-label={project.title}
+                    aria-label={isEn ? (project.titleEn || project.title) : project.title}
                   >
-                    <ResponsiveImage src={project.image} alt={project.altText || project.title} className="card-thumb-img" />
+                    <ResponsiveImage src={project.image} alt={(isEn ? (project.altTextEn || project.altText) : project.altText) || (isEn ? (project.titleEn || project.title) : project.title)} className="card-thumb-img" />
                   </Link>
                   <span className="card-cat-badge">{project.categoryNameAr}</span>
 
@@ -238,9 +238,9 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
 
                 {/* Card Content */}
                 <div className="card-body">
-                  <h3 className="card-title" title={project.title}>
+                  <h3 className="card-title" title={isEn ? (project.titleEn || project.title) : project.title}>
                     <Link href={projectUrl} prefetch={true} className="card-title-link">
-                      {project.title}
+                      {isEn ? (project.titleEn || project.title) : project.title}
                     </Link>
                   </h3>
 

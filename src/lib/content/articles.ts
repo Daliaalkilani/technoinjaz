@@ -4,6 +4,7 @@ import path from 'node:path';
 import { blogArticlesData, type BlogArticle } from '@/data/blogArticlesData';
 
 const DIR = path.join(process.cwd(), 'src/content/articles');
+const DIR_EN = path.join(process.cwd(), 'src/content/articles-en');
 
 export const getAllArticles = (): BlogArticle[] => blogArticlesData;
 
@@ -12,6 +13,21 @@ export const getArticleMeta = (slug: string): BlogArticle | null =>
 
 export async function getArticleMarkdown(slug: string): Promise<string> {
   return readFile(path.join(DIR, `${slug}.md`), 'utf8');
+}
+
+/**
+ * English translation of an article body, if one has been produced yet.
+ * Returns null while a translation is still pending so callers fall back
+ * to the Arabic body instead of 500-ing.
+ */
+export async function getArticleMarkdownEn(
+  slug: string
+): Promise<string | null> {
+  try {
+    return await readFile(path.join(DIR_EN, `${slug}.md`), 'utf8');
+  } catch {
+    return null;
+  }
 }
 
 export function getRelatedArticles(slug: string, limit = 3): BlogArticle[] {

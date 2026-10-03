@@ -23,7 +23,6 @@ import { User, Menu, WifiOff } from 'lucide-react';
 import MobileNavDrawer from './MobileNavDrawer';
 import TabletDock from './TabletDock';
 import NotificationBell from '@/components/notifications/NotificationBell';
-import NotificationToaster from '@/components/notifications/NotificationToaster';
 
 export interface AppShellProps {
   children: React.ReactNode;
@@ -180,7 +179,6 @@ export function AppShell({ children }: AppShellProps) {
       </a>
       <ScrollToTop />
       <ScrollProgress className="top-0" />
-      <NotificationToaster />
 
       {/* Top Navbar with GooeyNav */}
       <div 

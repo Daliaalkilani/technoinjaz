@@ -75,15 +75,15 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
   };
 
   const isProjectSaved = isSaved(project.slug);
-  const cleanExcerpt = plainExcerpt(project.excerpt, project.metaDesc);
-  const cleanTags = projectTags(project.tags);
+  const cleanExcerpt = plainExcerpt(isEn ? (project.excerptEn || project.excerpt) : project.excerpt, project.metaDesc);
+  const cleanTags = projectTags(isEn && project.tagsEn?.length ? project.tagsEn : project.tags);
 
   const handleToggleBookmark = () => {
     toggleSave({
       id: project.slug,
       title: project.title,
       category: project.category,
-      categoryLabel: project.categoryNameAr,
+      categoryLabel: isEn ? (project.categoryNameEn || project.categoryNameAr) : project.categoryNameAr,
       description: cleanExcerpt,
       type: 'project',
       image: project.image,
@@ -105,7 +105,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
           <span>{isEn ? "Projects" : "المشاريع"}</span>
         </Link>
         <span className="breadcrumb-separator">/</span>
-        <span className="breadcrumb-category">{project.categoryNameAr}</span>
+        <span className="breadcrumb-category">{isEn ? (project.categoryNameEn || project.categoryNameAr) : project.categoryNameAr}</span>
         <span className="breadcrumb-separator">/</span>
         <span className="breadcrumb-current" aria-current="page" title={project.title}>
           {project.title}
@@ -116,10 +116,10 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
       <header className="project-detail-header">
         <div className="project-category-badge">
           <Layers size={14} />
-          <span>{project.categoryNameAr}</span>
+          <span>{isEn ? (project.categoryNameEn || project.categoryNameAr) : project.categoryNameAr}</span>
         </div>
 
-        <h1 className="project-detail-title">{project.title}</h1>
+        <h1 className="project-detail-title">{isEn ? (project.titleEn || project.title) : project.title}</h1>
 
         <p className="project-detail-lead">{cleanExcerpt}</p>
 
@@ -177,10 +177,10 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
 
       {/* Featured Cover Image */}
       <div className="project-featured-image-wrapper">
-        <ResponsiveImage src={project.image} alt={project.altText || project.title} className="project-featured-image" sizes="(max-width: 1279.98px) calc(100vw - 32px), 1200px" priority />
+        <ResponsiveImage src={project.image} alt={(isEn ? (project.altTextEn || project.altText) : project.altText) || project.title} className="project-featured-image" sizes="(max-width: 1279.98px) calc(100vw - 32px), 1200px" priority />
         {project.altText && (
           <div className="project-image-caption">
-            <span>{project.altText}</span>
+            <span>{isEn ? (project.altTextEn || project.altText) : project.altText}</span>
           </div>
         )}
       </div>
@@ -337,7 +337,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
                       loading="lazy"
                     />
                     <div className="related-project-info">
-                      <span className="related-project-cat">{rel.categoryNameAr}</span>
+                      <span className="related-project-cat">{isEn ? (rel.categoryNameEn || rel.categoryNameAr) : rel.categoryNameAr}</span>
                       <h4 className="related-project-name">{rel.title}</h4>
                     </div>
                   </Link>

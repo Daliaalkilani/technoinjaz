@@ -38,12 +38,12 @@ export async function generateMetadata({
       canonical: pageUrl
     },
     robots: {
-      index: false,
-      follow: false,
+      index: true,
+      follow: true,
       googleBot: {
-        index: false,
-        follow: false,
-        noimageindex: true
+        index: true,
+        follow: true,
+        noimageindex: false
       }
     },
     openGraph: {

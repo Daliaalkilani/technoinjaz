@@ -4,8 +4,6 @@ import ResponsiveImage from '@/components/ui/ResponsiveImage';
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   ExternalLink, 
-  Play, 
-  Pause, 
   ChevronRight, 
   ChevronLeft, 
   Bookmark, 
@@ -262,14 +260,6 @@ export const LiveProjectsShowcase: React.FC = () => {
                 <button
                   type="button"
                   className="spotlight-btn-icon"
-                  onClick={() => setIsPlaying(!isPlaying)}
-                  title={isPlaying ? 'Pause' : 'Play'}
-                >
-                  {isPlaying ? <Pause size={17} /> : <Play size={17} />}
-                </button>
-                <button
-                  type="button"
-                  className="spotlight-btn-icon"
                   onClick={handlePrev}
                   title="Previous"
                 >
@@ -291,14 +281,6 @@ export const LiveProjectsShowcase: React.FC = () => {
               <div className="spotlight-details">
                 <h2 className="spotlight-title">{activeTitle}</h2>
                 <p className="spotlight-desc">{activeDescription}</p>
-
-                <div className="spotlight-tags">
-                  {activeHighlights.map(tag => (
-                    <span key={tag} className="spotlight-tag-item">
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
 
                 <div className="spotlight-cta-row" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
                   <a

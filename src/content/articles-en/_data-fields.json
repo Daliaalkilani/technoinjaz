@@ -1,0 +1,219 @@
+{
+  "_comment": "English data-level fields for articles-en (8 slugs: batches 1+3). Reused from src/data/blogArticlesData.ts where present (titleEn, excerptEn, categoryEn, readTimeEn, publishDateEn); seoTitleEn, metaDescEn, and tagsEn translated fresh to match the article markdown. The md file's H1 equals the SEO title except where the Arabic H1 differs from the Arabic SEO title.",
+  "5g-nr-radio-architecture": {
+    "titleEn": "5G Technical Deep Dive: 5G NR, OFDM, Massive MIMO, and Open RAN Fronthaul",
+    "excerptEn": "A technical breakdown of 5G New Radio: flexible numerology, OFDM waveforms, 3D beamforming, Massive MIMO channel state estimation, and Open RAN split 7.2x fronthaul.",
+    "seoTitleEn": "How Do 5G Networks Work Technically? 5G NR, OFDM, MIMO, and Fronthaul Explained",
+    "metaDescEn": "A technical guide to understanding what happens inside a 5G network: from 5G NR, OFDM, and Numerology to MIMO, Beamforming, fading, Fronthaul, and RU/DU/CU architecture, with 5G-Advanced and Release 19 updates.",
+    "tagsEn": [
+      "5G Networks",
+      "5G NR",
+      "Telecommunications",
+      "MIMO",
+      "Beamforming",
+      "OFDM",
+      "Open RAN"
+    ],
+    "readTimeEn": "16 min read",
+    "publishDateEn": "Sep 21, 2026",
+    "categoryEn": "Networks & Telecom"
+  },
+  "ai-image-classification": {
+    "titleEn": "AI Image Classification: From Convolutional Neural Networks to Vision Transformers",
+    "excerptEn": "Comprehensive technical deep dive into image classification: convolution operations, ResNet backbones, Vision Transformers (ViT), multimodal CLIP, and metric evaluation.",
+    "seoTitleEn": "How Does AI Image Classification Work? From CNN to Vision Transformers",
+    "metaDescEn": "A practical guide to understanding AI image classification: data preparation, CNN, ResNet, and Vision Transformers, Transfer Learning, the right metrics, CLIP and DINOv2, applications and challenges.",
+    "tagsEn": [
+      "Image Classification",
+      "Computer Vision",
+      "CNN",
+      "Vision Transformers",
+      "ResNet",
+      "Artificial Intelligence"
+    ],
+    "readTimeEn": "19 min read",
+    "publishDateEn": "Sep 21, 2026",
+    "categoryEn": "Computer Vision"
+  },
+  "embedded-serial-protocols": {
+    "titleEn": "UART vs I2C vs SPI vs RS-232: Embedded Serial Communication Protocols Guide",
+    "excerptEn": "A practical engineering guide comparing UART, I2C, SPI, and RS-232/RS-485: wiring efficiency, clocking, signal integrity, and hardware decision matrices.",
+    "seoTitleEn": "UART vs I2C vs SPI vs RS-232: Choosing a Communication Protocol for Embedded Systems",
+    "metaDescEn": "A practical comparison of UART, I2C, SPI, and RS-232 in embedded systems: wiring, speed, synchronization, addressing, distance, voltage, errors, and the best use for each interface, with an I3C update.",
+    "tagsEn": [
+      "Embedded Systems",
+      "UART",
+      "I2C",
+      "SPI",
+      "RS232",
+      "Microcontrollers",
+      "Electronics"
+    ],
+    "readTimeEn": "20 min read",
+    "publishDateEn": "Sep 21, 2026",
+    "categoryEn": "Embedded Systems"
+  },
+  "smart-ai-ride-pooling": {
+    "titleEn": "Smart AI Ride-Pooling: Algorithms, Dynamic Routing, and Urban Congestion Reduction",
+    "excerptEn": "Algorithmic deep dive into on-demand shared ride-pooling: combinatorial request matching, dynamic vehicle routing (DARP), and balancing passenger detour times.",
+    "seoTitleEn": "How Does Smart AI Ride-Pooling Work? From Matching to Reducing Congestion",
+    "metaDescEn": "A guide explaining smart ride-pooling systems: the difference between Ride-Hailing and Ride-Pooling, real-time matching, demand prediction, GNNs and reinforcement learning, fleet rebalancing, and how to measure their real impact on congestion and emissions.",
+    "tagsEn": [
+      "Smart Systems",
+      "Smart Mobility",
+      "Artificial Intelligence",
+      "Ride-Pooling",
+      "Route Optimization",
+      "Smart Cities"
+    ],
+    "readTimeEn": "22 min read",
+    "publishDateEn": "Sep 21, 2026",
+    "categoryEn": "Smart Mobility & AI"
+  },
+  "affective-computing": {
+    "slug": "affective-computing",
+    "titleEn": "Affective Computing: How Does AI Analyze Emotional Expression?",
+    "excerptEn": "Affective Computing combines artificial intelligence, psychology, and human-computer interaction to detect expressive signals in the face, voice, text, and physiological signals, while retaining the bounds of uncertainty and context.",
+    "seoTitleEn": "What Is Affective Computing? How Does AI Analyze Emotional Expression?",
+    "metaDescEn": "A comprehensive guide to understanding Affective Computing: how AI systems analyze facial expressions, voice, text, and physiological signals, and what their applications, limitations, and ethical risks are.",
+    "tagsEn": [
+      "Affective Computing",
+      "Artificial Intelligence",
+      "Human-Computer Interaction",
+      "Computer Vision",
+      "Affective AI"
+    ],
+    "readTimeEn": "14 min read",
+    "publishDateEn": "Sep 20, 2026",
+    "categoryEn": "Artificial Intelligence"
+  },
+  "digital-twin": {
+    "slug": "digital-twin",
+    "titleEn": "Digital Twin: What Is It, How Does It Work, and What Are Its Key Applications?",
+    "excerptEn": "A Digital Twin is a data-based digital representation of a real-world entity or process, synchronized with reality to a degree and at a frequency suited to its intended purpose, for monitoring performance, testing scenarios, and supporting decisions.",
+    "seoTitleEn": "What Is a Digital Twin? How It Works, Its Applications, and Its Main Challenges",
+    "metaDescEn": "A comprehensive guide to understanding the Digital Twin: how it works, its components, the difference between it and simulation, and its key applications in industry, buildings, and healthcare, along with the challenges it faces.",
+    "tagsEn": [
+      "Digital Twin",
+      "Internet of Things",
+      "Digital Transformation",
+      "Simulation",
+      "Smart Systems"
+    ],
+    "readTimeEn": "12 min read",
+    "publishDateEn": "Sep 20, 2026",
+    "categoryEn": "Digital Transformation"
+  },
+  "facial-expression-recognition-ai": {
+    "slug": "facial-expression-recognition-ai",
+    "titleEn": "How Does AI Recognize Facial Expressions? FER, FACS, and CNN Explained",
+    "excerptEn": "How do algorithms analyze the subtle movements of the facial muscles? A review of the FACS system and Action Units, the CNN and Vision Transformer architectures, and the challenges of lighting, angles, and ethics.",
+    "seoTitleEn": "How Does AI Recognize Facial Expressions? FER, FACS, and CNN Explained",
+    "metaDescEn": "A technical guide to understanding facial expression recognition with AI: from Face Detection, Landmarks, and FACS to CNN and the FER2013, CK+, AffectNet, and RAF-DB datasets, with bias, privacy, and the limits of emotion inference.",
+    "tagsEn": [
+      "Computer Vision",
+      "Facial Expressions",
+      "FER",
+      "FACS",
+      "CNN",
+      "Artificial Intelligence",
+      "Vision Transformers"
+    ],
+    "readTimeEn": "18 min read",
+    "publishDateEn": "Sep 21, 2026",
+    "categoryEn": "Computer Vision"
+  },
+  "emotion-aware-recommendation": {
+    "slug": "emotion-aware-recommendation",
+    "titleEn": "Camera-Based Facial Expression Analysis and Content Personalization: How Do Emotion-Aware Recommendation Systems Work?",
+    "excerptEn": "How computer vision is used to analyze facial expressions and movements and feed them into recommendation engines as a contextual probabilistic signal, while addressing the constraints of privacy, governance, and algorithmic bias.",
+    "seoTitleEn": "Camera-Based Facial Expression Analysis and Content Personalization: How Do Emotion-Aware Recommendation Systems Work?",
+    "metaDescEn": "A practical explanation of how facial expressions are analyzed via camera and used as a contextual signal in recommendation systems, from face detection and CNN to content personalization, with the key scientific limitations and the risks of privacy and bias.",
+    "tagsEn": [
+      "Recommender Systems",
+      "Facial Expressions",
+      "Computer Vision",
+      "Affective Computing",
+      "Content Personalization"
+    ],
+    "readTimeEn": "15 min read",
+    "publishDateEn": "Sep 20, 2026",
+    "categoryEn": "Recommender Systems"
+  },
+  "internet-of-things-iot": {
+    "titleEn": "What Is the Internet of Things (IoT)? Architecture, Protocols, Applications, and Security",
+    "excerptEn": "A comprehensive guide to understanding the Internet of Things: the layered architecture from sensors to the cloud, a practical comparison of MQTT, CoAP, and HTTP, LPWAN and Matter technologies, and security standards based on NISTIR 8259.",
+    "seoTitleEn": "What Is the Internet of Things (IoT)? Architecture, Protocols, Applications, and Security",
+    "metaDescEn": "A comprehensive guide to understanding the Internet of Things (IoT): how devices, sensors, connectivity, cloud, and edge work; the difference between Wi-Fi, BLE, Zigbee, LoRaWAN, NB-IoT, and LTE-M; MQTT and CoAP protocols; plus security, AIoT, and the future of 6G.",
+    "tagsEn": [
+      "Internet of Things",
+      "IoT",
+      "MQTT",
+      "CoAP",
+      "LoRaWAN",
+      "NB-IoT",
+      "LTE-M",
+      "Matter",
+      "Edge Computing",
+      "AIoT",
+      "IoT Security"
+    ],
+    "readTimeEn": "17 min read",
+    "publishDateEn": "Sep 21, 2026",
+    "categoryEn": "Internet of Things"
+  },
+  "model-context-protocol-mcp": {
+    "titleEn": "Model Context Protocol (MCP): Standardizing AI Tool & Data Integration",
+    "excerptEn": "Model Context Protocol (MCP) is an open standard that provides a unified way to connect AI applications and agents to tools, databases, and external resources, reducing custom integration code and strengthening security.",
+    "seoTitleEn": "What Is the MCP Protocol? How Does It Connect AI Models to Tools and Data?",
+    "metaDescEn": "A practical guide to understanding the Model Context Protocol (MCP): its architecture, tools, resources, and prompts, modern transports, security, and how it differs from APIs, Function Calling, and LangChain.",
+    "tagsEn": [
+      "MCP",
+      "Model Context Protocol",
+      "AI Agents",
+      "Data Integration",
+      "LLM Tools",
+      "Anthropic",
+      "AI Protocols"
+    ],
+    "readTimeEn": "16 min read",
+    "publishDateEn": "Sep 20, 2026",
+    "categoryEn": "Systems Architecture"
+  },
+  "next-token-prediction": {
+    "titleEn": "Next Token Prediction: From N-grams to Transformers and Arabic LLMs",
+    "excerptEn": "In-depth technical breakdown of next token prediction: from historical N-grams and LSTMs to causal self-attention Transformers, decoding heuristics, and Arabic morphology tokenization.",
+    "seoTitleEn": "How Do AI Models Predict the Next Word? From N-gram to Transformers",
+    "metaDescEn": "A practical explanation of how the next word or token is predicted in language models, from N-gram, RNN, and LSTM to Transformers, with generation strategies, the challenges of the Arabic language, and the Jais and ALLaM models.",
+    "tagsEn": [
+      "NLP",
+      "Language Models",
+      "Transformers",
+      "Next Token Prediction",
+      "Artificial Intelligence",
+      "Arabic Language"
+    ],
+    "readTimeEn": "15 min read",
+    "publishDateEn": "Sep 20, 2026",
+    "categoryEn": "NLP & LLMs"
+  },
+  "5g-iot": {
+    "titleEn": "How 5G Transforms the Internet of Things: Speed, Latency, Massive IoT, and 5G-Advanced",
+    "excerptEn": "A comprehensive guide to how 5G impacts IoT: when industrial and urban applications need eMBB, URLLC, and mMTC, and the role of RedCap, NB-IoT, and 3GPP standards up to 5G-Advanced.",
+    "seoTitleEn": "How Do 5G Networks Affect the Internet of Things? Speed, Latency, Scale, and 5G-Advanced",
+    "metaDescEn": "A guide explaining the relationship between 5G and the Internet of Things, from eMBB, URLLC, and mMTC to NB-IoT, LTE-M, and RedCap, with practical applications, security, the limits of theoretical figures, and the future of 5G-Advanced and 6G.",
+    "tagsEn": [
+      "5G",
+      "Internet of Things",
+      "URLLC",
+      "eMBB",
+      "mMTC",
+      "RedCap",
+      "NB-IoT",
+      "5G-Advanced"
+    ],
+    "readTimeEn": "15 min read",
+    "publishDateEn": "Sep 21, 2026",
+    "categoryEn": "Networks & Telecom"
+  }
+}

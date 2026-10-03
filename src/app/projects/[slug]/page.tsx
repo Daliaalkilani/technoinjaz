@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getAllProjects, getProjectMeta, getProjectMarkdown, getRelatedProjects } from '@/lib/content/projects';
+import { getAllProjects, getProjectMeta, getProjectMarkdown, getProjectMarkdownEn, getRelatedProjects } from '@/lib/content/projects';
 import { renderMarkdown } from '@/lib/markdown';
 import { plainExcerpt } from '@/lib/text';
 import ProjectDetailView from '@/features/projects/ProjectDetailView';
@@ -51,6 +51,9 @@ export default async function ProjectPage({
 
   const md = await getProjectMarkdown(slug);
   const { html, toc } = renderMarkdown(md, { stripLeadingH1: true, variant: 'project' });
+  // English body: shipped in parallel so the client can flip languages without a reload.
+  const mdEn = await getProjectMarkdownEn(slug);
+  const htmlEn = mdEn ? renderMarkdown(mdEn, { stripLeadingH1: true, variant: 'project' }).html : null;
   const related = getRelatedProjects(slug, 3);
   const qaItems = PROJECT_QA[slug] ?? [];
 
@@ -79,7 +82,7 @@ export default async function ProjectPage({
           related={related}
           qa={<ContentQA items={qaItems} title="الأسئلة الشائعة حول المشروع" />}
         >
-          <ProjectBody html={html} />
+          <ProjectBody html={html} htmlEn={htmlEn} />
         </ProjectDetailView>
       </div>
     </>

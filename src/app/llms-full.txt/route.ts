@@ -1,6 +1,7 @@
 import { getAllArticles } from '@/lib/content/articles';
 import { getAllProjects } from '@/lib/content/projects';
 import { projectReelsData } from '@/data/projectReelsData';
+import { teamMembers as team } from '@/data/teamData';
 import { faqData } from '@/data/faqData';
 import { ARTICLE_QA } from '@/data/qa/articles';
 import { PROJECT_QA } from '@/data/qa/projects';
@@ -29,10 +30,19 @@ export async function GET() {
 - [المشاريع الهندسية](${absoluteUrl('/projects')})
 - [المدونة الهندسية](${absoluteUrl('/articles')})
 - [المشاريع الحية ومقاطع الفيديو](${absoluteUrl('/videos')})
+- [مكتبة الملفات التقنية](${absoluteUrl('/library')})
 - [الأسئلة الشائعة](${absoluteUrl('/faq')})
 - [من نحن](${absoluteUrl('/about')})
 - [اتصل بنا](${absoluteUrl('/contact')})
 
+## Team Profiles
+` ;
+
+  for (const m of team.filter((t) => !t.isPlaceholder)) {
+    text += `### ${m.name} — ${m.role}\n- URL: ${absoluteUrl('/team/' + m.id)}\n- Bio: ${(m.shortBio || m.bio || '').slice(0, 200)}\n\n`;
+  }
+
+  text += `
 ## Engineering Articles
 `;
 
