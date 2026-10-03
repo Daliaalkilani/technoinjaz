@@ -22,7 +22,6 @@ import { getLoggedInUser } from '@/lib/auth';
 import { User, Menu, WifiOff } from 'lucide-react';
 import MobileNavDrawer from './MobileNavDrawer';
 import TabletDock from './TabletDock';
-import NotificationBell from '@/components/notifications/NotificationBell';
 
 export interface AppShellProps {
   children: React.ReactNode;
@@ -234,7 +233,6 @@ export function AppShell({ children }: AppShellProps) {
             </div>
 
             {/* Platform Notifications Bell */}
-            <NotificationBell />
 
             {/* User Profile / Auth Button */}
             <div className="navbar-desktop-only">

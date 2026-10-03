@@ -279,13 +279,7 @@
 
 [data-theme='light'] .es-hexgrid polygon { stroke: rgba(13, 124, 134, 0.25); }
 
-@media (prefers-reduced-motion: reduce) {
-  .error-scene * {
-    animation: none !important;
-  }
-  .es-smoke circle { opacity: 0.5; }
-  .es-waves path { opacity: 0.8; }
-}
+/* Animations run on every screen & regardless of OS reduce-motion (owner decision) */
 
 /* ==========================================================================
    Layout: illustration + content. Desktop: two columns; phones: stacked.
@@ -329,13 +323,6 @@
   .te-error-card.has-scene > .error-scene {
     max-width: 380px;
   }
-  /* Mobile: freeze all scene animations (owner request 2026-10-03 — static like desktop) */
-  .error-scene * {
-    animation: none !important;
-  }
-  .es-star { opacity: 0.5; }
-  .es-waves path { opacity: 0.8; }
-  .es-smoke circle { opacity: 0.5; }
 }
 
 @media (max-width: 480px) {
