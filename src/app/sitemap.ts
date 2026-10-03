@@ -7,7 +7,14 @@ import { absoluteUrl } from '@/config/site';
 export const dynamic = 'force-static';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const s = (p: string) => ({ url: absoluteUrl(p) });
+  // Every URL serves both languages (client-side toggle) — declare ar/en alternates
+  // so Google indexes one URL per page with correct hreflang annotations.
+  const alt = (p: string) => ({
+    alternates: {
+      languages: { ar: absoluteUrl(p), en: absoluteUrl(p), 'x-default': absoluteUrl(p) }
+    }
+  });
+  const s = (p: string) => ({ url: absoluteUrl(p), ...alt(p) });
   // Image sitemap entries help image search and AI answer engines attach the cover.
   const img = (src?: string) => (src ? { images: [absoluteUrl(src)] } : {});
 

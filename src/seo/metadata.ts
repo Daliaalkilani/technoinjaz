@@ -22,6 +22,7 @@ export function buildRootMetadata(): Metadata {
     openGraph: {
       siteName: 'تكنو إنجاز | Techno Enjaz',
       locale: 'ar_SY',
+      alternateLocale: ['en_US'],
       type: 'website',
       images: [OG_IMAGE]
     },
@@ -70,7 +71,13 @@ export function pageMetadata(o: {
     title: o.absoluteTitle ? { absolute: o.title } : o.title,
     description: o.description,
     alternates: {
-      canonical: url
+      canonical: url,
+      // Same URL serves both languages (client-side toggle) — declare both to Google
+      languages: {
+        ar: url,
+        en: url,
+        'x-default': url
+      }
     },
     robots: o.noindex
       ? { index: false, follow: true }
@@ -82,6 +89,7 @@ export function pageMetadata(o: {
       type: o.type ?? 'website',
       images,
       locale: 'ar_SY',
+      alternateLocale: ['en_US'],
       siteName: 'تكنو إنجاز | Techno Enjaz',
       ...(o.type === 'article'
         ? {

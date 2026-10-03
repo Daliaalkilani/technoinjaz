@@ -15,6 +15,7 @@ export default function robots(): MetadataRoute.Robots {
           '/login',
           '/register',
           '/api/',
+          '/403',
           '/offline',
           '/access-denied',
           '/connection-error',

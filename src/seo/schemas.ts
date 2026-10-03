@@ -143,7 +143,7 @@ export function website() {
     url: SITE_URL,
     name: ORG.nameAr,
     alternateName: ORG.nameEn,
-    inLanguage: 'ar',
+    inLanguage: ['ar', 'en'],
     publisher: {
       '@id': ORG_ID
     },
@@ -213,9 +213,20 @@ export function blogPosting(article: BlogArticle) {
     publisher: {
       '@id': ORG_ID
     },
-    inLanguage: 'ar',
+    inLanguage: ['ar', 'en'],
     articleSection: article.category,
+    ...(article.categoryEn ? { alternateSection: article.categoryEn } : {}),
     ...(tags ? { keywords: tags } : {}),
+    ...(article.titleEn
+      ? {
+          headlineEn: article.titleEn.length > 110 ? article.titleEn.slice(0, 107) + '...' : article.titleEn,
+          alternativeHeadline: article.titleEn,
+          ...(article.excerptEn ? { descriptionEn: article.excerptEn } : {}),
+          ...(article.tagsEn?.length
+            ? { keywordsEn: article.tagsEn.map((t: string) => t.replace(/_/g, ' ')).join(', ') }
+            : {})
+        }
+      : {}),
     isPartOf: {
       '@id': WEBSITE_ID
     }
@@ -234,7 +245,14 @@ export function projectWork(project: ProjectItem) {
     description: plainExcerpt(project.metaDesc || project.excerpt),
     image: project.image.startsWith('http') ? project.image : absoluteUrl(project.image),
     url,
-    inLanguage: 'ar',
+    inLanguage: ['ar', 'en'],
+    ...(project.titleEn
+      ? {
+          headlineEn: project.seoTitleEn || project.titleEn,
+          alternativeHeadline: project.titleEn,
+          ...(project.metaDescEn ? { descriptionEn: project.metaDescEn } : {})
+        }
+      : {}),
     genre: project.categoryNameAr,
     contributor: {
       '@id': ORG_ID
@@ -274,13 +292,27 @@ export function faqPageSchema(items: FaqItem[]) {
 
 // Questions & answers shown on an article/project page (ContentQA).
 export function qaSchema(items: QAItem[]) {
-  return {
-    '@type': 'FAQPage',
-    inLanguage: 'ar',
-    mainEntity: items.map((item) => ({
+  // Bilingual FAQPage: the EN variant is emitted as an extra Question entity when
+  // translations exist (both languages live on the same URL).
+  const entities = items.flatMap((item) => {
+    const ar = {
       '@type': 'Question',
       name: item.q,
       acceptedAnswer: { '@type': 'Answer', text: item.a }
-    }))
+    };
+    if (!item.qEn && !item.aEn) return [ar];
+    return [
+      ar,
+      {
+        '@type': 'Question',
+        name: item.qEn || item.q,
+        acceptedAnswer: { '@type': 'Answer', text: item.aEn || item.a }
+      }
+    ];
+  });
+  return {
+    '@type': 'FAQPage',
+    inLanguage: ['ar', 'en'],
+    mainEntity: entities
   };
 }
