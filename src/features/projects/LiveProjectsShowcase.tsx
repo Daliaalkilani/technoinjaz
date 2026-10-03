@@ -234,11 +234,17 @@ export const LiveProjectsShowcase: React.FC = () => {
   return (
     <div className="live-projects-container" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
       {/* Featured Auto-Advancing Spotlight */}
-      <div 
+      <div
         className="spotlight-hero"
             ref={spotlightRef}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+            /* Hover-pause is a mouse-only affordance. On touch devices a tap fires a
+             * synthetic mouseenter with no matching mouseleave, so isHovered stayed
+             * true forever: after visiting a project and coming back the spotlight
+             * was frozen "paused" until a fresh unrelated tap. Match the spiral and
+             * bento behaviour: only pointerType === 'mouse' may pause playback. */
+            onPointerEnter={(e) => { if (e.pointerType === 'mouse') setIsHovered(true); }}
+            onPointerLeave={(e) => { if (e.pointerType === 'mouse') setIsHovered(false); }}
+            onPointerCancel={() => setIsHovered(false)}
             style={{ borderColor: `${activeProject.color}40` }}
           >
             <div 

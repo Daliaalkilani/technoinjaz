@@ -1,6 +1,14 @@
 import type { Metadata } from 'next';
 import { SITE_URL, absoluteUrl } from '@/config/site';
 
+const OG_IMAGE = {
+  url: '/og-image.png',
+  width: 1200,
+  height: 630,
+  alt: 'شعار تكنو إنجاز | Techno Enjaz logo',
+  type: 'image/png'
+};
+
 export function buildRootMetadata(): Metadata {
   return {
     metadataBase: new URL(SITE_URL),
@@ -15,10 +23,11 @@ export function buildRootMetadata(): Metadata {
       siteName: 'تكنو إنجاز | Techno Enjaz',
       locale: 'ar_SY',
       type: 'website',
-      images: [{ url: '/images/og-default.jpg', width: 1200, height: 630 }]
+      images: [OG_IMAGE]
     },
     twitter: {
-      card: 'summary_large_image'
+      card: 'summary_large_image',
+      images: [{ url: OG_IMAGE.url, alt: OG_IMAGE.alt }]
     },
     robots: {
       index: true,
@@ -53,7 +62,9 @@ export function pageMetadata(o: {
   absoluteTitle?: boolean;
 }): Metadata {
   const url = absoluteUrl(o.path);
-  const images = [{ url: o.image ? (o.image.startsWith('http') ? o.image : absoluteUrl(o.image)) : absoluteUrl('/images/og-default.jpg') }];
+  const images = o.image
+    ? [{ url: o.image.startsWith('http') ? o.image : absoluteUrl(o.image) }]
+    : [{ ...OG_IMAGE, url: absoluteUrl(OG_IMAGE.url) }];
 
   return {
     title: o.absoluteTitle ? { absolute: o.title } : o.title,

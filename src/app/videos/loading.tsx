@@ -1,6 +1,4 @@
-'use client';
 
-import React from 'react';
 import '@/components/ui/Skeleton.css';
 import { SkFill, SkText } from '@/components/ui/Sk';
 import '@/features/videos/ProjectReelsFeed.css';

@@ -1,6 +1,4 @@
-'use client';
 
-import React from 'react';
 import '@/components/ui/Skeleton.css';
 import { SkLine, SkLines, SkFill, SkBox, SkText } from '@/components/ui/Sk';
 import '@/features/contact/ContactPage.css';

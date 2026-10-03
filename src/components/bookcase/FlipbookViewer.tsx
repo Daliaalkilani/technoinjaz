@@ -65,6 +65,10 @@ const A4_H = 841.89;
 
 export interface FlipbookViewerProps {
   pdfUrl?: string;
+  /** Cover image (usually the PDF's first page as AVIF) shown instantly while the
+   *  PDF downloads — on slow links pdfjs needs the WHOLE file because Cloudflare
+   *  assets don't answer range requests (200 full-body instead of 206 partial). */
+  coverImage?: string;
   title: string;
   subtitle?: string;
   isOpen: boolean;
@@ -73,6 +77,7 @@ export interface FlipbookViewerProps {
 
 export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
   pdfUrl = '/pdf/robotics-summer-club.pdf',
+  coverImage,
   title,
   subtitle,
   isOpen,
@@ -520,8 +525,23 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
         <div className="flipbook-body">
           {loading && (
             <div className="flipbook-loading-cover">
-              <div className="spinner-lg" />
-              <span>{loadingMessage}</span>
+              {coverImage ? (
+                /* Instant cover: the reader shows the book's real cover (a ~16KB AVIF
+                 * of page 1) while the multi-MB PDF streams in — the spinner only
+                 * appears if even the cover hasn't arrived yet. */
+                <div className="flipbook-cover-wait">
+                  <img src={coverImage} alt={title} className="flipbook-cover-img" />
+                  <div className="flipbook-cover-progress" aria-hidden="true">
+                    <div className="spinner-sm" />
+                    <span>{loadingMessage}</span>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="spinner-lg" />
+                  <span>{loadingMessage}</span>
+                </>
+              )}
             </div>
           )}
 

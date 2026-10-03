@@ -4,7 +4,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import GooeyNav from './GooeyNav';
-import CinematicFooter from './CinematicFooter';
+import dynamic from 'next/dynamic';
+// Below-the-fold footer: code-split so its gsap + ScrollTrigger modules are not
+// part of the initial page JS; it streams in with a same-geometry footer placeholder.
+// SSR stays on so the static export still contains the full footer markup.
+const CinematicFooter = dynamic(() => import('./CinematicFooter'), {
+  ssr: true,
+  loading: () => <footer id="contact" className="footer-boot-placeholder" style={{ minHeight: '420px' }} />,
+});
 import ThemeSwitch from './ThemeSwitch';
 import LanguageDropdown from './LanguageDropdown';
 import ScrollToTop from './ScrollToTop';

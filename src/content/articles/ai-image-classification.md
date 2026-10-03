@@ -89,7 +89,7 @@ Car → box
 Traffic light → box
 ```
 
-![صورة مكتب عليه حاسوب محمول وزجاجات وكوب ووعاء وكرسي، وحول كل جسم مربع محيط ملوّن باسم فئته كما اكتشفها نموذج YOLOv3](/images/articles/body/ai-image-classification-4.webp "Object Detection بنموذج YOLOv3: الناتج ليس فئة واحدة للصورة، بل فئة ومربع محيط (Bounding Box) لكل جسم مثل laptop وbottle وcup وchair — المصدر: MTheiler، ويكيميديا كومنز، CC BY-SA 4.0")
+![صورة مكتب عليه حاسوب محمول وزجاجات وكوب ووعاء وكرسي، وحول كل جسم مربع محيط ملوّن باسم فئته كما اكتشفها نموذج YOLOv3](/images/articles/body/ai-image-classification-4.avif "Object Detection بنموذج YOLOv3: الناتج ليس فئة واحدة للصورة، بل فئة ومربع محيط (Bounding Box) لكل جسم مثل laptop وbottle وcup وchair — المصدر: MTheiler، ويكيميديا كومنز، CC BY-SA 4.0")
 
 ## Image Segmentation
 
@@ -206,7 +206,7 @@ Image → learned features → classifier
 
 ومع زيادة العمق تصبح التمثيلات أكثر ارتباطًا ببنية الكائنات.
 
-![مخطط شبكة عصبية التفافية نموذجية: صورة مدخلة ثم طبقات التفاف وتجميع ثم طبقة متصلة بالكامل للمخرجات](/images/articles/body/ai-image-classification-1.webp "بنية CNN نموذجية: طبقات التفاف تنتج خرائط خصائص، يتبعها تقليص ثم طبقة تصنيف — المصدر: Aphex34، ويكيميديا كومنز، CC BY-SA 4.0")
+![مخطط شبكة عصبية التفافية نموذجية: صورة مدخلة ثم طبقات التفاف وتجميع ثم طبقة متصلة بالكامل للمخرجات](/images/articles/body/ai-image-classification-1.avif "بنية CNN نموذجية: طبقات التفاف تنتج خرائط خصائص، يتبعها تقليص ثم طبقة تصنيف — المصدر: Aphex34، ويكيميديا كومنز، CC BY-SA 4.0")
 
 لكن يجب الحذر من الجملة المبسطة:
 
@@ -223,7 +223,7 @@ Pooling تقلل الأبعاد المكانية لبعض Feature Maps.
 - Max Pooling.
 - Average Pooling.
 
-![مثال عددي على Max Pooling بنافذة 2×2 يحوّل مصفوفة 6×6 إلى 3×3 بأخذ القيمة العظمى من كل نافذة](/images/articles/body/ai-image-classification-2.webp "مثال على Max Pooling بنافذة 2×2: تؤخذ أكبر قيمة من كل نافذة فتصغر الخريطة من 6×6 إلى 3×3 — المصدر: Daniel Voigt Godoy، ويكيميديا كومنز، CC BY 4.0")
+![مثال عددي على Max Pooling بنافذة 2×2 يحوّل مصفوفة 6×6 إلى 3×3 بأخذ القيمة العظمى من كل نافذة](/images/articles/body/ai-image-classification-2.avif "مثال على Max Pooling بنافذة 2×2: تؤخذ أكبر قيمة من كل نافذة فتصغر الخريطة من 6×6 إلى 3×3 — المصدر: Daniel Voigt Godoy، ويكيميديا كومنز، CC BY 4.0")
 
 قد تساعد في:
 
@@ -309,7 +309,7 @@ Classifier
 
 > CNN وTransformers وغيرها يمكن أن تتعلم Visual Representations فعالة.
 
-![مخطط Vision Transformer: تقسيم الصورة إلى رقع وتضمينها مع الترميز الموضعي ثم تمريرها عبر طبقات الانتباه إلى رأس التصنيف](/images/articles/body/ai-image-classification-3.webp "بنية Vision Transformer: تُقسَّم الصورة إلى رقع تُعامل كسلسلة Tokens ثم يصنّفها رمز cls — المصدر: Aston Zhang وآخرون (Dive into Deep Learning)، ويكيميديا كومنز، CC BY-SA 4.0")
+![مخطط Vision Transformer: تقسيم الصورة إلى رقع وتضمينها مع الترميز الموضعي ثم تمريرها عبر طبقات الانتباه إلى رأس التصنيف](/images/articles/body/ai-image-classification-3.avif "بنية Vision Transformer: تُقسَّم الصورة إلى رقع تُعامل كسلسلة Tokens ثم يصنّفها رمز cls — المصدر: Aston Zhang وآخرون (Dive into Deep Learning)، ويكيميديا كومنز، CC BY-SA 4.0")
 
 # هل Vision Transformer أفضل من CNN دائمًا؟
 
@@ -675,7 +675,7 @@ melanoma → benign lesion
 
 وهذه المعلومات أهم من Accuracy واحدة.
 
-![مصفوفة التباس توضيحية لثلاث فئات هي كلب وذئب وقطة، يظهر فيها تصنيف 18 ذئبًا على أنها كلاب رغم دقة عامة 88%](/images/articles/body/ai-image-classification-5.webp "Confusion Matrix: الصفوف هي الفئة الحقيقية والأعمدة توقع النموذج؛ الخلط wolf → dog يخفض Recall فئة الذئب إلى 62% بينما تبدو Accuracy العامة جيدة (أرقام توضيحية) — رسم توضيحي: تكنو إنجاز")
+![مصفوفة التباس توضيحية لثلاث فئات هي كلب وذئب وقطة، يظهر فيها تصنيف 18 ذئبًا على أنها كلاب رغم دقة عامة 88%](/images/articles/body/ai-image-classification-5.avif "Confusion Matrix: الصفوف هي الفئة الحقيقية والأعمدة توقع النموذج؛ الخلط wolf → dog يخفض Recall فئة الذئب إلى 62% بينما تبدو Accuracy العامة جيدة (أرقام توضيحية) — رسم توضيحي: تكنو إنجاز")
 
 # ماذا عن ROC-AUC وPR-AUC؟
 

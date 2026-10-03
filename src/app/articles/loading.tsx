@@ -1,10 +1,8 @@
-'use client';
 
-import React from 'react';
 import '@/components/ui/Skeleton.css';
 import { SkLine, SkLines, SkFill, SkBox, SkText } from '@/components/ui/Sk';
 import '@/features/articles/ArticlesListing.css';
-import { StickyFilterBarSkeleton } from '@/components/ui/StickyFilterBar';
+import { StickyFilterBarSkeleton } from '@/components/ui/StickyFilterBarSkeleton';
 
 // Mirrors ArticlesListing: header, search, filter rows and the real card grid.
 export default function ArticlesLoading() {

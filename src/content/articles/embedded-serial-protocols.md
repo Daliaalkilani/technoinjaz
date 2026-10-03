@@ -175,7 +175,7 @@ Stop
 
 ويمكن إضافة Parity في إعدادات أخرى.
 
-![مخطط توقيت إطار UART يوضح حالة الخمول وبت البداية وبتات البيانات وبت التكافؤ الاختياري وبت التوقف](/images/articles/body/embedded-serial-protocols-1.webp "إطار UART: بت بداية ثم بتات البيانات ثم Parity اختيارية وبت توقف، وزمن البت يساوي 1 / Baud Rate — المصدر: AmenophisIII، ويكيميديا كومنز، CC0")
+![مخطط توقيت إطار UART يوضح حالة الخمول وبت البداية وبتات البيانات وبت التكافؤ الاختياري وبت التوقف](/images/articles/body/embedded-serial-protocols-1.avif "إطار UART: بت بداية ثم بتات البيانات ثم Parity اختيارية وبت توقف، وزمن البت يساوي 1 / Baud Rate — المصدر: AmenophisIII، ويكيميديا كومنز، CC0")
 
 # ما دور Start وStop Bits؟
 
@@ -525,7 +525,7 @@ SDA -------- devices
 
 وهذا يسمح لعدة أجهزة بمشاركة الخط دون صراع Push-pull مباشر.
 
-![مخطط ناقل I²C يضم متحكمًا واحدًا وثلاثة أجهزة Target على خطي SDA وSCL مع مقاومتي Pull-up إلى Vdd](/images/articles/body/embedded-serial-protocols-2.webp "ناقل I²C: Controller وعدة Targets تشترك في خطي SDA وSCL، مع مقاومتي Pull-up ترفعان الخطين إلى Vdd — المصدر: Tim Mathias، ويكيميديا كومنز، CC BY-SA 4.0")
+![مخطط ناقل I²C يضم متحكمًا واحدًا وثلاثة أجهزة Target على خطي SDA وSCL مع مقاومتي Pull-up إلى Vdd](/images/articles/body/embedded-serial-protocols-2.avif "ناقل I²C: Controller وعدة Targets تشترك في خطي SDA وSCL، مع مقاومتي Pull-up ترفعان الخطين إلى Vdd — المصدر: Tim Mathias، ويكيميديا كومنز، CC BY-SA 4.0")
 
 # هل اختيار Pull-up مجرد "4.7 kΩ دائمًا"؟
 
@@ -807,7 +807,7 @@ CS2 → Display
 
 إذًا يمكن لـSPI خدمة عدة Targets.
 
-![مخطط ناقل SPI يربط متحكمًا بثلاثة أجهزة Flash وADC وDisplay عبر خطوط SCK وMOSI وMISO مشتركة، مع خط Chip Select منفصل CS0 وCS1 وCS2 لكل جهاز](/images/articles/body/embedded-serial-protocols-4.webp "SPI مع عدة Targets: خطوط SCK وMOSI وMISO مشتركة، ولكل Target خط CS خاص، فكل جهاز إضافي يكلّف Pin وتوجيهًا إضافيين — رسم توضيحي: تكنو إنجاز")
+![مخطط ناقل SPI يربط متحكمًا بثلاثة أجهزة Flash وADC وDisplay عبر خطوط SCK وMOSI وMISO مشتركة، مع خط Chip Select منفصل CS0 وCS1 وCS2 لكل جهاز](/images/articles/body/embedded-serial-protocols-4.avif "SPI مع عدة Targets: خطوط SCK وMOSI وMISO مشتركة، ولكل Target خط CS خاص، فكل جهاز إضافي يكلّف Pin وتوجيهًا إضافيين — رسم توضيحي: تكنو إنجاز")
 
 المشكلة:
 
@@ -847,7 +847,7 @@ Mode 3
 
 > CPOL/CPHA + bit order + CS timing.
 
-![مخطط توقيت SPI يقارن قطبية الساعة CPOL=0 وCPOL=1 ولحظات أخذ عينات MOSI وMISO عند CPHA=0 وCPHA=1](/images/articles/body/embedded-serial-protocols-3.webp "توقيت SPI: تحدد CPOL حالة الساعة في الخمول، وتحدد CPHA الحافة التي تُقرأ عندها بتات MOSI وMISO — المصدر: Cburnett، ويكيميديا كومنز، CC BY-SA 4.0")
+![مخطط توقيت SPI يقارن قطبية الساعة CPOL=0 وCPOL=1 ولحظات أخذ عينات MOSI وMISO عند CPHA=0 وCPHA=1](/images/articles/body/embedded-serial-protocols-3.avif "توقيت SPI: تحدد CPOL حالة الساعة في الخمول، وتحدد CPHA الحافة التي تُقرأ عندها بتات MOSI وMISO — المصدر: Cburnett، ويكيميديا كومنز، CC BY-SA 4.0")
 
 # هل SPI تحتوي ACK أو Addressing؟
 
@@ -1159,7 +1159,7 @@ STOP
 - Missing STOP.
 - Register خاطئ.
 
-![لقطة شاشة من برنامج PulseView تعرض إشارتي SCL وSDA وفك ترميز معاملة I²C مع ساعة DS1307: START وعنوان 0x68 للكتابة ثم Repeated START وقراءة البيانات وACK وNACK ثم STOP](/images/articles/body/embedded-serial-protocols-5.webp "فك ترميز I²C في PulseView: يظهر START والعنوان 0x68 مع W ثم Repeated START وقراءة سجلات الوقت، وكل بايت يتبعه ACK حتى NACK الأخير وSTOP — المصدر: Joelholdsworth، ويكيميديا كومنز، CC BY-SA 4.0")
+![لقطة شاشة من برنامج PulseView تعرض إشارتي SCL وSDA وفك ترميز معاملة I²C مع ساعة DS1307: START وعنوان 0x68 للكتابة ثم Repeated START وقراءة البيانات وACK وNACK ثم STOP](/images/articles/body/embedded-serial-protocols-5.avif "فك ترميز I²C في PulseView: يظهر START والعنوان 0x68 مع W ثم Repeated START وقراءة سجلات الوقت، وكل بايت يتبعه ACK حتى NACK الأخير وSTOP — المصدر: Joelholdsworth، ويكيميديا كومنز، CC BY-SA 4.0")
 
 لكن Logic Analyzer لا يكشف دائمًا مشكلة Analog edge quality.
 

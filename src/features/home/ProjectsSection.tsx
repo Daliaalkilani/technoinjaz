@@ -7,7 +7,6 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import InfiniteSpiral, { type InfiniteSpiralItem } from '@/components/effects/InfiniteSpiral';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import SectionBackground from './SectionBackground';
-import { PROJECTS_DATA } from '@/data/projectsData';
 import './ProjectsSection.css';
 
 const proj01 = '/images/showcase/project-01.png';
@@ -60,10 +59,11 @@ const getProjectImages = (lang: string): InfiniteSpiralItem[] => {
     'Field Testing & Engineering Performance Verification'
   ];
 
+  /* Owner request (2026-10-02): the home spiral is decorative — tapping a card must do
+     nothing (no navigation). The old per-index href took people to unrelated projects. */
   return images.map((src, index) => ({
     src,
-    alt: lang === 'ar' ? titlesAr[index] : titlesEn[index],
-    href: `/projects/${PROJECTS_DATA[index]?.slug || ''}`
+    alt: lang === 'ar' ? titlesAr[index] : titlesEn[index]
   }));
 };
 

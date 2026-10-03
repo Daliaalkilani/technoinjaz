@@ -49,7 +49,7 @@ export const projectReelsData: ProjectReel[] = [
     categoryEn: 'Cloud Systems',
     categoryColor: '#0aeec3',
     categoryIcon: 'database',
-    coverImage: '/images/platforms/hisab-erp.jpg',
+    coverImage: '/images/platforms/hisab-erp.768.avif',
     liveUrl: 'https://hisab-erp.pages.dev/login',
     engineer: {
       name: 'م. عبد الغني الحمدي',
@@ -97,7 +97,7 @@ export const projectReelsData: ProjectReel[] = [
     categoryEn: 'IoT & Embedded',
     categoryColor: '#f59e0b',
     categoryIcon: 'cpu',
-    coverImage: '/images/platforms/arduino-lab.jpg',
+    coverImage: '/images/platforms/arduino-lab.768.avif',
     liveUrl: 'https://circuit-lab-7jr.pages.dev/',
     engineer: {
       name: 'م. عبد الهادي الكيلاني',
@@ -135,7 +135,7 @@ export const projectReelsData: ProjectReel[] = [
     categoryEn: 'Cloud Systems',
     categoryColor: '#38bdf8',
     categoryIcon: 'layout',
-    coverImage: '/images/platforms/projectforge.jpg',
+    coverImage: '/images/platforms/projectforge.768.avif',
     liveUrl: 'https://projectforge-e3q.pages.dev/',
     engineer: {
       name: 'م. عبد الغني الحمدي',
@@ -173,7 +173,7 @@ export const projectReelsData: ProjectReel[] = [
     categoryEn: 'Digital Identities',
     categoryColor: '#a855f7',
     categoryIcon: 'sparkles',
-    coverImage: '/images/platforms/interactive-cv.jpg',
+    coverImage: '/images/platforms/interactive-cv.768.avif',
     liveUrl: 'https://cv.abdalgani.com/',
     engineer: {
       name: 'م. عبد الغني الحمدي',
@@ -211,7 +211,7 @@ export const projectReelsData: ProjectReel[] = [
     categoryEn: 'Apps & Stores',
     categoryColor: '#ec4899',
     categoryIcon: 'shopping-bag',
-    coverImage: '/images/platforms/khazama-store.jpg',
+    coverImage: '/images/platforms/khazama-store.768.avif',
     liveUrl: 'https://khazama.pages.dev/',
     engineer: {
       name: 'م. عبد الغني الحمدي',
@@ -238,7 +238,7 @@ export const projectReelsData: ProjectReel[] = [
     categoryEn: 'Cloud Systems',
     categoryColor: '#0ea5e9',
     categoryIcon: 'layers',
-    coverImage: '/images/platforms/cablexperts.jpg',
+    coverImage: '/images/platforms/cablexperts.768.avif',
     liveUrl: 'https://cablexperts.pages.dev/',
     engineer: {
       name: 'م. عبد الهادي الكيلاني',
@@ -265,7 +265,7 @@ export const projectReelsData: ProjectReel[] = [
     categoryEn: 'Apps & Stores',
     categoryColor: '#10b981',
     categoryIcon: 'heart-pulse',
-    coverImage: '/images/platforms/dermocean.jpg',
+    coverImage: '/images/platforms/dermocean.768.avif',
     liveUrl: 'https://dermocean.pages.dev/',
     description: 'واجهة رقمية طبية تستعرض المنتجات الجلدية والتركيبات المعتمدة، مع محرك بحث تخصصي يتيح تصفية المنتجات حسب نوع البشرة والمكونات الفعالة.',
     descriptionEn: 'Specialized clinical dermatology platform featuring active ingredient databases, interactive skin compatibility selectors, and verified regimens.',

@@ -222,7 +222,11 @@ const InfiniteSpiral = ({
     '--infinite-spiral-card-height': `${cardHeight}px`,
     '--infinite-spiral-card-radius': `${cardRadius}px`,
     cursor: animationMode === 'drag' || animationMode === 'all' ? 'grab' : 'default',
-    touchAction: animationMode === 'drag' || animationMode === 'all' ? 'pan-x' : 'auto',
+    /* Touch drag-rotate is intentionally mouse-only (see onPointerDown), so touch must
+       keep vertical page scrolling. 'pan-x' here trapped the user's finger on the home
+       projects section — a vertical swipe scrolled nothing until the finger left the
+       section. The stylesheet's pan-y was being overridden by this inline value. */
+    touchAction: 'pan-y',
     userSelect: animationMode === 'drag' || animationMode === 'all' ? 'none' : 'auto'
   } as CSSProperties;
 

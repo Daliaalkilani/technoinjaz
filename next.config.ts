@@ -6,6 +6,12 @@ const nextConfig: NextConfig = {
   trailingSlash: false,
   images: { unoptimized: true },
   poweredByHeader: false,
+  // Compile-time tree-shaking boost: rewrite `import { X } from 'pkg'` to
+  // per-symbol barrel imports so only used symbols land in client chunks
+  // (lucide-react icons, framer-motion exports, gsap plugins).
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'framer-motion', 'gsap'],
+  },
   async redirects() {
     return [
       { source: '/index.html', destination: '/', permanent: true },

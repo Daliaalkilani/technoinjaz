@@ -6,8 +6,9 @@
 html.auth-no-scroll,
 body.auth-no-scroll,
 html:has(.auth-page-wrapper),
-body:has(.auth-page-wrapper),
-.auth-page-wrapper {
+body:has(.auth-page-wrapper) {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
 }
@@ -27,11 +28,14 @@ body:has(.auth-page-wrapper)::-webkit-scrollbar,
   width: 100%;
   min-height: 100vh;
   min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
   background-color: #050508;
   color: #ffffff;
   position: relative;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden; /* Owner request (2026-10-02): the login screen never scrolls —
+                       the card must fit the viewport; on tiny screens the card
+                       scales down instead of the page growing a scrollbar. */
   display: flex;
   flex-direction: column;
 }
@@ -514,21 +518,27 @@ body:has(.auth-page-wrapper)::-webkit-scrollbar,
 /* Responsive */
 @media (max-width: 640px) {
   .auth-card {
-    padding: 28px 20px;
-    border-radius: 20px;
+    padding: 20px 16px;
+    border-radius: 18px;
+    max-height: calc(100dvh - 88px); /* keep the whole card on one screen: the login
+                                       page is scroll-locked by design */
+    overflow-y: auto;                 /* the card itself may scroll internally if a
+                                       keyboard shrinks the viewport */
+    scrollbar-width: none;
   }
+  .auth-card::-webkit-scrollbar { display: none; }
   .auth-card.register-mode {
     max-width: 100%;
   }
   .form-row-2 {
     grid-template-columns: 1fr;
-    gap: 18px;
+    gap: 14px;
   }
   .auth-social-grid {
     grid-template-columns: 1fr;
   }
   .auth-heading {
-    font-size: 22px;
+    font-size: 20px;
   }
 }
 

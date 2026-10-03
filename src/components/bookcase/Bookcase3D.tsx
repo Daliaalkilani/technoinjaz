@@ -37,6 +37,7 @@ const DEFAULT_BOOKS: BookItem[] = [
     subtitleEn: 'Comprehensive hands-on curriculum in Robotics & AI for young innovators',
     spineText: 'نادي الروبوتات | ROBOTICS',
     spineColor: 'linear-gradient(90deg, #1d4ed8 0%, #3b82f6 50%, #2563eb 100%)',
+    coverImage: '/images/pdf-covers/robotics-summer-club.avif',
     pdfUrl: '/pdf/robotics-summer-club.pdf',
     category: 'روبوتات وذكاء اصطناعي',
     categoryEn: 'Robotics & STEM',
@@ -50,6 +51,7 @@ const DEFAULT_BOOKS: BookItem[] = [
     subtitleEn: 'Computer vision algorithms & architectural specifications for touchless UI',
     spineText: 'اللوح الافتراضي | Virtual Board',
     spineColor: 'linear-gradient(90deg, #047857 0%, #10b981 50%, #059669 100%)',
+    coverImage: '/images/pdf-covers/virtual-board-hand-tracking.avif',
     pdfUrl: '/docs/projects/virtual-board-hand-tracking.pdf',
     category: 'رؤية حاسوبية',
     categoryEn: 'Computer Vision',
@@ -63,6 +65,7 @@ const DEFAULT_BOOKS: BookItem[] = [
     subtitleEn: 'Embedded systems engineer guide to UART, SPI, I2C, and CAN architectures',
     spineText: 'بروتوكولات IoT | Serial Protocols',
     spineColor: 'linear-gradient(90deg, #6d28d9 0%, #8b5cf6 50%, #7c3aed 100%)',
+    coverImage: '/images/pdf-covers/virtual-board-hand-tracking.avif',
     pdfUrl: '/pdf/robotics-summer-club.pdf',
     category: 'إنترنت الأشياء',
     categoryEn: 'IoT & Firmware',
@@ -176,6 +179,7 @@ export const Bookcase3D: React.FC<Bookcase3DProps> = ({
           isOpen={Boolean(activeBook)}
           onClose={() => setActiveBook(null)}
           pdfUrl={activeBook.pdfUrl}
+          coverImage={activeBook.coverImage}
           title={isEn ? (activeBook.titleEn || activeBook.title) : activeBook.title}
           subtitle={isEn ? activeBook.subtitleEn : activeBook.subtitle}
         />

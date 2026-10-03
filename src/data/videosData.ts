@@ -1,6 +1,6 @@
-const droneNanoImg = '/images/videos/video-drone-nano.png';
-const armWeldingImg = '/images/videos/video-arm-welding.png';
-const armVisionImg = '/images/videos/video-arm-vision.png';
+const droneNanoImg = '/images/videos/video-drone-nano.768.avif';
+const armWeldingImg = '/images/videos/video-arm-welding.768.avif';
+const armVisionImg = '/images/videos/video-arm-vision.768.avif';
 
 export interface VideoItem {
   id: string;

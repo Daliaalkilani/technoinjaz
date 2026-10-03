@@ -665,6 +665,16 @@ const useAutoSwipeStrip = (gridRef: React.RefObject<HTMLDivElement | null>) => {
       window.addEventListener('pointerup', release, { once: true });
       window.addEventListener('pointercancel', release, { once: true });
     };
+    /* Owner (2026-10-02, refined): the strip must glide ALWAYS — finger hover or even a
+       swipe must not stop it. Only taps do something (open the article). So touch never
+       pauses the loop at all: touchstart/touchmove/touchend are ignored entirely. The
+       native horizontal pan still works (touch-action on the strip) and the auto-scroll
+       re-syncs its position from wherever the user left it on the next glide frame. */
+    const syncFromDom = () => {
+      window.setTimeout(() => { pos = Math.abs(grid.scrollLeft); }, 400);
+    };
+    const onTouchStart = () => syncFromDom();
+    const onTouchEnd = () => syncFromDom();
     const onFocusIn = (e: FocusEvent) => {
       const t = e.target as Element | null;
       if (t?.matches?.(':focus-visible')) pause();
@@ -682,9 +692,9 @@ const useAutoSwipeStrip = (gridRef: React.RefObject<HTMLDivElement | null>) => {
     );
     io.observe(grid);
 
-    grid.addEventListener('touchstart', pause, { passive: true });
-    grid.addEventListener('touchend', release, { passive: true });
-    grid.addEventListener('touchcancel', release, { passive: true });
+    grid.addEventListener('touchstart', onTouchStart, { passive: true });
+    grid.addEventListener('touchend', onTouchEnd, { passive: true });
+    grid.addEventListener('touchcancel', onTouchEnd, { passive: true });
     grid.addEventListener('pointerdown', onPointerDown, { passive: true });
     grid.addEventListener('wheel', nudge, { passive: true });
     grid.addEventListener('focusin', onFocusIn);
@@ -696,9 +706,9 @@ const useAutoSwipeStrip = (gridRef: React.RefObject<HTMLDivElement | null>) => {
       if (raf !== null) window.cancelAnimationFrame(raf);
       setGliding(false);
       io.disconnect();
-      grid.removeEventListener('touchstart', pause);
-      grid.removeEventListener('touchend', release);
-      grid.removeEventListener('touchcancel', release);
+      grid.removeEventListener('touchstart', onTouchStart);
+      grid.removeEventListener('touchend', onTouchEnd);
+      grid.removeEventListener('touchcancel', onTouchEnd);
       grid.removeEventListener('pointerdown', onPointerDown);
       window.removeEventListener('pointerup', release);
       window.removeEventListener('pointercancel', release);

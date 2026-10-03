@@ -1,11 +1,9 @@
-'use client';
 
-import React from 'react';
 import '@/components/ui/Skeleton.css';
 import { SkLine, SkLines, SkFill, SkBox, SkText } from '@/components/ui/Sk';
 import '@/features/projects/LiveProjectsShowcase.css';
 import '@/features/projects/ProjectsCatalogSection.css';
-import { StickyFilterBarSkeleton } from '@/components/ui/StickyFilterBar';
+import { StickyFilterBarSkeleton } from '@/components/ui/StickyFilterBarSkeleton';
 
 // Mirrors /projects: page header, live-projects spotlight, then the catalog grid.
 export default function ProjectsLoading() {

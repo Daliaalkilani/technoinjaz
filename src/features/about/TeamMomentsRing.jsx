@@ -97,10 +97,10 @@ export default function TeamMomentsRing({ onScrollDown = undefined } = {}) {
 
     /* صور الفريق المرفوعة */
     const photoUrls = [
-      '/images/moments/moment1.jpg',
-      '/images/moments/moment2.jpg',
-      '/images/moments/moment3.jpg',
-      '/images/moments/moment4.jpg'
+      '/images/moments/moment1.480.avif',
+      '/images/moments/moment2.480.avif',
+      '/images/moments/moment3.480.avif',
+      '/images/moments/moment4.480.avif'
     ];
 
     let textures = { front: [], back: [] };

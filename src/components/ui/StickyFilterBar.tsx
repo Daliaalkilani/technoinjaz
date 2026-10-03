@@ -578,25 +578,9 @@ export function StickyFilterBar({
   );
 }
 
-/** Static placeholder of the bar for route loading skeletons (same geometry). */
-export function StickyFilterBarSkeleton({ chipWidths, withFilter = false }: { chipWidths: number[]; withFilter?: boolean }) {
-  return (
-    <div className="sfb sfb--skeleton" aria-hidden="true">
-      <div className="sfb-inner">
-        <div className="sfb-row">
-          <div className="sfb-strip">
-            {chipWidths.map((w, i) => (
-              <span key={i} className="sk sfb-chip-sk" style={{ width: w }} />
-            ))}
-          </div>
-          <div className="sfb-actions">
-            <span className="sk sfb-icon-sk" />
-            {withFilter && <span className="sk sfb-filter-sk" />}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+// Re-export kept for backwards compatibility with any existing imports;
+// the implementation lives in a server-safe module so route loading.tsx
+// skeletons don't pull this interactive client component into their bundle.
+export { StickyFilterBarSkeleton } from './StickyFilterBarSkeleton';
 
 export default StickyFilterBar;

@@ -204,7 +204,7 @@ export function blogPosting(article: BlogArticle) {
     headline: article.title.length > 110 ? article.title.slice(0, 107) + '...' : article.title,
     name: article.seoTitle || article.title,
     description: article.metaDescription || article.excerpt,
-    image: article.image ? (article.image.startsWith('http') ? article.image : absoluteUrl(article.image)) : absoluteUrl('/images/og-default.jpg'),
+    image: article.image ? (article.image.startsWith('http') ? article.image : absoluteUrl(article.image)) : absoluteUrl('/og-image.png'),
     datePublished: `${article.publishedAt}T00:00:00+03:00`,
     dateModified: `${article.modifiedAt || article.publishedAt}T00:00:00+03:00`,
     author: {

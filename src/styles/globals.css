@@ -1312,3 +1312,12 @@ picture {
     radial-gradient(circle at 30% 20%, rgba(2, 132, 199, 0.12), transparent 60%),
     linear-gradient(135deg, #eef6fb 0%, #e3eef7 100%);
 }
+
+/* Route-transition guard: while the CinematicFooter lazy chunk loads, its placeholder
+   (<footer id="contact" class="footer-boot-placeholder">) must stay invisible — during
+   a navigation the short loading skeleton lets this empty block flash near the top of
+   the viewport for a split second. The real footer is never empty, so this rule only
+ ever affects the boot placeholder. */
+#contact.footer-boot-placeholder:empty {
+  visibility: hidden;
+}
