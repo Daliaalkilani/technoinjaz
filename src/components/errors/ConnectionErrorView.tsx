@@ -96,27 +96,6 @@ export const ConnectionErrorView: React.FC<ConnectionErrorViewProps> = ({ onRetr
             : 'تعذر الوصول إلى خوادم منصة تكنو إنجاز السحابية. يرجى التأكد من تشغيل الإنترنت، إشارة الواي فاي، أو إعدادات الشبكة لديك.'}
         </p>
 
-        {/* Diagnostics & Troubleshooting Tips */}
-        <div className="te-error-diagnostics">
-          <div className="te-error-diagnostics-header">
-            <span>{isEn ? 'Troubleshooting Checklist' : 'خطوات التحقق السريعة'}</span>
-            <span style={{ fontSize: '11px', opacity: 0.7 }}>TELEMETRY CHECK</span>
-          </div>
-          <ul className="te-error-tips-list">
-            <li className="te-error-tip-item">
-              <span className="te-error-tip-bullet" />
-              <span>{isEn ? 'Verify router Wi-Fi or cellular mobile data connection.' : 'تأكد من تشغيل موجه الواي فاي (Router) أو بيانات الهاتف.'}</span>
-            </li>
-            <li className="te-error-tip-item">
-              <span className="te-error-tip-bullet" />
-              <span>{isEn ? 'Check if VPN or ad-blocking proxies are interrupting sockets.' : 'تأكد من إيقاف أي برنامج VPN أو بروكسي قد يعيق الاتصال.'}</span>
-            </li>
-            <li className="te-error-tip-item">
-              <span className="te-error-tip-bullet" />
-              <span>{isEn ? 'Recheck your device airplane mode status.' : 'تأكد من عدم تفعيل وضع الطيران في جهازك.'}</span>
-            </li>
-          </ul>
-        </div>
 
         {/* Primary and Secondary Actions */}
         <div className="te-error-actions">

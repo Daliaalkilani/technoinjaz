@@ -36,37 +36,6 @@ export const AccessDeniedView: React.FC<AccessDeniedViewProps> = ({
             : `ليس لديك ترخيص الوصول الكافي لعرض ${resourceName ? `"${resourceName}"` : 'هذا المورد الهندسي المحمي'}. يرجى تسجيل الدخول بحساب معتمد أو مراجعة إدارة النظام.`}
         </p>
 
-        {/* Security Telemetry Box */}
-        <div className="te-error-diagnostics">
-          <div className="te-error-diagnostics-header">
-            <span>{isEn ? 'Security Enforcement Specs' : 'مواصفات الحماية البرمجية'}</span>
-            <span style={{ fontFamily: 'monospace', color: '#f87171', fontSize: '11px' }}>
-              ZERO-TRUST
-            </span>
-          </div>
-          <ul className="te-error-tips-list">
-            <li className="te-error-tip-item">
-              <span className="te-error-tip-bullet" style={{ background: '#ef4444' }} />
-              <span>
-                {isEn ? 'Authorization Status: Unverified Session' : 'حالة الاعتماد: جلسة غير مصرح لها أو منتهية الصلاحية'}
-              </span>
-            </li>
-            <li className="te-error-tip-item">
-              <span className="te-error-tip-bullet" style={{ background: '#ef4444' }} />
-              <span>
-                {isEn
-                  ? `Required Level: ${requiredRole || 'Core Engineer / Verified Admin'}`
-                  : `المستوى المطلوب: ${requiredRole || 'مهندس معتمد / مشرف نظام'}`}
-              </span>
-            </li>
-            <li className="te-error-tip-item">
-              <span className="te-error-tip-bullet" style={{ background: '#ef4444' }} />
-              <span>
-                {isEn ? 'Policy: Role-Based Access Control (RBAC)' : 'البروتوكول: نظام إدارة الصلاحيات القائم على الأدوار (RBAC)'}
-              </span>
-            </li>
-          </ul>
-        </div>
 
       </div>
     </div>
