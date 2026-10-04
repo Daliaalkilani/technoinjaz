@@ -251,6 +251,11 @@ export function projectWork(project: ProjectItem) {
     image: project.image.startsWith('http') ? project.image : absoluteUrl(project.image),
     url,
     inLanguage: ['ar', 'en'],
+    // AEO: voice assistants read the project title + lead paragraph
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['.project-detail-title', '.project-detail-lead']
+    },
     ...(project.titleEn
       ? {
           headlineEn: project.seoTitleEn || project.titleEn,
