@@ -16,7 +16,6 @@ import {
   ArrowLeft,
   ArrowRight
 } from 'lucide-react';
-import { formsConfigured, sendForm } from '@/lib/forms';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import './ContactPage.css';
 
@@ -63,32 +62,29 @@ export default function ContactPage({ onBack } = {}) {
     e.preventDefault();
     if (!formData.name.trim() || !formData.inquiry.trim() || sending) return;
 
-    // 1. Send directly to the team inbox (Web3Forms). Falls back to the visitor's
-    //    mail app only if the service is not configured or unreachable.
-    if (formsConfigured()) {
-      setSending(true);
-      setSendError(false);
-      const ok = await sendForm(
-        `استفسار جديد عبر الموقع من: ${formData.name}`,
-        {
-          'الاسم': formData.name,
-          'الاختصاص': formData.specialization || '—',
-          'الجامعة / جهة العمل': formData.university || '—',
-          'البريد الإلكتروني': formData.email || '—',
-          'رقم الهاتف': formData.phone || '—',
-          'نص الاستفسار': formData.inquiry
-        },
-        formData.email || undefined
-      );
+    // 1. Server-side pipeline: elegant email from info@technoenjaz.com to the
+    //    owner's inbox + WhatsApp ping + D1 archive. Falls back to the visitor's
+    //    mail app only if the API is unreachable or rejects the message.
+    setSending(true);
+    setSendError(false);
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, lang: isEn ? 'en' : 'ar' }),
+      });
+      const data = await res.json().catch(() => null);
       setSending(false);
-      if (ok) {
+      if (res.ok && data?.success) {
         setSubmitted(true);
         return;
       }
-      // not delivered (offline / service down): fall back to the visitor's mail app
-      // below so the inquiry is never lost
-      setSendError(true);
+    } catch {
+      setSending(false);
     }
+    // not delivered (offline / service down): fall back to the visitor's mail app
+    // below so the inquiry is never lost
+    setSendError(true);
 
     const emailSubject = encodeURIComponent(
       isEn ? `New Website Inquiry from: ${formData.name}` : `استفسار جديد عبر الموقع من: ${formData.name}`

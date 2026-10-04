@@ -6,6 +6,9 @@
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
   "observability": { "enabled": true },
+  "send_email": [
+    { "name": "SEND_EMAIL" }
+  ],
   "d1_databases": [
     { "binding": "DB", "database_name": "technoenjaz-db", "database_id": "673520c9-5763-47da-a3c7-1bb9cf89e048" }
   ],
