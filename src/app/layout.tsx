@@ -45,6 +45,11 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: THEME_LANG_BOOT }} />
         <link rel="stylesheet" href="/loader/loader.css" />
         <link rel="preload" as="style" href="/fonts/readex-pro.css" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if (window.trustedTypes && window.trustedTypes.createPolicy) { window.trustedTypes.createPolicy('default', { createHTML: (s) => s }); }`,
+          }}
+        />
         <link rel="stylesheet" href="/fonts/readex-pro.css" />
         <link rel="alternate" type="application/rss+xml" title="تكنو إنجاز — المقالات الهندسية" href="/feed.xml" />
         <style dangerouslySetInnerHTML={{ __html: 'html[data-skip-loader] #te-loader{display:none!important;}' }} />
