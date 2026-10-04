@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useLayoutEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { translations, type Translations } from '../locales/translations';
 
 export type Theme = 'dark' | 'light';
@@ -61,6 +62,22 @@ export const ThemeLanguageProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch {}
     document.documentElement.removeAttribute('data-lang-pending');
   }, []);
+
+  // Suppress the one-frame Arabic flash on client-side navigations when the site is in
+  // English: server RSC payloads are rendered with Arabic defaults, so a freshly mounted
+  // route paints Arabic for a frame before the context state applies. Hide the app root
+  // for exactly that paint (same mechanism as the boot script's data-lang-pending).
+  const pathname = usePathname();
+  React.useLayoutEffect(() => {
+    if (lang !== 'en') return;
+    const root = document.getElementById('app-root');
+    if (!root) return;
+    root.style.visibility = 'hidden';
+    // Double rAF: run after the browser has painted the new route.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      root.style.visibility = '';
+    }));
+  }, [pathname, lang]);
 
   // Listen for browser/system color scheme changes in real time
   useEffect(() => {
