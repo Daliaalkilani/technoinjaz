@@ -38,23 +38,23 @@ But it has no direct access to:
 
 Which is why, as a matter of engineering accuracy, the correct description is:
 
-```text
+```flow
 Camera
-  ↓
+→
 Visible Facial Movement
-  ↓
+→
 Computer Vision Analysis
-  ↓
+→
 Expression Representation
-  ↓
+→
 Probabilistic Estimate
 ```
 
 And not:
 
-```text
+```flow
 Camera
-  ↓
+→
 True Inner Emotion
 ```
 
@@ -75,9 +75,9 @@ The output is usually:
 
 Example:
 
-```text
+```flow
 Image
-  ↓
+→
 Face detected at x1, y1, x2, y2
 ```
 
@@ -268,25 +268,25 @@ This suits situations where we do not want to force every expression into one ri
 
 The Pipeline can be summarized as:
 
-```text
+```flow
 Camera Frame
-    ↓
+→
 Face Detection
-    ↓
+→
 Face Tracking
-    ↓
+→
 Landmark Detection
-    ↓
+→
 Face Alignment
-    ↓
+→
 Crop / Normalize
-    ↓
+→
 Feature Extraction / Deep Model
-    ↓
+→
 Expression or AU Prediction
-    ↓
+→
 Confidence / Uncertainty
-    ↓
+→
 Application
 ```
 
@@ -407,11 +407,11 @@ Such as:
 
 The Features then enter a classifier:
 
-```text
+```flow
 Features
-  ↓
+→
 SVM / KNN / Random Forest
-  ↓
+→
 Expression class
 ```
 
@@ -433,15 +433,15 @@ CNNs learn Visual Features directly from images.
 
 A simplified Pipeline:
 
-```text
+```flow
 Aligned face
-    ↓
+→
 Convolutional backbone
-    ↓
+→
 Visual representation
-    ↓
+→
 Classification head
-    ↓
+→
 Expression probabilities
 ```
 
@@ -500,13 +500,13 @@ A facial expression is a **temporal movement**.
 
 We may have:
 
-```text
+```flow
 Neutral
-  ↓
+→
 Onset
-  ↓
+→
 Apex
-  ↓
+→
 Offset
 ```
 
@@ -868,20 +868,28 @@ But even a Multimodal system does not gain direct access to an "inner truth"; it
 
 ## Facial Expression Model
 
-```text
+```flow
 Face
- ↓
+→
 Expression probabilities
 ```
 
 ## Multimodal Affect Model
 
-```text
-Face ─────┐
-Voice ────┤
-Text ─────┤→ Fusion → affective estimate
-HR/EDA ───┤
-Context ──┘
+```flow
+Face (camera)
+→
+Voice
+→
+Text
+→
+Physiological signals (HR/EDA)
+→
+Usage context
+→ | fuse all channels together
+Multimodal Fusion
+→
+Probabilistic affective estimate
 ```
 
 The Multimodal system may be more Robust when one channel is weak.
@@ -960,19 +968,19 @@ And this data may allow a Profile of the user to be built.
 
 Preferable where possible:
 
-```text
+```flow
 Camera frame
-  ↓
+→
 On-device FER
-  ↓
+→
 Expression vector
 ```
 
 Instead of:
 
-```text
+```flow
 Raw video
-  ↓
+→
 Cloud
 ```
 
@@ -1329,11 +1337,11 @@ This page specializes in:
 
 And an **expression-based content personalization** system adds a dimension to FER:
 
-```text
+```flow
 FER output
-   ↓
+→
 user context
-   ↓
+→
 recommendation engine
 ```
 
@@ -1349,19 +1357,19 @@ Camera → Emotion
 
 It is an engineering chain:
 
-```text
+```flow
 Camera
-  ↓
+→
 Face Detection
-  ↓
+→
 Landmarks / Alignment
-  ↓
+→
 Visual Representation
-  ↓
+→
 CNN / Transformer / AU model
-  ↓
+→
 Expression Probabilities
-  ↓
+→
 Confidence + Context
 ```
 

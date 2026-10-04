@@ -1,5 +1,6 @@
 import 'server-only';
 import { Marked, Renderer } from 'marked';
+import { applyContentExtensions } from './content-extensions';
 
 export interface TocHeading {
   id: string;
@@ -33,6 +34,11 @@ export function renderMarkdown(
 
   const toc: TocHeading[] = [];
   let i = variant === 'project' ? 1 : 0;
+
+  // Content extensions (```flow diagrams, ```math/$$ KaTeX) are resolved to
+  // final HTML before marked sees the source and re-inserted after parsing.
+  const ext = applyContentExtensions(src);
+  src = ext.src;
   const renderer = new Renderer();
 
   renderer.heading = function ({ tokens, depth }) {
@@ -113,7 +119,7 @@ export function renderMarkdown(
   // Tables scroll sideways inside their own box on phones instead of squeezing
   // every column down to one letter per line.
   const markedInstance = new Marked({ gfm: true, breaks: true, renderer });
-  const html = (markedInstance.parse(src.trim()) as string)
+  let html = (markedInstance.parse(src.trim()) as string)
     .replace(/<table>/g, '<div class="md-table-wrap" tabindex="0"><table>')
     .replace(/<\/table>/g, '</table></div>')
     // "المصادر والمراجع" at the end: a collapsed section that opens on tap.
@@ -123,6 +129,8 @@ export function renderMarkdown(
       (_m, open: string, label: string, close: string, body: string) =>
         `<details class="md-refs"><summary class="md-refs__summary">${open}${label}${close}<span class="md-refs__chevron" aria-hidden="true"></span></summary><div class="md-refs__body">${body}</div></details>`
     );
+
+  html = ext.restore(html);
 
   return { html, toc };
 }

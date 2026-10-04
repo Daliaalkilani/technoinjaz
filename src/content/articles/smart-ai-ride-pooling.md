@@ -16,11 +16,12 @@ Suggested Slug: smart-ai-ride-pooling
 
 الفكرة تبدو بسيطة:
 
-```text
+```flow
 راكب A: من X إلى Y
+→
 راكب B: من نقطة قريبة إلى وجهة قريبة
-                 ↓
-          مركبة واحدة مشتركة
+→ | دمج في نفس المركبة
+مركبة واحدة مشتركة
 ```
 
 لكن تنفيذها على مستوى مدينة كاملة ليس مجرد "العثور على أقرب سيارة".
@@ -38,14 +39,14 @@ Suggested Slug: smart-ai-ride-pooling
 
 لهذا فإن نظام مشاركة الرحلات الحديث أقرب إلى منصة تحسين لحظية:
 
-```text
+```flow
 Requests + Vehicles + Traffic + Constraints
-                    ↓
-          Matching & Routing Engine
-                    ↓
-      Shared Trips + Fleet Rebalancing
-                    ↓
-          Continuous Re-optimization
+→
+Matching & Routing Engine
+→
+Shared Trips + Fleet Rebalancing
+→
+Continuous Re-optimization
 ```
 
 # ما الفرق بين Ride-Hailing وRide-Pooling؟
@@ -71,10 +72,15 @@ Passenger C → Vehicle 3
 
 تحاول المنصة دمج طلبات مستقلة داخل المركبة نفسها إذا كانت متوافقة.
 
-```text
-Passenger A ┐
-Passenger B ├→ Vehicle 1
-Passenger C ┘
+```flow
+direction: horizontal
+الراكب A
+→
+الراكب B
+→
+الراكب C
+→ | دمج في مركبة واحدة
+المركبة 1
 ```
 
 تصف FHWA ride-sharing في بيئة النقل عند الطلب على أنه حالة يختار فيها الركاب منتجًا يسمح بمطابقة رحلاتهم مع ركاب آخرين لهم مسارات متداخلة.
@@ -211,26 +217,26 @@ service_area
 
 يمكن تصور النظام كالتالي:
 
-```text
-1. Passenger Request
-       ↓
-2. Validate request
-       ↓
-3. Find candidate vehicles
-       ↓
-4. Generate feasible shared trips
-       ↓
-5. Estimate pickup + detour
-       ↓
-6. Score alternatives
-       ↓
-7. Assign vehicle
-       ↓
-8. Update route
-       ↓
-9. Track execution
-       ↓
-10. Re-optimize when state changes
+```flow
+Passenger Request
+→
+Validate request
+→
+Find candidate vehicles
+→
+Generate feasible shared trips
+→
+Estimate pickup + detour
+→
+Score alternatives
+→
+Assign vehicle
+→
+Update route
+→
+Track execution
+→
+Re-optimize when state changes
 ```
 
 كل مرحلة لها هدف مختلف.
@@ -316,13 +322,13 @@ Dropoff A
 
 يمكن تمثيل ذلك مفاهيميًا:
 
-```text
+```flow
 Requests
-   ↓
+→
 Feasible shared trips
-   ↓
+→
 Trip ↔ Vehicle compatibility
-   ↓
+→
 Global assignment
 ```
 
@@ -430,9 +436,9 @@ Simulation evaluates
 
 أو:
 
-```text
+```flow
 GNN/RL chooses strategic action
-        ↓
+→
 Assignment solver handles hard constraints
 ```
 
@@ -460,13 +466,13 @@ neighbor congestion
 
 مثلًا:
 
-```text
+```flow
 Urban Graph
-   ↓
+→
 GNN
-   ↓
+→
 Spatial Representation
-   ↓
+→
 RL / Prediction / Optimization
 ```
 
@@ -688,41 +694,29 @@ requests(zone, time)
 
 يمكن تصميمها طبقيًا:
 
-```text
-Passenger / Driver Apps
-          ↓
-      API Layer
-          ↓
-Event / Request Stream
-          ↓
-┌─────────────────────────┐
-│ Real-time State Store   │
-│ Vehicle positions       │
-│ Active requests         │
-│ Current routes          │
-└─────────────────────────┘
-          ↓
-┌─────────────────────────┐
-│ Intelligence Layer      │
-│ ETA prediction          │
-│ Demand forecast         │
-│ Matching                │
-│ Routing                 │
-│ Rebalancing             │
-└─────────────────────────┘
-          ↓
-    Dispatch Decisions
-          ↓
- Driver / Passenger Apps
+```flow
+تطبيقات الراكب والسائق
+→
+طبقة الـAPI
+→
+تدفق الأحداث والطلبات
+→ | حالة لحظية: مواقع المركبات، الطلبات النشطة، المسارات الحالية
+مخزن الحالة اللحظية
+→ | تنبؤ ETA، تنبؤ الطلب، مطابقة، توجيه، إعادة توزيع
+طبقة الذكاء
+→
+قرارات الإرسال (Dispatch)
+→
+تطبيقات السائق والراكب
 ```
 
 وبجانبها:
 
-```text
+```flow
 Historical Data
-     ↓
+→
 Training / Analytics
-     ↓
+→
 Model Registry
 ```
 
@@ -1314,19 +1308,19 @@ Forecasting على مستوى Zone قد لا يحتاج Trajectory خام لكل
 
 أي:
 
-```text
+```flow
 Ride-Pool
-   ↓
+→
 Transit Hub
-   ↓
+→
 Metro / BRT / Rail
 ```
 
 بدل:
 
-```text
+```flow
 Ride-Pool
-   ↓
+→
 40 km across city
 ```
 
@@ -1570,21 +1564,21 @@ Inference تعتمد على حجم المدخلات والمعمارية، وق�
 
 هو نظام تحكم واتخاذ قرار لحظي:
 
-```text
+```flow
 Observe
-   ↓
+→
 Forecast
-   ↓
+→
 Generate feasible shared trips
-   ↓
+→
 Optimize assignment
-   ↓
+→
 Route
-   ↓
+→
 Rebalance
-   ↓
+→
 Measure
-   ↓
+→
 Repeat
 ```
 

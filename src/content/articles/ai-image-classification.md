@@ -25,25 +25,25 @@ other: 0.02
 
 المسار الحقيقي أقرب إلى:
 
-```text
+```flow
 Data
-  ↓
+→
 Cleaning & Labeling
-  ↓
+→
 Train / Validation / Test Split
-  ↓
+→
 Preprocessing & Augmentation
-  ↓
+→
 Model / Pretrained Backbone
-  ↓
+→
 Training or Fine-tuning
-  ↓
+→
 Evaluation
-  ↓
+→
 Calibration & Error Analysis
-  ↓
+→
 Deployment
-  ↓
+→
 Monitoring
 ```
 
@@ -135,13 +135,13 @@ Height × Width × 3 channels
 
 المسار الكلاسيكي كان غالبًا:
 
-```text
+```flow
 Image
-  ↓
+→
 Hand-crafted Feature Extraction
-  ↓
+→
 Feature Vector
-  ↓
+→
 Classifier
 ```
 
@@ -287,15 +287,15 @@ CNN ما تزال قوية جدًا، لكن تصنيف الصور الحديث 
 
 مثلًا:
 
-```text
+```flow
 Image
- ↓
+→
 16×16 patches
- ↓
+→
 Patch embeddings
- ↓
+→
 Transformer
- ↓
+→
 Classifier
 ```
 
@@ -876,11 +876,11 @@ dog = 0.99
 
 مثال:
 
-```text
+```flow
 Image
- ↓
+→
 Classifier
- ↓
+→
 OK / scratch / crack / contamination
 ```
 
@@ -1148,39 +1148,39 @@ Image → CNN → Label
 
 النظام الحديث أقرب إلى:
 
-```text
+```flow
 Representative Data
-      ↓
+→
 Preprocessing / Augmentation
-      ↓
+→
 Pretrained Visual Representation
-      ↓
+→
 CNN / ViT / Foundation Model
-      ↓
+→
 Fine-tuning
-      ↓
+→
 Probability Scores
-      ↓
+→
 Calibration + Metrics + Error Analysis
-      ↓
+→
 Deployment
-      ↓
+→
 Monitoring
 ```
 
 التطور التاريخي يمكن تلخيصه:
 
-```text
+```flow
 Hand-crafted Features
-        ↓
+→
 SIFT / HOG + SVM
-        ↓
+→
 CNN
-        ↓
+→
 ResNet
-        ↓
+→
 Vision Transformer
-        ↓
+→
 Self-supervised & Vision-Language Foundation Models
 ```
 

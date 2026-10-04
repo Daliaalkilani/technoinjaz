@@ -34,11 +34,11 @@ UART describes an asynchronous serial send/receive mechanism inside the microcon
 
 So you can have:
 
-```text
+```flow
 MCU UART
-   ↓ 3.3 V logic
+→ | 3.3 V logic
 RS-232 Transceiver
-   ↓ ± voltage signaling
+→ | ± voltage signaling
 RS-232 cable
 ```
 
@@ -165,11 +165,14 @@ It means:
 
 A simplified Frame:
 
-```text
+```flow
+direction: horizontal
 Idle
-  ↓
+→ | start bit
 Start
-D0 D1 D2 D3 D4 D5 D6 D7
+→ | 8 data bits
+D0 … D7
+→ | stop bit
 Stop
 ```
 
@@ -315,11 +318,11 @@ Because it is:
 
 Example:
 
-```text
+```flow
 MCU UART
-   ↓
+→
 USB-UART Bridge
-   ↓
+→
 Laptop Terminal
 ```
 
@@ -344,9 +347,9 @@ The reason the confusion persists:
 
 Many systems use:
 
-```text
+```flow
 UART frames
-   ↓
+→
 RS-232 electrical transceiver
 ```
 
@@ -383,12 +386,12 @@ It performs two basic functions:
 
 The picture:
 
-```text
+```flow
 MCU UART 3.3/5V
-      ↓
- RS-232 Transceiver
-      ↓
- RS-232 Cable
+→
+RS-232 Transceiver
+→
+RS-232 Cable
 ```
 
 Some Transceivers contain a Charge Pump to generate the required voltages from a single low-voltage Supply.
@@ -492,13 +495,17 @@ The key feature:
 
 Example:
 
-```text
+```flow
+direction: horizontal
 MCU Controller
-  │
-  ├── Temperature Sensor 0x48
-  ├── EEPROM             0x50
-  ├── RTC                0x68
-  └── IMU                0x6A
+→ | address 0x48
+Temperature Sensor
+→ | address 0x50
+EEPROM
+→ | address 0x68
+RTC
+→ | address 0x6A
+IMU
 ```
 
 with shared SDA/SCL lines.
@@ -515,11 +522,11 @@ A Pull-up resistor raises the line to HIGH when no device is pulling it.
 
 Conceptually:
 
-```text
+```flow
 VDD
- |
+→
 Rpullup
- |
+→
 SDA -------- devices
 ```
 
@@ -1266,11 +1273,11 @@ USB may be better than native RS‑232.
 
 But inside the device there may be:
 
-```text
+```flow
 MCU UART
-   ↓
+→
 USB-UART Bridge
-   ↓
+→
 USB
 ```
 

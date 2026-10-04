@@ -34,11 +34,11 @@ UART تصف آلية إرسال واستقبال تسلسلية غير متزا�
 
 لذلك يمكن أن يكون لدينا:
 
-```text
+```flow
 MCU UART
-   ↓ 3.3 V logic
+→ | 3.3 V logic
 RS-232 Transceiver
-   ↓ ± voltage signaling
+→ | ± voltage signaling
 RS-232 cable
 ```
 
@@ -165,11 +165,14 @@ GND ↔ GND
 
 Frame مبسطة:
 
-```text
+```flow
+direction: horizontal
 Idle
-  ↓
+→ | start bit
 Start
-D0 D1 D2 D3 D4 D5 D6 D7
+→ | 8 data bits
+D0 … D7
+→ | stop bit
 Stop
 ```
 
@@ -315,11 +318,11 @@ UART peripheral قد تعمل على I/O voltage الخاصة بالشريحة،
 
 مثال:
 
-```text
+```flow
 MCU UART
-   ↓
+→
 USB-UART Bridge
-   ↓
+→
 Laptop Terminal
 ```
 
@@ -344,9 +347,9 @@ RS‑232 معيار تاريخي للاتصال التسلسلي Point-to-Point.
 
 كثير من الأنظمة تستخدم:
 
-```text
+```flow
 UART frames
-   ↓
+→
 RS-232 electrical transceiver
 ```
 
@@ -383,12 +386,12 @@ RS-232 electrical transceiver
 
 الصورة:
 
-```text
+```flow
 MCU UART 3.3/5V
-      ↓
- RS-232 Transceiver
-      ↓
- RS-232 Cable
+→
+RS-232 Transceiver
+→
+RS-232 Cable
 ```
 
 بعض Transceivers تحتوي Charge Pump لتوليد الفولتية المطلوبة من Supply واحدة منخفضة.
@@ -492,13 +495,17 @@ SCL = Serial Clock
 
 مثال:
 
-```text
-MCU Controller
-  │
-  ├── Temperature Sensor 0x48
-  ├── EEPROM             0x50
-  ├── RTC                0x68
-  └── IMU                0x6A
+```flow
+direction: horizontal
+المتحكم الرئيسي (MCU Controller)
+→ | عنوان 0x48
+حساس حرارة
+→ | عنوان 0x50
+EEPROM
+→ | عنوان 0x68
+ساعة RTC
+→ | عنوان 0x6A
+IMU
 ```
 
 بخطوط SDA/SCL مشتركة.
@@ -515,11 +522,11 @@ Pull-up resistor ترفع الخط إلى HIGH عندما لا يسحبه أي �
 
 مفهوميًا:
 
-```text
+```flow
 VDD
- |
+→
 Rpullup
- |
+→
 SDA -------- devices
 ```
 
@@ -1266,11 +1273,11 @@ Parity ليست حماية شاملة للرسائل.
 
 لكن يمكن أن يكون داخل الجهاز:
 
-```text
+```flow
 MCU UART
-   ↓
+→
 USB-UART Bridge
-   ↓
+→
 USB
 ```
 

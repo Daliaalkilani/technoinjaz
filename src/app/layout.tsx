@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import { Readex_Pro } from 'next/font/google';
 import '@/styles/globals.css';
+import 'katex/dist/katex.min.css';
+import '@/styles/article-content.css';
 import { ThemeLanguageProvider } from '@/context/ThemeLanguageContext';
 import { LoaderProvider } from '@/context/LoaderContext';
 import { AppShell } from '@/components/layout/AppShell';
@@ -44,6 +46,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="stylesheet" href="/loader/loader.css" />
+        <link rel="alternate" type="application/rss+xml" title="تكنو إنجاز — المقالات الهندسية" href="/feed.xml" />
         <style dangerouslySetInnerHTML={{ __html: 'html[data-skip-loader] #te-loader{display:none!important;}' }} />
         {/* Rocket artwork: start downloading in parallel with the HTML itself. On slow
             connections the loader background would otherwise sit as a plain dark box

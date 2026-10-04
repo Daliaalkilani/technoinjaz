@@ -1,0 +1,141 @@
+/* Article content extensions: flow diagrams (```flow) and math (```math, $$…$$).
+   Follows the site's visual language: same cyan accent + card treatment as
+   .md-flow in globals.css, using the site's CSS variables. */
+
+/* ------------------------------------------------------------------ */
+/* Flow diagrams                                                       */
+/* ------------------------------------------------------------------ */
+
+.md-flowchart {
+  margin: 28px 0;
+  padding: 20px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(56, 189, 248, 0.22);
+  background: rgba(56, 189, 248, 0.06);
+}
+
+.md-flowchart__title {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #38bdf8;
+  margin-bottom: 14px;
+}
+
+.md-flowchart__track {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.md-flowchart__node-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 100%;
+}
+
+.md-flowchart__node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  background: rgba(56, 189, 248, 0.1);
+  font-size: 14.5px;
+  font-weight: 700;
+  line-height: 1.6;
+  text-align: center;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  unicode-bidi: plaintext;
+}
+
+.md-flowchart__note {
+  font-size: 12.5px;
+  font-weight: 500;
+  opacity: 0.75;
+}
+
+.md-flowchart__edge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 3px 0;
+}
+
+.md-flowchart__edge-arrow {
+  color: #38bdf8;
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+.md-flowchart__edge-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #38bdf8;
+  opacity: 0.85;
+}
+
+/* Horizontal variant: stages flow left→right, wrapping on narrow screens. */
+.md-flowchart--h .md-flowchart__track {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  row-gap: 10px;
+}
+
+.md-flowchart--h .md-flowchart__node-wrap {
+  flex-direction: row;
+  align-items: center;
+}
+
+.md-flowchart--h .md-flowchart__edge {
+  padding: 0 8px;
+}
+
+/* Light theme: match [data-theme='light'] .md-flow in globals.css. */
+[data-theme='light'] .md-flowchart {
+  background: #f1f7fd;
+  border-color: rgba(2, 132, 199, 0.2);
+}
+
+[data-theme='light'] .md-flowchart__title,
+[data-theme='light'] .md-flowchart__edge-arrow,
+[data-theme='light'] .md-flowchart__edge-label {
+  color: #0284c7;
+}
+
+[data-theme='light'] .md-flowchart__node {
+  background: #e3f0fc;
+  border-color: rgba(2, 132, 199, 0.3);
+  color: #0f172a;
+}
+
+/* ------------------------------------------------------------------ */
+/* Math (KaTeX)                                                        */
+/* ------------------------------------------------------------------ */
+
+.md-math {
+  margin: 22px 0;
+  padding: 14px 12px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  text-align: center;
+  font-size: 17px;
+}
+
+.md-math .katex-display {
+  margin: 0;
+}
+
+/* Fallbacks (should never trigger — throwOnError is off) render as code. */
+.md-math--fallback,
+.md-math-inline--fallback {
+  font-size: 15px;
+  direction: ltr;
+  display: inline-block;
+}

@@ -38,23 +38,23 @@ Suggested Slug: facial-expression-recognition-ai
 
 ولهذا فالأدق هندسيًا أن نقول:
 
-```text
+```flow
 Camera
-  ↓
+→
 Visible Facial Movement
-  ↓
+→
 Computer Vision Analysis
-  ↓
+→
 Expression Representation
-  ↓
+→
 Probabilistic Estimate
 ```
 
 وليس:
 
-```text
+```flow
 Camera
-  ↓
+→
 True Inner Emotion
 ```
 
@@ -75,9 +75,9 @@ True Inner Emotion
 
 مثال:
 
-```text
+```flow
 Image
-  ↓
+→
 Face detected at x1, y1, x2, y2
 ```
 
@@ -268,25 +268,25 @@ AU12 = active
 
 يمكن تلخيص Pipeline كالتالي:
 
-```text
+```flow
 Camera Frame
-    ↓
+→
 Face Detection
-    ↓
+→
 Face Tracking
-    ↓
+→
 Landmark Detection
-    ↓
+→
 Face Alignment
-    ↓
+→
 Crop / Normalize
-    ↓
+→
 Feature Extraction / Deep Model
-    ↓
+→
 Expression or AU Prediction
-    ↓
+→
 Confidence / Uncertainty
-    ↓
+→
 Application
 ```
 
@@ -407,11 +407,11 @@ scale normalized
 
 ثم تدخل Features إلى مصنف:
 
-```text
+```flow
 Features
-  ↓
+→
 SVM / KNN / Random Forest
-  ↓
+→
 Expression class
 ```
 
@@ -433,15 +433,15 @@ CNN تتعلم Visual Features مباشرة من الصور.
 
 Pipeline مبسط:
 
-```text
+```flow
 Aligned face
-    ↓
+→
 Convolutional backbone
-    ↓
+→
 Visual representation
-    ↓
+→
 Classification head
-    ↓
+→
 Expression probabilities
 ```
 
@@ -500,13 +500,13 @@ FER الحديثة يمكن أن تستخدم:
 
 يمكن أن يكون لدينا:
 
-```text
+```flow
 Neutral
-  ↓
+→
 Onset
-  ↓
+→
 Apex
-  ↓
+→
 Offset
 ```
 
@@ -868,20 +868,28 @@ AU6 + AU12 = الشخص سعيد داخليًا
 
 ## Facial Expression Model
 
-```text
+```flow
 Face
- ↓
+→
 Expression probabilities
 ```
 
 ## Multimodal Affect Model
 
-```text
-Face ─────┐
-Voice ────┤
-Text ─────┤→ Fusion → affective estimate
-HR/EDA ───┤
-Context ──┘
+```flow
+وجه (كاميرا)
+→
+صوت
+→
+نص
+→
+إشارات فسيولوجية (HR/EDA)
+→
+سياق الاستخدام
+→ | دمج كل القنوات معًا
+Fusion (دمج متعدد الوسائط)
+→
+تقدير احتمالي للحالة الوجدانية
 ```
 
 الـMultimodal system قد يكون أكثر Robustness عندما قناة واحدة ضعيفة.
@@ -960,19 +968,19 @@ FER عبر الكاميرا قد يتعامل مع معلومات شديدة ا�
 
 يفضل عندما يكون ذلك ممكنًا:
 
-```text
+```flow
 Camera frame
-  ↓
+→
 On-device FER
-  ↓
+→
 Expression vector
 ```
 
 بدل:
 
-```text
+```flow
 Raw video
-  ↓
+→
 Cloud
 ```
 
@@ -1331,11 +1339,11 @@ No decision
 
 أما نظام **تخصيص المحتوى وفق التعبير** فيضيف بعد FER:
 
-```text
+```flow
 FER output
-   ↓
+→
 user context
-   ↓
+→
 recommendation engine
 ```
 
@@ -1351,19 +1359,19 @@ Camera → Emotion
 
 بل سلسلة هندسية:
 
-```text
+```flow
 Camera
-  ↓
+→
 Face Detection
-  ↓
+→
 Landmarks / Alignment
-  ↓
+→
 Visual Representation
-  ↓
+→
 CNN / Transformer / AU model
-  ↓
+→
 Expression Probabilities
-  ↓
+→
 Confidence + Context
 ```
 

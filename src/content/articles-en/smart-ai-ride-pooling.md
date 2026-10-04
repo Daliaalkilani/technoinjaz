@@ -16,11 +16,12 @@ Suggested Slug: smart-ai-ride-pooling
 
 The idea sounds simple:
 
-```text
+```flow
 Passenger A: from X to Y
+→
 Passenger B: from a nearby point to a nearby destination
-                 ↓
-          one shared vehicle
+→ | merged into the same vehicle
+One shared vehicle
 ```
 
 But implementing it across an entire city is not just "finding the nearest car."
@@ -38,14 +39,14 @@ The real system needs to solve a problem that changes every second:
 
 This is why a modern ride-pooling system is closer to a real-time optimization platform:
 
-```text
+```flow
 Requests + Vehicles + Traffic + Constraints
-                    ↓
-          Matching & Routing Engine
-                    ↓
-      Shared Trips + Fleet Rebalancing
-                    ↓
-          Continuous Re-optimization
+→
+Matching & Routing Engine
+→
+Shared Trips + Fleet Rebalancing
+→
+Continuous Re-optimization
 ```
 
 # What Is the Difference Between Ride-Hailing and Ride-Pooling?
@@ -71,10 +72,15 @@ Passenger C → Vehicle 3
 
 The platform tries to combine independent requests inside the same vehicle if they are compatible.
 
-```text
-Passenger A ┐
-Passenger B ├→ Vehicle 1
-Passenger C ┘
+```flow
+direction: horizontal
+Passenger A
+→
+Passenger B
+→
+Passenger C
+→ | pooled into one vehicle
+Vehicle 1
 ```
 
 FHWA describes ride-sharing in the on-demand transportation environment as a situation where passengers choose a product that allows their trips to be matched with other passengers who have overlapping routes.
@@ -211,26 +217,26 @@ These are problems that can become computationally very hard as scale grows.
 
 The system can be envisioned as follows:
 
-```text
-1. Passenger Request
-       ↓
-2. Validate request
-       ↓
-3. Find candidate vehicles
-       ↓
-4. Generate feasible shared trips
-       ↓
-5. Estimate pickup + detour
-       ↓
-6. Score alternatives
-       ↓
-7. Assign vehicle
-       ↓
-8. Update route
-       ↓
-9. Track execution
-       ↓
-10. Re-optimize when state changes
+```flow
+Passenger Request
+→
+Validate request
+→
+Find candidate vehicles
+→
+Generate feasible shared trips
+→
+Estimate pickup + detour
+→
+Score alternatives
+→
+Assign vehicle
+→
+Update route
+→
+Track execution
+→
+Re-optimize when state changes
 ```
 
 Each stage has a different goal.
@@ -316,13 +322,13 @@ The simplified idea:
 
 This can be represented conceptually:
 
-```text
+```flow
 Requests
-   ↓
+→
 Feasible shared trips
-   ↓
+→
 Trip ↔ Vehicle compatibility
-   ↓
+→
 Global assignment
 ```
 
@@ -430,9 +436,9 @@ Simulation evaluates
 
 or:
 
-```text
+```flow
 GNN/RL chooses strategic action
-        ↓
+→
 Assignment solver handles hard constraints
 ```
 
@@ -460,13 +466,13 @@ then produce Embeddings that represent the spatial relationships.
 
 For example:
 
-```text
+```flow
 Urban Graph
-   ↓
+→
 GNN
-   ↓
+→
 Spatial Representation
-   ↓
+→
 RL / Prediction / Optimization
 ```
 
@@ -688,41 +694,29 @@ and not RMSE only.
 
 It can be designed in layers:
 
-```text
+```flow
 Passenger / Driver Apps
-          ↓
-      API Layer
-          ↓
+→
+API Layer
+→
 Event / Request Stream
-          ↓
-┌─────────────────────────┐
-│ Real-time State Store   │
-│ Vehicle positions       │
-│ Active requests         │
-│ Current routes          │
-└─────────────────────────┘
-          ↓
-┌─────────────────────────┐
-│ Intelligence Layer      │
-│ ETA prediction          │
-│ Demand forecast         │
-│ Matching                │
-│ Routing                 │
-│ Rebalancing             │
-└─────────────────────────┘
-          ↓
-    Dispatch Decisions
-          ↓
- Driver / Passenger Apps
+→ | live state: vehicle positions, active requests, current routes
+Real-time State Store
+→ | ETA prediction, demand forecast, matching, routing, rebalancing
+Intelligence Layer
+→
+Dispatch Decisions
+→
+Driver / Passenger Apps
 ```
 
 Alongside it:
 
-```text
+```flow
 Historical Data
-     ↓
+→
 Training / Analytics
-     ↓
+→
 Model Registry
 ```
 
@@ -1314,19 +1308,19 @@ The greatest value may lie in:
 
 That is:
 
-```text
+```flow
 Ride-Pool
-   ↓
+→
 Transit Hub
-   ↓
+→
 Metro / BRT / Rail
 ```
 
 instead of:
 
-```text
+```flow
 Ride-Pool
-   ↓
+→
 40 km across city
 ```
 
@@ -1570,21 +1564,21 @@ A smart ride-pooling system is not just an app that connects several passengers 
 
 It is a real-time control and decision-making system:
 
-```text
+```flow
 Observe
-   ↓
+→
 Forecast
-   ↓
+→
 Generate feasible shared trips
-   ↓
+→
 Optimize assignment
-   ↓
+→
 Route
-   ↓
+→
 Rebalance
-   ↓
+→
 Measure
-   ↓
+→
 Repeat
 ```
 

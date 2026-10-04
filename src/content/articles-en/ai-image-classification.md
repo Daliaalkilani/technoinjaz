@@ -25,25 +25,25 @@ But building a reliable classification system does not start with merely picking
 
 The real path is closer to:
 
-```text
+```flow
 Data
-  ↓
+→
 Cleaning & Labeling
-  ↓
+→
 Train / Validation / Test Split
-  ↓
+→
 Preprocessing & Augmentation
-  ↓
+→
 Model / Pretrained Backbone
-  ↓
+→
 Training or Fine-tuning
-  ↓
+→
 Evaluation
-  ↓
+→
 Calibration & Error Analysis
-  ↓
+→
 Deployment
-  ↓
+→
 Monitoring
 ```
 
@@ -135,13 +135,13 @@ Today, deep models learn a large part of the representation directly from the da
 
 The classical pipeline was usually:
 
-```text
+```flow
 Image
-  ↓
+→
 Hand-crafted Feature Extraction
-  ↓
+→
 Feature Vector
-  ↓
+→
 Classifier
 ```
 
@@ -287,15 +287,15 @@ The original ViT idea is conceptually simple:
 
 For example:
 
-```text
+```flow
 Image
- ↓
+→
 16×16 patches
- ↓
+→
 Patch embeddings
- ↓
+→
 Transformer
- ↓
+→
 Classifier
 ```
 
@@ -876,11 +876,11 @@ Classification can be used for:
 
 Example:
 
-```text
+```flow
 Image
- ↓
+→
 Classifier
- ↓
+→
 OK / scratch / crack / contamination
 ```
 
@@ -1146,39 +1146,39 @@ Image → CNN → Label
 
 The modern system is closer to:
 
-```text
+```flow
 Representative Data
-      ↓
+→
 Preprocessing / Augmentation
-      ↓
+→
 Pretrained Visual Representation
-      ↓
+→
 CNN / ViT / Foundation Model
-      ↓
+→
 Fine-tuning
-      ↓
+→
 Probability Scores
-      ↓
+→
 Calibration + Metrics + Error Analysis
-      ↓
+→
 Deployment
-      ↓
+→
 Monitoring
 ```
 
 The historical evolution can be summarized as:
 
-```text
+```flow
 Hand-crafted Features
-        ↓
+→
 SIFT / HOG + SVM
-        ↓
+→
 CNN
-        ↓
+→
 ResNet
-        ↓
+→
 Vision Transformer
-        ↓
+→
 Self-supervised & Vision-Language Foundation Models
 ```
 

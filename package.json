@@ -21,6 +21,7 @@
     "framer-motion": "^13.3.0",
     "gl-matrix": "^3.4.4",
     "gsap": "^3.15.0",
+    "katex": "^0.19.0",
     "lucide-react": "^1.46.0",
     "marked": "^18.0.13",
     "next": "^15.5.26",
