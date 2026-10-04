@@ -342,7 +342,7 @@ export const LiveProjectsShowcase: React.FC = () => {
                   </div>
                 </div>
                 <div className="preview-window-body preview-image-container">
-                  <ResponsiveImage src={activeProject.image} alt={activeTitle} className="preview-project-image" />
+                  <ResponsiveImage src={activeProject.image} alt={activeTitle} className="preview-project-image" priority={currentIndex === 0} />
                   <a
                     href={activeProject.url}
                     target="_blank"

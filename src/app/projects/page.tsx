@@ -9,6 +9,19 @@ import { webPage, itemList } from '@/seo/schemas';
 
 export const dynamic = 'force-static';
 
+// Preload the LCP image (first live-project preview) so the browser fetches it before JS runs.
+const lcpPreload = (
+  <link
+    rel="preload"
+    as="image"
+    {...({
+      imagesrcset: '/_img/images/platforms/hisab-erp.640.avif 640w, /_img/images/platforms/hisab-erp.960.avif 960w, /_img/images/platforms/hisab-erp.1280.avif 1280w',
+      imagesizes: '(max-width: 640px) 100vw, 60vw',
+    } as Record<string, string>)}
+    fetchPriority="high"
+  />
+);
+
 export const metadata: Metadata = pageMetadata({
   title: 'المشاريع الهندسية',
   description: 'استعرض مشاريع تكنو إنجاز المنفذة: أنظمة ذكاء اصطناعي، رؤية حاسوبية، روبوتات، وأنظمة سحابية — نماذج تطبيقية حقيقية بتفاصيل تقنية كاملة ولقطات من التنفيذ الفعلي.',
@@ -24,6 +37,7 @@ export default function ProjectsPage() {
 
   return (
     <>
+      {lcpPreload}
       <JsonLd
         data={[
           webPage({ path: '/projects', name: 'المشاريع الهندسية', type: 'CollectionPage' }),
