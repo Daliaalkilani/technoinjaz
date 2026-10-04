@@ -52,7 +52,9 @@ export default function TableOfContents({ items, title, variant }: TableOfConten
     e.preventDefault();
     setActiveId(id);
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    window.history.replaceState(null, '', `#${id}`);
+    // iOS Safari cancels an in-flight smooth scroll when replaceState fires — delaying it
+    // fixes the "first TOC click scrolls to top" bug.
+    window.setTimeout(() => window.history.replaceState(null, '', `#${id}`), 900);
     if (variant === 'accordion') setIsOpen(false);
   };
 
