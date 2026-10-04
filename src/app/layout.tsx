@@ -43,9 +43,9 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: LEGACY_HASH_REDIRECT }} />
         <script dangerouslySetInnerHTML={{ __html: THEME_LANG_BOOT }} />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="stylesheet" href="/loader/loader.css" />
+        <link rel="preload" as="style" href="/fonts/readex-pro.css" />
+        <link rel="stylesheet" href="/fonts/readex-pro.css" />
         <link rel="alternate" type="application/rss+xml" title="تكنو إنجاز — المقالات الهندسية" href="/feed.xml" />
         <style dangerouslySetInnerHTML={{ __html: 'html[data-skip-loader] #te-loader{display:none!important;}' }} />
         {/* Rocket artwork: start downloading in parallel with the HTML itself. On slow
