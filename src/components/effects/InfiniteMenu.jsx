@@ -24,7 +24,6 @@ in mat4 aInstanceMatrix;
 out vec2 vUvs;
 out float vAlpha;
 flat out int vInstanceId;
-out vec3 vWorldDir;
 
 #define PI 3.141593
 
@@ -52,7 +51,6 @@ void main() {
     vAlpha = smoothstep(0.5, 1., normalize(worldPosition.xyz).z) * .9 + .1;
     vUvs = aModelUvs;
     vInstanceId = gl_InstanceID;
-    vWorldDir = normalize(centerPos);
 }
 `;
 
@@ -63,7 +61,7 @@ uniform sampler2D uTex;
 uniform int uItemCount;
 uniform int uAtlasSize;
 uniform int uFocusActive;
-uniform vec3 uFocusDir;
+uniform int uFocusInstance;
 uniform int uFocusItem;
 
 out vec4 outColor;
@@ -71,14 +69,13 @@ out vec4 outColor;
 in vec2 vUvs;
 in float vAlpha;
 flat in int vInstanceId;
-in vec3 vWorldDir;
 
 void main() {
     int itemIndex = vInstanceId % uItemCount;
     if (uFocusActive == 1) {
-        // While a member dwells at his seat, no other nearby instance may repeat his face.
-        float d = dot(normalize(vWorldDir), normalize(uFocusDir));
-        if (d > 0.35 && vInstanceId % uItemCount == uFocusItem && uItemCount > 1) {
+        // While a member dwells at his seat, his face shows on that instance only:
+        // every other instance statically mapped to him borrows another member's face.
+        if (vInstanceId != uFocusInstance && itemIndex == uFocusItem && uItemCount > 1) {
             int off = 1 + (vInstanceId % (uItemCount - 1));
             itemIndex = (uFocusItem + off) % uItemCount;
         }
@@ -646,7 +643,7 @@ class InfiniteGridMenu {
     this.tourMembers = real.length ? real : this.items.map((_, i) => i);
     this.onActiveItemChange = onActiveItemChange || (() => {});
     this.focusActive = false;
-    this.focusDir = vec3.create();
+    this.focusInstance = -1;
     this.focusItem = 0;
     this.onMovementChange = onMovementChange || (() => {});
     this.scaleFactor = scale;
@@ -736,7 +733,7 @@ class InfiniteGridMenu {
       uItemCount: gl.getUniformLocation(this.discProgram, 'uItemCount'),
       uAtlasSize: gl.getUniformLocation(this.discProgram, 'uAtlasSize'),
       uFocusActive: gl.getUniformLocation(this.discProgram, 'uFocusActive'),
-      uFocusDir: gl.getUniformLocation(this.discProgram, 'uFocusDir'),
+      uFocusInstance: gl.getUniformLocation(this.discProgram, 'uFocusInstance'),
       uFocusItem: gl.getUniformLocation(this.discProgram, 'uFocusItem')
     };
 
@@ -851,10 +848,9 @@ class InfiniteGridMenu {
     const gl = this.gl;
     this.control.update(deltaTime, this.TARGET_FRAME_DURATION);
 
-    // While a member dwells at his seat, the instances around him mirror his face.
-    if (this.targetVertexIndex >= 0 && !this.isTransitioning && !this.isPointerDown) {
-      const dir = this.#getVertexWorldPosition(this.targetVertexIndex);
-      vec3.copy(this.focusDir, vec3.normalize(vec3.create(), dir));
+    // While a member dwells at his seat, no other instance may repeat his face.
+    if (this.targetVertexIndex >= 0 && !this.isTransitioning && !this.control.isPointerDown) {
+      this.focusInstance = this.targetVertexIndex;
       this.focusItem = this.targetMemberIndex % Math.max(1, this.items.length);
       this.focusActive = true;
     } else {
@@ -913,7 +909,7 @@ class InfiniteGridMenu {
     gl.uniform1i(this.discLocations.uItemCount, this.items.length);
     gl.uniform1i(this.discLocations.uAtlasSize, this.atlasSize);
     gl.uniform1i(this.discLocations.uFocusActive, this.focusActive ? 1 : 0);
-    gl.uniform3f(this.discLocations.uFocusDir, this.focusDir[0], this.focusDir[1], this.focusDir[2]);
+    gl.uniform1i(this.discLocations.uFocusInstance, this.focusInstance);
     gl.uniform1i(this.discLocations.uFocusItem, this.focusItem);
 
     gl.uniform1f(this.discLocations.uFrames, this.#frames);
