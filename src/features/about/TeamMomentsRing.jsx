@@ -392,7 +392,7 @@ export default function TeamMomentsRing({ onScrollDown = undefined } = {}) {
 
 
     function resize() {
-      const dpr = Math.min(window.devicePixelRatio || 1, 0.8);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1);
       const parent = cv.parentElement;
       const rect = parent ? parent.getBoundingClientRect() : cv.getBoundingClientRect();
       const clientW = rect.width || window.innerWidth;

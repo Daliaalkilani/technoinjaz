@@ -374,7 +374,7 @@ export default function ContactPage({ onBack } = {}) {
                     info@technoenjaz.com
                   </span>
                 </div>
-                <span className="info-badge-action email">
+                <span className="info-badge-action email ext">
                   {t.contact.messageNow}
                 </span>
               </a>
@@ -395,7 +395,7 @@ export default function ContactPage({ onBack } = {}) {
                     +963 958 794 195
                   </span>
                 </div>
-                <span className="info-badge-action whatsapp">
+                <span className="info-badge-action whatsapp ext">
                   {t.contact.chatNow}
                 </span>
               </a>
@@ -416,7 +416,7 @@ export default function ContactPage({ onBack } = {}) {
                     @TECHNO_ENJAZ
                   </span>
                 </div>
-                <span className="info-badge-action insta">
+                <span className="info-badge-action insta ext">
                   {t.contact.followNow}
                 </span>
               </a>
@@ -437,7 +437,7 @@ export default function ContactPage({ onBack } = {}) {
                     Techno Enjaz
                   </span>
                 </div>
-                <span className="info-badge-action facebook">
+                <span className="info-badge-action facebook ext">
                   {t.contact.followFacebook}
                 </span>
               </a>

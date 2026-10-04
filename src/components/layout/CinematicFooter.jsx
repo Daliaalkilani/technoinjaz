@@ -358,6 +358,15 @@ export function CinematicFooter() {
                 </span>
               </div>
             )}
+
+            {/* Official email — blue, under stay-updated newsletter */}
+            <a
+              href="mailto:info@technoenjaz.com"
+              className="footer-official-email"
+              dir="ltr"
+            >
+              info@technoenjaz.com
+            </a>
           </div>
 
           {/* Interactive Magnetic Pills Layout */}
