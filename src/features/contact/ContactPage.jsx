@@ -50,6 +50,7 @@ export default function ContactPage({ onBack } = {}) {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [mapLoaded, setMapLoaded] = useState(false);
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState(false);
 
@@ -461,13 +462,25 @@ export default function ContactPage({ onBack } = {}) {
                 </a>
               </div>
               <div className="map-iframe-wrapper">
-                <iframe
-                  title={t.contact.mapIframeTitle}
-                  src={MAP_IFRAME_SRC}
-                  className="map-iframe"
-                  loading="lazy"
-                  allowFullScreen
-                />
+                {mapLoaded ? (
+                  <iframe
+                    title={t.contact.mapIframeTitle}
+                    src={MAP_IFRAME_SRC}
+                    className="map-iframe"
+                    loading="lazy"
+                    allowFullScreen
+                  />
+                ) : (
+                  <button
+                    type="button"
+                    className="map-facade"
+                    onClick={() => setMapLoaded(true)}
+                    aria-label={t.contact.mapIframeTitle}
+                  >
+                    <span className="map-facade-pin" aria-hidden="true" />
+                    <span className="map-facade-btn">{t.contact.openGoogleMaps}</span>
+                  </button>
+                )}
               </div>
             </div>
 
