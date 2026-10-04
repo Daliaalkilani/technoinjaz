@@ -24,6 +24,7 @@ in mat4 aInstanceMatrix;
 out vec2 vUvs;
 out float vAlpha;
 flat out int vInstanceId;
+out vec3 vWorldDir;
 
 #define PI 3.141593
 
@@ -51,6 +52,7 @@ void main() {
     vAlpha = smoothstep(0.5, 1., normalize(worldPosition.xyz).z) * .9 + .1;
     vUvs = aModelUvs;
     vInstanceId = gl_InstanceID;
+    vWorldDir = normalize(centerPos);
 }
 `;
 
@@ -60,15 +62,24 @@ precision highp float;
 uniform sampler2D uTex;
 uniform int uItemCount;
 uniform int uAtlasSize;
+uniform int uFocusActive;
+uniform vec3 uFocusDir;
+uniform int uFocusItem;
 
 out vec4 outColor;
 
 in vec2 vUvs;
 in float vAlpha;
 flat in int vInstanceId;
+in vec3 vWorldDir;
 
 void main() {
     int itemIndex = vInstanceId % uItemCount;
+    if (uFocusActive == 1) {
+        // While a member is settled, the instances around him show his face as well.
+        float d = dot(normalize(vWorldDir), normalize(uFocusDir));
+        if (d > 0.5) itemIndex = uFocusItem;
+    }
     int cellsPerRow = uAtlasSize;
     int cellX = itemIndex % cellsPerRow;
     int cellY = itemIndex / cellsPerRow;
@@ -625,13 +636,15 @@ class InfiniteGridMenu {
   tourDuration = 1;
   tourBow = 0.22;
 
-  constructor(canvas, items, onActiveItemChange, onMovementChange, onInit = null, scale = 1.0, onLabelPosition = null) {
+  constructor(canvas, items, onActiveItemChange, onMovementChange, onInit = null, scale = 1.0) {
     this.canvas = canvas;
     this.items = items || [];
     const real = this.items.map((it, i) => (it && !it.isPlaceholder ? i : -1)).filter(i => i >= 0);
     this.tourMembers = real.length ? real : this.items.map((_, i) => i);
     this.onActiveItemChange = onActiveItemChange || (() => {});
-    this.onLabelPosition = onLabelPosition || null;
+    this.focusActive = false;
+    this.focusDir = vec3.create();
+    this.focusItem = 0;
     this.onMovementChange = onMovementChange || (() => {});
     this.scaleFactor = scale;
     this.camera.position[2] = 3 * scale;
@@ -718,7 +731,10 @@ class InfiniteGridMenu {
       uTex: gl.getUniformLocation(this.discProgram, 'uTex'),
       uFrames: gl.getUniformLocation(this.discProgram, 'uFrames'),
       uItemCount: gl.getUniformLocation(this.discProgram, 'uItemCount'),
-      uAtlasSize: gl.getUniformLocation(this.discProgram, 'uAtlasSize')
+      uAtlasSize: gl.getUniformLocation(this.discProgram, 'uAtlasSize'),
+      uFocusActive: gl.getUniformLocation(this.discProgram, 'uFocusActive'),
+      uFocusDir: gl.getUniformLocation(this.discProgram, 'uFocusDir'),
+      uFocusItem: gl.getUniformLocation(this.discProgram, 'uFocusItem')
     };
 
     this.discGeo = new DiscGeometry(56, 1);
@@ -832,6 +848,16 @@ class InfiniteGridMenu {
     const gl = this.gl;
     this.control.update(deltaTime, this.TARGET_FRAME_DURATION);
 
+    // While a member dwells at his seat, the instances around him mirror his face.
+    if (this.targetVertexIndex >= 0 && !this.isTransitioning && !this.isPointerDown) {
+      const dir = this.#getVertexWorldPosition(this.targetVertexIndex);
+      vec3.copy(this.focusDir, vec3.normalize(vec3.create(), dir));
+      this.focusItem = this.targetMemberIndex % Math.max(1, this.items.length);
+      this.focusActive = true;
+    } else {
+      this.focusActive = false;
+    }
+
     let positions = this.instancePositions.map(p => vec3.transformQuat(vec3.create(), p, this.control.orientation));
     const scale = 0.25;
     const SCALE_INTENSITY = 0.6;
@@ -883,6 +909,9 @@ class InfiniteGridMenu {
 
     gl.uniform1i(this.discLocations.uItemCount, this.items.length);
     gl.uniform1i(this.discLocations.uAtlasSize, this.atlasSize);
+    gl.uniform1i(this.discLocations.uFocusActive, this.focusActive ? 1 : 0);
+    gl.uniform3f(this.discLocations.uFocusDir, this.focusDir[0], this.focusDir[1], this.focusDir[2]);
+    gl.uniform1i(this.discLocations.uFocusItem, this.focusItem);
 
     gl.uniform1f(this.discLocations.uFrames, this.#frames);
     gl.uniform1f(this.discLocations.uScaleFactor, this.scaleFactor);
@@ -900,30 +929,6 @@ class InfiniteGridMenu {
     );
 
 
-    if (this.onLabelPosition && this.targetVertexIndex >= 0) {
-      // Report the settled member's screen position so an HTML name label can sit beside it.
-      const p = this.#getVertexWorldPosition(this.targetVertexIndex);
-      const m = this.camera.matrices.view;
-      const pr = this.camera.matrices.projection;
-      const x = p[0], y = p[1], z = p[2];
-      const eyeX = m[0]*x + m[4]*y + m[8]*z + m[12];
-      const eyeY = m[1]*x + m[5]*y + m[9]*z + m[13];
-      const eyeZ = m[2]*x + m[6]*y + m[10]*z + m[14];
-      const clipX = pr[0]*eyeX + pr[8]*eyeZ;
-      const clipY = pr[5]*eyeY + pr[9]*eyeZ;
-      const clipW = pr[11]*eyeZ;
-      if (clipW > 0) {
-        const nx = (clipX / clipW) * 0.5 + 0.5;
-        const ny = 1 - ((clipY / clipW) * 0.5 + 0.5);
-        const dprX = gl.drawingBufferWidth / this.canvas.clientWidth || 1;
-        const dprY = gl.drawingBufferHeight / this.canvas.clientHeight || 1;
-        this.onLabelPosition({
-          x: Math.round(nx * gl.drawingBufferWidth / dprX),
-          y: Math.round(ny * gl.drawingBufferHeight / dprY),
-          memberIndex: this.targetMemberIndex
-        });
-      }
-    }
   }
 
   #updateCameraMatrix() {
@@ -1151,7 +1156,6 @@ export default function InfiniteMenu({
   const sketchRef = useRef(null);
   const [activeItem, setActiveItem] = useState(null);
   const [isMoving, setIsMoving] = useState(false);
-  const [labelPos, setLabelPos] = useState(null);
   const [webglSupported, setWebglSupported] = useState(true);
 
   useEffect(() => {
@@ -1192,13 +1196,7 @@ export default function InfiniteMenu({
           handleActiveItem,
           setIsMoving,
           null,
-          scale,
-          pos => {
-            setLabelPos(prev => {
-              if (prev && prev.x === pos.x && prev.y === pos.y && prev.memberIndex === pos.memberIndex) return prev;
-              return pos;
-            });
-          }
+          scale
         );
         sketchRef.current = sketch;
 
@@ -1293,17 +1291,6 @@ export default function InfiniteMenu({
       ) : (
         <>
           <canvas id="infinite-grid-menu-canvas" ref={canvasRef} aria-hidden="true" />
-          {labelPos && activeItem && (
-          <div
-            className="infinite-menu-member-label"
-            style={{ left: labelPos.x, top: labelPos.y }}
-            aria-hidden="true"
-          >
-            {isEn
-              ? (activeItem.nameEn || activeItem.titleEn || activeItem.name || activeItem.title)
-              : (activeItem.name || activeItem.title)}
-          </div>
-        )}
         </>
       )}
 
