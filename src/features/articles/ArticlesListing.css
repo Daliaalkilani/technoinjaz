@@ -683,3 +683,18 @@
   inset: 0;
   z-index: 1;
 }
+
+/* Light mode: empty state must stay readable */
+html[data-theme="light"] .blog-empty-state {
+  background: rgba(241, 245, 249, 0.92);
+  border-color: rgba(2, 132, 199, 0.35);
+}
+html[data-theme="light"] .blog-empty-state h3 {
+  color: #0f172a;
+}
+html[data-theme="light"] .blog-empty-state p {
+  color: #475569;
+}
+html[data-theme="light"] .blog-empty-icon {
+  color: #0284c7;
+}

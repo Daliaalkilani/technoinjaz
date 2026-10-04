@@ -120,9 +120,12 @@ export function ArticlesListing({
 
   const filteredArticles = useMemo(() => {
     return articles.filter(art => {
-      const matchesCategory = selectedCategory === 'all' || 
-        art.category.includes(selectedCategory) || 
-        art.categoryEn.toLowerCase().includes(selectedCategory.toLowerCase());
+      const sel = selectedCategory.toLowerCase();
+      const catDef = blogCategories.find(c => c.id === selectedCategory || c.name === selectedCategory || c.nameEn === selectedCategory);
+      const matchesCategory = selectedCategory === 'all' ||
+        art.category.includes(selectedCategory) ||
+        art.categoryEn.toLowerCase().includes(sel) ||
+        (catDef && (art.category === catDef.name || art.categoryEn === catDef.nameEn));
 
       const query = searchQuery.trim().toLowerCase();
       const matchesSearch = !query || 
@@ -154,7 +157,7 @@ export function ArticlesListing({
     blogCategories.forEach((cat) => {
       counts[cat.id] = cat.id === 'all'
         ? articles.length
-        : articles.filter(a => a.category.includes(cat.name) || a.categoryEn.toLowerCase().includes(cat.id)).length;
+        : articles.filter(a => a.category === cat.name || a.categoryEn === cat.nameEn).length;
     });
     return counts;
   }, [articles]);
