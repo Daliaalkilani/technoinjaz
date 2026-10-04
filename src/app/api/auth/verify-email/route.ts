@@ -1,3 +1,4 @@
+import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { getDB, apiError, apiOk, isSameOrigin, readJson } from '@/lib/server/db';
 import { getSessionUser, issueVerificationToken, sha256Hex } from '@/lib/server/auth';
 
@@ -23,7 +24,8 @@ export async function POST(request: Request) {
       const user = await getSessionUser(request, db);
       if (!user) return apiError(401, 'unauthorized');
       if (user.email_verified) return apiOk({ alreadyVerified: true });
-      await issueVerificationToken(db, user.id, new URL(request.url).origin, user.email);
+      const env = (getCloudflareContext().env as { SEND_EMAIL?: (m: unknown) => Promise<void> }) || {};
+      await issueVerificationToken(db, user.id, new URL(request.url).origin, user.email, env.SEND_EMAIL);
       return apiOk({ sent: true });
     }
 

@@ -144,7 +144,15 @@ export const publicUser = (u: SessionUser) => ({
 // ─────────────────────────────────────────────────────────────────────────────
 const VERIFY_TTL_MS = 48 * 60 * 60 * 1000;
 
-export async function issueVerificationToken(db: D1, userId: number, origin: string, email: string) {
+type SendEmail = (message: unknown) => Promise<void>;
+
+export async function issueVerificationToken(
+  db: D1,
+  userId: number,
+  origin: string,
+  email: string,
+  sendEmail?: SendEmail
+) {
   const token = randomToken();
   await db.prepare('DELETE FROM email_verification_tokens WHERE user_id = ?1').bind(userId).run();
   await db
@@ -152,9 +160,34 @@ export async function issueVerificationToken(db: D1, userId: number, origin: str
     .bind(await sha256Hex(token), userId, Date.now() + VERIFY_TTL_MS)
     .run();
   const link = `${origin}/account?verify=${token}`;
-  // TODO(owner): send this link by email from info@technoenjaz.com once the mailbox
-  // is live (the SEND_EMAIL binding used by /api/contact can deliver it). Until then
-  // the link is only written to the Worker logs (wrangler tail / dashboard logs).
+  // Deliver via the same SEND_EMAIL binding the contact route uses (Cloudflare Email
+  // Routing: info@technoenjaz.com is routed, no mailbox password exists). Best effort —
+  // failure falls back to Worker logs so registration never breaks.
+  try {
+    if (sendEmail) {
+      const emailMod = (await import(/* webpackIgnore: true */ 'cloudflare:email' as string)) as unknown as { EmailMessage: new (from: string, to: string, raw: string) => unknown };
+      const { EmailMessage } = emailMod;
+      const raw = [
+        'From: Techno Enjaz <info@technoenjaz.com>',
+        `To: ${email}`,
+        'Subject: =?UTF-8?B?' + Buffer.from('توثيق بريدك — تكنو إنجاز').toString('base64') + '?=',
+        'MIME-Version: 1.0',
+        'Content-Type: text/html; charset=UTF-8',
+        '',
+        `<div dir="rtl" style="font-family:Tahoma,Arial,sans-serif;padding:24px">`,
+        `<h2 style="color:#0369a1">أهلاً بك في تكنو إنجاز 👋</h2>`,
+        `<p>اضغط الزر التالي لتوثيق بريدك الإلكتروني (الرابط صالح 48 ساعة):</p>`,
+        `<p><a href="${link}" style="background:#0284c7;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:bold">توثيق البريد</a></p>`,
+        `<p style="font-size:12px;color:#64748b">إذا لم تطلب هذا الحساب تجاهل الرسالة.</p>`,
+        `</div>`
+      ].join('\r\n');
+      await sendEmail(new EmailMessage('info@technoenjaz.com', email, raw) as unknown as object);
+      console.log(`[verify-email] sent via SEND_EMAIL user=${userId} email=${email}`);
+      return;
+    }
+  } catch (e) {
+    console.error('[verify-email] send failed, falling back to logs', e instanceof Error ? e.message : e);
+  }
   console.log(`[verify-email] user=${userId} email=${email} link=${link}`);
 }
 

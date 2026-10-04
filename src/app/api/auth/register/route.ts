@@ -1,4 +1,5 @@
 import { getDB, apiError, apiOk, isSameOrigin, readJson } from '@/lib/server/db';
+import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { EMAIL_RE, hashPassword, createSession, setSessionCookie, issueVerificationToken, publicUser, type SessionUser } from '@/lib/server/auth';
 
 export const dynamic = 'force-dynamic';
@@ -33,7 +34,8 @@ export async function POST(request: Request) {
     const userId = Number(inserted.meta.last_row_id);
     const user: SessionUser = { id: userId, email, name, email_verified: 0, created_at: now };
 
-    await issueVerificationToken(db, userId, new URL(request.url).origin, email);
+    const env = (getCloudflareContext().env as { SEND_EMAIL?: (m: unknown) => Promise<void> }) || {};
+    await issueVerificationToken(db, userId, new URL(request.url).origin, email, env.SEND_EMAIL);
     const { token, expiresAt } = await createSession(db, userId);
 
     const res = apiOk({ user: publicUser(user) }, { status: 201 });
