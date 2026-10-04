@@ -282,13 +282,14 @@ export default function ContactPage({ onBack } = {}) {
                   <div className="form-group">
                     <label className="form-label">
                       <Mail size={15} />
-                      <span>{t.contact.email}</span>
+                      <span>{t.contact.email} <span style={{ color: '#ef4444' }}>*</span></span>
                     </label>
                     <input
                       type="email"
                       id="contact-email" name="email"
                       value={formData.email}
                       onChange={handleChange}
+                      required
                       placeholder={t.contact.emailPlaceholder}
                       className="form-input"
                     />
@@ -297,13 +298,14 @@ export default function ContactPage({ onBack } = {}) {
                   <div className="form-group">
                     <label className="form-label">
                       <Phone size={15} />
-                      <span>{t.contact.phone}</span>
+                      <span>{t.contact.phone} <span style={{ color: '#ef4444' }}>*</span></span>
                     </label>
                     <input
                       type="tel"
                       id="contact-phone" name="phone"
                       value={formData.phone}
                       onChange={handleChange}
+                      required
                       placeholder={t.contact.phonePlaceholder}
                       className="form-input"
                     />
