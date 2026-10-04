@@ -383,6 +383,8 @@ export const LiveProjectsShowcase: React.FC = () => {
                   <button
                     key={project.id}
                     type="button"
+                    role="tab"
+                    aria-selected={isActive}
                     className={`spotlight-dot ${isActive ? 'active' : ''}`}
                     onClick={() => handleSelectIndex(idx)}
                     title={`${idx + 1}. ${pTitle}`}
