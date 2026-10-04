@@ -64,7 +64,14 @@ export function pageMetadata(o: {
 }): Metadata {
   const url = absoluteUrl(o.path);
   const images = o.image
-    ? [{ url: o.image.startsWith('http') ? o.image : absoluteUrl(o.image) }]
+    ? [
+        {
+          url: o.image.startsWith('http') ? o.image : absoluteUrl(o.image),
+          width: 640,
+          height: 640,
+          alt: o.title
+        }
+      ]
     : [{ ...OG_IMAGE, url: absoluteUrl(OG_IMAGE.url) }];
 
   return {

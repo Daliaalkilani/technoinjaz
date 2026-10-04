@@ -214,6 +214,11 @@ export function blogPosting(article: BlogArticle) {
       '@id': ORG_ID
     },
     inLanguage: ['ar', 'en'],
+    // AEO: voice assistants & answer engines read these sections aloud
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['h1', '.article-excerpt', '.article-body > p:first-of-type']
+    },
     articleSection: article.category,
     ...(article.categoryEn ? { alternateSection: article.categoryEn } : {}),
     ...(tags ? { keywords: tags } : {}),
