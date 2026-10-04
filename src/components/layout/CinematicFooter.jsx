@@ -92,7 +92,10 @@ const MarqueeLogo = () => (
   <img
     src="/images/brand/techno-logo.png"
     alt="Techno Enjaz"
+    width={23}
+    height={24}
     className="footer-marquee-logo"
+    loading="lazy"
   />
 );
 
@@ -422,9 +425,7 @@ export function CinematicFooter() {
               <MagneticButton as={Link} href="/faq" prefetch={true} className="footer-glass-pill footer-pill-secondary">
                 {t.nav?.faq || (lang === 'en' ? 'FAQ' : 'الأسئلة الشائعة')}
               </MagneticButton>
-              <MagneticButton as={Link} href="/privacy-policy" prefetch={true} className="footer-glass-pill footer-pill-secondary">
-                {lang === 'en' ? 'Privacy Policy' : 'سياسة الخصوصية'}
-              </MagneticButton>
+              
             </div>
           </div>
         </div>
@@ -432,7 +433,10 @@ export function CinematicFooter() {
         {/* 3. Bottom Bar / Credits */}
         <div className="footer-bottom-bar">
           <div className="footer-copyright">
-            {t.footer?.copyright || '© 2026 تكنو إنجاز. جميع الحقوق محفوظة.'}
+            {t.footer?.copyright || '© 2026 تكنو إنجاز. جميع الحقوق محفوظة.'}{' '}
+            <Link href="/privacy-policy" prefetch={true} className="footer-copyright-privacy">
+              {lang === 'en' ? 'Privacy Policy' : 'سياسة الخصوصية'}
+            </Link>
           </div>
 
           {/* Back to top button */}
