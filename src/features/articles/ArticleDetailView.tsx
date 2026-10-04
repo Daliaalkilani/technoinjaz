@@ -233,7 +233,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             <div className="author-capsule-text">
               <span className="author-capsule-byline">
                 <span className="author-capsule-by">{isEn ? 'By' : 'بقلم'}</span>{' '}
-                <Link href="/about#team" rel="author" className="author-capsule-name">{authorName}</Link>
+                <Link href="/about#team-showcase" rel="author" className="author-capsule-name">{authorName}</Link>
               </span>
               <span className="author-capsule-sub">
                 <span className="author-capsule-role">{authorRole}</span>

@@ -5,11 +5,22 @@ import type { FaqItem } from '@/data/faqData';
 import type { QAItem } from '@/data/qa/types';
 import { projectTags, plainExcerpt } from '@/lib/text';
 
+const ABDULGHANI_ID = `${SITE_URL}/#abdulghani-alhamdi`;
+const ABDULGHANI_URL = absoluteUrl('/about#team-showcase');
+const ABDULGHANI_SAME_AS = [
+  'https://www.facebook.com/share/19ZeJgTRzk/',
+  'https://www.instagram.com/abdalgani_h1',
+  'https://x.com/Abdalganih2',
+  'https://github.com/abdalganih1',
+  'https://t.me/abdalganih',
+  'https://wa.me/963958794195'
+];
+
 export function abdulghaniPersonSchema() {
-  const url = absoluteUrl('/about#team');
+  const url = ABDULGHANI_URL;
   return {
     '@type': 'Person',
-    '@id': `${SITE_URL}/#abdulghani-alhamdi`,
+    '@id': ABDULGHANI_ID,
     name: 'المهندس عبد الغني الحمدي',
     alternateName: [
       'Eng. Abdulghani Alhamdi',
@@ -51,14 +62,7 @@ export function abdulghaniPersonSchema() {
       '@id': ORG_ID
     },
     disambiguatingDescription: '«التغيير يبدأ من الداخل، ابدأ بنفسك ثم غير العالم» - رؤيته: تكوين مجتمع مترابط ومستقل ذو كفاءة عالية، رسالته: التطور والتقدم العلمي والعملي للرقي بجميع المجالات، أهدافه: رفع الوعي للأشخاص الطموحين ومتابعتهم عبر استقطاب المشاريع وتدريبهم عليها.',
-    sameAs: [
-      'https://www.facebook.com/share/19ZeJgTRzk/',
-      'https://www.instagram.com/abdalgani_h1',
-      'https://x.com/Abdalganih2',
-      'https://github.com/abdalganih1',
-      'https://t.me/abdalganih',
-      'https://wa.me/963958794195'
-    ],
+    sameAs: ABDULGHANI_SAME_AS,
     email: 'info@abdalgani.com'
   };
 }
@@ -207,13 +211,17 @@ export function blogPosting(article: BlogArticle) {
     image: article.image ? (article.image.startsWith('http') ? article.image : absoluteUrl(article.image)) : absoluteUrl('/og-image.png'),
     datePublished: `${article.publishedAt}T00:00:00+03:00`,
     dateModified: `${article.modifiedAt || article.publishedAt}T00:00:00+03:00`,
+    // Every article is founder-authored (ARTICLE_AUTHOR) — same @id as the Organization founder node
     author: {
       '@type': 'Person',
-      '@id': `${SITE_URL}/#abdulghani-alhamdi`,
+      '@id': ABDULGHANI_ID,
       name: article.author.name,
-      alternateName: article.author.nameEn,
-      jobTitle: article.author.roleEn,
-      url: absoluteUrl('/about#team'),
+      alternateName: [article.author.nameEn, 'المهندس عبد الغني الحمدي', 'Abdulghani Alhamdi'],
+      jobTitle: article.author.role,
+      description: article.author.roleEn,
+      url: ABDULGHANI_URL,
+      image: absoluteUrl(article.author.avatar),
+      sameAs: ABDULGHANI_SAME_AS,
       worksFor: { '@id': ORG_ID }
     },
     publisher: {
