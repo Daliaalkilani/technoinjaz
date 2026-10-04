@@ -36,13 +36,13 @@ const defaultCardData: BentoCardItem[] = [
   },
   {
     color: '#0d1629',
-    title: 'الحوسبة العاطفية: كيف يحلل الذكاء الاصطناعي التعبير العاطفي؟',
-    titleEn: 'Affective Computing & Human Interaction',
-    description: 'كيف تحلل الأنظمة تعابير الوجه والصوت والإشارات الحيوية ضمن حدود عدم اليقين والسياق.',
-    descriptionEn: 'Multimodal AI analysis of facial, vocal, and physiological expressions within contextual bounds.',
+    title: 'كيف يعمل تصنيف الصور بالذكاء الاصطناعي؟',
+    titleEn: 'How Does AI Image Classification Work?',
+    description: 'من الشبكات العصبية الالتفافية إلى محولات الرؤية: كيف يرى النموذج الصورة ويصنفها خطوة بخطوة.',
+    descriptionEn: 'From CNNs to Vision Transformers: how a model sees an image and classifies it step by step.',
     label: 'ذكاء اصطناعي',
     labelEn: 'Artificial Intelligence',
-    image: '/images/articles/affective-computing.jpg'
+    image: '/images/articles/ai-image-classification.png'
   },
   {
     color: '#0d1629',
@@ -762,7 +762,7 @@ const MagicBento: React.FC<MagicBentoProps> = ({
   useEffect(() => {
     [
       'digital-twin',
-      'affective-computing',
+      'ai-image-classification',
       'emotion-aware-recommendation',
       'model-context-protocol-mcp',
       'next-token-prediction',
@@ -790,7 +790,7 @@ const MagicBento: React.FC<MagicBentoProps> = ({
           const cardDesc = isEn ? (card.descriptionEn || card.description) : card.description;
           const articleSlugs = [
             'digital-twin',
-            'affective-computing',
+            'ai-image-classification',
             'emotion-aware-recommendation',
             'model-context-protocol-mcp',
             'next-token-prediction',

@@ -209,9 +209,9 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
                     className="card-thumb-link"
                     aria-label={isEn ? (project.titleEn || project.title) : project.title}
                   >
-                    <ResponsiveImage src={project.image} alt={(isEn ? (project.altTextEn || project.altText) : project.altText) || (isEn ? (project.titleEn || project.title) : project.title)} className="card-thumb-img" />
+                    <ResponsiveImage src={project.image} alt={(isEn ? (project.altTextEn || project.altText) : project.altText) || (isEn ? (project.titleEn || project.title) : project.title)} className="card-thumb-img" sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 45vw" />
                   </Link>
-                  <span className="card-cat-badge">{project.categoryNameAr}</span>
+                  <span className="card-cat-badge">{isEn && project.categoryNameEn ? project.categoryNameEn : project.categoryNameAr}</span>
 
                   <button
                     type="button"

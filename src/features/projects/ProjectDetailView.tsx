@@ -297,7 +297,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
               <p className="project-cta-subheading">
                 {isEn 
                   ? "Reach out to Techno Enjaz engineering team to discuss technical feasibility, prototype hardware, and development scope."
-                  : "تواصل مع فريق تكنو إنجاز الهندسي لمناقشة قابلية التنفيذ العملي، اختيار القطع، وتطوير النموذج الأولي."}
+                  : "تواصل مع فريق تكنو إنجاز لمناقشة قابلية التنفيذ العملي، اختيار القطع، وتطوير النموذج الأولي."}
               </p>
             </div>
             <Link href="/contact" className="project-cta-btn">

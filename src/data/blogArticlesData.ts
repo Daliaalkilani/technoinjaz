@@ -62,8 +62,8 @@ export const blogArticlesData: BlogArticle[] = [
     readTimeEn: '12 min read',
     author: {
       id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز الهندسي',
-      nameEn: 'Techno Enjaz Engineering Team',
+      name: 'فريق تكنو إنجاز',
+      nameEn: 'Techno Enjaz Team',
       role: 'قسم هندسة النظم والتحول الرقمي',
       roleEn: 'Systems Engineering & Digital Transformation Dept',
       avatar: '/images/team/abdulghani.jpg'
@@ -102,8 +102,8 @@ export const blogArticlesData: BlogArticle[] = [
     readTimeEn: '14 min read',
     author: {
       id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز الهندسي',
-      nameEn: 'Techno Enjaz Engineering Team',
+      name: 'فريق تكنو إنجاز',
+      nameEn: 'Techno Enjaz Team',
       role: 'قسم الذكاء الاصطناعي والتفاعل البشري',
       roleEn: 'AI & Human-Computer Interaction Dept',
       avatar: '/images/team/abdulghani.jpg'
@@ -142,8 +142,8 @@ export const blogArticlesData: BlogArticle[] = [
     readTimeEn: '15 min read',
     author: {
       id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز الهندسي',
-      nameEn: 'Techno Enjaz Engineering Team',
+      name: 'فريق تكنو إنجاز',
+      nameEn: 'Techno Enjaz Team',
       role: 'قسم هندسة خوارزميات التوصية',
       roleEn: 'Recommendation Algorithms Engineering',
       avatar: '/images/team/abdulghani.jpg'
@@ -182,8 +182,8 @@ export const blogArticlesData: BlogArticle[] = [
     readTimeEn: '16 min read',
     author: {
       id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز الهندسي',
-      nameEn: 'Techno Enjaz Engineering Team',
+      name: 'فريق تكنو إنجاز',
+      nameEn: 'Techno Enjaz Team',
       role: 'قسم معمارية البرمجيات وبروتوكولات AI',
       roleEn: 'Software Architecture & AI Protocols Dept',
       avatar: '/images/team/abdulghani.jpg'
@@ -222,8 +222,8 @@ export const blogArticlesData: BlogArticle[] = [
     readTimeEn: '15 min read',
     author: {
       id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز الهندسي',
-      nameEn: 'Techno Enjaz Engineering Team',
+      name: 'فريق تكنو إنجاز',
+      nameEn: 'Techno Enjaz Team',
       role: 'قسم معالجة اللغات الطبيعية والنماذج التوليدية',
       roleEn: 'Natural Language Processing & Generative Models',
       avatar: '/images/team/abdulghani.jpg'
@@ -262,8 +262,8 @@ export const blogArticlesData: BlogArticle[] = [
     readTimeEn: '15 min read',
     author: {
       id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز الهندسي',
-      nameEn: 'Techno Enjaz Engineering Team',
+      name: 'فريق تكنو إنجاز',
+      nameEn: 'Techno Enjaz Team',
       role: 'قسم هندسة الشبكات والاتصالات اللاسلكية',
       roleEn: 'Wireless Communications & Networks Dept',
       avatar: '/images/team/abdulghani.jpg'
@@ -302,8 +302,8 @@ export const blogArticlesData: BlogArticle[] = [
     readTimeEn: '18 min read',
     author: {
       id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز الهندسي',
-      nameEn: 'Techno Enjaz Engineering Team',
+      name: 'فريق تكنو إنجاز',
+      nameEn: 'Techno Enjaz Team',
       role: 'قسم الرؤية الحاسوبية والذكاء الاصطناعي',
       roleEn: 'Computer Vision & Deep Learning Dept',
       avatar: '/images/team/abdulghani.jpg'
@@ -342,8 +342,8 @@ export const blogArticlesData: BlogArticle[] = [
     readTimeEn: '17 min read',
     author: {
       id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز الهندسي',
-      nameEn: 'Techno Enjaz Engineering Team',
+      name: 'فريق تكنو إنجاز',
+      nameEn: 'Techno Enjaz Team',
       role: 'قسم إنترنت الأشياء والأنظمة الذكية',
       roleEn: 'Internet of Things & Smart Systems Dept',
       avatar: '/images/team/abdulghani.jpg'
@@ -382,8 +382,8 @@ export const blogArticlesData: BlogArticle[] = [
     readTimeEn: '20 min read',
     author: {
       id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز الهندسي',
-      nameEn: 'Techno Enjaz Engineering Team',
+      name: 'فريق تكنو إنجاز',
+      nameEn: 'Techno Enjaz Team',
       role: 'قسم هندسة النظم المدمجة والدوائر الإلكترونية',
       roleEn: 'Embedded Systems & Hardware Engineering Dept',
       avatar: '/images/team/abdulghani.jpg'
@@ -422,8 +422,8 @@ export const blogArticlesData: BlogArticle[] = [
     readTimeEn: '19 min read',
     author: {
       id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز الهندسي',
-      nameEn: 'Techno Enjaz Engineering Team',
+      name: 'فريق تكنو إنجاز',
+      nameEn: 'Techno Enjaz Team',
       role: 'قسم الذكاء الاصطناعي وتعلم الآلة',
       roleEn: 'AI & Machine Learning Dept',
       avatar: '/images/team/abdulghani.jpg'
@@ -462,8 +462,8 @@ export const blogArticlesData: BlogArticle[] = [
     readTimeEn: '16 min read',
     author: {
       id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز الهندسي',
-      nameEn: 'Techno Enjaz Engineering Team',
+      name: 'فريق تكنو إنجاز',
+      nameEn: 'Techno Enjaz Team',
       role: 'قسم هندسة الاتصالات والترددات اللاسلكية',
       roleEn: 'Telecommunications & RF Engineering Dept',
       avatar: '/images/team/abdulghani.jpg'
@@ -502,8 +502,8 @@ export const blogArticlesData: BlogArticle[] = [
     readTimeEn: '22 min read',
     author: {
       id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز الهندسي',
-      nameEn: 'Techno Enjaz Engineering Team',
+      name: 'فريق تكنو إنجاز',
+      nameEn: 'Techno Enjaz Team',
       role: 'قسم الأنظمة الذكية وهندسة النقل الحضري',
       roleEn: 'Smart Systems & Urban Mobility Dept',
       avatar: '/images/team/abdulghani.jpg'
