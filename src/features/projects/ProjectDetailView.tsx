@@ -111,8 +111,8 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
         <span className="breadcrumb-separator">/</span>
         <span className="breadcrumb-category">{isEn ? (project.categoryNameEn || project.categoryNameAr) : project.categoryNameAr}</span>
         <span className="breadcrumb-separator">/</span>
-        <span className="breadcrumb-current" aria-current="page" title={project.title}>
-          {project.title}
+        <span className="breadcrumb-current" aria-current="page" title={isEn ? (project.titleEn || project.title) : project.title}>
+          {isEn ? (project.titleEn || project.title) : project.title}
         </span>
       </nav>
 

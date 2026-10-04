@@ -86,7 +86,7 @@ export function renderMarkdown(
     // Draft placeholders (IMAGE_01_URL…) would ship as broken images: real paths only.
     if (!href.startsWith('/') && !/^https?:\/\//.test(href)) return '';
     const esc = (v: string) => v.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
-    const img = `<img src="${href}" alt="${esc(text || '')}" loading="lazy" decoding="async" />`;
+    const img = `<img src="${href}" alt="${esc(text || '')}" loading="lazy" decoding="async" width="1200" height="675" style="aspect-ratio:16/9;width:100%;height:auto;object-fit:contain;background:rgba(127,127,127,0.06)" />`;
     // The markdown title is the visible caption (what the image shows + source credit).
     return title
       ? `<figure class="md-figure">${img}<figcaption>${esc(title)}</figcaption></figure>`
