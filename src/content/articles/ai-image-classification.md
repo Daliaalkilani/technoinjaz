@@ -253,8 +253,8 @@ Pooling تقلل الأبعاد المكانية لبعض Feature Maps.
 
 قدمت ResNet فكرة **Residual Connections**:
 
-```text
-output = F(x) + x
+```math
+y = F(x) + x
 ```
 
 بدل أن تتعلم كل طبقة Transform كاملة من الصفر.
@@ -586,8 +586,8 @@ helmet
 
 ## Accuracy
 
-```text
-correct predictions / all predictions
+```math
+\text{Accuracy} = \frac{\text{التنبؤات الصحيحة}}{\text{كل التنبؤات}}
 ```
 
 مناسبة عندما تكون الفئات متوازنة نسبيًا وتكلفة الأخطاء متقاربة.
@@ -621,8 +621,8 @@ Recall للحالات المرضية = 0%
 
 > من بين ما توقعه النموذج كإيجابي، كم كان صحيحًا؟
 
-```text
-Precision = TP / (TP + FP)
+```math
+\text{Precision} = \frac{TP}{TP + FP}
 ```
 
 # Recall
@@ -631,16 +631,16 @@ Precision = TP / (TP + FP)
 
 > من بين الحالات الإيجابية الحقيقية، كم اكتشف النموذج؟
 
-```text
-Recall = TP / (TP + FN)
+```math
+\text{Recall} = \frac{TP}{TP + FN}
 ```
 
 # F1 Score
 
 المتوسط التوافقي بين Precision وRecall:
 
-```text
-F1 = 2 × Precision × Recall / (Precision + Recall)
+```math
+F_1 = \frac{2 \times \text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}
 ```
 
 مفيد عندما نحتاج توازنًا بينهما.
@@ -1168,23 +1168,7 @@ Deployment
 Monitoring
 ```
 
-التطور التاريخي يمكن تلخيصه:
-
-```flow
-Hand-crafted Features
-→
-SIFT / HOG + SVM
-→
-CNN
-→
-ResNet
-→
-Vision Transformer
-→
-Self-supervised & Vision-Language Foundation Models
-```
-
-لكن النموذج الأحدث ليس تلقائيًا الأفضل.
+تاريخيًا، مرّ المجال برحلة طويلة: بدأ بالسمات المصممة يدويًا (Hand-crafted Features) التي كانت تُستخرج بطرق مثل SIFT وHOG ثم تُغذّى إلى مصنّف مثل SVM، ثم جاءت الشبكات العصبية التلافيفية (CNN) لتتعلم هذه السمات من البيانات نفسها، تلتها أعمق مثل ResNet، ثم Vision Transformer الذي قلّص الحاجة إلى الحجم الكبير من البيانات الموسومة عبر التدريب المسبق، ووصلنا اليوم إلى نماذج الأساس المدرّبة ذاتيًا ومتعددة الوسائط بصريًا ولغويًا. لكن النموذج الأحدث ليس تلقائيًا الأفضل.
 
 أفضل نظام هو الذي:
 

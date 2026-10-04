@@ -253,8 +253,8 @@ As networks grew deeper, a problem emerged: deeper networks do not automatically
 
 ResNet introduced the idea of **Residual Connections**:
 
-```text
-output = F(x) + x
+```math
+y = F(x) + x
 ```
 
 instead of each layer learning a full Transform from scratch.
@@ -586,8 +586,8 @@ So in high-stakes applications we may need **Calibration** instead of interpreti
 
 ## Accuracy
 
-```text
-correct predictions / all predictions
+```math
+\text{Accuracy} = \frac{\text{correct predictions}}{\text{all predictions}}
 ```
 
 Suitable when the categories are relatively balanced and error costs are similar.
@@ -621,8 +621,8 @@ It answers:
 
 > Of everything the model predicted as positive, how much was correct?
 
-```text
-Precision = TP / (TP + FP)
+```math
+\text{Precision} = \frac{TP}{TP + FP}
 ```
 
 # Recall
@@ -631,16 +631,16 @@ It answers:
 
 > Of all the true positive cases, how many did the model detect?
 
-```text
-Recall = TP / (TP + FN)
+```math
+\text{Recall} = \frac{TP}{TP + FN}
 ```
 
 # F1 Score
 
 The harmonic mean of Precision and Recall:
 
-```text
-F1 = 2 × Precision × Recall / (Precision + Recall)
+```math
+F_1 = \frac{2 \times \text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}
 ```
 
 Useful when we need a balance between the two.
@@ -1166,23 +1166,7 @@ Deployment
 Monitoring
 ```
 
-The historical evolution can be summarized as:
-
-```flow
-Hand-crafted Features
-→
-SIFT / HOG + SVM
-→
-CNN
-→
-ResNet
-→
-Vision Transformer
-→
-Self-supervised & Vision-Language Foundation Models
-```
-
-But the newest model is not automatically the best.
+Historically, the field traveled a long road: it started with hand-crafted features extracted with methods such as SIFT and HOG and fed into classifiers like SVM, then convolutional neural networks (CNNs) learned those features directly from the data, followed by much deeper architectures such as ResNet, then the Vision Transformer, which reduced the dependence on huge labeled datasets through pre-training, and today we have self-supervised vision-language foundation models. But the newest model is not automatically the best.
 
 The best system is the one that:
 

@@ -124,29 +124,7 @@ UART اختصار:
 
 وهي وحدة Hardware موجودة في كثير من المتحكمات والمعالجات.
 
-في أبسط صورة نحتاج:
-
-```text
-Device A TX → Device B RX
-Device A RX ← Device B TX
-GND ↔ GND
-```
-
-لا يوجد Clock line.
-
-كيف يعرف المستقبل توقيت كل Bit؟
-
-الطرفان يتفقان على Baud Rate.
-
-مثل:
-
-```text
-9600
-115200
-1000000
-```
-
-إذا كان Hardware يدعمها ضمن Error tolerance المناسبة.
+في أبسط صورة نحتاج ثلاثة أسلاك فقط: مخرج الإرسال TX للجهاز A يتصل بمدخل الاستقبال RX للجهاز B، والعكس صحيح، مع أرضية مشتركة GND بين الطرفين. لا توجد خط ساعة (Clock line) على السلك؛ فكيف يعرف المستقبل توقيت كل Bit؟ الحل أن الطرفين يتفقان مسبقًا على معدل الباود Baud Rate — قيم شائعة مثل 9600 و115200 ومليون بت في الثانية — بشرط أن يدعم الـHardware القيمة المختارة ضمن هامش خطأ مقبول.
 
 # كيف يبدو UART Frame؟
 
@@ -235,22 +213,22 @@ Parity قد تكشف بعض أنماط الأخطاء فقط.
 
 في UART التقليدية التي يمثل فيها كل Symbol قيمة Bit واحدة، غالبًا يكون الرقم العددي متساويًا تقريبًا:
 
-```text
-115200 baud ≈ 115200 line bits/s
+```math
+115200~\text{baud} \approx 115200~\tfrac{\text{line bits}}{\text{s}}
 ```
 
 لكن Payload الفعلية أقل لأن Frame تحتوي Start/Stop/Parity.
 
 في 8N1:
 
-```text
-1 start + 8 data + 1 stop = 10 bits
+```math
+1~\text{start} + 8~\text{data} + 1~\text{stop} = 10~\text{bits}
 ```
 
 لذلك 115200 baud تعطي نظريًا نحو:
 
-```text
-11520 bytes/s
+```math
+\frac{115200~\text{bits/s}}{10~\text{bits/frame}} = 11520~\text{bytes/s}
 ```
 
 قبل أي بروتوكول إضافي.

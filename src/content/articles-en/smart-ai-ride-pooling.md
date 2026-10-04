@@ -130,34 +130,12 @@ The real question is:
 
 The benefit is realized when the system can combine requests that would otherwise have needed separate vehicles.
 
-Example:
-
-Without pooling:
-
-```text
-A → car 1 → 8 km
-B → car 2 → 7 km
-C → car 3 → 9 km
-```
-
-The total may be:
-
-```text
-24 vehicle-km
-```
-
-With good pooling:
-
-```text
-A+B+C → one vehicle → 13 km
-```
-
-VKT may drop.
+Example: suppose three passengers A, B and C who, in the traditional scenario, each need their own vehicle traveling 8, 7 and 9 km respectively — a combined 24 vehicle-km. If the system manages to pool all three into a single vehicle that travels only 13 km, the total vehicle-kilometers traveled (VKT) drops by nearly half.
 
 But if the pickup points are far apart:
 
-```text
-detour = 8 km
+```math
+\text{detour} = 8~\text{km}
 ```
 
 the benefit may vanish.
@@ -271,34 +249,7 @@ This step shrinks the search space.
 
 # 3. Can a New Passenger Be Inserted into an Existing Trip?
 
-Suppose the current Route is:
-
-```text
-Pickup A
-Dropoff A
-```
-
-Request B arrives.
-
-The system may try:
-
-```text
-Pickup A
-Pickup B
-Dropoff A
-Dropoff B
-```
-
-or:
-
-```text
-Pickup A
-Pickup B
-Dropoff B
-Dropoff A
-```
-
-then computes:
+Suppose the current Route serves passenger A only: pick A up, then drop A off. When a new request from passenger B arrives, there is no single correct way to insert it; the system may try picking B up before A and dropping B off after A, or picking both up together and dropping B first if B's destination is nearer. For every candidate ordering the system recomputes:
 
 - How much will B's waiting increase?
 - How much will A's time increase?
@@ -444,25 +395,7 @@ Assignment solver handles hard constraints
 
 # Why Use Graph Neural Networks?
 
-The road network is a Graph by nature.
-
-```text
-Node = zone / intersection
-Edge = road / adjacency
-```
-
-And demand in one zone affects nearby zones.
-
-A GNN can build a Representation of the state:
-
-```text
-zone demand
-available vehicles
-travel time
-neighbor congestion
-```
-
-then produce Embeddings that represent the spatial relationships.
+The road network is a Graph by nature: every zone or intersection is a Node, and every road connecting them is an Edge. This structure has a fundamental advantage: high demand in one zone spills over into neighboring zones within minutes — something graph-based models capture far better than models that treat each zone as an isolated unit. A GNN can build a Representation of the state that combines per-zone demand, available vehicles, travel times, and congestion in adjacent zones, then produce Embeddings that represent the spatial relationships between them.
 
 For example:
 
@@ -499,36 +432,7 @@ may be lower, but ten minutes later a high demand density may appear there.
 
 RL tries to learn a Policy that maximizes Reward over a time Horizon instead of a single decision.
 
-The State may contain, for example:
-
-```text
-vehicle distribution
-active requests
-forecast demand
-traffic state
-seat occupancy
-```
-
-And the Action:
-
-```text
-reposition vehicle
-change zone
-prioritize request group
-adjust policy parameter
-```
-
-And the Reward:
-
-```text
-+ served trips
-+ occupancy
-- waiting time
-- detour
-- deadheading
-- rejection
-- emissions proxy
-```
+The State may contain, for example, the distribution of vehicles across zones, currently active requests, forecast demand for the coming minutes, traffic conditions, and seat occupancy in each vehicle. The Action is the set of decisions the policy can take: reposition a vehicle toward another zone, change its operating zone, prioritize a group of requests, or adjust a policy parameter. The Reward typically combines what should be maximized — served trips and occupancy — with what should be minimized: waiting time, detour, deadheading, rejected requests, and an emissions proxy.
 
 But Reward design is very sensitive.
 
@@ -829,14 +733,8 @@ So we need Multi-objective Optimization.
 
 A simplified example:
 
-```text
-Cost =
-  a × waiting_time
-+ b × passenger_detour
-+ c × empty_distance
-+ d × rejected_requests
-+ e × operating_cost
-+ f × emissions
+```math
+\text{Cost} = a \cdot t_{\text{wait}} + b \cdot d_{\text{detour}} + c \cdot d_{\text{empty}} + d \cdot n_{\text{rejected}} + e \cdot C_{\text{ops}} + f \cdot E_{\text{CO}_2}
 ```
 
 The weights are not "fixed scientific values."

@@ -130,34 +130,12 @@ direction: horizontal
 
 تتحقق الفائدة عندما يستطيع النظام دمج طلبات كانت ستحتاج إلى مركبات منفصلة.
 
-مثال:
-
-بدون مشاركة:
-
-```text
-A → car 1 → 8 km
-B → car 2 → 7 km
-C → car 3 → 9 km
-```
-
-قد يكون الإجمالي:
-
-```text
-24 vehicle-km
-```
-
-مع pooling جيد:
-
-```text
-A+B+C → one vehicle → 13 km
-```
-
-قد ينخفض VKT.
+مثال: لنفرض ثلاثة ركاب A وB وC، تحتاج كل واحد منهم في السيناريو التقليدي إلى مركبة خاصة تقطع 8 و7 و9 كيلومترات على التوالي، أي ما مجموعه 24 مركبة-كيلومتر. إذا نجح النظام في دمج الثلاثة داخل مركبة واحدة قطعت 13 كيلومترًا فقط، فإن إجمالي المسافة المقطوعة بالمركبات (VKT) ينخفض بنحو النصف.
 
 لكن إذا كانت نقاط الالتقاط متباعدة:
 
-```text
-detour = 8 km
+```math
+\text{detour} = 8~\text{km}
 ```
 
 فقد تختفي الفائدة.
@@ -271,34 +249,7 @@ accessibility needs
 
 # 3. هل يمكن إدخال راكب جديد في رحلة قائمة؟
 
-لنفترض أن Route الحالية:
-
-```text
-Pickup A
-Dropoff A
-```
-
-وصل طلب B.
-
-قد يجرب النظام:
-
-```text
-Pickup A
-Pickup B
-Dropoff A
-Dropoff B
-```
-
-أو:
-
-```text
-Pickup A
-Pickup B
-Dropoff B
-Dropoff A
-```
-
-ثم يحسب:
+لنفترض أن المسار الحالي لمركبة تخدم الراكب A فقط: التقط A ثم أوصله. عندما يصل طلب جديد من الراكب B، لا يوجد ترتيب واحد صحيح لإدخاله؛ قد يجرب النظام التقاط B قبل A ثم إنزاله بعده، أو التقاطهما معًا وإنزال B أولًا إن كانت وجهته أقرب. في كل الاحتمالات يعيد النظام حساب
 
 - كم سيزداد انتظار B؟
 - كم سيزداد زمن A؟
@@ -444,27 +395,7 @@ Assignment solver handles hard constraints
 
 # لماذا تستخدم Graph Neural Networks؟
 
-شبكة الطرق Graph بطبيعتها.
-
-```text
-Node = zone / intersection
-Edge = road / adjacency
-```
-
-والطلب في منطقة يؤثر على مناطق قريبة.
-
-يمكن لـGNN أن تبني Representation للحالة:
-
-```text
-zone demand
-available vehicles
-travel time
-neighbor congestion
-```
-
-ثم تنتج Embeddings تمثل العلاقات المكانية.
-
-مثلًا:
+شبكة الطرق Graph بطبيعتها: كل منطقة أو تقاطع يمثل Node، وكل طريق يربط بينهما يمثل Edge. ولهذا البناء ميزة جوهرية: الطلب المرتفع في منطقة ما ينعكس خلال دقائق على المناطق المجاورة، وهو ما تلتقطه نماذج الرسم البياني أفضل من النماذج التي تتعامل مع كل منطقة كوحدة معزولة. يمكن لـGNN أن تبني Representation للحالة يجمع بين طلب كل منطقة وعدد المركبات المتاحة فيها وأزمنة السفر وازدحام المناطق المجاورة، ثم تنتج Embeddings تمثل العلاقات المكانية بين هذه العناصر. مثلًا:
 
 ```flow
 Urban Graph
@@ -499,36 +430,7 @@ current reward
 
 RL تحاول تعلم Policy تعظم Reward على Horizon زمني بدل قرار واحد.
 
-يمكن أن تحتوي State مثلًا:
-
-```text
-vehicle distribution
-active requests
-forecast demand
-traffic state
-seat occupancy
-```
-
-والAction:
-
-```text
-reposition vehicle
-change zone
-prioritize request group
-adjust policy parameter
-```
-
-والReward:
-
-```text
-+ served trips
-+ occupancy
-- waiting time
-- detour
-- deadheading
-- rejection
-- emissions proxy
-```
+يمكن أن تحتوي State مثلًا على توزيع المركبات على المناطق، والطلبات النشطة حاليًا، والطلب المتوقع خلال الدقائق القادمة، وحالة المرور، ونسبة إشغال المقاعد في كل مركبة. أما Action فهي القرارات التي يمكن للسياسة أن تتخذها: إعادة تموضع مركبة نحو منطقة أخرى، تغيير منطقة تشغيلها، إعطاء أولوية لمجموعة طلبات معينة، أو تعديل معامل في السياسة نفسها. ويجمع Reward عادة بين ما يجب تعظيمه — الرحلات المخدومة والإشغال — وما يجب تقليله: زمن الانتظار، والانحراف عن المسار، والقيادة الفارغة، والطلبات المرفوضة، ومؤشر الانبعاثات.
 
 لكن تصميم Reward حساس جدًا.
 
@@ -829,14 +731,8 @@ Edge قد تكون مفيدة لـ:
 
 مثال مبسط:
 
-```text
-Cost =
-  a × waiting_time
-+ b × passenger_detour
-+ c × empty_distance
-+ d × rejected_requests
-+ e × operating_cost
-+ f × emissions
+```math
+\text{Cost} = a \cdot t_{\text{wait}} + b \cdot d_{\text{detour}} + c \cdot d_{\text{empty}} + d \cdot n_{\text{rejected}} + e \cdot C_{\text{ops}} + f \cdot E_{\text{CO}_2}
 ```
 
 الأوزان ليست "قيمًا علمية ثابتة".

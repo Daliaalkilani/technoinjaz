@@ -124,29 +124,7 @@ UART stands for:
 
 It is a Hardware unit found in many microcontrollers and processors.
 
-In its simplest form we need:
-
-```text
-Device A TX → Device B RX
-Device A RX ← Device B TX
-GND ↔ GND
-```
-
-There is no Clock line.
-
-How does the receiver know the timing of each Bit?
-
-The two sides agree on a Baud Rate.
-
-Such as:
-
-```text
-9600
-115200
-1000000
-```
-
-provided the Hardware supports it within the appropriate Error tolerance.
+In its simplest form we need only three wires: device A's transmit output TX connects to device B's receive input RX and vice versa, with a common ground (GND) between the two sides. There is no Clock line on the wire — so how does the receiver know the timing of each Bit? The answer is that both sides agree in advance on a Baud Rate — common values include 9600, 115200, and one million bits per second — provided the Hardware supports the chosen value within the appropriate Error tolerance.
 
 # What Does a UART Frame Look Like?
 
@@ -235,22 +213,22 @@ The two terms are not synonyms in communications generally.
 
 In traditional UART, where each Symbol represents a single Bit value, the numerical values are often approximately equal:
 
-```text
-115200 baud ≈ 115200 line bits/s
+```math
+115200~\text{baud} \approx 115200~\tfrac{\text{line bits}}{\text{s}}
 ```
 
 But the actual Payload is lower because the Frame contains Start/Stop/Parity.
 
 In 8N1:
 
-```text
-1 start + 8 data + 1 stop = 10 bits
+```math
+1~\text{start} + 8~\text{data} + 1~\text{stop} = 10~\text{bits}
 ```
 
 So 115200 baud theoretically gives about:
 
-```text
-11520 bytes/s
+```math
+\frac{115200~\text{bits/s}}{10~\text{bits/frame}} = 11520~\text{bytes/s}
 ```
 
 before any additional protocol.
