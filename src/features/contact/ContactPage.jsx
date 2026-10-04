@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   MapPin,
   Phone,
@@ -51,6 +51,24 @@ export default function ContactPage({ onBack } = {}) {
 
   const [submitted, setSubmitted] = useState(false);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const mapWrapRef = useRef(null);
+  useEffect(() => {
+    // Load the real map as soon as the section approaches the viewport (feels instant),
+    // instead of waiting for a tap — but never during initial page load.
+    const el = mapWrapRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setMapLoaded(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: '300px' }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState(false);
 
@@ -461,7 +479,7 @@ export default function ContactPage({ onBack } = {}) {
                   <ExternalLink size={14} />
                 </a>
               </div>
-              <div className="map-iframe-wrapper">
+              <div className="map-iframe-wrapper" ref={mapWrapRef}>
                 {mapLoaded ? (
                   <iframe
                     title={t.contact.mapIframeTitle}
