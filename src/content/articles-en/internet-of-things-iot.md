@@ -339,6 +339,8 @@ In many projects, the design is **hybrid**, combining both.
 
 No. In many systems, it is better for the sensor to connect to a local network, and from there to a gateway that handles the internet connection, rather than the sensor connecting to the internet directly. The gateway can hide internal devices, aggregate data, manage protocols, reduce consumption, enforce security policies, and keep working locally when the cloud is unavailable.
 
+For a hands-on example of the local loop that comes before the internet, see our [ultrasonic water tank level monitoring project](/projects/ultrasonic-water-level-monitoring-project): an Arduino reads the sensor and sends the level percentage to a phone app over Bluetooth with no cloud platform — adding a gateway or Wi-Fi link is the step that would turn it into a full IoT system.
+
 ## Conclusion
 
 The Internet of Things is not a smart device or a single protocol, but **a complete system that links the physical world to software through sensing, connectivity, processing, decision-making, and actuation**. A system's success depends on a carefully considered balance among sensors, compute, connectivity, protocols, the split of processing between edge and cloud, interoperability, security, power, cost, and lifecycle.

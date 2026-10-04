@@ -78,6 +78,8 @@ The tests show that the prototype was able to carry out the basic measurement-an
 
 The prototype can be extended in the future by improving calibration, adding auxiliary sensors to compensate for the effect of temperature and humidity, or replacing Bluetooth with a networked communication medium such as Wi‑Fi when monitoring from outside the local range is needed. Level-limit alerts could also be added, or the system could be developed to integrate with the control of a pump or valve — these functions are treated as future developments and are not part of the currently documented version.
 
+For the bigger picture of how such a prototype grows into a connected system, read our article [What Is the Internet of Things (IoT)? Architecture, Protocols, Applications, and Security](/articles/internet-of-things-iot).
+
 ## Have a Similar Project?
 
 If you are working on a prototype or a monitoring system based on sensors and microcontrollers, you can contact **Techno Enjaz** to discuss the project's requirements and the appropriate scope of technical support.

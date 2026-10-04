@@ -43,6 +43,16 @@ export interface BlogArticle {
   initialComments: BlogComment[];
 }
 
+/** Every article is written by the founder — one source for the byline, listing cards and JSON-LD. */
+export const ARTICLE_AUTHOR: BlogArticle['author'] = {
+  id: 'abdulghani',
+  name: 'م. عبد الغني الحمدي',
+  nameEn: 'Eng. Abdul Ghani Al-Hamdi',
+  role: 'المؤسس والمهندس الرئيسي في تكنو إنجاز',
+  roleEn: 'Founder & Lead Engineer at Techno Enjaz',
+  avatar: '/images/team/abdulghani.jpg'
+};
+
 export const blogArticlesData: BlogArticle[] = [
   {
     id: 'digital-twin',
@@ -60,14 +70,7 @@ export const blogArticlesData: BlogArticle[] = [
     publishedAt: '2026-09-20',
     readTime: '12 دقيقة قراءة',
     readTimeEn: '12 min read',
-    author: {
-      id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز',
-      nameEn: 'Techno Enjaz Team',
-      role: 'قسم هندسة النظم والتحول الرقمي',
-      roleEn: 'Systems Engineering & Digital Transformation Dept',
-      avatar: '/images/team/abdulghani.jpg'
-    },
+    author: ARTICLE_AUTHOR,
     excerpt: 'التوأم الرقمي (Digital Twin) هو تمثيل رقمي قائم على البيانات لكيان أو عملية في العالم الحقيقي، تتم مزامنته مع الواقع بدرجة وتواتر يناسبان الهدف من استخدامه، لمراقبة الأداء واختبار السيناريوهات ودعم القرار.',
     excerptEn: 'A Digital Twin is a comprehensive, data-driven virtual representation of real-world entities or processes, synchronized at purpose-driven fidelity for monitoring, predictive analysis, and decision support.',
     content: [
@@ -100,14 +103,7 @@ export const blogArticlesData: BlogArticle[] = [
     publishedAt: '2026-09-20',
     readTime: '14 دقيقة قراءة',
     readTimeEn: '14 min read',
-    author: {
-      id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز',
-      nameEn: 'Techno Enjaz Team',
-      role: 'قسم الذكاء الاصطناعي والتفاعل البشري',
-      roleEn: 'AI & Human-Computer Interaction Dept',
-      avatar: '/images/team/abdulghani.jpg'
-    },
+    author: ARTICLE_AUTHOR,
     excerpt: 'الحوسبة العاطفية (Affective Computing) تجمع بين الذكاء الاصطناعي وعلم النفس والتفاعل الإنساني الحاسوبي لرصد الإشارات التعبيرية في الوجه والصوت والنص والإشارات الفسيولوجية، مع الاحتفاظ بحدود عدم اليقين والسياق.',
     excerptEn: 'Affective Computing bridges artificial intelligence, psychology, and HCI to measure expressive signals across facial movements, vocal tonality, text, and physiological telemetry without over-claiming mind reading.',
     content: [
@@ -140,14 +136,7 @@ export const blogArticlesData: BlogArticle[] = [
     publishedAt: '2026-09-20',
     readTime: '15 دقيقة قراءة',
     readTimeEn: '15 min read',
-    author: {
-      id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز',
-      nameEn: 'Techno Enjaz Team',
-      role: 'قسم هندسة خوارزميات التوصية',
-      roleEn: 'Recommendation Algorithms Engineering',
-      avatar: '/images/team/abdulghani.jpg'
-    },
+    author: ARTICLE_AUTHOR,
     excerpt: 'كيفية استخدام الرؤية الحاسوبية لتحليل تعابير وحركات الوجه واستخدامها كإشارة احتمالية سياقية في محركات التوصية، مع معالجة قيود الخصوصية والحوكمة والتحيز الخوارزمي.',
     excerptEn: 'Architectural walkthrough on leveraging computer vision facial landmarks as contextual probabilistic signals in recommender systems, handling privacy bounds and algorithmic bias.',
     content: [
@@ -180,14 +169,7 @@ export const blogArticlesData: BlogArticle[] = [
     publishedAt: '2026-09-20',
     readTime: '16 دقيقة قراءة',
     readTimeEn: '16 min read',
-    author: {
-      id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز',
-      nameEn: 'Techno Enjaz Team',
-      role: 'قسم معمارية البرمجيات وبروتوكولات AI',
-      roleEn: 'Software Architecture & AI Protocols Dept',
-      avatar: '/images/team/abdulghani.jpg'
-    },
+    author: ARTICLE_AUTHOR,
     excerpt: 'Model Context Protocol (MCP) هو معيار مفتوح يوفّر طريقة موحدة لربط تطبيقات ووكلاء الذكاء الاصطناعي بالأدوات وقواعد البيانات والموارد الخارجية، مقللاً كود الربط المخصص ومعززاً الأمان.',
     excerptEn: 'Model Context Protocol (MCP) is the open industry standard unifying how generative AI agents and models interface with external tools, APIs, and databases via standardized transports.',
     content: [
@@ -220,14 +202,7 @@ export const blogArticlesData: BlogArticle[] = [
     publishedAt: '2026-09-20',
     readTime: '15 دقيقة قراءة',
     readTimeEn: '15 min read',
-    author: {
-      id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز',
-      nameEn: 'Techno Enjaz Team',
-      role: 'قسم معالجة اللغات الطبيعية والنماذج التوليدية',
-      roleEn: 'Natural Language Processing & Generative Models',
-      avatar: '/images/team/abdulghani.jpg'
-    },
+    author: ARTICLE_AUTHOR,
     excerpt: 'تعتمد النماذج اللغوية التوليدية على تقدير ما يُرجح أن يأتي بعد السياق؛ استعراض تطور النمذجة من N-gram وRNN إلى Transformers، وتحديات الصرف واللهجات والرمزنة في اللغة العربية ونماذج Jais وALLaM.',
     excerptEn: 'In-depth technical breakdown of next token prediction: from historical N-grams and LSTMs to causal self-attention Transformers, decoding heuristics, and Arabic morphology tokenization.',
     content: [
@@ -260,14 +235,7 @@ export const blogArticlesData: BlogArticle[] = [
     publishedAt: '2026-09-21',
     readTime: '15 دقيقة قراءة',
     readTimeEn: '15 min read',
-    author: {
-      id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز',
-      nameEn: 'Techno Enjaz Team',
-      role: 'قسم هندسة الشبكات والاتصالات اللاسلكية',
-      roleEn: 'Wireless Communications & Networks Dept',
-      avatar: '/images/team/abdulghani.jpg'
-    },
+    author: ARTICLE_AUTHOR,
     excerpt: 'دليل شامل يوضح أثر 5G على إنترنت الأشياء: متى تحتاج التطبيقات الصناعية والحضرية إلى eMBB وURLLC وmMTC، وما دور RedCap وNB-IoT ومعايير 3GPP حتى 5G-Advanced.',
     excerptEn: 'Comprehensive guide to how 5G impacts IoT: evaluating eMBB, URLLC, mMTC, RedCap, and legacy LPWANs across industrial, smart city, and mission-critical deployments.',
     content: [
@@ -300,14 +268,7 @@ export const blogArticlesData: BlogArticle[] = [
     publishedAt: '2026-09-21',
     readTime: '18 دقيقة قراءة',
     readTimeEn: '18 min read',
-    author: {
-      id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز',
-      nameEn: 'Techno Enjaz Team',
-      role: 'قسم الرؤية الحاسوبية والذكاء الاصطناعي',
-      roleEn: 'Computer Vision & Deep Learning Dept',
-      avatar: '/images/team/abdulghani.jpg'
-    },
+    author: ARTICLE_AUTHOR,
     excerpt: 'كيف تحلل الخوارزميات الحركات الدقيقة لعضلات الوجه؟ استعراض لنظام FACS ووحدات العمل Action Units، ومعمارية CNN وVision Transformers، وتحديات الإضاءة والزوايا والأخلاقيات.',
     excerptEn: 'A technical exploration of Facial Expression Recognition (FER): FACS action units, landmark tracking, deep CNNs, Vision Transformers, and addressing real-world bias.',
     content: [
@@ -340,14 +301,7 @@ export const blogArticlesData: BlogArticle[] = [
     publishedAt: '2026-09-21',
     readTime: '17 دقيقة قراءة',
     readTimeEn: '17 min read',
-    author: {
-      id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز',
-      nameEn: 'Techno Enjaz Team',
-      role: 'قسم إنترنت الأشياء والأنظمة الذكية',
-      roleEn: 'Internet of Things & Smart Systems Dept',
-      avatar: '/images/team/abdulghani.jpg'
-    },
+    author: ARTICLE_AUTHOR,
     excerpt: 'الدليل الشامل لفهم إنترنت الأشياء: البنية الطبقية من الحساسات إلى السحابة، مقارنة عملية بين MQTT وCoAP وHTTP، تقنيات LPWAN وMatter، ومعايير أمان NISTIR 8259.',
     excerptEn: 'The definitive engineering pillar on the Internet of Things: layered architecture, protocol comparisons (MQTT, CoAP, Matter), edge vs cloud processing, and lifecycle security.',
     content: [
@@ -380,14 +334,7 @@ export const blogArticlesData: BlogArticle[] = [
     publishedAt: '2026-09-21',
     readTime: '20 دقيقة قراءة',
     readTimeEn: '20 min read',
-    author: {
-      id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز',
-      nameEn: 'Techno Enjaz Team',
-      role: 'قسم هندسة النظم المدمجة والدوائر الإلكترونية',
-      roleEn: 'Embedded Systems & Hardware Engineering Dept',
-      avatar: '/images/team/abdulghani.jpg'
-    },
+    author: ARTICLE_AUTHOR,
     excerpt: 'دليل هندسي مقارن لاختيار واجهات الاتصال التسلسلية في المتحكمات الدقيقة: تحليل تقني للسرعات، عدد الأسلاك، مستويات الجهد، ومصفوفة قرار عملية لاختيار البروتوكول المناسب.',
     excerptEn: 'A practical engineering guide comparing UART, I2C, SPI, and RS-232/RS-485: wiring efficiency, clocking, signal integrity, and hardware decision matrices.',
     content: [
@@ -420,14 +367,7 @@ export const blogArticlesData: BlogArticle[] = [
     publishedAt: '2026-09-21',
     readTime: '19 دقيقة قراءة',
     readTimeEn: '19 min read',
-    author: {
-      id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز',
-      nameEn: 'Techno Enjaz Team',
-      role: 'قسم الذكاء الاصطناعي وتعلم الآلة',
-      roleEn: 'AI & Machine Learning Dept',
-      avatar: '/images/team/abdulghani.jpg'
-    },
+    author: ARTICLE_AUTHOR,
     excerpt: 'دليل معمق في تصنيف الصور الرقمية: من استخراج الميزات التلافيفية عبر CNN إلى معالجة الباتشات باستخدام Vision Transformers وCLIP، مع مقاييس التقييم وتحديات العالم الواقعي.',
     excerptEn: 'Comprehensive technical deep dive into image classification: convolution operations, ResNet backbones, Vision Transformers (ViT), multimodal CLIP, and metric evaluation.',
     content: [
@@ -460,14 +400,7 @@ export const blogArticlesData: BlogArticle[] = [
     publishedAt: '2026-09-21',
     readTime: '16 دقيقة قراءة',
     readTimeEn: '16 min read',
-    author: {
-      id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز',
-      nameEn: 'Techno Enjaz Team',
-      role: 'قسم هندسة الاتصالات والترددات اللاسلكية',
-      roleEn: 'Telecommunications & RF Engineering Dept',
-      avatar: '/images/team/abdulghani.jpg'
-    },
+    author: ARTICLE_AUTHOR,
     excerpt: 'تحليل هندسي تقني شامل لكيفية عمل 5G NR: تباعد الحوامل الفرعية في OFDM، مصفوفات الهوائيات Massive MIMO، تشكيل الحزم Beamforming، وواجهات Fronthaul في O-RAN.',
     excerptEn: 'A technical breakdown of 5G New Radio: flexible numerology, OFDM waveforms, 3D beamforming, Massive MIMO channel state estimation, and Open RAN split 7.2x fronthaul.',
     content: [
@@ -500,14 +433,7 @@ export const blogArticlesData: BlogArticle[] = [
     publishedAt: '2026-09-21',
     readTime: '22 دقيقة قراءة',
     readTimeEn: '22 min read',
-    author: {
-      id: 'techno-rnd',
-      name: 'فريق تكنو إنجاز',
-      nameEn: 'Techno Enjaz Team',
-      role: 'قسم الأنظمة الذكية وهندسة النقل الحضري',
-      roleEn: 'Smart Systems & Urban Mobility Dept',
-      avatar: '/images/team/abdulghani.jpg'
-    },
+    author: ARTICLE_AUTHOR,
     excerpt: 'كيف تحل خوارزميات الذكاء الاصطناعي معضلة مشاركة الرحلات؟ دراسة شاملة لمطابقة الركاب، إعادة توجيه المسارات اللحظية، وتخفيف الانبعاثات والازدحام في المدن الذكية.',
     excerptEn: 'Algorithmic deep dive into on-demand shared ride-pooling: combinatorial request matching, dynamic vehicle routing (DARP), and balancing passenger detour times.',
     content: [

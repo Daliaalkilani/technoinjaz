@@ -157,6 +157,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   const publishDate = isEn ? article.publishDateEn : article.publishDate;
   const readTime = isEn ? article.readTimeEn : article.readTime;
   const authorName = isEn ? article.author.nameEn : article.author.name;
+  const authorRole = isEn ? article.author.roleEn : article.author.role;
   const excerpt = isEn ? article.excerptEn : article.excerpt;
 
   const saveArticle = () => toggleSave({
@@ -230,11 +231,17 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               className="author-capsule-avatar"
             />
             <div className="author-capsule-text">
-              <span className="author-capsule-name" style={{ whiteSpace: 'nowrap' }}>{authorName}</span>
-              <span className="author-capsule-divider">|</span>
-              <time dateTime={article.publishedAt} className="author-capsule-date" style={{ whiteSpace: 'nowrap' }}>
-                {publishDate}
-              </time>
+              <span className="author-capsule-byline">
+                <span className="author-capsule-by">{isEn ? 'By' : 'بقلم'}</span>{' '}
+                <Link href="/about#team" rel="author" className="author-capsule-name">{authorName}</Link>
+              </span>
+              <span className="author-capsule-sub">
+                <span className="author-capsule-role">{authorRole}</span>
+                <span className="author-capsule-divider">|</span>
+                <time dateTime={article.publishedAt} className="author-capsule-date" style={{ whiteSpace: 'nowrap' }}>
+                  {publishDate}
+                </time>
+              </span>
             </div>
           </div>
         </div>

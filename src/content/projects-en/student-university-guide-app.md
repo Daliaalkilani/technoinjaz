@@ -65,6 +65,8 @@ The project includes a virtual assistant that uses **Google Gemini** at the stag
 
 This approach keeps the project's artificial intelligence function specific: **analyzing the question and performing semantic matching against a controlled knowledge base**, rather than generating open-ended academic answers or providing unrestricted personal academic guidance.
 
+For the background, see our articles on [how AI models predict the next word](/articles/next-token-prediction) and [what the MCP protocol is and when a direct integration is simpler](/articles/model-context-protocol-mcp).
+
 ## The Administration Dashboard and Content Management
 
 Alongside the mobile application, the project includes an administration dashboard built within the Laravel environment for managing parts of the academic and administrative content. The interfaces document functions for managing faculties, majors, courses, registration requests, and system administrators, which allows the student experience to be separated from data administration tasks.

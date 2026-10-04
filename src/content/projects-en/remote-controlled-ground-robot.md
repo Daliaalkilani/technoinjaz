@@ -99,6 +99,8 @@ The project faced challenges related to:
 - Control and wireless communication solutions.
 - Computer vision applications.
 
+To understand the interface linking the HC-05 module to the controller, read our article [UART vs I2C vs SPI vs RS-232 in embedded systems](/articles/embedded-serial-protocols).
+
 ---
 
 ## Contact Us

@@ -53,6 +53,8 @@ The challenges associated with the project included:
 - Achieving a balance between processing speed and detection accuracy.
 - Handling variation in the angles at which objects appear.
 
+To see how object detection differs from classifying a whole image, read our article [How Does AI Image Classification Work? From CNN to Vision Transformers](/articles/ai-image-classification).
+
 ## Do You Have a Similar Project?
 
 If you are working on a project that needs image or video analysis using artificial intelligence and computer vision technologies, you can contact Techno Enjaz to discuss the technical requirements and the appropriate scope of the solution.

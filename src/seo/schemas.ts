@@ -208,7 +208,13 @@ export function blogPosting(article: BlogArticle) {
     datePublished: `${article.publishedAt}T00:00:00+03:00`,
     dateModified: `${article.modifiedAt || article.publishedAt}T00:00:00+03:00`,
     author: {
-      '@id': ORG_ID
+      '@type': 'Person',
+      '@id': `${SITE_URL}/#abdulghani-alhamdi`,
+      name: article.author.name,
+      alternateName: article.author.nameEn,
+      jobTitle: article.author.roleEn,
+      url: absoluteUrl('/about#team'),
+      worksFor: { '@id': ORG_ID }
     },
     publisher: {
       '@id': ORG_ID

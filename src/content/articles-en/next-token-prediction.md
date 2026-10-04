@@ -257,6 +257,8 @@ Training on Next Token Prediction is a vitally important foundation for autoregr
 
 So the model the end user interacts with is usually not just a network whose training ended at predicting the next token on raw text. Even so, the next-element prediction task remains **the core computational engine of step-by-step generation** in a large number of modern language models.
 
+Applications can also narrow how they use that engine: in our [digital student guide app](/projects/student-university-guide-app), Gemini is used only to understand a question's intent and match it to a controlled FAQ base, not to generate open-ended answers.
+
 ## Common Misconceptions About Next-Word Prediction
 
 | The Common Claim | The Correction |

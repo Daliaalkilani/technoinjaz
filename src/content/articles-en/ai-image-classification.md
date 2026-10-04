@@ -38,6 +38,8 @@ In Object Detection, for example, the model may identify a person, a car, and a 
 
 **Face Recognition**, meanwhile, is not just general image classification; its question is usually "Does this face belong to a specific identity?", it relies on representations and identity matching, and it carries different privacy and security implications. That is why the success of an Image Classifier should not be taken as automatic evidence that an Object Detector or a face recognition system will succeed.
 
+Our [AI weapon detection project](/projects/weapon-detection-yolo-ai) shows the difference in practice: rather than assigning one label to the whole frame, it uses YOLOv8 to locate a knife or pistol within the camera feed with a bounding box.
+
 ## How Does a Computer See an Image?
 
 To a computer, a digital image is a matrix of values. An RGB image can be represented roughly as height × width × 3 channels, with each pixel holding values for the intensity of red, green, and blue.

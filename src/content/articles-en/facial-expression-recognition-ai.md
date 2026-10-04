@@ -34,6 +34,8 @@ Its question is "Where is the face in the image?", and its output is usually a b
 
 Its question is "Who is this person?", and it takes two forms: Verification, meaning is this person the owner of the claimed identity? And Identification, meaning which person in the database matches this face? It is therefore a **biometric identity** task.
 
+One example is our [face recognition access control project](/projects/face-recognition-access-control-project), which matches the face in front of the camera against reference images of authorized people to tell them apart from unknown faces — a completely different task from reading the face's expression.
+
 ### Facial Expression Recognition (FER)
 
 Its question is "What expressive pattern appears on the face?", and its output might be a distribution such as: neutral at 0.44, happy at 0.31, surprise at 0.12, sad at 0.07, and other at 0.06.

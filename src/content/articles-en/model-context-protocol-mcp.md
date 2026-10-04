@@ -234,6 +234,8 @@ Dify added MCP support gradually and then introduced native support in two direc
 
 A good standard does not mean it must be used in every project.
 
+Our [digital student guide app](/projects/student-university-guide-app) is an example of the right-hand column: its virtual assistant calls Google Gemini directly to match a question against a fixed FAQ base — a single data source with no need for an MCP layer.
+
 ## An Architectural Example of a Company Project
 
 Suppose an organization wants an assistant that can search documents, read the CRM, create a support ticket, and run a sales report.

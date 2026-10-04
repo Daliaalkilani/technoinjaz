@@ -95,6 +95,8 @@ The project is also built as a prototype using the laptop camera, while function
 
 The project demonstrates hands-on experience in linking the camera with image processing, face recognition, event logging, and audible alerting within a single prototype, alongside Techno Enjaz's experience in **helping students develop applied technical projects** and connecting theory to a testable model.
 
+To understand how recognizing a person's identity differs from reading their facial expression, see our article [How Does AI Recognize Facial Expressions? FER, FACS, and CNN Explained](/articles/facial-expression-recognition-ai).
+
 ## A Similar Project?
 
 If you are working on a similar technical project and need to discuss requirements or benefit from Techno Enjaz's experience in applied projects, you can contact the office to explore the appropriate scope of assistance for the project.
