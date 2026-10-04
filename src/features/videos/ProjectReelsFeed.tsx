@@ -49,6 +49,7 @@ interface FeedReel {
   cover: string;
   accent: string;
   youtubeId?: string;
+  localSrc?: string;
   liveUrl?: string;
   durationSec: number;
   likes: number;
@@ -87,6 +88,7 @@ const FEED_REELS: FeedReel[] = [
     cover: v.cover,
     accent: '#38bdf8',
     youtubeId: youtubeIdFrom(v.youtubeUrl),
+    localSrc: `/videos/${v.id}.mp4`,
     durationSec: toSeconds(v.duration),
     likes: seedLikes(v.id),
     comments: [],
@@ -114,6 +116,8 @@ export const ProjectReelsFeed: React.FC = () => {
   // The YouTube iframe is created only after hydration: rendered on the server it
   // loaded before React attached onLoad, so it never became visible.
   const [hydrated, setHydrated] = useState(false);
+  const [localVideoOk, setLocalVideoOk] = useState<Record<string, boolean | undefined>>({});
+  const localVideoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
   // Instagram-style: the sound button shows while paused and for a moment after a
   // reel starts / sound is toggled, then hides while the video plays.
   const [peek, setPeek] = useState(true);
@@ -150,6 +154,20 @@ export const ProjectReelsFeed: React.FC = () => {
   useEffect(() => {
     const t = window.setTimeout(() => setHydrated(true), 2500);
     return () => window.clearTimeout(t);
+  }, []);
+
+  /* Probe once for self-hosted mp4 files: when present, they replace the YouTube embed. */
+  useEffect(() => {
+    const ids = Array.from(new Set(FEED_REELS.filter(r => r.localSrc).map(r => r.id)));
+    ids.forEach((id) => {
+      const reel = FEED_REELS.find(r => r.id === id);
+      if (!reel?.localSrc) return;
+      fetch(reel.localSrc, { method: 'HEAD' })
+        .then((res) => {
+          if (res.ok) setLocalVideoOk((m) => ({ ...m, [id]: true }));
+        })
+        .catch(() => {});
+    });
   }, []);
 
   useEffect(() => {
@@ -416,7 +434,22 @@ export const ProjectReelsFeed: React.FC = () => {
                     fetchPriority={index === 0 ? 'high' : 'auto'}
                     decoding="async"
                   />
-                  {reel.kind === 'video' && reel.youtubeId && isActive && hydrated && (
+                  {reel.kind === 'video' && reel.localSrc && isActive && hydrated && localVideoOk[reel.id] === true && (
+                    <video
+                      ref={(el) => { localVideoRefs.current[reel.id] = el; }}
+                      className="reel-iframe reel-local-video"
+                      src={reel.localSrc}
+                      poster={reel.cover}
+                      muted
+                      loop
+                      playsInline
+                      autoPlay
+                      preload="metadata"
+                      onError={() => setLocalVideoOk((m) => ({ ...m, [reel.id]: false }))}
+                      tabIndex={-1}
+                    />
+                  )}
+                  {reel.kind === 'video' && reel.youtubeId && localVideoOk[reel.id] !== true && isActive && hydrated && (
                     <iframe
                       ref={iframeRef}
                       className="reel-iframe"
