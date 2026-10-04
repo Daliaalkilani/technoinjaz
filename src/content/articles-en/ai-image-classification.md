@@ -23,29 +23,9 @@ other: 0.02
 
 But building a reliable classification system does not start with merely picking a neural network.
 
-The real path is closer to:
+The real path is closer to an integrated system that begins before any line of neural-network code. Everything starts with the **data**: collecting it and then **cleaning and labeling** it — the stage that sets the ceiling on final performance more than any later architectural decision, because label noise and sampling bias flow straight into model behavior. The data is then split into **training, validation, and test sets** with separation strict enough to prevent information leakage, so the test set remains an honest measure of generalization. Next comes **preprocessing and augmentation**, which standardize sizes and lighting and produce synthetic variations that make the model less prone to memorizing training examples.
 
-```flow
-Data
-→
-Cleaning & Labeling
-→
-Train / Validation / Test Split
-→
-Preprocessing & Augmentation
-→
-Model / Pretrained Backbone
-→
-Training or Fine-tuning
-→
-Evaluation
-→
-Calibration & Error Analysis
-→
-Deployment
-→
-Monitoring
-```
+Only after this preparation is the **model or pretrained backbone** chosen and put through **training or fine-tuning**, where weights are adjusted on task data. The work does not end at the first high accuracy: an **evaluation** stage with metrics appropriate to class balance follows, then **probability calibration and error analysis** to reveal real failure patterns instead of resting on a single aggregate number. Finally the system passes through **deployment** and continuous **monitoring**, because production data drifts gradually away from training data, making periodic retraining part of the design rather than an emergency measure.
 
 And the most important point:
 
@@ -133,17 +113,7 @@ Today, deep models learn a large part of the representation directly from the da
 
 # How Did Image Classification Work Before Deep Learning?
 
-The classical pipeline was usually:
-
-```flow
-Image
-→
-Hand-crafted Feature Extraction
-→
-Feature Vector
-→
-Classifier
-```
+The classical pipeline was usually staged and manual at its core: it began with **hand-crafted feature extraction** from the image using filters and algorithms carefully designed by researchers, transforming raw pixels into a compressed **feature vector** summarizing what was considered important — edges, corners, textures. That vector was then fed into a **conventional classifier** that learned the decision boundaries between classes in feature space. The quality of the whole system was hostage to the engineer's skill in feature design: any pattern the descriptor failed to capture simply leaked out of the system before it ever reached the classifier.
 
 Among the best-known Feature descriptors:
 
@@ -285,19 +255,7 @@ The original ViT idea is conceptually simple:
 4. Pass them through a Transformer.
 5. Use the final Representation for classification.
 
-For example:
-
-```flow
-Image
-→
-16×16 patches
-→
-Patch embeddings
-→
-Transformer
-→
-Classifier
-```
+In practice, the image is sliced into small patches — 16×16 pixels, for instance — and each patch is flattened and passed through a linear projection to become an **embedding** in the model's processing space, much as a word becomes a token in language models. These embeddings are then treated as a sequence of tokens flowing through the Transformer's layers, where self-attention lets every patch "look at" all the others and decide which ones matter for understanding the scene as a whole. Finally, the final representation — often via a dedicated classification token — is used to assign the correct class.
 
 The ViT paper showed that a pure Transformer can achieve very strong performance in Image Classification when Pre-trained on large data and then transferred to other Benchmarks.
 
@@ -874,15 +832,7 @@ Classification can be used for:
 - Part type.
 - Surface conditions.
 
-Example:
-
-```flow
-Image
-→
-Classifier
-→
-OK / scratch / crack / contamination
-```
+In its simplest form, a camera captures an image of the part on the production line and the model classifies it directly into one of the defined categories: acceptable, scratched, cracked, or surface-contaminated — with the decision resting on a confidence threshold tuned to the production plan. This capability suffices when the question is "is the part acceptable?", but if the facility needs to know **where** the defect is and what its extent is, classification becomes the wrong tool, and the right answer is to move to Detection or Segmentation.
 
 But if we need to localize the defect, Detection or Segmentation may be more suitable.
 
@@ -1144,27 +1094,7 @@ Image classification no longer means just:
 Image → CNN → Label
 ```
 
-The modern system is closer to:
-
-```flow
-Representative Data
-→
-Preprocessing / Augmentation
-→
-Pretrained Visual Representation
-→
-CNN / ViT / Foundation Model
-→
-Fine-tuning
-→
-Probability Scores
-→
-Calibration + Metrics + Error Analysis
-→
-Deployment
-→
-Monitoring
-```
+The modern system is closer to an integrated pipeline built by accumulation rather than one step: it starts with **representative data** matching the real distribution the system will face, passes through **preprocessing and augmentation** that widen training coverage, then benefits from a **pretrained visual representation** inside a CNN, ViT, or Foundation Model instead of learning everything from scratch. **Fine-tuning** on task data follows, producing **probability scores** rather than hard labels — and those scores themselves undergo **calibration, metrics, and error analysis** that expose weaknesses before users find them. **Deployment** is not the end of the story: continuous **monitoring** tracks data drift and performance decay, feeding an improvement cycle that returns to the data once again.
 
 Historically, the field traveled a long road: it started with hand-crafted features extracted with methods such as SIFT and HOG and fed into classifiers like SVM, then convolutional neural networks (CNNs) learned those features directly from the data, followed by much deeper architectures such as ResNet, then the Vision Transformer, which reduced the dependence on huge labeled datasets through pre-training, and today we have self-supervised vision-language foundation models. But the newest model is not automatically the best.
 

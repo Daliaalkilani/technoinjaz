@@ -14,15 +14,7 @@ Suggested Slug: smart-ai-ride-pooling
 
 **Smart Ride-Pooling (Dynamic Ride-Pooling) is an on-demand transportation system that tries to combine passengers with compatible routes inside the same vehicle in real time, while balancing several conflicting goals: reducing passenger waiting time, reducing deviation from their route, raising vehicle occupancy, cutting empty-distance travel, and improving fleet efficiency.**
 
-The idea sounds simple:
-
-```flow
-Passenger A: from X to Y
-→
-Passenger B: from a nearby point to a nearby destination
-→ | merged into the same vehicle
-One shared vehicle
-```
+The idea sounds simple: passenger A is headed from X to Y, passenger B departs from a nearby point toward a nearby destination, so the two share one vehicle and a single trip serves two requests instead of one. This pooling is both the economic and environmental heart of the system and the source of its complexity: every added passenger means added detours from the optimal route and longer waiting times, turning "pick up a companion along the way" into a delicate trade-off between each rider's experience and fleet efficiency.
 
 But implementing it across an entire city is not just "finding the nearest car."
 
@@ -37,17 +29,7 @@ The real system needs to solve a problem that changes every second:
 - Some requests cannot be combined without hurting service quality.
 - Today's decision affects where the vehicle will be in minutes — and whether it can serve the next request.
 
-This is why a modern ride-pooling system is closer to a real-time optimization platform:
-
-```flow
-Requests + Vehicles + Traffic + Constraints
-→
-Matching & Routing Engine
-→
-Shared Trips + Fleet Rebalancing
-→
-Continuous Re-optimization
-```
+This is why a modern ride-pooling system is closer to a real-time optimization platform that never stops: it takes requests, vehicle positions, traffic conditions, and operational constraints as inputs refreshed every second, feeds them into a **matching and routing engine** that generates shared trips and **fleet rebalancing** decisions, and then recomputes everything whenever the state changes — which is constantly. The system does not "solve" the problem once; it lives inside an endless cycle of re-optimization.
 
 # What Is the Difference Between Ride-Hailing and Ride-Pooling?
 
@@ -70,18 +52,7 @@ Passenger C → Vehicle 3
 
 ## Ride-Pooling
 
-The platform tries to combine independent requests inside the same vehicle if they are compatible.
-
-```flow
-direction: horizontal
-Passenger A
-→
-Passenger B
-→
-Passenger C
-→ | pooled into one vehicle
-Vehicle 1
-```
+The platform tries to combine independent requests inside the same vehicle when they are compatible: passengers A, B, and C each have a different origin and destination, but the matching engine checks whether their routes intersect within an acceptable detour envelope, and assigns all three to a single vehicle that serves them in one ordered tour instead of three separate ones. Compatibility here is not just geographic distance — it spans acceptable pickup and drop-off times and vehicle capacity, and those constraints are exactly what separates a successful pool from a poor service experience.
 
 FHWA describes ride-sharing in the on-demand transportation environment as a situation where passengers choose a product that allows their trips to be matched with other passengers who have overlapping routes.
 
@@ -193,29 +164,7 @@ These are problems that can become computationally very hard as scale grows.
 
 # What Is the Full Path of a Passenger Request?
 
-The system can be envisioned as follows:
-
-```flow
-Passenger Request
-→
-Validate request
-→
-Find candidate vehicles
-→
-Generate feasible shared trips
-→
-Estimate pickup + detour
-→
-Score alternatives
-→
-Assign vehicle
-→
-Update route
-→
-Track execution
-→
-Re-optimize when state changes
-```
+A request travels through the system as a sequence of stages, each with its own purpose: the **passenger request** arrives and is first **validated** — sound coordinates, a covered area, complete data — then the fleet is searched for **candidate vehicles** that are near and available. On top of those candidates the engine **generates feasible shared trips** that satisfy every constraint, **estimates** for each option the pickup time and detour magnitude, then **scores the alternatives** with an objective function balancing rider experience against fleet efficiency before **assigning the vehicle** and **updating its route**. Execution stays under continuous tracking, and whenever the state changes — a new request, sudden congestion, a cancellation — the computation starts over, so no decision is made once and settled; the trip remains a living object whose plan is continuously revised.
 
 Each stage has a different goal.
 
@@ -271,17 +220,7 @@ The simplified idea:
 3. Determine which Vehicle can serve each Trip.
 4. Solve the Assignment between Trips and vehicles.
 
-This can be represented conceptually:
-
-```flow
-Requests
-→
-Feasible shared trips
-→
-Trip ↔ Vehicle compatibility
-→
-Global assignment
-```
+Conceptually the problem is solved through four stacked layers: first identifying which requests are shareable at all, then building the **feasible shared trips** that satisfy the temporal and spatial constraints, then computing the **compatibility of every trip with every vehicle** as a set of acceptable pairs, and finally solving the **global assignment** that distributes trips across vehicles at maximum total value. Together these layers turn a chaotic list of requests into one coherent operating plan — and in the study's experiment on data from roughly 3 million taxi trips in New York, the researchers showed that a dynamic matching algorithm built on exactly this structure can achieve high service rates with a smaller fleet in simulation.
 
 In the study's experiment on data from roughly 3 million taxi trips in New York, the researchers showed that the dynamic matching algorithm could achieve high service rates using a smaller fleet in the simulation model, with a clear Trade-off between:
 
@@ -385,29 +324,13 @@ Optimization decides
 Simulation evaluates
 ```
 
-or:
-
-```flow
-GNN/RL chooses strategic action
-→
-Assignment solver handles hard constraints
-```
+Or by dividing the labor between two layers: a GNN or RL model chooses the **strategic action** — which zone to replenish with vehicles, which matching policy to activate — while an **assignment solver** enforces the hard constraints without deviation: no vehicle over capacity, no rider's promised pickup time violated. This split lets the system benefit from learned intuition without ever handing learning a decision that breaches a non-negotiable operational constraint.
 
 # Why Use Graph Neural Networks?
 
 The road network is a Graph by nature: every zone or intersection is a Node, and every road connecting them is an Edge. This structure has a fundamental advantage: high demand in one zone spills over into neighboring zones within minutes — something graph-based models capture far better than models that treat each zone as an isolated unit. A GNN can build a Representation of the state that combines per-zone demand, available vehicles, travel times, and congestion in adjacent zones, then produce Embeddings that represent the spatial relationships between them.
 
-For example:
-
-```flow
-Urban Graph
-→
-GNN
-→
-Spatial Representation
-→
-RL / Prediction / Optimization
-```
+In practice, the entire city is built as an **urban graph** whose network passes through the GNN to produce a **spatial representation** capturing the relationships between zones, and that representation then feeds the **reinforcement-learning, prediction, or optimization** layers that make the actual decision. The GNN here is not the decision-maker but the manufacturer of spatial understanding — it turns a scattered map of numbers into a connected picture the rest of the system can build on.
 
 But using a GNN does not automatically mean the model beats traditional methods.
 
@@ -596,33 +519,11 @@ and not RMSE only.
 
 # The Architecture of a Real Ride-Pooling Platform
 
-It can be designed in layers:
+The platform can be designed in layers starting from both ends of the experience: the passenger and driver apps connect through the **API layer**, which captures requests and location updates; everything flows through a continuous **event and request stream** and accumulates in a **real-time state store** holding a live snapshot of the system — every vehicle position, active request, and route in progress. Above this store operates the **intelligence layer**, producing ETA predictions and demand forecasts and handling matching, routing, and rebalancing, and it emits the **dispatch decisions** that return to the driver and passenger apps to be executed on the road. The loop thus closes from app to app, with each ring consuming the output of the one before it.
 
-```flow
-Passenger / Driver Apps
-→
-API Layer
-→
-Event / Request Stream
-→ | live state: vehicle positions, active requests, current routes
-Real-time State Store
-→ | ETA prediction, demand forecast, matching, routing, rebalancing
-Intelligence Layer
-→
-Dispatch Decisions
-→
-Driver / Passenger Apps
-```
+Alongside this real-time path runs a parallel, non-real-time one: historical data accumulates to feed **training and analytics**, and the resulting models are versioned and published through a **model registry**. The separation of the two paths is deliberate: the real-time system must respond in fractions of a second, while improving on yesterday's data happens on a timescale of days, and each path needs entirely different infrastructure.
 
-Alongside it:
-
-```flow
-Historical Data
-→
-Training / Analytics
-→
-Model Registry
-```
+Alongside it, historical data feeds a parallel non-real-time path through training and analytics, with the resulting models versioned in a model registry before deployment to production.
 
 ![A diagram of a ride-pooling platform architecture: passenger and driver apps, then an API layer, an event stream, a real-time state store, and the intelligence layer that issues dispatch decisions, with a non-real-time path from historical data to training and the model registry](/images/articles/body/smart-ai-ride-pooling-5.avif "Ride-Pooling platform architecture: a real-time path from the apps to the state store, the intelligence layer, and dispatch decisions, and a non-real-time path that trains prediction and matching models from historical data — illustration: Techno Enjaz")
 
@@ -1204,23 +1105,7 @@ The greatest value may lie in:
 - Low-demand hours.
 - Underserved zones.
 
-That is:
-
-```flow
-Ride-Pool
-→
-Transit Hub
-→
-Metro / BRT / Rail
-```
-
-instead of:
-
-```flow
-Ride-Pool
-→
-40 km across city
-```
+That is, the best use of ride-pooling is to feed transit hubs: short shared trips collect riders from their neighborhoods and deliver them to a **transit hub**, where they board the metro, BRT, or rail — instead of one shared ride stretching 40 km across the whole city. In the first pattern the shared vehicles specialize in what they do best — flexibility and door-level access — and leave the fast trunk corridor to what it does best, yielding an integrated system that is cheaper and more sustainable than competing with public transit rather than complementing it.
 
 Integrating with public transit may be more sustainable than competing with it.
 
@@ -1338,33 +1223,9 @@ and not Model loss only.
 
 # A Practical Architecture Example
 
-```text
-Passenger App
-     ↓
-Ride Request API
-     ↓
-Request Stream
-     ↓
-Candidate Search
-     ↓
-Travel Time Engine
-     ↓
-Feasible Trip Generator
-     ↓
-Assignment Optimizer
-     ↓
-Route Update
-     ↓
-Driver App
+The practical architecture can be read as two interwoven paths. On the real-time path, a rider opens the app and the request flows through the **ride-request API** into the request stream, where the real work begins: **candidate search** gathers nearby available vehicles, the **travel-time engine** prices the time cost of every possible combination, the **feasible-trip generator** builds the combinations that satisfy the constraints, and the **assignment optimizer** picks the best distribution — after which the route plan updates and reaches the driver's app to be executed on the road.
 
-             Historical Data
-                    ↓
-            Demand Forecast
-                    ↓
-            Rebalancing Policy
-                    ↓
-              Fleet State
-```
+In parallel, the non-real-time path works on a different clock: historical data feeds the **demand forecast**, which predicts where vehicles will be needed an hour from now, and the **rebalancing policy** moves the fleet proactively based on that forecast, reshaping the very **fleet state** that the real-time path reads its candidates from. The two paths meet in the fleet state: one consumes it while the other shapes it, and the system's intelligence shows in how well they coordinate.
 
 And GNN/RL can be added inside:
 
@@ -1460,25 +1321,7 @@ Simulation needs Calibration and Validation.
 
 A smart ride-pooling system is not just an app that connects several passengers to a car.
 
-It is a real-time control and decision-making system:
-
-```flow
-Observe
-→
-Forecast
-→
-Generate feasible shared trips
-→
-Optimize assignment
-→
-Route
-→
-Rebalance
-→
-Measure
-→
-Repeat
-```
+It is a real-time control and decision-making system turning in a closed loop that never stops: it **observes** the state of the network, **forecasts** what will happen minutes ahead, **generates the feasible shared trips** and **optimizes the assignment**, then **routes** the vehicles and **rebalances** the fleet proactively, and finally **measures** the outcome of what it executed so the loop returns to observation smarter than before. Every turn of the loop moves the system into a better state, and the real intelligence lies not in any single step but in the speed of iteration and the quality of the measurement that feeds it.
 
 Artificial intelligence can help with:
 

@@ -32,15 +32,7 @@ The most important example:
 
 UART describes an asynchronous serial send/receive mechanism inside the microcontroller or processor, whereas RS‑232 is an electrical and functional interface standard that uses voltage levels different from logic GPIO/UART and usually requires a Transceiver.
 
-So you can have:
-
-```flow
-MCU UART
-→ | 3.3 V logic
-RS-232 Transceiver
-→ | ± voltage signaling
-RS-232 cable
-```
+So you can read the typical chain as two distinct layers: the UART inside the microcontroller runs at the chip's 3.3 V logic level, and this fragile digital signal does not reach the cable as-is — it first passes through an **RS-232 Transceiver** that converts it into the bipolar signaling the standard specifies, and that converted signal is what actually travels down the RS-232 cable to the far end. Keeping the logical role and the electrical role separate is what allows one protocol to run over entirely different physical media.
 
 # What Is a Communication Protocol in an Embedded System?
 
@@ -141,18 +133,7 @@ It means:
 - No parity.
 - 1 Stop bit.
 
-A simplified Frame:
-
-```flow
-direction: horizontal
-Idle
-→ | start bit
-Start
-→ | 8 data bits
-D0 … D7
-→ | stop bit
-Stop
-```
+The simplified frame reads chronologically on a single line: the line rests high in the **Idle** state, then drops into the **start bit** to announce transmission and hand the receiver its synchronization edge, followed immediately by the **eight data bits** D0 through D7, read one at a time to the agreed clock rhythm, until the line returns to the **stop bit**, which guarantees a silent interval before the next frame. In other configurations a **parity** bit can be inserted between the data and the stop bit to detect simple transmission errors.
 
 Parity can be added in other settings.
 
@@ -294,15 +275,7 @@ Because it is:
 - Suitable for Console logs.
 - Easily monitored with a logic Analyzer.
 
-Example:
-
-```flow
-MCU UART
-→
-USB-UART Bridge
-→
-Laptop Terminal
-```
+The most familiar practical example is a bring-up session on a fresh board: the microcontroller's UART connects to a small **USB-UART bridge** on the board, the bridge appears on the computer as a virtual serial port, and the engineer opens a terminal on the laptop to watch log messages and command responses directly. This combination is why UART remains among the first interfaces a firmware engineer reaches for when bringing a board to life — a diagnostic channel that needs neither screen nor network.
 
 This is why it remains among the first interfaces a Firmware engineer uses when bringing up a board.
 
@@ -323,13 +296,7 @@ RS‑232 is a historical standard for Point-to-Point serial communication.
 
 The reason the confusion persists:
 
-Many systems use:
-
-```flow
-UART frames
-→
-RS-232 electrical transceiver
-```
+Many industrial systems pair the two: **UART frames** as the logical protocol, with an **RS-232 electrical transceiver** as the physical medium that carries them over distances far beyond what 3.3 V logic tolerates. Separating the levels matters for understanding and for debugging: a frame-format problem is fixed in the logical layer, a voltage-level or noise problem is fixed in the electrical layer, and confusing the two wastes the troubleshooting time.
 
 But keeping the two separate matters.
 
@@ -362,15 +329,7 @@ It performs two basic functions:
 1. Converting voltage levels.
 2. Inverting the signal as required.
 
-The picture:
-
-```flow
-MCU UART 3.3/5V
-→
-RS-232 Transceiver
-→
-RS-232 Cable
-```
+The complete picture: the microcontroller's UART generates a 3.3 V or 5 V logic signal, the **RS-232 Transceiver** picks it up and converts it to standard-compliant bipolar levels, and only that converted signal travels over the **RS-232 cable** toward the other end. Many transceivers include a **charge pump** that generates the required voltages from a single low-voltage supply, sparing the design a dedicated negative rail.
 
 Some Transceivers contain a Charge Pump to generate the required voltages from a single low-voltage Supply.
 
@@ -471,20 +430,7 @@ The key feature:
 
 > Multiple Targets can share the same Bus through Addresses.
 
-Example:
-
-```flow
-direction: horizontal
-MCU Controller
-→ | address 0x48
-Temperature Sensor
-→ | address 0x50
-EEPROM
-→ | address 0x68
-RTC
-→ | address 0x6A
-IMU
-```
+On an I²C bus the controller talks to several devices over the same two wires, telling them apart by address rather than by separate wires: a temperature sensor answers to 0x48, an EEPROM to 0x50, an RTC to 0x68, and an IMU to 0x6A. When the controller opens a read or write transaction it begins the frame with the target address, so every device listens on the line but only the addressed one responds while the rest stay silent. This is how an entire constellation of sensors and memories is built on two wires with a single controller acting as the sole clock source.
 
 with shared SDA/SCL lines.
 
@@ -498,15 +444,7 @@ The device pulls the line LOW, but does not drive it HIGH in the usual way.
 
 A Pull-up resistor raises the line to HIGH when no device is pulling it.
 
-Conceptually:
-
-```flow
-VDD
-→
-Rpullup
-→
-SDA -------- devices
-```
+Conceptually, every I²C line rests on a **pull-up resistor** tying it to VDD, while any device on the bus can pull the line to ground through an open-drain transistor. At rest the resistor wins and the line sits high; when a device wants to signal, it pulls the line low deliberately. This arrangement is what lets multiple devices share the line without direct push-pull conflict: two devices pulling low at once do not short one driver's high output against another's low, they simply combine into a single low level, and contention can still be detected when a device fails to read back what it drove.
 
 This allows multiple devices to share the line without direct Push-pull conflict.
 
@@ -1249,15 +1187,7 @@ If you want to connect a modern Product to a computer:
 
 USB may be better than native RS‑232.
 
-But inside the device there may be:
-
-```flow
-MCU UART
-→
-USB-UART Bridge
-→
-USB
-```
+But inside the device, what looks like a serial port from the outside may be something else entirely: the microcontroller's UART feeds a **USB-UART bridge** that repackages the frame stream into USB packets, and the computer on the far end sees a **Virtual COM Port** it treats as an ordinary serial port, while the physical transfer actually rides the USB bus at its own speed and with its own protocol. It is one more illustration of why the layers matter: a single logical protocol can travel inside completely different physical media depending on the vantage point.
 
 and here the computer sees a Virtual COM Port.
 

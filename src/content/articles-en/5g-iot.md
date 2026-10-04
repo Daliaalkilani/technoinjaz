@@ -43,21 +43,7 @@ These devices may include:
 - Agricultural systems.
 - Equipment inside factories.
 
-An IoT system usually consists of more than "a device connected to the internet":
-
-```text
-Sensor / Device
-      ↓
-Connectivity
-      ↓
-Gateway or Network
-      ↓
-Edge / Cloud Platform
-      ↓
-Data Processing
-      ↓
-Application / Automation
-```
+An IoT system usually consists of more than "a device connected to the internet": the sensor or device captures a measurement, the data crosses a **connectivity** layer toward a gateway or network that aggregates it, then reaches an **edge or cloud platform** that processes and analyzes it, and finally the application or automation layer translates the result into an executed decision. The network is one link in this chain, and the whole chain fails if any link before or after it fails.
 
 That is why the network is only one element of the system.
 
@@ -430,17 +416,7 @@ But safety requirements do not reduce to the network connection alone.
 
 Sending all data to a distant cloud is not always ideal.
 
-Processing can be placed closer to the device:
-
-```text
-IoT Device
-   ↓
-5G / Local Network
-   ↓
-Edge
-   ↓
-Cloud
-```
+Processing can be placed closer to the device: an IoT device sends its data over 5G or a local network to an **edge** node on site, which handles what is needed locally and uploads only aggregated results to the **cloud**. This gradation buys fast response to critical events on site, while the cloud retains the storage and deep-analysis capabilities for everything that is not time-critical.
 
 The edge helps when we need:
 
@@ -681,21 +657,7 @@ Then compare:
 
 You may discover the best architecture uses more than one technology.
 
-Example:
-
-```text
-Sensors → BLE
-        ↓
-     Gateway
-        ↓
-    5G / Fiber
-        ↓
-       Edge
-        ↓
-      Cloud
-```
-
-And not:
+A realistic example: low-power sensors communicate over BLE to a nearby gateway that aggregates their data; the gateway forwards it over 5G or fiber to an edge node that processes it locally, and only the distilled findings rise to the cloud. Each technology here plays the role it excels at — the sensor preserves battery, the gateway aggregates, 5G transports quickly, and the edge decides locally. And not:
 
 ```text
 Every sensor → 5G modem → Cloud

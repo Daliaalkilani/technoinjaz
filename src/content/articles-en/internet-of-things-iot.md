@@ -18,25 +18,7 @@ The "thing" may be a small temperature sensor, an electricity meter, a smartwatc
 
 Yet merely having an internet connection does not make a device a complete IoT system.
 
-The system is often composed of a chain such as:
-
-```text
-Physical World
-      ↓
-Sensors / Devices
-      ↓
-Connectivity
-      ↓
-Gateway / Edge
-      ↓
-Cloud or Local Platform
-      ↓
-Processing / Analytics
-      ↓
-Application
-      ↓
-Action / Automation
-```
+The system is often composed of an interconnected chain that begins with the **physical world** itself, where **sensors and devices** capture real measurements such as temperature, humidity, and motion. These measurements travel across a **connectivity** layer toward a **gateway or edge node** that aggregates and filters the data — and perhaps processes it locally — before uploading it, and then reach a **cloud or local platform** responsible for **processing and analytics**, turning raw data into meaningful information. At the top sits the **application**, which translates that information into a decision, and the **action or automation** that executes the decision back onto the physical world — completing the cycle that began at a sensor and ends at a motor, a valve, or a notification.
 
 The real value comes not merely from "connecting things," but from turning measurements into information, and then into a decision or an action.
 
@@ -173,17 +155,7 @@ The choice here changes:
 
 Some devices do not connect to the cloud directly.
 
-They may connect via:
-
-```text
-BLE Sensor
-    ↓
-Gateway
-    ↓
-Internet
-    ↓
-Cloud
-```
+A short-range BLE sensor may connect to a nearby **gateway** that receives its transmissions; the gateway then forwards the data over the internet to the **cloud**, where it is stored and processed. This arrangement lets the sensor benefit from a low-energy protocol that cannot sustain a direct internet connection, while the gateway absorbs the heavier processing and its higher cost.
 
 The gateway can:
 
@@ -470,15 +442,7 @@ The second may need:
 
 **Publish / Subscribe**
 
-Instead of each device connecting directly to every consumer of its data, it publishes messages to a broker.
-
-```text
-Temperature Sensor
-        ↓ publish
-      Broker
-       ↙   ↘
-Dashboard  Alert Service
-```
+Instead of each device connecting directly to every consumer of its data, the sensor publishes its temperature readings to a central **broker**, and the broker in turn distributes them to every subscriber — a monitoring dashboard and an alerting service, for instance — without the publisher knowing any of them. This decoupling lets new consumers be added without touching the device, and the device replaced without updating the consumers, because the only thing they share is a topic name rather than an address.
 
 Advantages:
 
@@ -650,17 +614,7 @@ Industrial IoT can support:
 - Quality control.
 - Digital Twins.
 
-Example:
-
-```text
-Motor Sensors
-     ↓
-Edge Analytics
-     ↓
-Anomaly Detection
-     ↓
-Maintenance System
-```
+A practical example illustrates this arrangement: sensors on an industrial motor stream their measurements into **analytics running at the edge**, near the production line; that analytics detects **anomaly patterns** in vibration or temperature the moment they appear, and pushes the result straight into the **maintenance system**, which opens a work order before the fault escalates into a breakdown. The raw data never travels to a distant data center; the critical decision is built close to its source.
 
 There is also a direct relationship with the **digital twin**: IoT data can feed a digital model of a real asset so that it can be monitored, simulated, and optimized.
 

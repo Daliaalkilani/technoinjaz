@@ -38,30 +38,9 @@ On its own, a language model usually cannot access:
 
 For the model to use these systems, a bridging layer must exist.
 
-Before a common standard existed, integration often took the shape of:
+Before a common standard existed, integration was built ad hoc: every language model needed its own custom connector to every service, written in the language of the project and shaped by the assumptions of the team behind it. Model A reached the documentation service through a connector its team wrote, and the billing system through another connector with a completely different design; when model B arrived, both bridges had to be rebuilt a third and fourth time. The result was a crisscrossing mesh of integrations whose size equals the number of models multiplied by the number of services, and every strand of that mesh carried its own version history, security caveats, and maintenance cycle. As models and tools multiply, the mesh grows combinatorially until adding a single service becomes a project in itself.
 
-```text
-LLM A → Proprietary Integration → Service 1
-LLM A → Proprietary Integration → Service 2
-LLM B → Different Integration → Service 1
-LLM B → Different Integration → Service 2
-```
-
-As the number of models and tools grows, the web of integrations becomes hard to maintain.
-
-MCP instead tries to turn it into:
-
-```text
-AI Application
-      │
-   MCP Client
-      │
-──────── MCP ────────
-      │
-   MCP Server
-      │
-Tools / Data / APIs
-```
+MCP proposes to invert this equation with a unified intermediary layer: each AI application talks to the outside world through an **MCP Client** embedded by the developer, each data or tool provider exposes its capabilities through an **MCP Server** that conforms to the protocol, and the conversation between the two sides flows over the **MCP protocol**, which standardizes how capabilities are discovered, tools are invoked, and resources are read. Complexity thus shifts from a product to a sum: each side implements the standard exactly once, so new services appear to every existing model without modification, and new models reach every existing service without building bespoke bridges.
 
 This does not eliminate APIs or databases; it adds a **standardized layer aimed at AI applications and agents** on top of them.
 
@@ -297,25 +276,7 @@ The user:
 
 > "Show me the last three open support tickets for customer X."
 
-Instead of the model guessing:
-
-```text
-User
- ↓
-AI Host
- ↓
-MCP Tool: search_support_tickets
- ↓
-MCP Server
- ↓
-Support System API
- ↓
-Structured Result
- ↓
-LLM
- ↓
-Answer
-```
+Instead of the model guessing, the request travels an organized path: the user asks the AI Host, the Host selects the right tool — search_support_tickets — and invokes it through the MCP client, so the request reaches the MCP Server, which translates it into a call on the support system's API. The result comes back as structured data that enters the language model's context, and the model shapes it into a readable answer for the user. At every link in this chain a well-defined interface is at work, not free-form guessing.
 
 MCP's value here is not that the model "somehow knows about tickets"; it is that access to them now flows through an organized, reusable interface.
 
@@ -718,17 +679,7 @@ No.
 
 Retrieves information relevant to the question and places it into the model's context.
 
-Example:
-
-```text
-Question
- ↓
-Vector Search
- ↓
-Relevant Documents
- ↓
-LLM
-```
+In the typical path, the question enters a **vector search** over an embedding space that retrieves the semantically nearest **documents**, and those documents are injected into the language model's context so the model formulates its answer on top of them. The whole pattern revolves around enriching the context with relevant content before generation, and goes no further than that.
 
 ## MCP
 
@@ -797,26 +748,9 @@ Suppose the organization wants an assistant that can:
 - Create a support ticket.
 - Run a sales report.
 
-You could build:
+You could build such an assistant as a multi-server MCP architecture: the assistant embeds one or more **MCP Clients** inside its own components, and each client connects to a dedicated **MCP Server** responsible for one slice of the estate — a documents server exposing search and retrieval, a CRM server presenting customer records, a support server that can open tickets, and an analytics server that runs sales reports. When the user asks to "open a ticket for customer X and pull their sales report," the assistant discovers through the protocol which server owns the needed tools, invokes the ticketing tool on the support server and the reporting tool on the analytics server, and weaves both results into a single answer.
 
-```text
-AI Assistant
-│
-├── MCP Client → Documents MCP Server
-├── MCP Client → CRM MCP Server
-├── MCP Client → Support MCP Server
-└── MCP Client → Analytics MCP Server
-```
-
-Each server can have:
-
-- Its own authentication.
-- Its own scopes.
-- Independent logging.
-- Rate limits.
-- A team responsible for it.
-
-And this is organizationally better than giving a single model unified credentials that reach directly into every system.
+The real value of this separation shows up in governance: each server can carry its own **authentication** mechanism suited to the sensitivity of its service, tightly scoped **permissions** granting least privilege, **independent logging** that makes it easy to trace who did what and when, **rate limits** protecting the backing systems, and a clear **owning team**. That organization is engineering-wise far better than handing a single model unified credentials that reach directly into every system, because any breach or mistake stays contained within one server's boundary instead of spreading across the whole estate.
 
 # How Do You Design a Good MCP Tool?
 
@@ -932,19 +866,7 @@ The Model Context Protocol does not make the model smarter by itself, does not r
 
 Its core value is **standardizing how AI applications connect to external tools and data**.
 
-It can be summarized as:
-
-```text
-LLM = understands, generates, and decides when it needs an external capability
-
-MCP = provides a standard communication language for reaching that capability
-
-MCP Server = defines and executes the external capabilities
-
-Host = coordinates the model, permissions, the user, and the context
-```
-
-where the language model generates the tool invocation request step by step based on [next-token prediction in language models](#article/next-token-prediction).
+The system is easiest to grasp through the division of roles within it. The language model is what understands the context, generates the answer, and decides when the task needs an external capability; the MCP protocol provides the standard communication language through which the model reaches that capability; the MCP Server is what defines and actually executes the external capabilities behind a uniform interface; and the Host orchestrates the whole scene — managing the model, permissions, the user experience, and the shared context. The language model generates the tool invocation request step by step based on [next-token prediction in language models](#article/next-token-prediction).
 
 The biggest change in 2026 is that MCP is no longer a nascent experiment from one company; it became a widely adopted standard that moved to independent governance, with its specification evolving toward more scalable Streamable HTTP and a stateless protocol-level core, plus major improvements in authorization and extensions.
 

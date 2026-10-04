@@ -14,24 +14,11 @@ Suggested Slug: 5g-nr-radio-architecture
 
 **A 5G network is not just "faster 4G."** The real difference shows up in the design of the 5G NR radio interface, flexible spectrum usage, adaptable OFDM, MIMO and Beamforming, the split of the radio access network into functions such as RU, DU, and CU — plus a new Core designed for a wider range of services.
 
-To understand 5G from an engineering perspective, it helps to break it down into a chain:
+To understand 5G from an engineering perspective, it helps to trace how data actually travels through the system. The journey begins at the **User Equipment** — the phone or connected device — which generates and consumes the data and reaches the radio access network wirelessly over the **5G NR radio interface**, the set of protocols and physical channels that define how the signal is modulated, coded, and transmitted across the spectrum.
 
-```text
-User Equipment
-      ↓
-5G NR Radio Interface
-      ↓
-gNB / RAN
-  ├── RU
-  ├── DU
-  └── CU
-      ↓
-5G Core
-      ↓
-Data Network / Edge / Cloud
-```
+On the other side of the link stands the **gNB** base station, which in 5G is not a monolithic block but a functionally split chain that can be distributed geographically: the **Radio Unit (RU)** sits near the antenna and handles analog and high-frequency processing; the **Distributed Unit (DU)** manages the real-time-critical layers such as scheduling, HARQ, and the MAC layer; and the **Centralized Unit (CU)** takes care of higher, less latency-sensitive layers such as RRC session management. This split allows RUs to be deployed at remote cell sites over fiber while DU and CU functions stay centralized, cutting cost and simplifying operations.
 
-This article focuses on the **radio access network and the physical layer** rather than on commercial applications.
+Behind the access network lies the **5G Core**, built on a service-based architecture, which handles session management, mobility, authentication, and policy — and finally routes traffic toward the **data network**: the internet, cloud services, or an **edge** that places compute close to the user to reduce latency. Each link in this chain is a subject in its own right, but this article concentrates on the first two: the radio access network and the physical layer.
 
 # What Is the Difference Between 5G and 5G NR?
 
@@ -387,30 +374,9 @@ These phenomena do not mean the same thing.
 
 # What Is Multipath?
 
-The signal reaches the receiver over more than one path.
+The signal reaches the receiver over more than one path. The simplest picture is the direct link: the base station transmits toward the user in line of sight, so that copy covers the shortest distance and arrives first, with the strongest power. In urban environments, however, the radio wave rarely travels that path alone; a wave reflected off a glass facade or a concrete wall is deflected from its original course and covers a much longer route before reaching the very same device, arriving a fraction of a microsecond behind the direct copy.
 
-Example:
-
-```text
-Base Station ───────→ UE
-      ↘
-       Building
-          ↘
-           UE
-```
-
-The two paths:
-
-- Have different lengths.
-- Different arrival times.
-- Different Phase.
-
-At the receiver, they may:
-
-- Reinforce each other.
-- Or partially cancel each other.
-
-This is one source of Fading.
+That delay is not a marginal detail — it determines how the signal behaves at the receiver: the two paths differ in length, and therefore in **arrival time**, and therefore in the **phase** at which each copy lands. When the two copies combine at the user's antenna they may reinforce each other, producing a signal stronger than either path alone, or they may partially cancel and collapse the received signal abruptly — which is one source of Fading, addressed by techniques such as MIMO and the subcarrier structure of OFDM.
 
 # Are Reflection, Refraction, and Scattering the Whole Story?
 
@@ -621,25 +587,7 @@ This is an important technical point in RAN architecture.
 
 When we split base station functions, we need links between the parts.
 
-Simplified:
-
-```text
-Radio Unit
-   ↓
-Fronthaul
-   ↓
-Distributed Unit
-   ↓
-Midhaul
-   ↓
-Centralized Unit
-   ↓
-Backhaul
-   ↓
-5G Core
-```
-
-Terminology and splits vary by Architecture, but the idea is that the **Fronthaul is closest to the radio**.
+In simplified form, the links run in series: from the Radio Unit over the **Fronthaul** to the Distributed Unit, then over the **Midhaul** to the Centralized Unit, and finally over the **Backhaul** to the 5G Core. Each link in this chain carries different timing and capacity requirements: the closer a link sits to the radio, the more demanding its synchronization needs become, which is why the Fronthaul is the most demanding link in the entire chain. Terminology and splits vary by architecture, but the constant idea is that the **Fronthaul is closest to the radio**.
 
 ![A split RAN chain from the Radio Unit RU to DU, then CU, then 5G Core, with Fronthaul links between RU and DU, Midhaul between DU and CU, and Backhaul between CU and the core network](/images/articles/body/5g-nr-radio-architecture-5.avif "Fronthaul between RU and DU is the most demanding in timing, synchronization, and capacity, followed by Midhaul between DU and CU, then Backhaul toward the Core; in O-RAN, Open Fronthaul defines the interface between O-RU and O-DU using the 7.2x split — illustration: Techno Enjaz")
 

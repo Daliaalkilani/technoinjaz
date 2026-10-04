@@ -36,27 +36,7 @@ But it has no direct access to:
 - The culture.
 - The cause of the expression.
 
-Which is why, as a matter of engineering accuracy, the correct description is:
-
-```flow
-Camera
-→
-Visible Facial Movement
-→
-Computer Vision Analysis
-→
-Expression Representation
-→
-Probabilistic Estimate
-```
-
-And not:
-
-```flow
-Camera
-→
-True Inner Emotion
-```
+Which is why, as a matter of engineering accuracy, the system is better described as a graduated chain: the camera captures **visible facial movement**, computer-vision software analyzes that movement and derives an **expression representation** from it, and the system finally emits a **probabilistic estimate** of a category or affective dimension. At every link in this chain approximate inference accumulates, and at no point is there a direct measurement of the "true inner emotion" — the latter is not a technical output any system can produce, but an interpretive construct that lies outside what a camera can measure in the first place.
 
 # What Is the Difference Between Face Detection, Face Recognition, and Facial Expression Recognition?
 
@@ -73,13 +53,7 @@ The output is usually:
 - A Bounding Box.
 - And possibly initial face keypoints.
 
-Example:
-
-```flow
-Image
-→
-Face detected at x1, y1, x2, y2
-```
+In practice, an image goes in and bounding-box coordinates come out: a face was found from x1, y1 to x2, y2, possibly with initial keypoints marking the face position. That number alone says nothing about the person's identity or state; its only job is to answer "where" precisely enough to trigger the next stages.
 
 ## Face Recognition
 
@@ -266,29 +240,9 @@ This suits situations where we do not want to force every expression into one ri
 
 # How Does an FER System Work from Camera to Result?
 
-The Pipeline can be summarized as:
+The pipeline begins with a frame arriving from the camera, on which **face detection** locates the faces in the scene; **face tracking** then preserves each face's identity across consecutive frames and prevents measurements from flickering between them. Next, **landmark detection** extracts the reference points on facial features, **alignment** builds on them to normalize head pose and angle, and **cropping and normalization** produce a standardized face image ready for analysis.
 
-```flow
-Camera Frame
-→
-Face Detection
-→
-Face Tracking
-→
-Landmark Detection
-→
-Face Alignment
-→
-Crop / Normalize
-→
-Feature Extraction / Deep Model
-→
-Expression or AU Prediction
-→
-Confidence / Uncertainty
-→
-Application
-```
+This image enters the **feature extraction** stage, where a deep model produces an internal representation on the basis of which the system emits an **expression or AU prediction** accompanied by a **confidence or uncertainty** score reflecting how trustworthy the decision is. Those scores are not decoration: the final application needs them to decide when to trust the result and when to fall back to conservative behavior, because every stage in the chain — from detection to prediction — can be an independent source of error that accumulates in the final output.
 
 Every stage can be an independent source of error.
 
@@ -405,15 +359,7 @@ Such as:
 - Gabor filters.
 - HOG.
 
-The Features then enter a classifier:
-
-```flow
-Features
-→
-SVM / KNN / Random Forest
-→
-Expression class
-```
+These features are assembled into a vector that feeds a conventional classifier — SVM, KNN, or Random Forest — which learns the decision boundaries between expression classes in feature space, and the class nearest to a new example becomes the output. The approach can be lightweight, relatively interpretable, and suitable for constrained environments, but it pays for its reliance on manual feature engineering: greater sensitivity to unexpected variations, and difficulty representing complex patterns the feature designer never anticipated.
 
 Their advantages:
 
@@ -431,19 +377,7 @@ Their limitations:
 
 CNNs learn Visual Features directly from images.
 
-A simplified Pipeline:
-
-```flow
-Aligned face
-→
-Convolutional backbone
-→
-Visual representation
-→
-Classification head
-→
-Expression probabilities
-```
+The simplified deep-learning pipeline passes through four stages: an aligned face enters the **convolutional backbone**, which extracts features layer by layer from raw to abstract; these coalesce into a rich **visual representation** that feeds a **classification head**, which converts it into **expression probabilities**. The fundamental difference is that the network learns these representations directly from data, instead of the engineer manually specifying a rule like "measure the distance between the mouth corners" — and so the network captures patterns more intricate and more precise than any hand-written rule can express.
 
 Instead of an engineer manually specifying:
 
@@ -498,17 +432,7 @@ Sometimes, but video provides additional information.
 
 A facial expression is a **temporal movement**.
 
-We may have:
-
-```flow
-Neutral
-→
-Onset
-→
-Apex
-→
-Offset
-```
+A single expression unfolds in time through distinguishable phases: the face starts from a **neutral** state, enters the **onset** phase as the muscles contract gradually, reaches the **apex** when the expression is complete, and finally fades through the **offset** phase as the face returns to rest. A still image sees one frame of this trajectory and can easily land on an ambiguous moment that reveals nothing about which phase it is; video, by contrast, captures the speed, direction, and development of the movement and its duration — the very temporal signals that distinguish a genuine passing expression from a frozen pose.
 
 A still image sees a single Frame.
 
@@ -866,31 +790,7 @@ But even a Multimodal system does not gain direct access to an "inner truth"; it
 
 # What Is the Difference Between a Facial Expression Model and a Multimodal Affect Model?
 
-## Facial Expression Model
-
-```flow
-Face
-→
-Expression probabilities
-```
-
-## Multimodal Affect Model
-
-```flow
-Face (camera)
-→
-Voice
-→
-Text
-→
-Physiological signals (HR/EDA)
-→
-Usage context
-→ | fuse all channels together
-Multimodal Fusion
-→
-Probabilistic affective estimate
-```
+A **facial expression model** takes the face image alone and emits expression probabilities from it — one input channel, one bounded output. A **multimodal affect model** gathers a far broader estate: facial expression from the camera, vocal tone and acoustic features, spoken-text content, physiological signals such as heart rate and skin conductance, plus the usage context that interprets the same face differently in different situations. All these channels are brought together in a **multimodal fusion** stage that produces a probabilistic affective estimate deeper than any single channel could reach on its own. That plurality gives the system greater robustness when one channel weakens and the others compensate, but it multiplies the considerations around privacy, complexity, and data synchronization across channels.
 
 The Multimodal system may be more Robust when one channel is weak.
 
@@ -966,23 +866,7 @@ And this data may allow a Profile of the user to be built.
 
 ## 1. Local Processing
 
-Preferable where possible:
-
-```flow
-Camera frame
-→
-On-device FER
-→
-Expression vector
-```
-
-Instead of:
-
-```flow
-Raw video
-→
-Cloud
-```
+The first principle is local processing: wherever the device's capabilities allow, the FER pipeline should process the camera frame on the device itself and emit only the expression vector, instead of uploading **raw video** to the cloud. The difference is not operational but ethical and architectural: on the local path the user's face never leaves the device at all, and the leakable data shrinks to an abstract vector of numbers from which no face can be reconstructed.
 
 ## 2. Do Not Store Video Without Need
 
@@ -1335,15 +1219,7 @@ This page specializes in:
 - Physiological signals.
 - Context.
 
-And an **expression-based content personalization** system adds a dimension to FER:
-
-```flow
-FER output
-→
-user context
-→
-recommendation engine
-```
+And an **expression-based content personalization** system builds a layer on top of FER: it takes the expression output, blends it with the user's context inside a recommendation engine, and turns a momentary measurement into a personalization decision. That added dimension is enough to make it a different system with its own risks and governance — which is why these topics should remain separate pages instead of being merged into one enormous article.
 
 Which is why these topics should remain separate pages instead of being merged into one enormous article.
 
@@ -1355,23 +1231,7 @@ Facial expression recognition with AI is not a process of:
 Camera → Emotion
 ```
 
-It is an engineering chain:
-
-```flow
-Camera
-→
-Face Detection
-→
-Landmarks / Alignment
-→
-Visual Representation
-→
-CNN / Transformer / AU model
-→
-Expression Probabilities
-→
-Confidence + Context
-```
+It is an integrated engineering chain: it begins with the camera, moves through face detection, then landmarks and alignment, then builds a visual representation inside a CNN, Transformer, or AU model, then expression probabilities, and finally the confidence scores and context that determine how the decision will actually be used.
 
 And the most important dividing line is:
 

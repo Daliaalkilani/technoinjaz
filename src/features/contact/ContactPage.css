@@ -487,6 +487,23 @@
 }
 
 /* تجاوب الشاشات */
+@media (max-width: 1024px) {
+  .contact-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Tablet: inquiry panel takes the whole page, contact info moves below */
+  .contact-form-panel {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .contact-info-panel {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
 @media (max-width: 950px) {
   .contact-main-grid {
     grid-template-columns: 1fr;
