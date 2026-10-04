@@ -173,9 +173,9 @@ export const FaqSection: React.FC = () => {
             <MessageCircle size={26} />
           </div>
           <div className="faq-cta-text-wrap">
-            <h3 className="faq-cta-title">
+            <h2 className="faq-cta-title">
               {isEn ? "Have an inquiry not answered above?" : "لديك سؤال أو استفسار لم تجد إجابته؟"}
-            </h3>
+            </h2>
             <p className="faq-cta-sub">
               {isEn
                 ? "Our engineering team responds promptly to all academic and technical project inquiries."

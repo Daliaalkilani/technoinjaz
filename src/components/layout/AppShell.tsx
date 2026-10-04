@@ -63,6 +63,7 @@ export function AppShell({ children }: AppShellProps) {
   const isArticleDetailPage = /^\/articles\/[^\/]+/.test(pathname);
   const isProjectDetailPage = /^\/projects\/[^\/]+/.test(pathname);
   const isAuthPage = pathname === '/login' || pathname === '/register';
+  const isPrivacyPage = pathname === '/privacy-policy';
   const isAccountPage = pathname === '/account' || pathname.startsWith('/account');
   const isErrorPage = 
     pathname === '/connection-error' || 
@@ -205,7 +206,7 @@ export function AppShell({ children }: AppShellProps) {
           >
             <ResponsiveImage
               src="/images/brand/techno-logo.png"
-              alt={t.nav.brand}
+              alt=""
               className="navbar-brand-logo"
               sizes="48px"
               priority
@@ -346,7 +347,7 @@ export function AppShell({ children }: AppShellProps) {
         </div>
       )}
 
-      {!isArticleDetailPage && !isProjectDetailPage && !isAuthPage && !isAccountPage && !isErrorPage && <CinematicFooter />}
+      {!isArticleDetailPage && !isProjectDetailPage && !isAuthPage && !isAccountPage && !isPrivacyPage && !isErrorPage && <CinematicFooter />}
     </div>
   );
 }
