@@ -89,14 +89,17 @@ MagneticButton.displayName = "MagneticButton";
 // 2. MARQUEE ITEM
 // -------------------------------------------------------------------------
 const MarqueeLogo = () => (
-  <img
-    src="/images/brand/techno-logo.png"
-    alt="Techno Enjaz"
-    width={23}
-    height={24}
-    className="footer-marquee-logo"
-    loading="lazy"
-  />
+  <picture>
+    <source srcSet="/images/brand/techno-logo.webp" type="image/webp" />
+    <img
+      src="/images/brand/techno-logo-small.png"
+      alt="Techno Enjaz"
+      width={23}
+      height={24}
+      className="footer-marquee-logo"
+      loading="lazy"
+    />
+  </picture>
 );
 
 const MarqueeItem = ({ items }) => (
