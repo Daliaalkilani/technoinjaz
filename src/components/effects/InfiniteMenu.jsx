@@ -76,9 +76,12 @@ in vec3 vWorldDir;
 void main() {
     int itemIndex = vInstanceId % uItemCount;
     if (uFocusActive == 1) {
-        // While a member is settled, the instances around him show his face as well.
+        // While a member dwells at his seat, no other nearby instance may repeat his face.
         float d = dot(normalize(vWorldDir), normalize(uFocusDir));
-        if (d > 0.5) itemIndex = uFocusItem;
+        if (d > 0.35 && vInstanceId % uItemCount == uFocusItem && uItemCount > 1) {
+            int off = 1 + (vInstanceId % (uItemCount - 1));
+            itemIndex = (uFocusItem + off) % uItemCount;
+        }
     }
     int cellsPerRow = uAtlasSize;
     int cellX = itemIndex % cellsPerRow;

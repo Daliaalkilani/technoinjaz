@@ -22,6 +22,7 @@ export function SkText({ words = 8 }: { words?: number }) {
     <span
       className="sk-text"
       aria-hidden="true"
+      style={{ color: 'transparent' }}
       data-sk={Array.from({ length: words }, (_, i) => (i % 3 === 0 ? 'mmmmmm ' : i % 3 === 1 ? 'mmm ' : 'mmmmm ')).join('')}
     />
   );
