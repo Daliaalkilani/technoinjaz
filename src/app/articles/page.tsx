@@ -8,7 +8,7 @@ import { webPage, itemList } from '@/seo/schemas';
 export const dynamic = 'force-static';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'المدونة الهندسية والتقنية المتقدمة',
+  title: 'المدونة الهندسية',
   description: 'استكشف أحدث المقالات الهندسية المتخصصة في الذكاء الاصطناعي، إنترنت الأشياء، وبناء الأنظمة البرمجية الحديثة الصادرة عن فريق تكنو إنجاز.',
   path: '/articles'
 });

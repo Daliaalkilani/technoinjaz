@@ -10,8 +10,8 @@ import { webPage, itemList } from '@/seo/schemas';
 export const dynamic = 'force-static';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'المشاريع الهندسية والأنظمة التطبيقية',
-  description: 'المشاريع الهندسية والمنظومات التطبيقية في الذكاء الاصطناعي والرؤية الحاسوبية والروبوتات والأنظمة السحابية.',
+  title: 'المشاريع الهندسية',
+  description: 'استعرض مشاريع تكنو إنجاز المنفذة: أنظمة ذكاء اصطناعي، رؤية حاسوبية، روبوتات، وأنظمة سحابية — نماذج تطبيقية حقيقية بتفاصيل تقنية كاملة ولقطات من التنفيذ الفعلي.',
   path: '/projects'
 });
 

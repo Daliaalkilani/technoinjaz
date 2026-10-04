@@ -13,10 +13,11 @@ export function buildRootMetadata(): Metadata {
   return {
     metadataBase: new URL(SITE_URL),
     title: {
-      default: 'تكنو إنجاز | Techno Enjaz',
+      default: 'تكنو إنجاز | أنظمة ذكاء اصطناعي وحلول هندسية — Techno Enjaz',
       template: '%s | تكنو إنجاز | Techno Enjaz'
     },
-    description: 'تكنو إنجاز - صرح هندسي رائد في تطوير الأنظمة البرمجية المتكاملة، الحلول السحابية فائقة الأداء، الأتمتة وإنترنت الأشياء، وتطبيقات الذكاء الاصطناعي في حماة، سوريا.',
+    description: 'تكنو إنجاز: مكتب هندسي يطوّر أنظمة ذكاء اصطناعي، حلولاً سحابية، وأتمتة وإنترنت أشياء — مشاريع حقيقية موثقة بخبرة تنفيذية من حماة، سوريا.',
+
     applicationName: 'تكنو إنجاز',
     creator: 'داليا الكيلاني و روان هبهاب (Dalia Alkilani & Rawan Habhab)',
     openGraph: {
@@ -28,6 +29,8 @@ export function buildRootMetadata(): Metadata {
     },
     twitter: {
       card: 'summary_large_image',
+      site: '@Abdalganih2',
+      creator: '@Abdalganih2',
       images: [{ url: OG_IMAGE.url, alt: OG_IMAGE.alt }]
     },
     robots: {
