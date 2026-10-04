@@ -145,7 +145,12 @@ export const ProjectReelsFeed: React.FC = () => {
   mutedRef.current = isMuted;
   pausedRef.current = isPaused;
 
-  useEffect(() => setHydrated(true), []);
+  // Defer YouTube embed mount: the reel cover plays the visual role at first paint;
+  // the player (850KB of Google JS) mounts once the page settles.
+  useEffect(() => {
+    const t = window.setTimeout(() => setHydrated(true), 2500);
+    return () => window.clearTimeout(t);
+  }, []);
 
   useEffect(() => {
     setPeek(true);
