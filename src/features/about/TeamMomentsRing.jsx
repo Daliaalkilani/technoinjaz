@@ -98,16 +98,10 @@ export default function TeamMomentsRing({ onScrollDown = undefined } = {}) {
     /* صور الفريق المرفوعة */
     const photoUrls = [
       '/images/moments/moment1.480.avif',
-      '/images/team/dalia.320.avif',
       '/images/moments/moment2.480.avif',
-      '/images/team/abdulhady.480.avif',
       '/images/moments/moment3.480.avif',
-      '/images/team/dunia.320.avif',
-      '/images/moments/moment4.480.avif',
-      '/images/team/abdulghani.480.avif'
+      '/images/moments/moment4.480.avif'
     ];
-    // 12 slots, 8 unique photos: repeat first 4 at slots 8-11 → duplicates sit 8 slots apart
-    // (240°) instead of adjacent — from the very first frame, no visible reshuffling later.
 
     let textures = { front: [], back: [] };
 
