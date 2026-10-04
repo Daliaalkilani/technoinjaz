@@ -459,6 +459,8 @@ class ArcballControl {
     this._combinedQuat = quat.create();
 
     canvas.addEventListener('pointerdown', e => {
+      // Touch drags must scroll the page, never rotate the sphere (user request).
+      if (e.pointerType === 'touch') return;
       vec2.set(this.pointerPos, e.clientX, e.clientY);
       vec2.copy(this.previousPointerPos, this.pointerPos);
       this.isPointerDown = true;

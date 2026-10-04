@@ -49,7 +49,15 @@ export function renderMarkdown(
     if (effectiveDepth !== 2 && effectiveDepth !== 3) {
       return `<h${effectiveDepth}>${inner}</h${effectiveDepth}>`;
     }
-    const text = inner.replace(/<[^>]+>/g, '').trim();
+    const text = inner
+      .replace(/<[^>]+>/g, '')
+      .replace(/&amp;/g, '&')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&nbsp;/g, ' ')
+      .trim();
     const slug = text
       .toLowerCase()
       .replace(/[^\w\u0621-\u064A0-9]+/g, '-')
