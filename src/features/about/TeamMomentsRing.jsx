@@ -575,6 +575,7 @@ export default function TeamMomentsRing({ onScrollDown = undefined } = {}) {
     let isVisible = false;
     const t0 = performance.now();
     let lastPaint = 0;
+    let frameMs = 0;
     function frame(now) {
       if (!isMounted || !isVisible || document.hidden) {
         animId = null;
@@ -582,7 +583,11 @@ export default function TeamMomentsRing({ onScrollDown = undefined } = {}) {
       }
       // Cap the spin to 30fps: the rotation is slow, so this halves canvas work
       // (the ring was the page's main-thread hog under CPU throttling).
-      if (now - lastPaint >= 33) {
+      // Adaptive: a slow frame (>180ms, e.g. low-end CPU) backs the spin off to ~5fps
+      // so the page never blocks; fast devices keep a smooth 30fps.
+      frameMs = frameMs ? frameMs * 0.7 + (now - lastPaint) * 0.3 : 33;
+      const interval = frameMs > 180 ? 200 : 33;
+      if (now - lastPaint >= interval) {
         lastPaint = now;
         const tNow = ((now - t0) / 1000) % DUR;
         render(tNow);
