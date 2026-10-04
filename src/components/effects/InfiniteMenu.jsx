@@ -625,12 +625,13 @@ class InfiniteGridMenu {
   tourDuration = 1;
   tourBow = 0.22;
 
-  constructor(canvas, items, onActiveItemChange, onMovementChange, onInit = null, scale = 1.0) {
+  constructor(canvas, items, onActiveItemChange, onMovementChange, onInit = null, scale = 1.0, onLabelPosition = null) {
     this.canvas = canvas;
     this.items = items || [];
     const real = this.items.map((it, i) => (it && !it.isPlaceholder ? i : -1)).filter(i => i >= 0);
     this.tourMembers = real.length ? real : this.items.map((_, i) => i);
     this.onActiveItemChange = onActiveItemChange || (() => {});
+    this.onLabelPosition = onLabelPosition || null;
     this.onMovementChange = onMovementChange || (() => {});
     this.scaleFactor = scale;
     this.camera.position[2] = 3 * scale;
@@ -897,6 +898,32 @@ class InfiniteGridMenu {
       0,
       this.DISC_INSTANCE_COUNT
     );
+
+
+    if (this.onLabelPosition && this.targetVertexIndex >= 0) {
+      // Report the settled member's screen position so an HTML name label can sit beside it.
+      const p = this.#getVertexWorldPosition(this.targetVertexIndex);
+      const m = this.camera.matrices.view;
+      const pr = this.camera.matrices.projection;
+      const x = p[0], y = p[1], z = p[2];
+      const eyeX = m[0]*x + m[4]*y + m[8]*z + m[12];
+      const eyeY = m[1]*x + m[5]*y + m[9]*z + m[13];
+      const eyeZ = m[2]*x + m[6]*y + m[10]*z + m[14];
+      const clipX = pr[0]*eyeX + pr[8]*eyeZ;
+      const clipY = pr[5]*eyeY + pr[9]*eyeZ;
+      const clipW = pr[11]*eyeZ;
+      if (clipW > 0) {
+        const nx = (clipX / clipW) * 0.5 + 0.5;
+        const ny = 1 - ((clipY / clipW) * 0.5 + 0.5);
+        const dprX = gl.drawingBufferWidth / this.canvas.clientWidth || 1;
+        const dprY = gl.drawingBufferHeight / this.canvas.clientHeight || 1;
+        this.onLabelPosition({
+          x: Math.round(nx * gl.drawingBufferWidth / dprX),
+          y: Math.round(ny * gl.drawingBufferHeight / dprY),
+          memberIndex: this.targetMemberIndex
+        });
+      }
+    }
   }
 
   #updateCameraMatrix() {
@@ -1124,6 +1151,7 @@ export default function InfiniteMenu({
   const sketchRef = useRef(null);
   const [activeItem, setActiveItem] = useState(null);
   const [isMoving, setIsMoving] = useState(false);
+  const [labelPos, setLabelPos] = useState(null);
   const [webglSupported, setWebglSupported] = useState(true);
 
   useEffect(() => {
@@ -1164,7 +1192,13 @@ export default function InfiniteMenu({
           handleActiveItem,
           setIsMoving,
           null,
-          scale
+          scale,
+          pos => {
+            setLabelPos(prev => {
+              if (prev && prev.x === pos.x && prev.y === pos.y && prev.memberIndex === pos.memberIndex) return prev;
+              return pos;
+            });
+          }
         );
         sketchRef.current = sketch;
 
@@ -1257,7 +1291,20 @@ export default function InfiniteMenu({
           })}
         </div>
       ) : (
-        <canvas id="infinite-grid-menu-canvas" ref={canvasRef} aria-hidden="true" />
+        <>
+          <canvas id="infinite-grid-menu-canvas" ref={canvasRef} aria-hidden="true" />
+          {labelPos && activeItem && (
+          <div
+            className="infinite-menu-member-label"
+            style={{ left: labelPos.x, top: labelPos.y }}
+            aria-hidden="true"
+          >
+            {isEn
+              ? (activeItem.nameEn || activeItem.titleEn || activeItem.name || activeItem.title)
+              : (activeItem.name || activeItem.title)}
+          </div>
+        )}
+        </>
       )}
 
       {activeItem && (

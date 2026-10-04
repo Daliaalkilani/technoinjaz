@@ -28,6 +28,29 @@
   cursor: grabbing;
 }
 
+/* اسم العضو المستقر: بلسان بجانب صورته على الكرة */
+.infinite-menu-member-label {
+  position: absolute;
+  transform: translate(-50%, 0);
+  margin-top: 18px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(10, 15, 25, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 3;
+  transition: opacity 0.25s ease;
+}
+.infinite-menu-member-label:dir(rtl),
+[dir='rtl'] .infinite-menu-member-label {
+  font-family: var(--font-arabic);
+}
+
 /* بطاقة العضو النشط بجانب الدائرة ثلاثية الأبعاد */
 .active-member-card {
   position: absolute;
