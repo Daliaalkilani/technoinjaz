@@ -324,40 +324,12 @@
   border-radius: 8px 0 0 8px;
 }
 
+/* Tables: the card (border, radius, background, separators, scroll) is
+   .md-table-wrap in globals.css. No border/radius/overflow/collapse on the
+   <table> itself — that combination is what clipped the header and left a
+   dead zone beside the rows. */
 .markdown-prose table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 28px 0;
   font-size: 14px;
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-[data-theme="light"] .markdown-prose table {
-  border-color: rgba(0, 0, 0, 0.08);
-}
-
-.markdown-prose th,
-.markdown-prose td {
-  padding: 10px 14px;
-  text-align: right;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-[dir="ltr"] .markdown-prose th,
-[dir="ltr"] .markdown-prose td {
-  text-align: left;
-}
-
-.markdown-prose th {
-  background: rgba(255, 255, 255, 0.06);
-  font-weight: 700;
-  color: #38bdf8;
-}
-
-[data-theme="light"] .markdown-prose th {
-  background: rgba(0, 0, 0, 0.04);
 }
 
 .markdown-prose code {
