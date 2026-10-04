@@ -12,1100 +12,346 @@ Suggested Slug: ai-image-classification
 
 # How Does AI Image Classification Work? From CNN to Vision Transformers
 
-**Image Classification is a computer vision task that aims to assign one or more categories to an entire image based on its visual content.**  
-A model might take an image as input and output, for example:
+**Image Classification is a computer vision task that aims to assign one or more categories to an entire image based on its visual content.** An image goes into the model, and out comes a distribution of scores over the known categories, such as 0.91 for cat, 0.07 for dog, and 0.02 for other.
 
-```text
-cat: 0.91
-dog: 0.07
-other: 0.02
-```
+But building a reliable classification system does not begin with choosing a neural network. The real path is an integrated system that starts before the first line of model code, specifically with the **data**: collecting it, then **cleaning and labeling** it, the stage that sets the ceiling on final performance more than any later architectural decision, because label noise and sampling bias flow directly into the model's behavior. Next, the data is split into **training, validation, and test** sets with a strict separation that prevents information leakage, so the test remains an honest measure of performance the model was never tuned on. Then comes **preprocessing and augmentation**, which standardize sizes and lighting and generate synthetic variations that curb the model's tendency to memorize training examples.
 
-But building a reliable classification system does not start with merely picking a neural network.
+Only after these preparations is the **pretrained model or backbone** chosen and put through **training or fine-tuning** on the task's data. And the work does not end with the first high accuracy: there is an **evaluation stage** with metrics that respect class balance, then **probability calibration and error analysis** to expose real failure patterns instead of settling for a single aggregate number. Finally, the system moves into **deployment** and continuous **monitoring**, because the production data distribution gradually drifts from the training data, which makes periodic retraining part of the system's design rather than an emergency measure.
 
-The real path is closer to an integrated system that begins before any line of neural-network code. Everything starts with the **data**: collecting it and then **cleaning and labeling** it — the stage that sets the ceiling on final performance more than any later architectural decision, because label noise and sampling bias flow straight into model behavior. The data is then split into **training, validation, and test sets** with separation strict enough to prevent information leakage, so the test set remains an honest measure of generalization. Next comes **preprocessing and augmentation**, which standardize sizes and lighting and produce synthetic variations that make the model less prone to memorizing training examples.
-
-Only after this preparation is the **model or pretrained backbone** chosen and put through **training or fine-tuning**, where weights are adjusted on task data. The work does not end at the first high accuracy: an **evaluation** stage with metrics appropriate to class balance follows, then **probability calibration and error analysis** to reveal real failure patterns instead of resting on a single aggregate number. Finally the system passes through **deployment** and continuous **monitoring**, because production data drifts gradually away from training data, making periodic retraining part of the design rather than an emergency measure.
-
-And the most important point:
+Above all of this stands one basic truth:
 
 > **The model does not "understand" the image the way a human does; it learns numerical representations that help it link visual patterns to specific categories.**
 
-# What Is the Difference Between Image Classification, Object Detection, and Segmentation?
+## Classification and Its Neighbors: Detection, Segmentation, and Face Recognition
 
-These tasks are often confused.
+Computer vision tasks are often confused with one another, even though each asks a different question and produces a different output:
 
-## Image Classification
+| Task | The Question It Answers | Output |
+|---|---|---|
+| Image Classification | What is in the image? | One category for the whole image, such as "cat" |
+| Object Detection | What objects are present, and where are they? | A category, Bounding Box, and confidence score per object |
+| Image Segmentation | Which pixels belong to which object or region? | A pixel-level mask |
 
-The question:
-
-> What is in the image?
-
-Example:
-
-```text
-Image → "cat"
-```
-
-The output is a category for the whole image.
-
-## Object Detection
-
-The question:
-
-> What objects are present, and where are they?
-
-The output:
-
-- A category.
-- A Bounding Box.
-- A confidence score.
-
-Example:
-
-```text
-Person → box
-Car → box
-Traffic light → box
-```
+In Object Detection, for example, the model may identify a person, a car, and a traffic light in the same scene and draw a bounding box around each.
 
 ![A desk with a laptop, bottles, a cup, a bowl, and a chair, with a colored bounding box around each object labeled with its class as detected by a YOLOv3 model](/images/articles/body/ai-image-classification-4.avif "Object Detection with YOLOv3: the output is not a single category for the image, but a category plus a Bounding Box for each object such as laptop, bottle, cup, and chair — Source: MTheiler, Wikimedia Commons, CC BY-SA 4.0")
 
-## Image Segmentation
+**Face Recognition**, meanwhile, is not just general image classification; its question is usually "Does this face belong to a specific identity?", it relies on representations and identity matching, and it carries different privacy and security implications. That is why the success of an Image Classifier should not be taken as automatic evidence that an Object Detector or a face recognition system will succeed.
 
-The question:
+## How Does a Computer See an Image?
 
-> Which Pixels belong to which object or region?
+To a computer, a digital image is a matrix of values. An RGB image can be represented roughly as height × width × 3 channels, with each pixel holding values for the intensity of red, green, and blue.
 
-The output is a pixel-level Mask.
+Before deep learning, the engineer had to convert these raw values into hand-designed features; today, deep models learn a large part of that representation directly from data. Understanding this shift is the key to understanding the whole history of the field.
 
-## Face Recognition
+## From Handcrafted Features to Convolutional Networks
 
-Not just generic Image Classification.
+### The Classic Pipeline Before Deep Learning
 
-The question there is usually:
+The classic pipeline was staged and manual at its core. It began by extracting **hand-designed features** through filters and engineering algorithms carefully crafted by researchers, turning raw pixels into a compact **feature vector** that summarized what was deemed important, such as edges, corners, and textures. That vector was then fed to a traditional **classifier** that learned the boundaries between classes in feature space. The quality of the entire system hinged on the engineer's skill in designing features; any pattern the descriptor failed to capture was simply lost before it reached the classifier.
 
-> Does this face belong to a specific identity?
+Among the best-known feature descriptors are HOG, SIFT, LBP, and Gabor features, and among the classifiers commonly used with them are SVM, Logistic Regression, KNN, and Random Forest.
 
-It relies on identity representations and matching, with different privacy and security implications.
+### A Classic Example: HOG + SVM
 
-So the success of an Image Classifier should not be taken as automatic proof that an Object Detector or Face Recognition system will succeed.
+HOG summarizes the directions of gradients and edges in an image and converts them into a feature vector, after which an SVM learns a boundary separating the classes. This methodology is still useful in some projects, when data is scarce, the problem is relatively simple, compute is limited, the features are well understood, and we need a small, fast model. But it remains more dependent on manual feature engineering.
 
-# How Does a Computer See an Image?
+### What Did CNNs Change?
 
-A digital image is a matrix of values.
+**Convolutional Neural Networks — CNNs** made it possible to learn features during training itself. Instead of a human designing features and passing them to a classifier, the image now goes straight into a network that learns its own features and then classifies them.
 
-An RGB image can be approximated as:
-
-```text
-Height × Width × 3 channels
-```
-
-Each Pixel contains values representing the intensity of:
-
-- Red.
-- Green.
-- Blue.
-
-Before deep learning, the engineer tried to convert these raw values into hand-designed Features.
-
-Today, deep models learn a large part of the representation directly from the data.
-
-# How Did Image Classification Work Before Deep Learning?
-
-The classical pipeline was usually staged and manual at its core: it began with **hand-crafted feature extraction** from the image using filters and algorithms carefully designed by researchers, transforming raw pixels into a compressed **feature vector** summarizing what was considered important — edges, corners, textures. That vector was then fed into a **conventional classifier** that learned the decision boundaries between classes in feature space. The quality of the whole system was hostage to the engineer's skill in feature design: any pattern the descriptor failed to capture simply leaked out of the system before it ever reached the classifier.
-
-Among the best-known Feature descriptors:
-
-- HOG.
-- SIFT.
-- LBP.
-- Gabor features.
-
-Then a classifier such as:
-
-- SVM.
-- Logistic Regression.
-- KNN.
-- Random Forest.
-
-## Example: HOG + SVM
-
-HOG summarizes Gradient orientations and edges.
-
-It then turns the image into a Feature Vector.
-
-After that, an SVM learns a boundary separating the classes.
-
-This methodology is still useful in some projects when:
-
-- Data is scarce.
-- The problem is relatively simple.
-- Compute is limited.
-- The Features are well understood.
-- We need a small, fast model.
-
-But it depends more heavily on manual Feature engineering.
-
-# What Did CNNs Change?
-
-**Convolutional Neural Networks — CNNs** made it possible to learn Features during training itself.
-
-Instead of:
-
-```text
-Human-designed features → classifier
-```
-
-we now have:
-
-```text
-Image → learned features → classifier
-```
-
-## The Convolutional Layer
-
-It applies Kernels/Filters to local regions of the image.
-
-In early layers, responses may appear for patterns such as:
-
-- Edges.
-- Orientations.
-- Contrasts.
-- Textures.
-
-As depth increases, the representations become more tied to object structure.
+The heart of these networks is the **convolutional layer**, which applies kernels/filters to local regions of the image. In early layers, responses may emerge to simple patterns such as edges, orientations, contrasts, and textures, and as depth increases the representations become more tied to the structure of objects.
 
 ![Diagram of a typical convolutional neural network: an input image followed by convolution and pooling layers and a fully connected layer producing outputs](/images/articles/body/ai-image-classification-1.avif "Typical CNN structure: convolution layers produce feature maps, followed by downsampling and a classification layer — Source: Aphex34, Wikimedia Commons, CC BY-SA 4.0")
 
-But beware the oversimplified sentence:
+But beware of the popular simplification: "The first layer recognizes edges, the second recognizes eyes, and the third recognizes the face." It is useful for teaching, but it is not a fixed rule for every network and every dataset.
 
-> "The first layer recognizes edges, the second eyes, the third faces."
+### Pooling: Shrinking Spatial Dimensions
 
-It can be pedagogically useful, but it is not a fixed rule for every network and every Dataset.
-
-# What Is the Role of Pooling?
-
-Pooling reduces the spatial dimensions of some Feature Maps.
-
-For example:
-
-- Max Pooling.
-- Average Pooling.
+Pooling reduces the spatial dimensions of some feature maps, its best-known forms being Max Pooling and Average Pooling.
 
 ![A numerical example of Max Pooling with a 2×2 window converting a 6×6 matrix into 3×3 by taking the maximum value from each window](/images/articles/body/ai-image-classification-2.avif "An example of Max Pooling with a 2×2 window: the largest value in each window is taken, shrinking the map from 6×6 to 3×3 — Source: Daniel Voigt Godoy, Wikimedia Commons, CC BY 4.0")
 
-It may help with:
+This helps reduce computation, indirectly enlarge the receptive field, and make some representations less sensitive to small local changes. But not all modern networks rely on traditional pooling in the same way; some use strided convolutions or other architectures.
 
-- Reducing the amount of computation.
-- Indirectly increasing the Receptive Field.
-- Making some representations less sensitive to small local variations.
+### The Classifier Head: Not Necessarily Fully Connected Layers
 
-But not all modern networks rely on traditional Pooling in the same way; some use Strided Convolutions or other architectures.
+It is often said that every CNN ends with fully connected layers, which is true of many traditional architectures but not a general rule. Modern models may use Global Average Pooling, a linear classification head, or attention heads. The essential concept, then, is the presence of a **Classifier Head** that turns the representation into class scores, not the necessity of several fully connected layers.
 
-# Does Every CNN End in Fully Connected Layers?
+### ResNet: How Deep Training Became Possible
 
-No.
-
-This description is correct for many traditional architectures, but it is not a universal rule.
-
-Modern models use, for example:
-
-- Global Average Pooling.
-- A linear classification head.
-- Attention heads.
-
-The important concept is the presence of a **Classifier Head** that converts a Representation into Scores for the classes — not the necessity of multiple Fully Connected layers.
-
-# What Is ResNet and Why Was It Important?
-
-As networks grew deeper, a problem emerged: deeper networks do not automatically become easier to train.
-
-ResNet introduced the idea of **Residual Connections**:
+As networks grew deeper, a striking problem emerged: deeper networks do not automatically become easier to train. ResNet introduced the idea of **Residual Connections**, in which a layer learns the residual and the input is added to it directly:
 
 ```math
 y = F(x) + x
 ```
 
-instead of each layer learning a full Transform from scratch.
+instead of every layer learning a full transform from scratch. This design helped train very deep networks, and in the original ResNet paper an **ensemble** of residual networks achieved 3.57% error in the ImageNet 2015 competition.
 
-This design helped train very deep networks.
+Precision is needed here:
 
-In the original ResNet paper, an **Ensemble** of residual networks achieved a 3.57% error rate in the ImageNet 2015 competition.
+> The 3.57% figure does not mean any single ResNet achieved "96.43% Accuracy" on every kind of image, nor does it mean AI has become better than humans at vision in general.
 
-This point requires precision:
+It is the result of a specific benchmark, within a specific metric, architecture, and experiment.
 
-> The 3.57% figure does not mean that any single ResNet achieved "96.43% Accuracy" on every kind of image, nor that AI became better than humans at vision in general.
+## Beyond CNNs: Transformers and Foundation Models
 
-It is the result of a specific Benchmark, within a specific Metric, architecture, and experiment.
+CNNs remain very powerful, but modern image classification no longer rests on them alone, and the **Vision Transformer — ViT** was one of the most important shifts.
 
-# What Came After CNNs?
+### How Does a Vision Transformer Work?
 
-CNNs are still very powerful, but modern image classification is no longer built on them alone.
+The original ViT idea is conceptually simple: the image is cut into small patches, say 16×16 pixels, and each patch is flattened and passed through a linear projection to become an **embedding** in the model's processing space, just as a word becomes a token in language models. These embeddings are then treated as a token sequence that flows through the Transformer layers, where self-attention lets each patch "look" at every other patch and decide which ones matter for understanding the whole scene. Finally, the final representation, often via a dedicated classification token, is used to assign the image to its category.
 
-One of the most significant shifts was the **Vision Transformer — ViT**.
-
-# How Does a Vision Transformer Work?
-
-The original ViT idea is conceptually simple:
-
-1. Split the image into Patches.
-2. Convert each Patch into a Vector.
-3. Treat the Patches as a sequence of Tokens.
-4. Pass them through a Transformer.
-5. Use the final Representation for classification.
-
-In practice, the image is sliced into small patches — 16×16 pixels, for instance — and each patch is flattened and passed through a linear projection to become an **embedding** in the model's processing space, much as a word becomes a token in language models. These embeddings are then treated as a sequence of tokens flowing through the Transformer's layers, where self-attention lets every patch "look at" all the others and decide which ones matter for understanding the scene as a whole. Finally, the final representation — often via a dedicated classification token — is used to assign the correct class.
-
-The ViT paper showed that a pure Transformer can achieve very strong performance in Image Classification when Pre-trained on large data and then transferred to other Benchmarks.
-
-This widened the field from:
-
-> The CNN is the only natural architecture for vision
-
-to:
-
-> CNNs, Transformers, and others can all learn effective Visual Representations.
+The ViT paper showed that a pure Transformer can achieve very strong image classification performance when pretrained on large data and then transferred to other benchmarks. The landscape thus widened from the conviction that CNNs are the only natural architecture for vision to the recognition that CNNs, Transformers, and others can all learn effective visual representations.
 
 ![A Vision Transformer diagram: splitting the image into patches, embedding them with positional encoding, then passing them through attention layers to the classification head](/images/articles/body/ai-image-classification-3.avif "Vision Transformer structure: the image is split into patches treated as a sequence of Tokens, then classified by the cls token — Source: Aston Zhang et al. (Dive into Deep Learning), Wikimedia Commons, CC BY-SA 4.0")
 
-# Is the Vision Transformer Always Better Than a CNN?
+### Is a Vision Transformer Always Better than a CNN?
 
-No.
+No. The choice depends on data size, the availability of pretraining, resources, latency, the target device, the required accuracy, and model size. A small CNN can be excellent for an edge application, while a ViT or foundation model may win when strong pretraining is available or a broader representation is needed. There is no "best architecture" independent of the use case.
 
-The choice depends on:
+### From Closed Sets to Open Vocabularies
 
-- Data size.
-- Pretraining.
-- Resources.
-- Latency.
-- The target device.
-- The required accuracy.
-- Model size.
+Traditional classification is usually **closed-set**, meaning the classes are known during training, such as cat, dog, horse, and car, and the classifier head learns only those classes. But modern image–text models such as **CLIP** changed the way of thinking.
 
-A small CNN may be excellent for an Edge application.
+### CLIP: Classification Through Language
 
-A ViT or Foundation Model may be better when we have strong Pretraining or need a broader Representation.
+CLIP learns to link images and text within a shared representation space. Instead of a fixed classifier head, an image can be compared with text prompts such as "a photo of a cat," "a photo of a dog," and "a photo of a bicycle," and the closest prompt chosen. This enabled what is called **Zero-shot classification** on multiple benchmarks without direct supervised training on each dataset.
 
-There is no "best Architecture" independent of the Use Case.
+But that does not mean zero-shot automatically suits every sensitive application; performance depends on the classes, the prompt wording, the domain, the data distribution, and the biases embedded in the pretraining data.
 
-# What Is the Difference Between Closed-set and Open-vocabulary Classification?
+### DINOv2: Visual Features Without Labels
 
-Traditional classification is mostly **Closed-set**.
+DINOv2 is an example of **self-supervised visual pretraining**, in which the model learns general visual features from many images without relying on traditional labels for each one. That representation can then be used for different tasks, including classification, retrieval, dense prediction, and transfer. This reflects a pivotal trend in computer vision:
 
-That is, the categories are known during training:
+> Instead of training a separate model from scratch for every project, we increasingly start from a Visual Foundation Model and then adapt it to the task.
 
-```text
-cat
-dog
-horse
-car
-```
+## Building the Classification Pipeline Step by Step
 
-The Classifier head learns only these categories.
+Having surveyed the architectures, we return to the system sketched in the introduction and build it stage by stage.
 
-Modern image-text models such as **CLIP** changed the way of thinking.
+### Step One: Define the Task Precisely
 
-# How Does CLIP Work for Classification?
+The first decision is the type of classification: is it **Single-label Classification**, where each image carries one category, such as cat or dog, or **Multi-label Classification**, where an image may carry more than one label, such as containing a person, a bicycle, and a helmet at once? The difference is fundamental, because the loss function, the output activation, and the metrics all differ between the two.
 
-CLIP learns to link:
+### Step Two: Collect the Data
 
-- Images.
-- And text.
+Image count alone is not enough. The decisive questions are: Do the images represent the real operating environment? Do they span different cameras, different lighting, and different ages or groups? Do they cover rare cases and diverse backgrounds? And are the labels correct in the first place? A hundred thousand biased images can be worse than a smaller dataset that truly represents the problem.
 
-inside a shared Representation space.
+### Step Three: Separate Training, Validation, and Test
 
-Instead of a fixed Head only, an image can be compared with Text prompts such as:
+The **Train** set is used to update weights, the **Validation** set to choose hyperparameters, the checkpoint, the threshold, and the model itself, and the **Test** set for final evaluation alone.
 
-```text
-"a photo of a cat"
-"a photo of a dog"
-"a photo of a bicycle"
-```
+One of the most dangerous mistakes here is **Data Leakage**. In medical imaging, for example, if multiple images of the same patient are spread across training and test, performance may look much higher than it really is. The correct split may therefore be at the level of the patient, device, site, or time period, depending on the task.
 
-and then choosing the text closest to the image.
+### Step Four: Preprocessing
 
-This enabled what is called **Zero-shot classification** across multiple Benchmarks without direct Supervised training on each Dataset.
+Preprocessing may include resizing, cropping, normalization, color conversion, and artifact removal. There is no single normalization that is right for everyone; if you use a pretrained model, you most likely need to respect the preprocessing it was trained with.
 
-But this does not mean Zero-shot is automatically suitable for every sensitive application.
+### Step Five: Data Augmentation
 
-Performance depends on:
+Data augmentation may include random cropping, rotation, flipping, color jitter, blur, random erasing, and MixUp/CutMix in some projects. Its goal is not merely to "increase the number of images," but to expose the model to plausible variations it may encounter at runtime.
 
-- The categories.
-- The Prompt.
-- The Domain.
-- The data distribution.
-- The biases present in Pretraining.
+Augmentation becomes dangerous when it changes a label's meaning: horizontally flipping an X-ray or an image of an organ may change the anatomical side (laterality), and large rotations may be unrealistic for documents or specific orientations. The rule here:
 
-# What Is DINOv2 and Why Does It Matter?
+> Augmentation must preserve the meaning of the class, not be random just to increase data.
 
-DINOv2 is an example of **Self-supervised visual pretraining**.
+### Step Six: Choose a Baseline
 
-The idea is to learn general Visual Features from many images without relying on traditional Labels for each image.
+Start with something simple: Logistic Regression on ready-made features, an SVM, a pretrained ResNet18, a MobileNet/EfficientNet-class model, or a small ViT. The goal is to find out whether any added complexity brings real value.
 
-The Representation can then be used for different tasks, including:
+### Step Seven: Transfer or Train from Scratch?
 
-- Image Classification.
-- Retrieval.
-- Dense prediction.
-- Transfer.
+In many projects, Transfer Learning is the practical choice, and it has two common styles. The first is the **Fixed Feature Extractor**, freezing most of the backbone and training only the classification head. The second is **Fine-tuning**, starting from pretrained weights and then updating some or all of the model's layers.
 
-This reflects an important trend in computer vision:
+So transfer does not always mean "freeze the early layers and train only the last layer"; that is one method among several. Full fine-tuning may be better when there is enough data, the domain is different, and a suitable learning rate is used.
 
-> Instead of training a separate Model from scratch for every project, we increasingly start from a Visual Foundation Model and then adapt it to the task.
+### Step Eight: Understand What the Model Outputs
 
-# How Do You Build an Image Classification Pipeline?
+A multi-class classifier usually produces raw values called **logits**, such as `[4.2, 1.1, -0.4]`, which a Softmax function then turns into values summing to 1, such as `[0.94, 0.043, 0.017]`. But there is an important caveat:
 
-## 1. Define the Task Precisely
+> **A Softmax score is not necessarily a well-calibrated probability.**
 
-What do you want:
+The model may be overconfident, which is why high-stakes applications need **calibration** instead of interpreting 0.94 as true 94% confidence.
 
-### Single-label Classification?
+## How Do We Measure a Classifier's Performance?
 
-One category per image:
+### Overall Accuracy and Its Trap
 
-```text
-cat OR dog
-```
-
-### Multi-label Classification?
-
-More than one Label for the image:
-
-```text
-person
-bicycle
-helmet
-```
-
-The difference matters because:
-
-- The Loss differs.
-- The Output activation differs.
-- The Metrics differ.
-
-# 2. Collect the Data
-
-The number of images alone is not enough.
-
-Ask:
-
-- Do the images represent the real operating environment?
-- Are there different camera devices?
-- Different lighting?
-- Different ages/categories?
-- Rare cases?
-- Varied backgrounds?
-- Are the Labels correct?
-
-100,000 biased images may be worse than a smaller Dataset that actually represents the problem.
-
-# 3. Separate Train, Validation, and Test
-
-## Train
-
-For updating the weights.
-
-## Validation
-
-For choosing:
-
-- Hyperparameters.
-- Checkpoint.
-- Threshold.
-- Model.
-
-## Test
-
-For final evaluation.
-
-One of the most dangerous mistakes is **Data Leakage**.
-
-For example, in Medical Imaging:
-
-If multiple images of the same patient are spread between Train and Test, performance can appear higher than it actually is.
-
-The right Split may need to be at the level of:
-
-- Patient.
-- Device.
-- Site.
-- Time period.
-
-depending on the task.
-
-# 4. Preprocessing
-
-It may include:
-
-- Resize.
-- Crop.
-- Normalization.
-- Color conversion.
-- Artifact removal.
-
-But there is no single "correct" Normalization for everyone.
-
-If you use a Pretrained model, the Preprocessing it was trained with must usually be respected.
-
-# 5. Data Augmentation
-
-It can include:
-
-- Random crop.
-- Rotation.
-- Flip.
-- Color jitter.
-- Blur.
-- Random erasing.
-- MixUp/CutMix in some projects.
-
-Its goal is not just "increasing the number of images," but exposing the model to plausible variations it may encounter at runtime.
-
-## When Is Augmentation Risky?
-
-When it changes the meaning of the Label.
-
-Example:
-
-Flipping a medical X-ray or organ image horizontally may change Laterality.
-
-Or a large Rotation may be unrealistic for documents and specific orientations.
-
-So:
-
-> Augmentation must preserve the meaning of the category; it should not be random just to multiply the data.
-
-# 6. Choose a Baseline
-
-Start with something simple.
-
-Such as:
-
-- Logistic Regression on Features.
-- SVM.
-- Pretrained ResNet18.
-- A MobileNet/EfficientNet-class model.
-- A small ViT.
-
-The goal is to know whether the added complexity brings value.
-
-# 7. Transfer Learning or Training from Scratch?
-
-In many projects, Transfer Learning is the practical choice.
-
-Two common approaches exist:
-
-## Fixed Feature Extractor
-
-Freeze most of the Backbone and train the Classification head.
-
-## Fine-tuning
-
-Starting from Pretrained weights, then updating some or all of the model's layers.
-
-So Transfer Learning does not always mean:
-
-> "We freeze the first layers and train only the last layer."
-
-That is one method.
-
-Full Fine-tuning may be better when:
-
-- We have enough data.
-- The Domain is different.
-- We use a suitable Learning Rate.
-
-# 8. What Does the Model Output?
-
-In a Multi-class classifier, it usually produces **Logits**.
-
-Such as:
-
-```text
-[4.2, 1.1, -0.4]
-```
-
-Then Softmax converts them into values summing to 1:
-
-```text
-[0.94, 0.043, 0.017]
-```
-
-But it is important to note:
-
-> **A Softmax score is not necessarily a well-calibrated Probability.**
-
-The model may be Overconfident.
-
-So in high-stakes applications we may need **Calibration** instead of interpreting 0.94 as genuine 94% confidence.
-
-# How Do We Measure an Image Classifier's Performance?
-
-## Accuracy
+Accuracy is defined as follows:
 
 ```math
 \text{Accuracy} = \frac{\text{correct predictions}}{\text{all predictions}}
 ```
 
-Suitable when the categories are relatively balanced and error costs are similar.
+It suits cases where classes are relatively balanced and error costs are similar, but it can be misleading. Take a dataset with 990 healthy images and 10 diseased images: a model that says "healthy" for every image achieves 99% accuracy, yet its Recall for the diseased cases is 0%, meaning it fails the medical goal completely.
 
-But it can be misleading.
+### Precision, Recall, and F1
 
-Example:
-
-A Dataset containing:
-
-- 990 healthy images.
-- 10 diseased images.
-
-A model that says "healthy" for every image:
-
-```text
-Accuracy = 99%
-```
-
-Yet:
-
-```text
-Recall for the diseased cases = 0%
-```
-
-The system fails the medical objective.
-
-# Precision
-
-It answers:
-
-> Of everything the model predicted as positive, how much was correct?
+**Precision** answers the question: of everything the model predicted as positive, how much was correct?
 
 ```math
 \text{Precision} = \frac{TP}{TP + FP}
 ```
 
-# Recall
-
-It answers:
-
-> Of all the true positive cases, how many did the model detect?
+**Recall** answers the question: of the truly positive cases, how many did the model find?
 
 ```math
 \text{Recall} = \frac{TP}{TP + FN}
 ```
 
-# F1 Score
-
-The harmonic mean of Precision and Recall:
+The **F1 Score** is the harmonic mean of the two, useful when we need a balance between them:
 
 ```math
 F_1 = \frac{2 \times \text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}
 ```
 
-Useful when we need a balance between the two.
+### Macro or Weighted F1?
 
-# Macro or Weighted F1?
+In multi-class classification, **Macro F1** computes F1 for each class and then gives them all equal weight, which is useful when rare classes matter. **Weighted F1** weighs each class by its number of samples, and may thereby hide poor performance on a small class.
 
-In Multiclass classification:
+### The Confusion Matrix
 
-## Macro F1
-
-You compute the F1 for each Class and then give it equal weight.
-
-Useful when rare categories matter.
-
-## Weighted F1
-
-It weights each category by its number of Samples.
-
-It can hide poor performance on a small class.
-
-# Confusion Matrix
-
-One of the most valuable tools because it reveals **which class the model confuses with which class**.
-
-We might see, for example:
-
-```text
-wolf → dog
-truck → bus
-melanoma → benign lesion
-```
-
-This information is more important than a single Accuracy figure.
+The Confusion Matrix is one of the most valuable tools, because it reveals **which class the model confuses with which**. We may discover that it confuses wolves with dogs, trucks with buses, and melanoma with a benign lesion, and this information matters far more than a single accuracy figure.
 
 ![An illustrative confusion matrix for three classes — dog, wolf, and cat — showing 18 wolves classified as dogs despite 88% overall accuracy](/images/articles/body/ai-image-classification-5.avif "Confusion Matrix: rows are the true class and columns are the model's prediction; the wolf → dog confusion drops the wolf class Recall to 62% while overall Accuracy looks good (illustrative figures) — illustration: Techno Enjaz")
 
-# What About ROC-AUC and PR-AUC?
+### ROC-AUC and PR-AUC
 
-They can be especially useful in Binary Classification.
+These metrics can be useful especially in binary classification, but the choice of metric should rest on class imbalance, the cost of false positives, the cost of false negatives, the threshold, and the nature of the application. On highly imbalanced data, a Precision-Recall curve may be more informative than accuracy alone.
 
-But the choice of Metric should depend on:
+## From the Dataset to the Real World
 
-- Class imbalance.
-- The cost of a False Positive.
-- The cost of a False Negative.
-- Threshold.
-- The application.
+### Distribution Shift
 
-In a highly imbalanced Dataset, the Precision-Recall curve may be more informative than Accuracy alone.
+Success on the test set is not enough, because of the problem of **Distribution Shift**. A model may train on images from professional cameras and then run on a cheap phone, train on data from one hospital and then be used in another, or train in good lighting and then operate at night. It must therefore be tested on different devices, locations, and times, under blur, lighting changes, compression, and occlusion, and on the subgroups that matter.
 
-# Don't Just Test the Dataset; Test the Real World
+### Confidence Is Not Certainty
 
-Success on a Test split is not enough.
+A model may output 0.99 for dog while the image lies entirely outside the training distribution: an X-ray in front of a model trained on animals, an odd cartoon drawing, or a type of disease it has never seen. Good systems therefore sometimes need out-of-distribution detection, abstention, human review, confidence thresholds, and calibration. The best decision may be "I don't know enough" rather than a wrong class with high confidence.
 
-There is the problem of **Distribution Shift**.
+## Deep Learning or Classic Machine Learning?
 
-The model may train on:
+Academic sources often contrast the two approaches sharply, but reality depends more on the task:
 
-- Professional cameras.
+| Classic ML Is Preferable When | Deep Learning Usually Wins When |
+|---|---|
+| The dataset is very small | The visual data is complex |
+| The features are well understood and strong | Pretrained models are available |
+| Resources are limited | We need to learn features |
+| The model needs to be simple | Visual variation is high |
+| Latency must be extremely low | The scale is large |
+| We need a relatively direct explanation | |
 
-then operate on:
+Most importantly, Transfer Learning has greatly narrowed the gap in data requirements. The claim that deep learning always needs millions of images was truer when thinking centered on training from scratch; today you can start from a pretrained ResNet or ViT, a self-supervised model, or an image–text model, and then fine-tune on a smaller dataset. But "smaller" does not mean any number of images will do; quality, representativeness, and similarity to the original domain remain decisive.
 
-- A cheap phone.
+## Applications of Image Classification
 
-Or train on:
+### Medical Imaging
 
-- One hospital.
+Models may assist in reading mammograms, retinal images, skin lesions, pathology slides, X-rays, MRI, and CT. But research performance must be kept separate from clinical deployment.
 
-then be used in:
+A 2020 Nature study on breast cancer screening showed, on the study's dataset, an absolute reduction in false positives of **5.7% in the United States and 1.2% in the United Kingdom**, and a reduction in false negatives of **9.4% and 2.7%** respectively. These are the results of a specific study, not a statement that "AI is more accurate than doctors at every diagnosis," and an addendum was later published to add detail on the method's reproducibility. That is why any medical system needs external validation, clinical validation, regulatory review where applicable, continuous monitoring, and human oversight.
 
-- Another hospital.
+### Vehicles and Autonomous Driving
 
-Or train on:
+Computer vision matters for vehicles, but **Image Classification alone is not enough**; a vehicle usually needs object detection, segmentation, tracking, depth estimation, sensor fusion, planning, and control.
 
-- Good lighting.
+The popular phrase "94% of crashes are caused by human error" must also be handled with care. NHTSA documents clarify that the "Critical Reason" is the last failure in the chain before the crash, **and is neither the cause of the crash nor an assignment of fault**. So it is not valid to turn such a figure into a claim that machine vision systems will automatically prevent 94% of crashes.
 
-then work at night.
+### Manufacturing
 
-You must test:
+Classification is used for defect classification, product quality control, sorting, part-type identification, and surface-condition monitoring. In its simplest form, a camera captures an image of the part on the production line and the model classifies it directly into one of the defined categories: intact, scratched, cracked, or surface-contaminated, with the verdict based on a confidence threshold set by the production plan. This is enough when the question is "Is the part acceptable?", but if the facility needs to determine **where** the defect is and its boundaries on the surface, classification becomes the wrong tool, and moving to Detection or Segmentation is the better solution.
 
-- Different devices.
-- Different Locations.
-- Different times.
-- Blur.
-- Lighting.
-- Compression.
-- Occlusion.
-- Important Subgroups.
+### Agriculture
 
-# What Is the Difference Between Confidence and Uncertainty?
+In agriculture, classification is used to identify plant diseases, crop types, fruit ripeness, and produce quality, but the model must be tested on different cameras, under sunlight, in different environments, and on diverse plant varieties.
 
-The model may output:
+### Security and Surveillance
 
-```text
-dog = 0.99
-```
+Classification can be used here to categorize scenes, content, and visual events. **Face Recognition**, however, is a different and sensitive task, in which false matches, performance across demographic groups, consent or legal basis, data retention, and security must all be assessed. A model with high accuracy on a public dataset should not be taken as evidence of its suitability for a high-risk identity use.
 
-but the image may be outside the training Distribution.
+## Challenges, Robustness, and Interpretability
 
-Such as:
+### Data and Learning Challenges
 
-- An X-ray image for a model trained on animals.
-- A strange cartoon drawing.
-- A disease type it has never seen.
+Classification systems fail for many reasons, summarized in the table below:
 
-Good systems therefore sometimes need:
+| Challenge | What Happens |
+|---|---|
+| Label Quality | If labels are wrong, the model learns noise |
+| Class Imbalance | The model may ignore rare classes |
+| Shortcut Learning | It learns an unintended signal, such as a device mark, a background, or a marker on an X-ray instead of the disease itself, then collapses outside the dataset |
+| Domain Shift | A change in camera, location, or population can lower performance |
+| Spurious Correlations | The label may correlate with a side factor only in the training data |
 
-- Out-of-distribution detection.
-- Abstention.
-- Human review.
-- A Confidence threshold.
-- Calibration.
+### Adversarial Examples
 
-The best decision may be:
+Research has shown that specially designed perturbations can push models into wrong classifications with high confidence. But adversarial attacks are not just "invisible noise"; there are also physical adversarial patterns, patch attacks, and data poisoning, and defending against all of them is not a fully solved problem.
 
-> "I don't know well enough"
+Adversarial Training can increase robustness against certain families of attacks, but it may raise training cost, affect accuracy on clean data, and fail to generalize to every threat model. So choosing a defense must be preceded by a clear question:
 
-rather than a wrong Class with high confidence.
+> Who is the attacker? What can they do? And what do we want to protect?
 
-# Is Deep Learning Always Better Than Classic ML?
+### How Do We Understand the Model's Decision?
 
-No.
+Tools such as **Grad-CAM** can produce an approximate heatmap of the regions that contributed to a prediction within some CNN-based architectures. This is useful for debugging, detecting shortcut learning, and reviewing what the model actually looks at. But:
 
-The academic literature compares them sharply, but reality depends much more on the task.
+> A heatmap is not a complete causal explanation, nor proof that the model "thought" this way like a human.
 
-## Classic ML may be better when:
+The explainability tool itself needs evaluation.
 
-- The Dataset is very small.
-- The Features are understood and strong.
-- Resources are limited.
-- The model needs simplicity.
-- Latency must be extremely low.
-- We need relatively direct interpretability.
+## Deploying on Edge Devices
 
-## Deep Learning is often better when:
+We may need to run classification on a phone, a camera, a Raspberry Pi-class device, or an embedded accelerator. Several tools serve this purpose, summarized in the table below:
 
-- The data is visually complex.
-- We have Pretrained models.
-- We need to learn Features.
-- Visual variations are numerous.
-- The Scale is large.
+| Technique | The Idea |
+|---|---|
+| Quantization | Reducing numerical precision, such as moving from FP32 to INT8 |
+| Pruning | Removing some low-importance weights or structures according to a defined method |
+| Knowledge Distillation | Training a smaller student model to benefit from a larger teacher |
+| Smaller Backbone | Sometimes the best optimization is choosing a smaller model from the start |
 
-And most importantly, Transfer Learning has greatly narrowed the gap in data requirements.
+Whatever the tool, you must measure accuracy, latency, RAM, model size, power consumption, and throughput, not FLOPs alone.
 
-# Does Deep Learning Always Need Millions of Images?
+## How Are Foundation Models Changing the Future of Classification?
 
-No.
+The field is shifting from a model trained only for fixed classes to a general visual representation that can be adapted to many tasks. **CLIP** links images and text and enables zero-shot classification in many cases, **DINOv2** learns general visual features in a self-supervised way, and **ViT-based pretrained models** can be fine-tuned or have their features used directly.
 
-That was truer when thinking about Training from scratch.
+These models reduce the need for training from scratch, but they do not remove the need for local validation, bias testing, data governance, and domain testing.
 
-Today you can start from:
+## How Do You Choose an Approach in Practice?
 
-- A Pretrained ResNet.
-- A Pretrained ViT.
-- A Self-supervised model.
-- An Image-text model.
+The simplified decision below links the nature of a project to the right starting point:
 
-then Fine-tune on a smaller Dataset.
+| Project Situation | Where to Start |
+|---|---|
+| Small dataset and a clear task | A pretrained CNN or ViT with Transfer Learning |
+| A small edge device | A mobile-oriented CNN, a small ViT, or a quantized model |
+| Constantly changing classes | Image-text models, embedding-based classification, or a retrieval-assisted approach |
+| A sensitive medical or industrial domain | Dataset quality, external validation, calibration, error analysis, human review, and monitoring |
+| Not enough labels | Self-supervised pretraining, Transfer Learning, Active Learning, weak supervision, or vision-language models |
 
-Of course, "smaller" does not mean any number of images will do.
+## A Checklist Before Launching a Classifier
 
-Quality, representativeness, and similarity to the original Domain still matter.
+Before a classifier reaches production, the following points should be confirmed, distributed across the stages of the system:
 
-# What Are the Main Applications of Image Classification?
+| Stage | What to Verify |
+|---|---|
+| Task definition | The task is truly Classification, not Detection/Segmentation, and the classes are clearly defined |
+| Data | Labels reviewed by specialists where needed, Train/Val/Test sets separated without leakage, and the test set represents the real world |
+| Modeling | A baseline exists, and class imbalance has been handled appropriately |
+| Evaluation | Metrics chosen according to the cost of error, the confusion matrix reviewed, and subgroup evaluation in place where needed |
+| Reliability | The model is calibrated if scores will be used as probabilities, its out-of-distribution behavior is known, and a human fallback exists for critical decisions |
+| Operations | Latency, power, and memory tested on the real device, post-deployment monitoring in place, and a retraining and versioning plan ready |
 
-## Medical Imaging
+## Conclusion
 
-Models may be used to assist with:
+Image classification no longer means an image going into a CNN and a label coming out. The modern system is an integrated whole built by accumulation rather than in a single step: it starts with **representative data** reflecting the real distribution the system will face, passes through **preprocessing and augmentation** that broaden training coverage, and then draws on a **pretrained visual representation** inside a CNN, ViT, or foundation model instead of learning everything from scratch. Then comes **fine-tuning** on the task's data, producing **probability scores** rather than rigid labels, which in turn undergo **calibration, metrics, and error analysis** that expose weaknesses before the user does. And at **deployment** the story does not end, as continuous **monitoring** tracks data drift and performance degradation and feeds an improvement loop that returns to the data once more.
 
-- Mammography.
-- Retinal images.
-- Skin lesions.
-- Pathology.
-- X-ray.
-- MRI.
-- CT.
+Historically, the field has traveled a long road: it began with hand-crafted features extracted by methods such as SIFT and HOG and fed to a classifier such as an SVM, then convolutional neural networks (CNNs) arrived to learn these features from the data itself, followed by deeper networks such as ResNet, then the Vision Transformer, which reduced the need for large volumes of labeled data through pretraining, until today we have reached self-supervised and multimodal vision-language foundation models. But the newest model is not automatically the best.
 
-But a distinction must be made between:
-
-> Research performance
-
-and:
-
-> Clinical deployment.
-
-A 2020 Nature study on breast cancer screening showed, on the study's Dataset, an absolute reduction in False Positives of **5.7% in the United States and 1.2% in the United Kingdom**, and a reduction in False Negatives of **9.4% and 2.7%**, respectively.
-
-These are results of a specific study, not a declaration that "AI is more accurate than doctors in every diagnosis."
-
-An Addendum was also later published to add detail on the reproducibility of the method.
-
-So any medical system needs:
-
-- External validation.
-- Clinical validation.
-- Regulatory review where appropriate.
-- Monitoring.
-- Human oversight.
-
-# Vehicles and Autonomous Driving
-
-Computer vision matters for vehicles, but **Image Classification alone is not enough**.
-
-A vehicle usually needs:
-
-- Object Detection.
-- Segmentation.
-- Tracking.
-- Depth.
-- Sensor fusion.
-- Planning.
-- Control.
-
-Also, the common phrase:
-
-> "94% of accidents are caused by human error"
-
-must be used with caution.
-
-NHTSA documents clarify that the "Critical Reason" is the last failure in the chain before the crash, **and is neither the cause of the crash nor an assignment of fault**.
-
-So a figure like this must not be turned into a claim that automated vision systems will automatically prevent 94% of accidents.
-
-# Manufacturing
-
-Classification can be used for:
-
-- Defect classification.
-- Product quality.
-- Sorting.
-- Part type.
-- Surface conditions.
-
-In its simplest form, a camera captures an image of the part on the production line and the model classifies it directly into one of the defined categories: acceptable, scratched, cracked, or surface-contaminated — with the decision resting on a confidence threshold tuned to the production plan. This capability suffices when the question is "is the part acceptable?", but if the facility needs to know **where** the defect is and what its extent is, classification becomes the wrong tool, and the right answer is to move to Detection or Segmentation.
-
-But if we need to localize the defect, Detection or Segmentation may be more suitable.
-
-# Agriculture
-
-Such as:
-
-- Plant disease classification.
-- Crop types.
-- Fruit ripeness.
-- Product quality.
-
-And the model must be tested on:
-
-- Different cameras.
-- Sunlight.
-- Different environments.
-- Different plant varieties.
-
-# Security and Surveillance
-
-Classification can be used for:
-
-- Scene classification.
-- Content.
-- Visual events.
-
-**Face Recognition**, on the other hand, is a different and sensitive task.
-
-It must be evaluated for:
-
-- False matches.
-- Demographic performance.
-- Consent/legal basis.
-- Retention.
-- Security.
-
-A model with high Accuracy on a public Dataset should not be considered evidence of its suitability for high-stakes identity use.
-
-# What Are the Challenges of Image Classification?
-
-## 1. Label Quality
-
-If the Labels are wrong, the model learns noise.
-
-## 2. Class Imbalance
-
-It may ignore rare categories.
-
-## 3. Shortcut Learning
-
-The model may learn an unintended signal.
-
-Example:
-
-Instead of learning the disease, it may learn:
-
-- A device watermark.
-- A background.
-- A Marker on the X-ray.
-
-then collapse outside the Dataset.
-
-## 4. Domain Shift
-
-A change of camera, location, or population can reduce performance.
-
-## 5. Spurious Correlations
-
-The Label may be correlated with a side factor only in the training data.
-
-## 6. Adversarial Examples
-
-Research has shown that specially designed Perturbations can make models classify incorrectly with high confidence.
-
-But adversarial attacks are not just "invisible noise"; there are also:
-
-- Physical adversarial patterns.
-- Patch attacks.
-- Data poisoning.
-
-And the defense is not a fully solved problem.
-
-# Does Adversarial Training Solve the Problem?
-
-It can increase Robustness against particular families of attacks.
-
-But it may:
-
-- Increase the training cost.
-- Affect Clean accuracy.
-- Not generalize to every Threat model.
-
-So before choosing a defense, you must define:
-
-> Who is the attacker? What is their capability? And what are we trying to protect?
-
-# How Do We Understand the Model's Decision?
-
-Tools such as **Grad-CAM** can produce an approximate Heatmap of the regions that contributed to a Prediction within some CNN-based architectures.
-
-This is useful for:
-
-- Debugging.
-- Detecting Shortcut learning.
-- Reviewing what the model is looking at.
-
-But:
-
-> A Heatmap is not a complete causal explanation, nor proof that the model "thought" the way a human does.
-
-Explainability tools must themselves be evaluated.
-
-# How Do You Deploy the Model on the Edge?
-
-We may need to run Classification on:
-
-- A phone.
-- A camera.
-- A Raspberry Pi-class device.
-- An Embedded accelerator.
-
-We can use:
-
-## Quantization
-
-Reducing the numerical Precision, such as:
-
-```text
-FP32 → INT8
-```
-
-## Pruning
-
-Removing some of the less important weights/structures according to a specific method.
-
-## Knowledge Distillation
-
-Training a smaller Student model to benefit from a larger Teacher.
-
-## Smaller Backbone
-
-Sometimes the best optimization is choosing a smaller model from the start.
-
-You must measure:
-
-- Accuracy.
-- Latency.
-- RAM.
-- Model size.
-- Power.
-- Throughput.
-
-and not FLOPs only.
-
-# How Are Foundation Models Changing the Future of Classification?
-
-There is a shift from:
-
-> A Model trained for fixed categories only
-
-to:
-
-> A general Visual representation that can be adapted to many tasks.
-
-Examples:
-
-## CLIP
-
-Links Image ↔ Text and enables Zero-shot classification in many cases.
-
-## DINOv2
-
-Learns general Visual Features in a Self-supervised manner.
-
-## ViT-based pretrained models
-
-Can be Fine-tuned or used for their Features.
-
-These models reduce the need for Training from scratch, but they do not eliminate the need for:
-
-- Local Validation.
-- Bias testing.
-- Data governance.
-- Domain testing.
-
-# How Do You Choose an Approach in Practice?
-
-Use this simplified decision guide:
-
-## Small Dataset + Clear Task
-
-Start with:
-
-- A Pretrained CNN or ViT.
-- Transfer Learning.
-
-## Small Edge Device
-
-Test:
-
-- A Mobile-oriented CNN.
-- A Small ViT.
-- A Quantized model.
-
-## Constantly Changing Categories
-
-Think about:
-
-- Image-text models.
-- Embedding-based classification.
-- A Retrieval-assisted approach.
-
-## A Sensitive Medical/Industrial Domain
-
-Focus on:
-
-- Dataset quality.
-- External validation.
-- Calibration.
-- Error analysis.
-- Human review.
-- Monitoring.
-
-## Not Enough Labels
-
-Think about:
-
-- Self-supervised pretraining.
-- Transfer Learning.
-- Active Learning.
-- Weak supervision.
-- Vision-language models.
-
-# Checklist Before Launching an Image Classifier
-
-- [ ] The task is truly Classification, not Detection/Segmentation.
-- [ ] Classes are clearly defined.
-- [ ] Labels reviewed by specialists where needed.
-- [ ] Train/Val/Test separated without Leakage.
-- [ ] The Test set represents the real world.
-- [ ] A Baseline exists.
-- [ ] Class imbalance handled appropriately.
-- [ ] Metrics chosen according to the cost of error.
-- [ ] Confusion Matrix reviewed.
-- [ ] Subgroup evaluation available where needed.
-- [ ] Model calibrated if the Scores will be used as probabilities.
-- [ ] OOD behavior known.
-- [ ] Human fallback in place for critical decisions.
-- [ ] Latency/Power/Memory tested on the real device.
-- [ ] Post-deployment Monitoring in place.
-- [ ] A retraining/versioning plan exists.
-
-# Conclusion
-
-Image classification no longer means just:
-
-```text
-Image → CNN → Label
-```
-
-The modern system is closer to an integrated pipeline built by accumulation rather than one step: it starts with **representative data** matching the real distribution the system will face, passes through **preprocessing and augmentation** that widen training coverage, then benefits from a **pretrained visual representation** inside a CNN, ViT, or Foundation Model instead of learning everything from scratch. **Fine-tuning** on task data follows, producing **probability scores** rather than hard labels — and those scores themselves undergo **calibration, metrics, and error analysis** that expose weaknesses before users find them. **Deployment** is not the end of the story: continuous **monitoring** tracks data drift and performance decay, feeding an improvement cycle that returns to the data once again.
-
-Historically, the field traveled a long road: it started with hand-crafted features extracted with methods such as SIFT and HOG and fed into classifiers like SVM, then convolutional neural networks (CNNs) learned those features directly from the data, followed by much deeper architectures such as ResNet, then the Vision Transformer, which reduced the dependence on huge labeled datasets through pre-training, and today we have self-supervised vision-language foundation models. But the newest model is not automatically the best.
-
-The best system is the one that:
-
-- Solves the right task.
-- Trains on representative data.
-- Is measured with metrics suited to the risks.
-- Knows when not to trust its prediction.
-- Operates within resource limits.
-- And proves its performance on the environment where it will actually be used.
+The best system is the one that solves the right task, trains on representative data, is measured with metrics suited to the risks, knows when not to trust its prediction, operates within resource limits, and proves its performance in the environment where it will actually be used.
 
 ## Sources and References
 

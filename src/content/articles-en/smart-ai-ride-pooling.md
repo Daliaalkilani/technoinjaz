@@ -12,1344 +12,408 @@ Suggested Slug: smart-ai-ride-pooling
 
 # How Does Smart AI Ride-Pooling Work? From Matching to Reducing Congestion
 
-**Smart Ride-Pooling (Dynamic Ride-Pooling) is an on-demand transportation system that tries to combine passengers with compatible routes inside the same vehicle in real time, while balancing several conflicting goals: reducing passenger waiting time, reducing deviation from their route, raising vehicle occupancy, cutting empty-distance travel, and improving fleet efficiency.**
+**Smart ride-pooling (Dynamic Ride-Pooling) is an on-demand transport system that tries to combine passengers with compatible routes in the same vehicle in real time, while balancing competing goals: reducing passenger waiting, reducing each passenger's detour, raising vehicle occupancy, cutting empty distance, and improving fleet efficiency.**
 
-The idea sounds simple: passenger A is headed from X to Y, passenger B departs from a nearby point toward a nearby destination, so the two share one vehicle and a single trip serves two requests instead of one. This pooling is both the economic and environmental heart of the system and the source of its complexity: every added passenger means added detours from the optimal route and longer waiting times, turning "pick up a companion along the way" into a delicate trade-off between each rider's experience and fleet efficiency.
+The idea looks simple: one passenger sets off from X heading to Y, and another sets off from a nearby point toward a nearby destination, so they share the same vehicle and a single trip serves two requests instead of two. This combining is the core of the system's economic and environmental value, and at the same time the source of its complexity: every additional passenger means extra deviations from the optimal route and a longer wait, turning "picking up a companion along the way" into a delicate equation that balances each passenger's comfort against fleet efficiency.
 
-But implementing it across an entire city is not just "finding the nearest car."
+But carrying out the idea across an entire city is far from "finding the nearest car." The real system solves a problem that changes every second: new requests arrive constantly, vehicles are moving, passengers are already on board some vehicles, travel times shift with traffic, each passenger has an acceptable limit for waiting and detour, capacity is limited, some requests cannot be combined without harming service quality, and every decision made now affects where a vehicle will be in a few minutes and its ability to serve the next request.
 
-The real system needs to solve a problem that changes every second:
+That is why a modern ride-pooling system is closer to a real-time optimization platform that never stops: it takes requests, vehicle positions, traffic conditions, and operational constraints as inputs refreshed every second, feeds them into a **matching and routing** engine that generates shared trips and **fleet rebalancing** decisions, and recalculates everything whenever the state changes, which happens constantly. The system does not "solve" the problem once; it lives in a perpetual cycle of re-optimization.
 
-- New requests arrive continuously.
-- Vehicles are moving.
-- Some passengers are already inside vehicles.
-- Travel times change with traffic.
-- Every passenger has an acceptable limit for waiting and detour.
-- Capacity is limited.
-- Some requests cannot be combined without hurting service quality.
-- Today's decision affects where the vehicle will be in minutes — and whether it can serve the next request.
+## Ride-Hailing and Ride-Pooling: A Fundamental Difference
 
-This is why a modern ride-pooling system is closer to a real-time optimization platform that never stops: it takes requests, vehicle positions, traffic conditions, and operational constraints as inputs refreshed every second, feeds them into a **matching and routing engine** that generates shared trips and **fleet rebalancing** decisions, and then recomputes everything whenever the state changes — which is constantly. The system does not "solve" the problem once; it lives inside an endless cycle of re-optimization.
+The two terms are sometimes used as if they were the same thing, but the difference between them is decisive. In **Ride-Hailing**, a digital platform connects a single passenger or group with a driver or vehicle, like a private trip through an app: passenger A in vehicle 1, passenger B in vehicle 2, and passenger C in vehicle 3.
 
-# What Is the Difference Between Ride-Hailing and Ride-Pooling?
+In **Ride-Pooling**, the platform tries to combine independent requests in the same vehicle if they are compatible. Passengers A, B, and C each have a different origin and destination, but the matching engine checks whether their routes intersect within an acceptable detour range, and assigns all three to a single vehicle that serves them in one ordered tour instead of three separate ones. Compatibility here is not just geographic proximity; it includes allowed pickup and drop-off times and vehicle capacity, the constraints that separate a successful combination from a poor service experience.
 
-The two terms are sometimes used as if they were the same thing, but the difference matters.
-
-## Ride-Hailing
-
-A digital platform connects:
-
-- A single passenger or group.
-- With a driver/vehicle.
-
-Such as a private trip through an app.
-
-```text
-Passenger A → Vehicle 1
-Passenger B → Vehicle 2
-Passenger C → Vehicle 3
-```
-
-## Ride-Pooling
-
-The platform tries to combine independent requests inside the same vehicle when they are compatible: passengers A, B, and C each have a different origin and destination, but the matching engine checks whether their routes intersect within an acceptable detour envelope, and assigns all three to a single vehicle that serves them in one ordered tour instead of three separate ones. Compatibility here is not just geographic distance — it spans acceptable pickup and drop-off times and vehicle capacity, and those constraints are exactly what separates a successful pool from a poor service experience.
-
-FHWA describes ride-sharing in the on-demand transportation environment as a situation where passengers choose a product that allows their trips to be matched with other passengers who have overlapping routes.
+The FHWA describes ride-sharing in the on-demand transport context as a situation in which passengers choose a product that allows their trips to be matched with other passengers who have overlapping routes.
 
 ![A MOIA ride-pooling service electric minibus stopped at an operations hub in Hamburg](/images/articles/body/smart-ai-ride-pooling-2.avif "MOIA's electric vehicle in Hamburg, designed for Ride-Pooling service that combines passengers with similar routes in one vehicle instead of a private trip per request — Source: Rebecca Hadler, Wikimedia Commons, CC BY-SA 4.0")
 
-So:
+The takeaway:
 
-> **Every Ride-Pooling is on-demand transportation, but not every Ride-Hailing involves actually sharing the ride.**
+> **All Ride-Pooling is on-demand transport, but not all Ride-Hailing is actual ride sharing.**
 
-And this difference is fundamental when discussing congestion and emissions.
+This difference is fundamental when the conversation turns to congestion and emissions.
 
-# Do Ride-Hailing Apps Automatically Reduce Congestion?
+## Do Ride-Hailing Apps Reduce Congestion Automatically?
 
-No.
+No. The idea may seem logical: if people use a car they do not own, there will be fewer cars. But the system can add new kilometers through cars driving without passengers between requests, heading to pickup points, drawing in people who would otherwise have taken the bus, metro, or walked, and generating new trips that would never have happened at all. The distance a vehicle travels without passengers is called **Deadheading**.
 
-The idea may seem logical:
+In a study of about 1.5 million RideAustin trips, drivers' travel to and from the service area was estimated at 19% of the service's total vehicle miles traveled (VMT), while driving between trips made up another 26% by the study's estimate. These are figures from **a specific case study**, not a fixed global percentage. A study published in Science Advances also found that the spread of transportation network companies in San Francisco contributed to increased congestion during the studied period from 2010 to 2016.
 
-> If people use a car they don't own, the number of cars will decrease.
+Therefore:
 
-But the system may add new kilometers because of:
-
-- Driving the car without passengers between requests.
-- Heading to the pickup point.
-- Attracting people who would have used the bus, metro, or walking.
-- New trips that would never have happened otherwise.
-
-The distances a vehicle travels without a passenger are called:
-
-**Deadheading**
-
-In a study of roughly 1.5 million RideAustin trips, the drivers' driving to and from the work area was estimated at 19% of the service's total VMT, while driving between trips accounted for another 26% in the study's estimate.
-
-These are figures for **a specific case study**, not a fixed global percentage.
-
-A study published in Science Advances also found that the spread of ride-hailing companies in San Francisco contributed to increased congestion during the 2010–2016 period it studied.
-
-So:
-
-> **App-based transportation is not synonymous with sustainable shared transportation.**
+> **App-based transport is not synonymous with sustainable shared transport.**
 
 The real question is:
 
-> Does the system increase average occupancy and reduce Vehicle Kilometers Traveled after accounting for empty distances, detours, and mode shift from the original means of transport?
+> Does the system raise average occupancy and reduce Vehicle Kilometers Traveled after accounting for empty distance, detours, and changes from the original travel mode?
 
-# When Can Ride-Pooling Reduce the Number of Vehicles?
+## When Can Ride-Pooling Reduce the Number of Vehicles?
 
-The benefit is realized when the system can combine requests that would otherwise have needed separate vehicles.
+The benefit materializes when the system succeeds in combining requests that would otherwise have needed separate vehicles. Take three passengers, A, B, and C, each of whom would need a private vehicle in the traditional scenario, traveling 8, 7, and 9 kilometers respectively, for a total of 24 vehicle-kilometers. If all three are combined into a single vehicle that travels only 13 kilometers, total vehicle kilometers traveled (VKT) falls by roughly half.
 
-Example: suppose three passengers A, B and C who, in the traditional scenario, each need their own vehicle traveling 8, 7 and 9 km respectively — a combined 24 vehicle-km. If the system manages to pool all three into a single vehicle that travels only 13 km, the total vehicle-kilometers traveled (VKT) drops by nearly half.
-
-But if the pickup points are far apart:
+But if the pickup points are far apart, so that the detour reaches:
 
 ```math
 \text{detour} = 8~\text{km}
 ```
 
-the benefit may vanish.
+the benefit may vanish entirely. Success depends on demand density, the similarity of origins and destinations, the waiting window, the acceptable detour limit, fleet size, vehicle capacity, request timing, and matching quality.
 
-So success depends on:
+## Why Is Dynamic Pooling a Hard Problem?
 
-- Demand density.
-- Similarity of Origins/Destinations.
-- The waiting window.
-- The acceptable detour limit.
-- Fleet size.
-- Vehicle capacity.
-- Request timing.
-- Matching quality.
+Suppose there are 5,000 vehicles, 20,000 active requests, and several passengers inside some vehicles. It is then impossible to test every possible combination naively, because each new request might be inserted before another passenger's pickup, after it, between drop-offs, or be rejected. And in every case the following constraints must be respected:
 
-# Why Is Dynamic Ride-Pooling a Hard Problem?
+| Constraint | Meaning |
+|---|---|
+| vehicle_capacity | The vehicle's capacity |
+| maximum_wait_time | The maximum waiting time |
+| maximum_detour | The maximum deviation from the route |
+| pickup_time_window | The pickup time window |
+| dropoff_time_window | The drop-off time window |
+| driver_constraints | Driver constraints |
+| service_area | The service area |
 
-Suppose there are:
-
-- 5,000 vehicles.
-- 20,000 active requests.
-- Multiple passengers inside some vehicles.
-
-Every possible Combination cannot be tested in a naive way.
-
-Each new request may fall:
-
-- Before another passenger's Pickup.
-- After it.
-- Between Drop-offs.
-- Or be rejected.
-
-And Constraints must be respected, such as:
-
-```text
-vehicle_capacity
-maximum_wait_time
-maximum_detour
-pickup_time_window
-dropoff_time_window
-driver_constraints
-service_area
-```
-
-The problem is therefore related to families of:
-
-- Dynamic Vehicle Routing.
-- Dial-a-Ride Problem.
-- Assignment.
-- Combinatorial Optimization.
-
-These are problems that can become computationally very hard as scale grows.
+The problem is therefore tied to well-known families of problems, such as Dynamic Vehicle Routing, the Dial-a-Ride Problem, Assignment, and Combinatorial Optimization, problems that can become extremely hard computationally as their size grows.
 
 ![An example of a vehicle routing problem on a road network: three vehicles departing from a central depot D and serving distributed points along colored routes](/images/articles/body/smart-ai-ride-pooling-1.avif "A simplified example of a Vehicle Routing problem: three vehicles share the service of 11 points starting from a central depot — Source: Zootos, Wikimedia Commons, CC BY-SA 4.0")
 
-# What Is the Full Path of a Passenger Request?
+## The Complete Path of a Passenger Request
 
-A request travels through the system as a sequence of stages, each with its own purpose: the **passenger request** arrives and is first **validated** — sound coordinates, a covered area, complete data — then the fleet is searched for **candidate vehicles** that are near and available. On top of those candidates the engine **generates feasible shared trips** that satisfy every constraint, **estimates** for each option the pickup time and detour magnitude, then **scores the alternatives** with an objective function balancing rider experience against fleet efficiency before **assigning the vehicle** and **updating its route**. Execution stays under continuous tracking, and whenever the state changes — a new request, sudden congestion, a cancellation — the computation starts over, so no decision is made once and settled; the trip remains a living object whose plan is continuously revised.
+A request's journey through the system passes through a series of stages, each with a different goal. The **passenger request** enters and is first validated: sound coordinates, a covered area, and complete data. Then the fleet is searched for nearby available **candidate vehicles**, on top of which the engine generates the **feasible shared trips** that satisfy every constraint, estimating the pickup time and detour size for each option; the **alternatives are then evaluated** with an objective function that balances passenger satisfaction against fleet efficiency, before the **vehicle is assigned** and its route updated. After execution, the system keeps tracking the trip moment by moment, and when the state changes, through a new request, sudden congestion, or a cancellation, the calculations are redone. No decision is made once and finished; the trip remains a living entity whose plan is continually revised.
 
-Each stage has a different goal.
+### Receiving the Request
 
-# 1. Receiving the Request
+A typical request may contain the pickup location (pickup_location), the drop-off location (dropoff_location), the request time (request_time), the maximum acceptable wait (max_wait), the maximum acceptable detour (max_detour), the number of passengers (passenger_count), and accessibility needs. The system should not collect additional data it does not need.
 
-A typical request may contain:
+### Searching for Candidate Vehicles
 
-```text
-pickup_location
-dropoff_location
-request_time
-max_wait
-max_detour
-passenger_count
-accessibility needs
-```
+Instead of comparing the request with every vehicle in the city, the search can be narrowed by estimated time of arrival (ETA) to the pickup point, geographic area, available capacity, current trip direction, and whether the request can be inserted into the existing route. This step shrinks the search space dramatically.
 
-And the system should not collect additional data it does not need.
+### Can a New Passenger Be Inserted into an Existing Trip?
 
-# 2. Searching for Candidate Vehicles
-
-Instead of comparing the request with every vehicle in the city, the search can be narrowed by:
-
-- ETA to the pickup point.
-- The geographic zone.
-- Free capacity.
-- The direction of the current trip.
-- Whether the request can be inserted into the existing Route.
-
-This step shrinks the search space.
-
-# 3. Can a New Passenger Be Inserted into an Existing Trip?
-
-Suppose the current Route serves passenger A only: pick A up, then drop A off. When a new request from passenger B arrives, there is no single correct way to insert it; the system may try picking B up before A and dropping B off after A, or picking both up together and dropping B first if B's destination is nearer. For every candidate ordering the system recomputes:
-
-- How much will B's waiting increase?
-- How much will A's time increase?
-- Is capacity exceeded?
-- Are the Time Windows still valid?
-
-If any Constraint fails, the request cannot be inserted into this vehicle.
+Suppose a vehicle's current route serves passenger A alone: pick them up, then drop them off. When a new request arrives from passenger B, there is no single correct way to insert it; the system might try picking up B before A and dropping B off afterward, or picking them up together and dropping B off first if B's destination is closer. For every possibility, the system recalculates: How much will B's wait increase? How much will A's trip time increase? Is capacity exceeded? Are the time windows still valid? If any constraint fails, the request cannot be inserted into this vehicle.
 
 ![A diagram showing a vehicle's current route picking up and dropping off passenger A, then two possible orderings for inserting passenger B — one accepted and one rejected because A's delay exceeds the allowed limit — along with the list of checked constraints](/images/articles/body/smart-ai-ride-pooling-3.avif "Insertion testing: the system tries the possible Pickup and Dropoff orderings for the new request, accepting an ordering only if waiting, detour, capacity, and time windows stay within limits — illustration: Techno Enjaz")
 
-# The Request-Trip-Vehicle Graph
+### The Request-Trip-Vehicle Graph
 
-Among the most influential research frameworks in Dynamic Ride-Sharing is the work of Alonso-Mora and colleagues published in 2017.
+One of the best-known and most influential research frameworks in dynamic ride-sharing is the work of Alonso-Mora and colleagues, published in 2017, which solves the problem through four stacked layers: it first determines which requests can be shared at all, then builds the **feasible shared trips** that meet the time and space constraints, then computes the **compatibility of each trip with each vehicle** as a system of acceptable pairs, and finally solves the **global assignment** that distributes trips among vehicles at the best overall value. Together, these four layers are what turn a chaotic list of requests into a single coherent operating plan.
 
-The simplified idea:
+In the study's experiment on data from about 3 million New York taxi trips, the researchers showed that a dynamic matching algorithm built on this framework could achieve high service rates with a smaller fleet in the simulation model, with a clear trade-off among fleet size, vehicle capacity, waiting time, and passenger delay. But these are **simulation results on a specific dataset and scenario**, not a promise that any city will get the same percentages.
 
-1. Determine which Requests can be shared.
-2. Build possible Trips that satisfy the constraints.
-3. Determine which Vehicle can serve each Trip.
-4. Solve the Assignment between Trips and vehicles.
+### Why Not Just Use Greedy Matching?
 
-Conceptually the problem is solved through four stacked layers: first identifying which requests are shareable at all, then building the **feasible shared trips** that satisfy the temporal and spatial constraints, then computing the **compatibility of every trip with every vehicle** as a set of acceptable pairs, and finally solving the **global assignment** that distributes trips across vehicles at maximum total value. Together these layers turn a chaotic list of requests into one coherent operating plan — and in the study's experiment on data from roughly 3 million taxi trips in New York, the researchers showed that a dynamic matching algorithm built on exactly this structure can achieve high service rates with a smaller fleet in simulation.
+Greedy matching says: give the request to the nearest vehicle available right now. It is fast, simple, and easy to operate, but it may produce a bad decision five minutes later. Vehicle A may be closest to a small request, while a minute later two highly compatible requests appear in A's own area; if A is used now, a better pooling opportunity may be lost later. This is the difference between a **myopic decision** and an **anticipatory decision**.
 
-In the study's experiment on data from roughly 3 million taxi trips in New York, the researchers showed that the dynamic matching algorithm could achieve high service rates using a smaller fleet in the simulation model, with a clear Trade-off between:
+## The Algorithms Used in Ride-Pooling
 
-- Fleet size.
-- Vehicle capacity.
-- Waiting time.
-- Passenger delay.
+No single algorithm suits every platform; instead there are families of methods, each with its place:
 
-But these are **simulation results on a specific Dataset and scenario**, not a promise that any city will see the same ratios.
+| Family | The Idea | When It Fits and Its Limits |
+|---|---|---|
+| Greedy / Insertion Heuristics | Testing the insertion of a new request into an existing route | When we want speed, a strong baseline, and a simpler system |
+| Integer / Mixed Integer Optimization | Formulating assignment as an optimization problem | When we need a better overall solution and clear constraints, though compute time can become a challenge at large scale |
+| Metaheuristics | Such as Large Neighborhood Search, Genetic Algorithms, and Simulated Annealing | They may find good solutions in large search spaces, with no guarantee of being faster or better in every scenario |
+| Machine Learning | Used in parts of the system rather than replacing optimization entirely | ETA estimation, demand forecasting, acceptance probability, travel time, and candidate pruning |
+| Reinforcement Learning | Learning policies for long-horizon decisions | Rebalancing, pricing, zone selection, and anticipatory control, but it is no magic solution for the matching problem |
 
-# Why Not Use Greedy Matching Only?
+In many of the strongest research systems, the design is **hybrid**: machine learning predicts, optimization decides, and simulation evaluates. Or the work is split between two layers: a GNN or RL model chooses the **strategic action**, such as which zone to replenish with vehicles and which matching policy to activate, while the **assignment solver** enforces the hard constraints without compromise: the vehicle must not exceed its capacity, and no passenger's pickup time may be violated. With this division, the system benefits from learned intuition without handing it a decision that breaks a non-negotiable operational constraint.
 
-Greedy says:
+## Why Use Graph Neural Networks (GNNs)?
 
-> Give the request to the nearest available vehicle now.
+A road network is a graph by nature: each zone or intersection is a node, and each road connecting them is an edge. This structure has a key advantage: high demand in one zone spills over within minutes into neighboring zones, which graph models capture better than models that treat each zone as an isolated unit. A GNN can build a representation of the state that combines each zone's demand, the number of vehicles available in it, travel times, and congestion in neighboring zones, and then produce embeddings representing the spatial relationships among these elements.
 
-The advantages:
+In practice, the whole city is built as an **urban graph** whose network passes through the GNN to produce a **spatial representation** capturing the relationships between zones, and this representation in turn feeds the **reinforcement learning, prediction, or optimization** layers that make the actual decision. The GNN here is not a decision-maker but a producer of spatial understanding: it turns a scattered map of numbers into a connected picture on which the rest of the system builds.
 
-- Fast.
-- Simple.
-- Easy to operate.
+But using a GNN does not automatically mean the model beats traditional methods; it must be compared with baselines under the same data, the same constraints, the same compute budget, and the same KPIs.
 
-But it may produce a bad decision five minutes later.
+## What Is the Role of Deep Reinforcement Learning?
 
-Example:
+In ride-pooling, the current decision affects the future. Sending a vehicle to the west side of the city now may yield a lower immediate reward, but high demand density may appear there ten minutes later. That is why reinforcement learning tries to learn a policy that maximizes reward over an extended time horizon rather than for a single decision. Its formulation has three elements:
 
-Vehicle A is the closest to a small request, but a minute later two highly compatible requests appear in A's same area.
+| Element | Its Content in Ride-Pooling |
+|---|---|
+| State | The distribution of vehicles across zones, active requests, expected demand over the coming minutes, traffic conditions, and seat occupancy in each vehicle |
+| Action | Repositioning a vehicle toward another zone, changing its operating zone, prioritizing a group of requests, or adjusting a parameter in the policy itself |
+| Reward | Combines what should be maximized, such as served trips and occupancy, with what should be minimized: waiting time, detour, empty driving, rejected requests, and an emissions indicator |
 
-If we used A now, we might lose better future Pooling.
+But reward design is extremely sensitive: if a large weight is given to revenue alone, the system may ignore fairness, and if a large weight is given to occupancy, it may impose annoying detours.
 
-This is the distinction between:
+## Is MADRL-GNN the Ideal Architecture?
 
-- **A Myopic decision**
-- **An Anticipatory decision**
-
-# The Algorithms Used in Ride-Pooling
-
-There is no single Algorithm suited to every platform.
-
-## Greedy / Insertion Heuristics
-
-They test inserting a new request into a current Route.
-
-Suitable when we want:
-
-- Speed.
-- A strong Baseline.
-- A simpler system.
-
-## Integer / Mixed Integer Optimization
-
-Assignment can be formulated as an Optimization problem.
-
-Useful when we need:
-
-- A better global solution.
-- Clear Constraints.
-
-But computation time can become a challenge at large Scale.
-
-## Metaheuristics
-
-Such as:
-
-- Large Neighborhood Search.
-- Genetic Algorithms.
-- Simulated Annealing.
-
-They may help find good solutions in large search spaces.
-
-But there is no guarantee they are faster or better in every scenario.
-
-## Machine Learning
-
-ML can be used in parts of the system instead of replacing the entire Optimization.
-
-Such as:
-
-- ETA prediction.
-- Demand forecasting.
-- Acceptance probability.
-- Travel time.
-- Candidate pruning.
-
-## Reinforcement Learning
-
-RL can be used for longer-term decisions such as:
-
-- Rebalancing.
-- Pricing.
-- Zone selection.
-- Anticipatory control.
-
-But RL is not a magic solution to the matching problem.
-
-In many of the strongest research systems, the design is **Hybrid**:
-
-```text
-Machine Learning predicts
-Optimization decides
-Simulation evaluates
-```
-
-Or by dividing the labor between two layers: a GNN or RL model chooses the **strategic action** — which zone to replenish with vehicles, which matching policy to activate — while an **assignment solver** enforces the hard constraints without deviation: no vehicle over capacity, no rider's promised pickup time violated. This split lets the system benefit from learned intuition without ever handing learning a decision that breaches a non-negotiable operational constraint.
-
-# Why Use Graph Neural Networks?
-
-The road network is a Graph by nature: every zone or intersection is a Node, and every road connecting them is an Edge. This structure has a fundamental advantage: high demand in one zone spills over into neighboring zones within minutes — something graph-based models capture far better than models that treat each zone as an isolated unit. A GNN can build a Representation of the state that combines per-zone demand, available vehicles, travel times, and congestion in adjacent zones, then produce Embeddings that represent the spatial relationships between them.
-
-In practice, the entire city is built as an **urban graph** whose network passes through the GNN to produce a **spatial representation** capturing the relationships between zones, and that representation then feeds the **reinforcement-learning, prediction, or optimization** layers that make the actual decision. The GNN here is not the decision-maker but the manufacturer of spatial understanding — it turns a scattered map of numbers into a connected picture the rest of the system can build on.
-
-But using a GNN does not automatically mean the model beats traditional methods.
-
-It must be compared against Baselines under:
-
-- The same data.
-- The same Constraints.
-- The same Compute budget.
-- The same KPIs.
-
-# What Is the Role of Deep Reinforcement Learning?
-
-In Ride-Pooling, the current decision affects the future.
-
-If we send a vehicle to the west of the city now:
-
-```text
-current reward
-```
-
-may be lower, but ten minutes later a high demand density may appear there.
-
-RL tries to learn a Policy that maximizes Reward over a time Horizon instead of a single decision.
-
-The State may contain, for example, the distribution of vehicles across zones, currently active requests, forecast demand for the coming minutes, traffic conditions, and seat occupancy in each vehicle. The Action is the set of decisions the policy can take: reposition a vehicle toward another zone, change its operating zone, prioritize a group of requests, or adjust a policy parameter. The Reward typically combines what should be maximized — served trips and occupancy — with what should be minimized: waiting time, detour, deadheading, rejected requests, and an emissions proxy.
-
-But Reward design is very sensitive.
-
-If we give a large weight to revenue only, the system may ignore fairness.
-
-If we give a large weight to Occupancy, it may cause annoying Detours.
-
-# Is MADRL-GNN the Ideal Architecture?
-
-The original research line proposes combining:
-
-**Multi-Agent Deep Reinforcement Learning + Graph Neural Networks**
-
-It is a logically sound research idea because:
-
-- Vehicles are numerous.
-- The network is a Graph.
-- Decisions are sequential.
-- Demand is Spatio-temporal.
-
-But this should not be turned into:
+The original research thread proposes combining **Multi-Agent Deep Reinforcement Learning + Graph Neural Networks**, a logical idea from a research standpoint, because there are many vehicles, the network is a graph, decisions are sequential, and demand varies in space and time. But this should not be turned into the claim that:
 
 > MADRL-GNN is the best proven algorithm for ride-pooling.
 
-A fair comparison requires:
+A fair comparison requires a complete implementation, baselines, hyperparameter tuning, multiple random seeds, real datasets, ablation studies, statistical significance, accounting for compute cost, and out-of-distribution tests.
 
-- A complete Implementation.
-- Baselines.
-- Hyperparameter tuning.
-- Multiple Seeds.
-- Real Datasets.
-- Ablation studies.
-- Statistical significance.
-- Compute cost.
-- Out-of-distribution tests.
+Nor is the claim that inference becomes **O(1)** after training generally true; the cost of a GNN depends on the number of nodes, edges, layers, and feature size, and the cost of the assignment solver depends on the number of vehicles, requests, feasible trips, and constraints.
 
-Also, the claim that inference after training becomes **O(1)** is not generally true.
+## Fleet Rebalancing
 
-The cost of a GNN, for instance, depends on:
+Even if matching is excellent, the fleet may cluster in the wrong place. At 8 a.m., requests pour in from residential neighborhoods, so vehicles carry their passengers downtown, leaving few vehicles in the neighborhoods later. By 10 a.m., empty vehicles pile up downtown while new demand appears in the neighborhoods. This is where rebalancing comes in: proactively directing empty vehicles toward where demand will appear.
 
-- The number of Nodes.
-- The number of Edges.
-- The number of Layers.
-- The size of Features.
-
-And the cost of the Assignment solver depends on the number of:
-
-- Vehicles.
-- Requests.
-- Possible trips.
-- Constraints.
-
-# What Is Fleet Rebalancing?
-
-Even if matching is excellent, the fleet may cluster in the wrong place.
-
-For example:
-
-```text
-08:00
-Residential zones → many requests
-Downtown → few cars available later
-```
-
-After dropping passengers downtown:
-
-```text
-10:00
-Downtown → many idle cars
-Residential → new demand
-```
-
-Rebalancing means proactively directing empty vehicles.
-
-But here is the paradox:
+But there is a paradox here:
 
 > Repositioning helps reduce waiting, but it adds Deadheading.
 
-So the goal must be:
-
-```text
-benefit of future positioning
->
-cost of empty travel
-```
+So the benefit of future positioning must outweigh the cost of traveling empty.
 
 ![A two-panel diagram: at 8 a.m. vehicles carry passengers from residential neighborhoods to downtown, and at 10 a.m. empty vehicles pile up downtown so some are redirected back to the neighborhoods where new demand appears](/images/articles/body/smart-ai-ride-pooling-4.avif "Fleet rebalancing: proactively moving empty vehicles reduces later waiting, but adds Deadheading, so the benefit of positioning must outweigh the cost of traveling without passengers — illustration: Techno Enjaz")
 
-# How Do We Predict Demand?
+## How Do We Predict Demand?
 
-Demand Forecasting tries to estimate:
+### Inputs and Models
 
-```text
-requests(zone, time)
-```
+Demand Forecasting tries to estimate the number of requests in each zone at each time, based on historical demand, time of day, day of week, weather, events, holidays, public transit disruptions, and the current demand trend. Time-series models, gradient boosting, LSTM/GRU, Temporal CNNs, GNNs, and Transformers can all be used. But there is no single "gold standard"; the best model depends on the dataset, spatial granularity, forecast horizon, and the city's dynamics.
 
-based on:
+### Is a 15–45-Minute Horizon Always Appropriate?
 
-- Historical demand.
-- Time of day.
-- Day of week.
-- Weather.
-- Events.
-- Holidays.
-- Transit disruptions.
-- The current demand trend.
+No. The forecast horizon must be chosen according to the operational decision it serves:
 
-You can use:
+| Forecast Horizon | The Decision It Serves |
+|---|---|
+| 5 minutes | Near-term rebalancing |
+| 30 minutes | Fleet positioning |
+| Hours | Staffing, charging, and supply planning |
 
-- Time-series models.
-- Gradient boosting.
-- LSTM/GRU.
-- Temporal CNN.
-- GNN.
-- Transformers.
+What matters most is not forecast accuracy alone; a less accurate model may drive better fleet decisions. That is why the **operational value of the forecast** must be measured, not RMSE alone.
 
-But there is no single "gold standard."
+## The Architecture of a Real Ride-Pooling Platform
 
-The best model depends on:
+### The Real-Time Path and the Non-Real-Time Path
 
-- The Dataset.
-- Spatial granularity.
-- The forecast horizon.
-- City dynamics.
+The platform is designed in layers starting from both ends of the experience: the passenger and driver apps connect to an **API** layer that captures requests and location updates, all of which flows through a never-ending stream of **events and requests** and accumulates in a **real-time state store** that keeps a live snapshot of the system: the positions of all vehicles, active requests, and routes in progress. On top of this store runs the **intelligence layer**, which produces ETA and demand predictions and handles matching, routing, and rebalancing, issuing **dispatch** decisions that return to the driver and passenger apps to be executed on the road. The cycle thus completes from app to app, with each link consuming the output of the one before it.
 
-# Is a 15–45 Minute Forecast Always Appropriate?
-
-No.
-
-This Horizon should be chosen according to the operational decision.
-
-## 5 Minutes
-
-Useful for:
-
-- Near-term rebalancing.
-
-## 30 Minutes
-
-Useful for:
-
-- Fleet positioning.
-
-## Hours
-
-Useful for:
-
-- Staffing.
-- Charging.
-- Supply planning.
-
-What matters most is not Forecast accuracy alone.
-
-A less accurate Model may lead to better Fleet decisions.
-
-So you must measure:
-
-> **The operational value of the forecast**
-
-and not RMSE only.
-
-# The Architecture of a Real Ride-Pooling Platform
-
-The platform can be designed in layers starting from both ends of the experience: the passenger and driver apps connect through the **API layer**, which captures requests and location updates; everything flows through a continuous **event and request stream** and accumulates in a **real-time state store** holding a live snapshot of the system — every vehicle position, active request, and route in progress. Above this store operates the **intelligence layer**, producing ETA predictions and demand forecasts and handling matching, routing, and rebalancing, and it emits the **dispatch decisions** that return to the driver and passenger apps to be executed on the road. The loop thus closes from app to app, with each ring consuming the output of the one before it.
-
-Alongside this real-time path runs a parallel, non-real-time one: historical data accumulates to feed **training and analytics**, and the resulting models are versioned and published through a **model registry**. The separation of the two paths is deliberate: the real-time system must respond in fractions of a second, while improving on yesterday's data happens on a timescale of days, and each path needs entirely different infrastructure.
-
-Alongside it, historical data feeds a parallel non-real-time path through training and analytics, with the resulting models versioned in a model registry before deployment to production.
+Alongside this real-time path runs a parallel non-real-time path: historical data accumulates to feed **training and analytics**, and the resulting models are stored in a **model registry** that manages their versions and deployment to production. Separating the two paths is deliberate; the real-time system must respond in fractions of a second, while improvement from yesterday's data proceeds at the rhythm of days, and each path has an entirely different infrastructure.
 
 ![A diagram of a ride-pooling platform architecture: passenger and driver apps, then an API layer, an event stream, a real-time state store, and the intelligence layer that issues dispatch decisions, with a non-real-time path from historical data to training and the model registry](/images/articles/body/smart-ai-ride-pooling-5.avif "Ride-Pooling platform architecture: a real-time path from the apps to the state store, the intelligence layer, and dispatch decisions, and a non-real-time path that trains prediction and matching models from historical data — illustration: Techno Enjaz")
 
-# Do We Actually Need Big Data?
+### Do We Really Need Big Data?
 
-Not every system needs "Big Data."
+Not every system needs "Big Data." A small platform in a limited city may run efficiently with a geographic database, simple stream processing, and an optimization service. The term Big Data becomes meaningful when volume, velocity, or variety reach a level that genuinely requires a distributed architecture. The goal is not "using Kafka and a Data Lake because the system is smart," but building the simplest architecture that can meet the required service-level agreement (SLA).
 
-A small platform in a limited city may operate efficiently with:
+### What Data Does the System Need?
 
-- A geographic database.
-- Simple stream processing.
-- An optimization service.
+| Source | Data |
+|---|---|
+| The passenger | Origin, destination, request time, party size, maximum waiting preference, and accessibility needs where relevant |
+| The vehicle | Current location, route, occupied seats, capacity, status, and energy or fuel level if it matters |
+| The network | Travel times, closures, incidents, and congestion |
+| Historical data | Demand by zone and time, cancellations, wait times, pickup success, detours, and deadheading |
 
-The term Big Data becomes meaningful when we have Scale, Velocity, or Variety that genuinely requires a distributed Architecture.
+### Map Matching
 
-The goal is not:
+GPS does not always give an accurate position on the road; a point may appear ten meters beside it. That is why map matching links telemetry to the nearest logical segment of the road network, an important step because route optimization depends on a correct graph.
 
-> "Using Kafka and a Data Lake because the system is smart."
+### Is Edge Computing Necessary?
 
-but rather:
+Not always. Many ride-pooling systems run in the cloud or in data centers, because dispatch decisions are centralized by nature. Edge computing may help with local traffic processing, filtering data to protect privacy, connected vehicle systems, and low-latency roadside analytics. But putting "AI inside every vehicle" is not a prerequisite for dynamic pooling.
 
-> Building the simplest Architecture that can meet the required SLA.
+## How Do We Define the Objective Function?
 
-# What Data Does the System Need?
-
-## From the Passenger
-
-- Origin.
-- Destination.
-- Request time.
-- Party size.
-- Maximum waiting preference.
-- Accessibility needs, when necessary.
-
-## From the Vehicle
-
-- Current location.
-- Route.
-- Occupied seats.
-- Capacity.
-- Status.
-- Energy/fuel state, when it matters.
-
-## From the Network
-
-- Travel times.
-- Closures.
-- Incidents.
-- Congestion.
-
-## Historically
-
-- Demand by zone/time.
-- Cancellations.
-- Wait times.
-- Pickup success.
-- Detours.
-- Deadheading.
-
-# Map Matching
-
-GPS does not always give an exact location on the road.
-
-The point may appear:
-
-```text
-10 meters beside the road
-```
-
-Map Matching links the Telemetry to the nearest logical Segment in the road network.
-
-This is an important step because Route optimization depends on a correct Graph.
-
-# Is Edge Computing Necessary?
-
-Not always.
-
-Much Ride-Pooling can run via a Cloud / Data Center because the Dispatch decision is centralized by nature.
-
-Edge may be useful for:
-
-- Local traffic processing.
-- Privacy filtering.
-- Connected vehicle systems.
-- Low-latency roadside analytics.
-
-But putting "AI inside every vehicle" is not a requirement for dynamic pooling.
-
-# How Do We Define the Objective Function?
-
-A poorly optimized system may achieve one Metric and harm the rest.
-
-Example:
-
-## Minimizing VMT Only
-
-May make passengers wait a long time.
-
-## Minimizing Waiting Only
-
-May send many separate vehicles.
-
-## Maximizing Occupancy Only
-
-May impose large Detours.
-
-So we need Multi-objective Optimization.
-
-A simplified example:
+A poorly designed system may achieve one metric while harming the rest. Minimizing distance traveled alone may lengthen passengers' waits, minimizing waiting alone may dispatch many separate vehicles, and maximizing occupancy alone may impose large detours. That is why we need multi-objective optimization, a simplified example of which is:
 
 ```math
 \text{Cost} = a \cdot t_{\text{wait}} + b \cdot d_{\text{detour}} + c \cdot d_{\text{empty}} + d \cdot n_{\text{rejected}} + e \cdot C_{\text{ops}} + f \cdot E_{\text{CO}_2}
 ```
 
-The weights are not "fixed scientific values."
+The weights here are not "fixed scientific values"; they express policies and business goals, and the sensitivity of results to them must be tested.
 
-They express Policy and Business goals, and their sensitivity must be tested.
+## The Right Performance Indicators
 
-# What Are the Right Performance Indicators?
+### Five Families of Indicators
 
-## Passenger Experience Indicators
+| Family | Indicators |
+|---|---|
+| Passenger experience | Mean wait, P90/P95 wait, in-vehicle time, detour time, cancellation rate, rejection rate, and pickup reliability |
+| Fleet | Vehicle occupancy, pooling rate, deadheading distance, revenue kilometers, idle time, and trips per vehicle-hour |
+| Network | Total VKT, VHT, average speed, and congestion delay |
+| Sustainability | Fuel or energy use, CO₂e, and emissions per passenger-km |
+| Fairness | Wait time by zone, rejection by zone, service coverage, and accessibility |
 
-- Mean wait time.
-- P90/P95 wait time.
-- In-vehicle time.
-- Detour time.
-- Cancellation rate.
-- Rejection rate.
-- Pickup reliability.
+Fairness indicators in particular are what prevent the system from improving only downtown while leaving the outskirts with poor service.
 
-## Fleet Indicators
+### Why P95 Sometimes Matters More Than the Mean
 
-- Vehicle occupancy.
-- Pooling rate.
-- Deadheading distance.
-- Revenue kilometers.
-- Idle time.
-- Trips per vehicle-hour.
+An average wait of 4 minutes may look excellent, but if 10% of users wait 18 minutes or more, there is a real problem. So monitor the whole distribution, not just the mean.
 
-## Network Indicators
+### How Do We Measure Congestion?
 
-- Total VKT.
-- VHT.
-- Average speed.
-- Congestion delay.
+Counting the vehicles we saved in theory is not enough. Vehicle Kilometers Traveled (VKT), Vehicle Hours Traveled (VHT), Vehicle Hours of Delay (VHD), speed, queue length, and network throughput must be used. And the calculation must include every kind of travel: occupied travel, empty driving toward pickups, empty driving between trips, rebalancing, and detours.
 
-## Sustainability Indicators
+## Emissions: The Full Picture
 
-- Fuel/energy use.
-- CO₂e.
-- Emissions per passenger-km.
+### Does Ride-Pooling Always Reduce Emissions?
 
-## Equity
+No. The environmental benefit is the outcome of an equation: avoided vehicle travel, minus new deadheading, pooling detours, and the effect of mode substitution. If a person switches from a private car to a shared ride, a benefit may appear. But if they switch to it from the metro, the bus, walking, or cycling, energy use and emissions may rise.
 
-- Wait time by zone.
-- Rejection by zone.
-- Service coverage.
-- Accessibility.
+This explains why results in the literature vary between cities. Systematic reviews indicate that pooling has significant **potential** to reduce distance traveled and energy, but actual results depend on the real pooling rate, occupancy, deadheading, mode substitution, city form, and the transit network.
 
-This prevents the system from optimizing downtown only and leaving the outskirts with poor service.
+### The Most Important Environmental Metric: Emissions per Passenger-Kilometer
 
-# Why Is P95 Sometimes More Important Than the Mean?
+Comparing CO₂ per vehicle can be misleading, and in many cases it is better to use CO₂e per passenger-kilometer; a vehicle carrying three passengers may consume slightly more than one carrying a single passenger, but it spreads its consumption across more riders. With electric vehicles, the measurement scope must also be defined: tailpipe emissions, electricity generation, or full lifecycle emissions.
 
-If average waiting is:
+### What About Pooling with Electric Vehicles?
 
-```text
-4 min
-```
+Electrifying the fleet can reduce operational emissions depending on the electricity generation mix, but it adds new constraints: battery state of charge, charger locations, charging time, charger queues, and the required battery reserve. Optimization then becomes a problem that combines passenger assignment, routing, rebalancing, and charging all at once. And sending a distant electric vehicle to a request may be a bad decision if it leads to a later charging downtime.
 
-it may look excellent.
+## Simulation: How Do We Prove the System Is Useful?
 
-But if:
+When real operating data is unavailable, simulation becomes an essential tool. But its limits must be clear:
 
-```text
-10% of users wait 18+ min
-```
+> **Simulation is experimental evidence within a model, not automatic proof of a real city's performance.**
 
-there is a problem.
+### Using SUMO
 
-So monitor the Distribution, not just the Mean.
+SUMO supports Demand Responsive Transport simulation through its Taxi Device, and its current documentation includes dispatch algorithms such as greedy, greedyClosest, greedyShared, and routeExtension, as well as custom dispatch through TraCI. This makes it suitable for building a baseline and testing an external algorithm.
 
-# How Do We Measure Congestion?
+### Designing a Good Experiment
 
-This is not enough:
+A good experiment rests on a graded comparison between clearly defined scenarios:
 
-> The number of vehicles we theoretically saved.
+| Scenario | Description |
+|---|---|
+| Baseline A: Private Trips | A separate vehicle for each request |
+| Baseline B: Ride-Hailing | A vehicle per request, with deadheading accounted for |
+| Baseline C: Greedy Pooling | Simple pooling |
+| Model D: Advanced Optimization | The algorithm under comparison |
 
-Use:
+Then the comparison conditions are held fixed: the same demand, the same network, the same travel-time assumptions, the same vehicle capacity, and the same maximum wait and detour limits.
 
-- Vehicle Kilometers Traveled — VKT.
-- Vehicle Hours Traveled — VHT.
-- Vehicle Hours of Delay — VHD.
-- Speed.
-- Queue length.
-- Network throughput.
+### Do Not Compare AI with a Deliberately Weak Algorithm
 
-And you must account for:
+A common research mistake is comparing an AI model with a naive "nearest car" baseline and then declaring AI "far better." A serious comparison requires strong baselines, such as an insertion heuristic, optimization-based assignment, predictive rebalancing, and established ride-pooling algorithms; otherwise we cannot know whether the gain came from "AI" or from a weak comparison.
 
-```text
-occupied travel
-+
-pickup deadheading
-+
-between-trip deadheading
-+
-rebalancing
-+
-detours
-```
+### Ablation Study
 
-# Does Ride-Pooling Always Reduce Emissions?
+If the system combines demand forecasting, a GNN, reinforcement learning, and rebalancing, it must be tested once without forecasting, once without the GNN, once without reinforcement learning, and once without rebalancing, so that we know which component actually added the value.
 
-No.
+### Testing Across Multiple Random Seeds
 
-The environmental benefit depends on:
+The traffic environment is stochastic by nature, and running a simulation once is not enough. Multiple random seeds, confidence intervals, and statistical tests where needed must be used. So one cannot say "we reduced congestion by 27%" if the figure comes from a single run.
 
-```text
-avoided vehicle travel
--
-new deadheading
--
-pooling detours
--
-mode substitution
-```
+### Stress Scenarios
 
-If a person switches from a private car to a shared Ride-Pool, a benefit may appear.
+| Scenario | The Question It Raises |
+|---|---|
+| Demand +20% | Does the system collapse? |
+| A traffic accident | Does it reroute? |
+| Rain or an event surge | Does the forecast adapt? |
+| GPS noise | Does map matching stay stable? |
+| Driver shortage | Does rejection rise fairly? |
+| Communication delay | Do decisions remain valid? |
 
-But if they switch from:
+### The Rejection Rate Problem
 
-- Metro.
-- Bus.
-- Walking.
-- Cycling.
+A system can improve its average wait by rejecting difficult requests: it serves easy downtown requests and rejects remote ones, so the metrics look good. That is why served demand, rejection, geographic distribution, and rider classes must be monitored together.
 
-to a Ride-Pool vehicle, energy or emissions may increase.
+## Fairness, Privacy, and Security
 
-This is why the literature gives different results across cities.
+### Fairness in Ride-Pooling
 
-Systematic reviews indicate that Pooling has great **potential** to reduce VMT and energy, but actual results depend on:
+Optimization may learn that some zones are "less profitable," and if suitable constraints are not in place, the central zone may enjoy excellent service while rejection rises at the outskirts. A minimum service coverage, a maximum geographic disparity, fairness penalties, and zone-level KPIs can be added. But fairness is not a single weight in an equation; it needs a clear definition of what equity means in the context of the city.
 
-- The real participation rate.
-- Occupancy.
-- Deadheading.
-- Modal substitution.
-- City form.
-- The transit network.
+### Privacy: Mobility Data Is Sensitive
 
-# The Key Environmental Metric: Emissions per Passenger-Kilometer
+A pooling system usually knows where a trip starts and ends, when a person moves, how often they visit places, and their life patterns. Even after removing names, mobility traces may remain re-identifiable under some conditions. That is why a set of safeguards is needed:
 
-A comparison of:
+| Safeguard | How It Is Applied |
+|---|---|
+| Data Minimization | Do not collect what you do not need |
+| Retention Limits | Do not keep high-precision locations forever |
+| Access Control | Separate live operations, analytics, and research datasets |
+| Aggregation | Zone-level forecasting may not need each user's raw trajectory |
+| Pseudonymization | Useful, but not a complete guarantee of anonymity |
 
-```text
-CO₂ per vehicle
-```
+### Security
 
-can be misleading.
+The system may control thousands of vehicles, so the APIs, the driver and passenger apps, the dispatch engine, admin access, GPS telemetry, and model endpoints must all be protected. Potential risks include fake ride requests, GPS spoofing, account takeover, route manipulation, denial-of-service attacks, and data leakage.
 
-Better in many cases:
+### Can AI Itself Cause Congestion?
 
-```text
-CO₂e / passenger-km
-```
+Yes. If a model predicts that zone A will become hot and sends 500 vehicles there, all behaving the same way, the result is congestion caused by the rebalancing itself (rebalancing congestion). That is why control must be capacity-aware, network-aware, and coordinated; an excellent forecast alone is not enough.
 
-because a vehicle carrying three passengers may consume slightly more than one carrying a single passenger, but it distributes the consumption over more passengers.
+## The Broader Context: Public Transit, Pricing, and the Future
 
-With electric cars, the Scope must also be defined:
+### The Relationship with Public Transit
 
-- Tailpipe emissions.
-- Electricity generation.
-- Lifecycle emissions.
+The best pooling system need not try to replace the metro, bus, or tram; its greatest value may lie in the first mile and last mile, low-demand hours, and underserved zones. The best use of pooling is feeding public transit hubs: short trips that gather passengers from their neighborhoods to a **Transit Hub** where they board the metro, BRT, or train, instead of a single 40-km shared trip across the whole city. In this pattern, shared vehicles specialize in what they excel at, namely flexibility and door-to-door access, and leave to rapid mass transit what it excels at, producing an integrated system that is cheaper and more sustainable. Integration with public transit can be more sustainable than competing with it.
 
-# What About EV Ride-Pooling?
+### Dynamic Pricing: Is It Part of the Intelligence?
 
-Electrifying the fleet can reduce operational emissions depending on the electricity mix.
+Price can be used to steer demand, encourage acceptance of pooling, and balance supply, for example by making private rides more expensive and pooled rides discounted. But dynamic pricing may raise concerns about fairness, affordability, and price discrimination. The system's goal should not be filling cars at any cost, but improving transport service while protecting users.
 
-But it adds new Constraints:
+### What About Autonomous Vehicles?
 
-```text
-state of charge
-charger location
-charging time
-charger queue
-battery reserve
-```
+They may change the economics of the service because the cost of the driver may disappear, but that could also lead to more empty trips, more repositioning, and induced demand. So autonomous pooling is not automatically less congested, and the algorithm must reduce empty movement, not just operating cost.
 
-turning the Optimization into:
+### What About eVTOL and Urban Air Mobility?
 
-```text
-passenger assignment
-+
-routing
-+
-rebalancing
-+
-charging
-```
+Ideas of assignment, scheduling, and fleet management can theoretically be extended to eVTOL aircraft, but this is an entirely different research and regulatory area, involving airspace, vertiports, battery safety, weather, and aviation certification. It should not be presented as a simple extension of the same ride-pooling application.
 
-And sending a distant EV to a request may not be good if it leads to Charging downtime later.
+## A Practical Framework for Building the System
 
-# Simulation: How Do We Prove the System Is Useful?
+### Build Phases
 
-If real operating data is unavailable, Simulation is an essential tool.
+| Phase | What Happens |
+|---|---|
+| 1. Do not start with AI | Build a baseline of the nearest feasible vehicle with simple insertion, and learn its performance |
+| 2. Add constraints | Waiting, detour, capacity, and service area |
+| 3. Add optimization | A better solution for matching |
+| 4. Add demand forecasting | Only if rebalancing is shown to need it |
+| 5. Add learning | Such as GNN/RL, if the baselines no longer meet the goal |
+| 6. Test operational KPIs | Not just model loss |
+| 7. Test externalities | Distance traveled, congestion, emissions, equity, and substitution of public transit |
 
-But we must be clear:
+### An Example of a Practical Architecture
 
-> **Simulation is empirical evidence inside a model, not automatic proof of performance in a real city.**
+The practical architecture can be read as two interlocking paths. On the real-time path, a passenger opens their app and the request goes out through a **ride request API**, flowing into the request stream where the real work begins: **candidate search** gathers nearby available vehicles, the **travel-time engine** estimates the time cost of each possible combination, the **feasible-trip generator** builds the combinations that satisfy the constraints, and then the **assignment optimizer** chooses the best distribution, so the route plan is updated and reaches the driver's app to be executed on the road.
 
-# Using SUMO
+In parallel, the non-real-time path runs: historical data feeds **demand forecasting**, which determines where vehicles will be needed in an hour, and the **rebalancing** policy moves the fleet proactively according to that forecast, changing the very **fleet state** from which the real-time path reads its candidates. The two paths meet at the fleet state: one consumes it and the other shapes it, and the system's intelligence shows in the coordination between them.
 
-SUMO supports Demand Responsive Transport simulation via the Taxi Device.
+GNN/RL can be introduced in demand representation, in the rebalancing policy, or in strategic matching, rather than putting "AI" into every component without need.
 
-The current documentation includes Dispatch algorithms such as:
+## How Do We Decide Whether the System Succeeded?
 
-- Greedy.
-- greedyClosest.
-- greedyShared.
-- routeExtension.
-- Custom dispatch via TraCI.
+It is not valid to say "the model achieved 95% accuracy"; ride-pooling is not a classification problem. Success should instead be reported with operational indicators compared against the baseline, along these lines:
 
-This makes it suitable for building a Baseline and testing an external algorithm.
+| Indicator | Form of the Change |
+|---|---|
+| Served requests | +x% |
+| Median wait | -y% |
+| P95 wait | -z% |
+| Mean occupancy | +a |
+| Deadhead VKT | -b% |
+| Total VKT | -c% |
+| Passenger detour | +d min |
+| CO₂e/passenger-km | -e% |
 
-# Designing a Good Experiment
+These should be accompanied by the confidence interval, the baseline used, the scenario, the dataset, and the simulation assumptions.
 
-## Baseline A: Private Trips
+## Corrections to Keep in Mind
 
-Each request → a separate vehicle.
+| The Common Claim | The Correction |
+|---|---|
+| "The problem is NP-hard, so traditional methods don't work" | False; worst-case hardness does not mean every practical instance is unsolvable, and modern heuristics and optimization can be very powerful |
+| "DRL runs in O(1) after training" | False as a rule; inference depends on input size and architecture, and assignment or route optimization may remain costly |
+| "AI eliminates congestion" | An exaggeration; the outcome depends on user behavior, policies, and demand |
+| "Pooling always lowers CO₂" | False; it may fail if deadheading, detours, or substitution from public transit rise |
+| "Fewer vehicles = emissions reduced by the same proportion" | False; distance, speed, fuel or energy, and occupancy must be measured |
+| "A simulation result = a real city's result" | False; simulation needs calibration and validation |
 
-## Baseline B: Ride-Hailing
+## Conclusion
 
-One vehicle per Request with Deadheading.
+A smart ride-pooling system is not merely an app that connects several passengers with a car, but a real-time control and decision-making system running in a closed loop that never stops: it **observes** the network's state, **predicts** what will happen in the next few minutes, generates the **feasible shared trips** and solves the **optimal assignment**, then dispatches vehicles and proactively **rebalances** the fleet, and finally **measures** the results of what it executed before returning to observation smarter than before. The real intelligence does not lie in any single step, but in the speed of this cycle and the quality of the measurement that feeds it.
 
-## Baseline C: Greedy Pooling
+AI can help forecast demand, estimate travel times, represent the network through GNNs, learn rebalancing policies, and choose anticipatory decisions. But the real benefit is not measured by the algorithm's name; it is measured by whether the system raised vehicle occupancy, reduced deadheading, lowered total distance traveled, kept waiting and detours acceptable, served zones fairly, integrated with public transit instead of drawing away its riders, and reduced actual emissions per passenger-kilometer.
 
-Simple Pooling.
+That is why the better question is not "Should we use MADRL or GNN?" but:
 
-## Model D: Advanced Optimization
-
-The comparison algorithm.
-
-Then fix:
-
-- The same Demand.
-- The same Network.
-- The same travel-time assumptions.
-- The same vehicle capacity.
-- The same maximum wait/detour.
-
-and compare.
-
-# Do Not Compare AI Against a Deliberately Weak Algorithm
-
-A common research error:
-
-```text
-AI Model
-vs
-naive nearest-car baseline
-```
-
-and then claiming:
-
-> AI is far better.
-
-Strong Baselines must be added, such as:
-
-- An insertion heuristic.
-- Optimization-based assignment.
-- Predictive rebalancing.
-- An established ride-pooling algorithm.
-
-Otherwise we do not know whether the gain comes from "AI" or from a weak comparison.
-
-# Ablation Study
-
-If the system is:
-
-```text
-Demand Forecast
-+ GNN
-+ RL
-+ Rebalancing
-```
-
-test:
-
-```text
-without forecast
-without GNN
-without RL
-without rebalancing
-```
-
-so we know what added the value.
-
-# Testing Across Multiple Seeds
-
-The traffic environment is stochastic.
-
-Running the Simulation once is not enough.
-
-Use:
-
-- Multiple Random seeds.
-- Confidence intervals.
-- Statistical tests when needed.
-
-And do not claim:
-
-> "We reduced congestion by 27%"
-
-if the number comes from a single Run.
-
-# Stress Scenarios
-
-Test:
-
-## Demand +20%
-
-Does the system collapse?
-
-## A Traffic Incident
-
-Does it reroute?
-
-## Rain/event surge
-
-Does the Forecast adapt?
-
-## GPS noise
-
-Is Map matching stable?
-
-## Driver shortage
-
-Does Rejection rise in a fair way?
-
-## Communication delay
-
-Are the decisions still valid?
-
-# What Is the Rejection Rate Problem?
-
-A system can improve average waiting by rejecting difficult requests.
-
-For example:
-
-```text
-serve easy downtown requests
-reject remote requests
-```
-
-and then the Metrics look good.
-
-So you must monitor:
-
-- Served demand.
-- Rejection.
-- Geography.
-- Rider class.
-
-together.
-
-# Fairness in Ride-Pooling
-
-The Optimization may learn that some zones are "less profitable."
-
-If we do not impose Constraints, this may happen:
-
-```text
-central zone → great service
-outer zone   → high rejection
-```
-
-You can add:
-
-- Minimum service coverage.
-- Maximum geographic disparity.
-- Fairness penalties.
-- Zone-level KPIs.
-
-But fairness is not just one Weight; it needs a clear definition of what equity means in the city's context.
-
-# Privacy: Mobility Data Is Sensitive
-
-Ride-Pooling usually knows:
-
-- Where a trip starts.
-- Where it ends.
-- When the person moves.
-- The frequency of visits.
-- Life patterns.
-
-Even if we delete the name, Mobility traces can be re-identifiable in some circumstances.
-
-So use:
-
-## Data Minimization
-
-Do not collect what you do not need.
-
-## Retention Limits
-
-Do not keep high-precision location forever.
-
-## Access Control
-
-Separate:
-
-- Live operations.
-- Analytics.
-- Research datasets.
-
-## Aggregation
-
-Zone-level Forecasting may not need the raw Trajectory of every user.
-
-## Pseudonymization
-
-Useful, but not a complete guarantee of anonymity.
-
-# Security
-
-The system may control thousands of vehicles.
-
-You must protect:
-
-- The API.
-- The driver app.
-- The passenger app.
-- The dispatch engine.
-- Admin access.
-- GPS telemetry.
-- Model endpoints.
-
-Among the risks:
-
-- Fake ride requests.
-- GPS spoofing.
-- Account takeover.
-- Route manipulation.
-- Denial-of-service.
-- Data leakage.
-
-# Can AI Itself Cause a Traffic Problem?
-
-Yes.
-
-Imagine a Model predicts that Zone A will become hot.
-
-So it repositions 500 vehicles there.
-
-All the vehicles behave the same way.
-
-The result:
-
-> Rebalancing congestion.
-
-This is why control must be:
-
-- Capacity-aware.
-- Network-aware.
-- Coordinated.
-
-An excellent Forecast is not enough.
-
-# The Relationship with Public Transit
-
-The best Ride-Pooling does not necessarily have to try to replace:
-
-- Metro.
-- Bus.
-- Tram.
-
-The greatest value may lie in:
-
-- First-mile.
-- Last-mile.
-- Low-demand hours.
-- Underserved zones.
-
-That is, the best use of ride-pooling is to feed transit hubs: short shared trips collect riders from their neighborhoods and deliver them to a **transit hub**, where they board the metro, BRT, or rail — instead of one shared ride stretching 40 km across the whole city. In the first pattern the shared vehicles specialize in what they do best — flexibility and door-level access — and leave the fast trunk corridor to what it does best, yielding an integrated system that is cheaper and more sustainable than competing with public transit rather than complementing it.
-
-Integrating with public transit may be more sustainable than competing with it.
-
-# Dynamic Pricing: Is It Part of the Intelligence?
-
-Price can be used to change:
-
-- Demand.
-- The acceptance of pooling.
-- The balance of supply.
-
-Such as:
-
-```text
-private ride = higher price
-pooled ride  = discount
-```
-
-But dynamic pricing may raise:
-
-- Fairness.
-- Affordability.
-- Price discrimination concerns.
-
-And the system's goal must not be:
-
-> Filling cars at any cost.
-
-but improving transportation service while protecting users.
-
-# What About Autonomous Vehicles?
-
-They can change the Economics because the driver cost may disappear.
-
-But this may also lead to:
-
-- More empty trips.
-- Greater repositioning.
-- Induced demand.
-
-So Autonomous Ride-Pooling is not automatically less congesting.
-
-The algorithm must reduce:
-
-```text
-empty movement
-```
-
-and not just the operating cost.
-
-# What About eVTOL and Urban Air Mobility?
-
-The ideas of:
-
-- Assignment.
-- Scheduling.
-- Fleet management.
-
-can theoretically be extended to eVTOL.
-
-But this is an entirely different research and regulatory area, involving:
-
-- Airspace.
-- Vertiports.
-- Battery safety.
-- Weather.
-- Aviation certification.
-
-So it should not be presented as a simple extension of the same Ride-Pooling application.
-
-# A Practical Framework for Building the System
-
-## Phase 1: Do Not Start with AI
-
-Build a Baseline:
-
-```text
-nearest feasible vehicle
-+
-simple insertion
-```
-
-and know its performance.
-
-## Phase 2: Add Constraints
-
-- Wait.
-- Detour.
-- Capacity.
-- Service area.
-
-## Phase 3: Add Optimization
-
-A better solution for matching.
-
-## Phase 4: Add Demand Forecast
-
-Only if it proves that Rebalancing needs it.
-
-## Phase 5: Add Learning
-
-Such as GNN/RL if the Baselines no longer achieve the goal.
-
-## Phase 6: Test Operational KPIs
-
-and not Model loss only.
-
-## Phase 7: Test Externalities
-
-- VKT.
-- Congestion.
-- Emissions.
-- Equity.
-- Transit substitution.
-
-# A Practical Architecture Example
-
-The practical architecture can be read as two interwoven paths. On the real-time path, a rider opens the app and the request flows through the **ride-request API** into the request stream, where the real work begins: **candidate search** gathers nearby available vehicles, the **travel-time engine** prices the time cost of every possible combination, the **feasible-trip generator** builds the combinations that satisfy the constraints, and the **assignment optimizer** picks the best distribution — after which the route plan updates and reaches the driver's app to be executed on the road.
-
-In parallel, the non-real-time path works on a different clock: historical data feeds the **demand forecast**, which predicts where vehicles will be needed an hour from now, and the **rebalancing policy** moves the fleet proactively based on that forecast, reshaping the very **fleet state** that the real-time path reads its candidates from. The two paths meet in the fleet state: one consumes it while the other shapes it, and the system's intelligence shows in how well they coordinate.
-
-And GNN/RL can be added inside:
-
-```text
-Demand representation
-or
-Rebalancing policy
-or
-Strategic matching
-```
-
-instead of placing "AI" in every Component without need.
-
-# How Do We Decide Whether the System Succeeded?
-
-Do not say:
-
-> "The model achieved 95% Accuracy."
-
-Ride-Pooling is not Classification.
-
-Say, for example:
-
-```text
-Served requests:        +x%
-Median wait:            -y%
-P95 wait:               -z%
-Mean occupancy:         +a
-Deadhead VKT:           -b%
-Total VKT:              -c%
-Passenger detour:       +d min
-CO₂e/passenger-km:      -e%
-```
-
-then add:
-
-- A confidence interval.
-- The baseline.
-- The scenario.
-- The dataset.
-- The simulation assumptions.
-
-# The Most Important Corrections to Watch Out For
-
-## "The Problem Is NP-hard, So Traditional Methods Don't Work"
-
-Incorrect.
-
-Worst-case difficulty does not mean every practical Instance is unsolvable.
-
-Heuristics and modern Optimization can be very powerful.
-
-## "DRL Runs in O(1) After Training"
-
-Incorrect as a rule.
-
-Inference depends on the input size and the architecture, and costly Assignment/route optimization may remain.
-
-## "AI Eliminates Congestion"
-
-Exaggeration.
-
-The outcome depends on user behavior, policies, and demand.
-
-## "Pooling Always Lowers CO₂"
-
-Incorrect.
-
-It may fail if these rise:
-
-- Deadheading.
-- Detours.
-- Substitution from transit.
-
-## "Reducing the Number of Vehicles = Reducing Emissions by the Same Percentage"
-
-Incorrect.
-
-You must measure:
-
-- Distance.
-- Speed.
-- Fuel/energy.
-- Occupancy.
-
-## "A Simulation Result = A Real City Result"
-
-Incorrect.
-
-Simulation needs Calibration and Validation.
-
-# Conclusion
-
-A smart ride-pooling system is not just an app that connects several passengers to a car.
-
-It is a real-time control and decision-making system turning in a closed loop that never stops: it **observes** the state of the network, **forecasts** what will happen minutes ahead, **generates the feasible shared trips** and **optimizes the assignment**, then **routes** the vehicles and **rebalances** the fleet proactively, and finally **measures** the outcome of what it executed so the loop returns to observation smarter than before. Every turn of the loop moves the system into a better state, and the real intelligence lies not in any single step but in the speed of iteration and the quality of the measurement that feeds it.
-
-Artificial intelligence can help with:
-
-- Predicting demand.
-- Estimating travel times.
-- Representing the network with a GNN.
-- Learning Rebalancing policies.
-- Choosing anticipatory decisions.
-
-But the real benefit is not measured by the algorithm's name.
-
-It is measured by whether the system has:
-
-- Raised vehicle occupancy.
-- Reduced Deadheading.
-- Lowered Total VKT.
-- Kept Wait/Detour acceptable.
-- Served areas fairly.
-- Integrated with public transit instead of pulling away its riders.
-- And reduced actual emissions per passenger-kilometer.
-
-That is why the better question is not:
-
-> "Should we use MADRL or GNN?"
-
-but rather:
-
-> **What decision do we need to improve, what is the strongest Baseline, and what Metric proves the system improved the city — not just the algorithm?**
+> **What decision do we need to improve, what is the strongest baseline, and which metric proves that the system improved the city, not just the algorithm?**
 
 ## Sources and References
 

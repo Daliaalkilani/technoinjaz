@@ -10,609 +10,277 @@ Suggested Slug: next-token-prediction
 
 # How Do AI Models Predict the Next Word? From N-gram to Transformers
 
-**Generative language models rest on a task that looks deceptively simple: estimating what is most likely to come after the current context.** But in modern models, it is often more accurate to say **next token prediction** rather than literally "the next word," because text is usually split into units called tokens, and a token may be a whole word, part of a word, a punctuation mark, or another unit.
+**Generative language models rest on a task that looks simple on the surface: estimating what is likely to come after the current context.** But in modern models, it is more accurate to speak of **Next Token Prediction** rather than literally the next word, because text is usually split into units called tokens, each of which may be a whole word, part of a word, a punctuation mark, or another unit.
 
-From this core idea, language modeling systems evolved across several generations: starting with statistical models such as N-grams, then moving to recurrent neural networks (RNNs and LSTMs), and arriving at Transformers and modern large language models.
+From this core idea, language modeling systems evolved through successive generations: they began with statistical models such as N-grams, then moved to the recurrent neural networks RNN and LSTM, until they reached Transformers and today's large language models.
 
-The real leap was not only in changing the underlying question, but in **how context is represented**: from counting preceding words, to compressing history into a hidden state, and then to using attention to relate parts of the context to one another directly and far more parallelizably.
+The real leap was not in changing the core question, but in **how context is represented**: from counting the preceding words, to compressing history into a hidden state, and then to using attention to link parts of the context to one another directly and in a far more parallelizable way. This journey is what this article traces.
 
 ## What Does Predicting the Next Word Mean?
 
-In its simplest form, if we have the context:
+In the simplest case, if the context is "The student went to the ...", the model tries to estimate a probability distribution over the word or token that might follow:
 
-> The student went to the ...
+| Candidate | Probability |
+|---|---|
+| the university | 0.42 |
+| the school | 0.23 |
+| the house | 0.12 |
+| other words | lower probabilities |
 
-the model tries to estimate a probability distribution over the word or token that might follow.
-
-It might give, for example:
-
-- the university: 0.42
-- the school: 0.23
-- the house: 0.12
-- other words: lower probabilities
-
-A generation algorithm is then used to pick the next output.
-
-Mathematically, the goal is to estimate the probability of the next element given the previous ones:
+A generation algorithm then chooses the next output. Mathematically, the goal is to estimate the probability of the next element given the preceding elements:
 
 `P(x_t | x_1, x_2, ..., x_{t-1})`
 
-And by repeating the process element after element, the model can generate a sentence, a paragraph, or a long text.
+By repeating the process element after element, the model can generate a sentence, a paragraph, or a long text.
 
-But there is an important difference between **the model** and **the generation method**:
+But there is an essential difference between **the model** and **the generation method**: the model produces a probability distribution, while the decoding strategy decides how we choose from that distribution. This difference explains why the same model can give highly consistent answers with Greedy Search and more varied ones with Sampling.
 
-- The model produces a probability distribution.
-- The decoding strategy decides how we choose from that distribution.
+## Why Do We Say Next Token and Not Next Word?
 
-This difference explains why the same model can give highly deterministic answers under Greedy Search, or more varied ones under Sampling.
+Traditional N-gram systems may indeed work at the word level, but modern language models usually use smaller units: tokens. An Arabic word may be stored as a single token, or split into several tokens depending on the tokenizer and the vocabulary it was trained on.
 
-## Why Do We Say Next Token Rather than Next Word in Modern Models?
+This design helps the model deal with rare and new words, different inflections, names, multiple languages, and shared word parts. References on Causal Language Modeling explain that the task in causal generative models is predicting the next token in a sequence of tokens, while preventing the model from seeing future tokens during prediction.
 
-Traditional N-gram systems may indeed operate at the word level. But modern language models usually use smaller units called tokens.
+That is why the phrase "predicting the next word" is useful as a simplification, but **Next Token Prediction is the more accurate technical formulation when talking about modern LLMs**.
 
-For instance, an Arabic word may be stored as a single token, or split into several tokens depending on the tokenizer and the vocabulary it was trained with.
+## From Text to a Prediction of the Next Token
 
-This design helps the model handle:
-
-- Rare words.
-- New words.
-- Different inflections.
-- Proper names.
-- Multiple languages.
-- Shared word pieces.
-
-References on Causal Language Modeling clarify that the task in causal generative models is to predict the next token in a token sequence, with the model prevented from seeing future tokens during prediction.
-
-This is why "predicting the next word" is a useful simplification, but **Next Token Prediction is the technically more accurate phrasing when discussing modern LLMs**.
-
-## How Does a Sentence Go from Text to a Next-Token Prediction?
-
-The pipeline can be simplified into six stages:
-
-**Text → Tokenization → Embeddings → Context Processing → Logits/Softmax → Decoding**
+Text passes through six successive stages: it is first split into tokens (tokenization), the tokens are then turned into numerical representations (embeddings), the context is processed, the model produces scores (logits) that Softmax turns into probabilities, and finally the decoding strategy chooses the next token.
 
 ![Stages of next-token prediction: splitting "the student went to the" into tokens, then numeric IDs, then embeddings, then context processing in a Transformer, then Logits, Softmax, and a probability distribution led by "the university" at 0.42](/images/articles/body/next-token-prediction-3.avif "From text to a probability distribution: the tokens and numbers are illustrative, and the model does not pick a word but produces a probability for every token; the decoding strategy then decides what gets chosen — Illustration: Techno Enjaz")
 
 ### 1. Tokenization: Splitting Text into Tokens
 
-The model does not work with the raw sentence directly.
+The model does not deal with the raw sentence directly; it starts by splitting it into tokens, which may be whole words, parts of words, common symbols, or characters and smaller units depending on the system. Subword tokenization methods such as BPE and SentencePiece have helped models handle large vocabularies and rare words without having to store every possible word as a separate entry. This stage matters even more in Arabic because of its rich morphological and derivational structure, a point we will return to later.
 
-It first splits it into tokens.
+### 2. Turning Tokens into Numbers
 
-The units may be:
+After splitting, each token gets a numeric identifier (Token ID). But a number like `4312` carries no semantic meaning in itself, so it is converted into a numerical vector through an embedding layer.
 
-- Whole words.
-- Parts of words.
-- Common tokens.
-- Characters or smaller units, depending on the system.
-
-Using Subword Tokenization such as BPE or SentencePiece helped models handle large vocabularies and rare words without storing every possible word as a separate entry.
-
-And in Arabic this stage becomes more important because of the language's rich morphological and derivational structure — we will return to this point later.
-
-### 2. Converting Tokens into Numbers
-
-After splitting the text, each token receives a numeric ID, the Token ID.
-
-But a number like `4312` carries no semantic meaning in itself, so it is converted into a numeric vector through an Embedding layer.
-
-An important correction to a common oversimplification here: **two words similar in meaning are not necessarily close to each other automatically in the initial embedding table**. Meaning and context take shape through training and the model's layers, and the contextual representations inside the network become far richer than a mere initial lookup vector.
+A common simplification needs correcting here: **two words with similar meanings are not necessarily close to each other automatically in the initial embedding table**. Meaning and context are shaped through training and the model's layers, and the contextual representations inside the network become far richer than a mere initial lookup vector.
 
 ### 3. Context Processing
 
-This is where the main generations of models differ.
-
-- N-gram relies on counts.
-- RNN relies on an accumulated hidden state.
-- LSTM adds memory and gates.
-- Transformer uses Self-Attention.
+This is where the main generations of models differ: N-grams rely on counts, RNNs on an accumulated hidden state, LSTMs add memory and gates, while the Transformer uses Self-Attention. This difference is the subject of the following sections.
 
 ### 4. Producing Logits
 
-In the end, the model produces a score for every candidate token in the vocabulary.
+In the end, the model produces a score for every possible token in the vocabulary; these scores are called logits, and they are not probabilities yet.
 
-These scores are called logits, and they are not yet probabilities.
+### 5. Turning Scores into Probabilities
 
-### 5. Converting Scores into Probabilities
+The Softmax function converts the scores into a probability distribution whose elements sum to 1.
 
-Softmax is used to convert the scores into a probability distribution whose elements sum to 1.
+### 6. Choosing the Token
 
-### 6. Selecting the Token
+Once the probabilities are available, the decoding stage begins: we either pick the highest directly, keep several paths, draw a probabilistic sample, or use Top-k, Top-p, and Temperature. Generation does not end at Softmax, and **how we choose from the distribution is a fundamental part of the model's final behavior**.
 
-Once we have the probabilities, the decoding stage begins:
+## N-gram: The Statistical Beginning
 
-- We take the highest directly.
-- Or we keep several paths.
-- Or we sample probabilistically.
-- Or we use Top-k / Top-p / Temperature.
+### The Idea and a Worked Example
 
-So generation does not end at Softmax; **how we choose from the distribution is an essential part of the model's final behavior**.
+N-grams are among the simplest statistical language models, approximating the probability of the current word from a limited number of preceding words instead of the full history. In a trigram model, the prediction depends on the last two words.
 
-# How Did N-gram Models Begin?
-
-N-grams are among the simplest statistical language models.
-
-The idea is to approximate the probability of the current word using a limited number of preceding words rather than the full history.
-
-With a trigram, prediction depends on the last two words.
-
-Example: suppose a simple corpus:
-
-- I love drinking tea
-- I love drinking coffee
-- I love traveling
-- I love drinking tea in the morning
-
-And we want to predict what comes after:
-
-> I love drinking ...
-
-The context "I love drinking" appeared three times:
-
-- Twice before "tea".
-- Once before "coffee".
-
-Therefore:
+Suppose a small corpus of four sentences: "I love drinking tea," "I love drinking coffee," "I love traveling," and "I love drinking tea in the morning." We want to predict what comes after "I love drinking ...". The context "I love drinking" appeared three times: twice before "tea" and once before "coffee." So:
 
 `P(tea | I love drinking) = 2/3`
 
-And:
+and:
 
 `P(coffee | I love drinking) = 1/3`
 
-The model picks "tea" if we use the highest probability.
+The model chooses "tea" if we go with the highest probability.
 
-## What Is N-gram's Strength?
+### What Is the Strength of N-grams?
 
-Its core strengths are:
+Their strength lies in simplicity, ease of understanding, speed of computation at small scales, no need for neural networks, and the ability to explain the reason behind each probability easily. But they suffer from major problems.
 
-- Simplicity.
-- Ease of understanding.
-- Fast computation at small scales.
-- No neural network required.
-- The reason behind a probability can be explained easily.
+### The Data Sparsity Problem
 
-But it suffers from serious problems.
+If a particular sequence never appeared in the training data, raw Maximum-Likelihood estimation may assign zero probability to some events. That is why techniques such as Smoothing and Backoff were historically used to distribute some probability to unobserved events. The problem worsens as N grows, because the number of possible combinations increases very rapidly. In Arabic, the abundance of inflections, affixes, and forms increases the number of surface word forms, which can amplify data sparsity if the system works on whole words.
 
-## What Is the Data Sparsity Problem?
+### Why Can't N-grams Capture Distant Context?
 
-If a given sequence never appears in the training data, raw Maximum-Likelihood estimation may assign zero probabilities to some events. That is why techniques such as Smoothing and Backoff were historically used to spread some probability over unobserved events.
+Because a trigram model looks only at the last two words, it may fail to capture a relationship that depends on a word that appeared dozens of words earlier. This limitation is what pushed researchers toward models that represent history more flexibly.
 
-The problem grows as N increases, because the number of possible combinations explodes.
+## RNN: Compressing History into a Hidden State
 
-In Arabic, the abundance of inflections, clitics, and forms increases the number of surface forms of words, which can aggravate data sparsity if the system operates on whole words.
+### A Hidden State Instead of a Fixed Window
 
-## Why Doesn't N-gram Understand Distant Context?
-
-If the model is a trigram, it looks only at the last two words.
-
-It may therefore fail to capture a relation that depends on a word appearing tens of words earlier.
-
-This limitation pushed researchers toward models that could represent history more flexibly.
-
-# How Did the RNN Change Context Processing?
-
-A Recurrent Neural Network does not rely on a fixed window of words.
-
-Instead, it passes a hidden state from step to step.
-
-At each step, the network uses:
-
-- The current token.
-- The previous hidden state.
-
-and then produces a new hidden state.
-
-In simplified form:
+A Recurrent Neural Network does not rely on a fixed window of words; instead, it passes a hidden state from one step to the next. At each step, the network uses the current token and the previous hidden state to produce a new hidden state; in simplified form:
 
 `h_t = f(W_h h_{t-1} + W_x x_t + b)`
 
-And `h_t` carries a compressed representation of everything the network has processed up to that moment.
-
-In theory, this allows the entire previous context to influence the prediction. In practice, preserving distant information was hard.
+`h_t` carries a compressed representation of everything the network has processed up to that moment. In theory, this lets the entire preceding context influence the prediction, but in practice preserving distant information was difficult.
 
 ![RNN diagram before and after unrolling through time, where the hidden state h passes from step to step](/images/articles/body/next-token-prediction-1.avif "Unrolling an RNN through time: at each step x_t enters and the hidden state h_t is updated based on h_{t-1} — Source: fdeloche, Wikimedia Commons, CC BY-SA 4.0")
 
-## What Is the Vanishing Gradient Problem?
+### The Vanishing Gradient Problem
 
-RNNs are usually trained with Backpropagation Through Time.
+RNNs are usually trained with Backpropagation Through Time. When the error is propagated across a large number of steps, gradients may become very small, so older words lose their influence on updating the model, a phenomenon known as the Vanishing Gradient. The practical result is that the network may remember nearby context well but struggle to learn distant dependencies, even though its structure allows them in theory.
 
-When the error is propagated across many steps, gradients may become tiny, so old words lose their influence on the model's update.
+## LSTM: Longer Memory Through Gates
 
-This is known as Vanishing Gradient.
+Long Short-Term Memory appeared in 1997 to address the difficulty of learning long-range dependencies in recurrent networks. It adds a cell state and control mechanisms called gates, the best known being the Forget Gate, the Input Gate, and the Output Gate. These gates help the unit decide what to keep, what can be forgotten, what new information enters, and what passes into the hidden state.
 
-Practically, this means the network may remember short context well but struggle to learn distant dependencies, even though its architecture theoretically permits them.
+LSTMs thus became more capable than simple RNNs of retaining important information over longer distances. But they did not solve another major problem: **processing is still largely sequential**, so all the positions in a sentence cannot be processed in parallel the way later became possible with Transformers.
 
-# What Did LSTM Add?
+## Transformers: Attention Instead of Recurrence
 
-Long Short-Term Memory appeared in 1997 to address the difficulty of learning long-range dependencies in recurrent networks.
+### From Encoder-Decoder to Decoder-Only
 
-LSTM adds a Cell State and control mechanisms called Gates.
-
-The best known:
-
-- Forget Gate.
-- Input Gate.
-- Output Gate.
-
-These gates help the unit determine:
-
-- What should be kept.
-- What can be forgotten.
-- What new information enters.
-- What passes to the hidden state.
-
-With this, LSTM became more capable than a plain RNN at holding important information over longer spans.
-
-But it did not solve another major problem: **processing remained largely sequential**.
-
-All positions of a sentence cannot be processed in the same parallel fashion that later became possible with Transformers.
-
-# What Did Transformers Change?
-
-In 2017, the paper **Attention Is All You Need** presented the Transformer architecture, which abandoned recurrence in the proposed architecture and relied on attention.
-
-But there is an important detail:
-
-**The original Transformer in the paper was an encoder–decoder aimed primarily at tasks like translation.**
-
-Generative models of the GPT family use a **Decoder-only Transformer** design, or designs derived from it, with Causal Masking to keep every position from seeing future tokens during generative training.
+In 2017, the paper **Attention Is All You Need** introduced the Transformer architecture, which in its proposed design dropped recurrence and relied on attention. But there is an important detail: **the original Transformer in the paper was an Encoder-Decoder aimed mainly at tasks such as translation.** Generative models in the GPT family use a **Decoder-only Transformer** design or designs derived from it, with causal masking that prevents each position from seeing future tokens during generative training.
 
 ![GPT architecture diagram of the Decoder-only Transformer type showing Embedding layers, Transformer blocks, Multi-Head Attention details with a Mask step, then Softmax at the output](/images/articles/body/next-token-prediction-2.avif "GPT architecture (Decoder-only): successive Transformer blocks, each containing Multi-Head Attention with a causal mask, then Linear and Softmax to predict the next token — Source: Marxav and Mrmw, Wikimedia Commons, CC0")
 
-This point matters because the phrase "Transformers predict the next word" is true in the context of modern causal models, but it is not an accurate description of every Transformer in existence.
+This point matters because the statement "Transformers predict the next word" is true in the context of modern causal models, but it is not an accurate description of every Transformer in existence.
 
-## What Is Self-Attention?
+### What Is Self-Attention?
 
-Instead of compressing all of history into a single state the way an RNN does, Self-Attention lets every position compute its relation to other positions in the context it is allowed to see.
-
-The mechanism starts from three representations:
-
-- Query (Q)
-- Key (K)
-- Value (V)
-
-And the core formula for Scaled Dot-Product Attention is:
+Instead of compressing all of history into a single state as RNNs do, Self-Attention lets each position compute its relationship to the other positions in the context it is allowed to see. The mechanism starts from three representations: the Query (Q), the Key (K), and the Value (V). The basic formula for Scaled Dot-Product Attention is:
 
 `Attention(Q,K,V) = softmax(QKᵀ / √d_k) V`
 
-The simplified idea:
+The simplified idea is that the query represents what the current position is looking for, the keys help measure the importance of other positions, and the values carry the information to be merged; Softmax turns the relationship scores into weights, and the model produces a weighted mix of the information.
 
-1. The Query represents what the current position is looking for.
-2. The Keys help measure the importance of other positions.
-3. The Values carry the information that will be merged.
-4. Softmax converts relation scores into weights.
-5. The model produces a weighted blend of the information.
+### What Distinguishes Causal Attention?
 
-## What Distinguishes Causal Attention?
+In autoregressive generation, the current token is not allowed to look into the future. If the sequence is "Artificial intelligence helps to ...", then when the model is trained to predict the fourth element, it can see only what precedes it, not the correct answer that appears later in the text. This is enforced with a causal mask, the mechanism that makes training consistent with how the model is used later: predicting the next element from the preceding ones.
 
-In Autoregressive Generation, the current token is not allowed to look into the future.
+### Why Did Transformers Beat RNNs in Large Models?
 
-If the sequence is:
+For reasons that include: the ability to process positions during training with a higher degree of parallelism than RNNs, representing distant relationships directly through attention, scalability to huge models and large datasets, Multi-Head Attention's ability to learn multiple kinds of relationships, and ease of integration with large-scale training techniques. This development paved the way for large autoregressive models such as GPT and others.
 
-> Artificial intelligence helps to ...
+## Does the Model "Understand," or Only Compute Probability?
 
-then when training the model to predict the fourth element, it can see only what precedes it, not the correct answer sitting later in the text.
+At the level of its core training objective, the model learns to estimate token probabilities. But reducing the behavior of large models to "merely picking the most probable word" is inaccurate for two reasons. First, during training the model builds complex internal representations of context, which can support tasks such as reasoning, summarization, translation, and question answering. Second, the model does not always choose the highest probability; the decoding method may use sampling, and its behavior also depends on the context, post-training, alignment, and the tools in use. The more accurate statement is therefore:
 
-This is enforced with a Causal Mask.
+> A generative model produces a probability distribution for the next token based on a learned representation of the context, and the generation strategy then determines how the actual output is chosen.
 
-This is the mechanism that makes training consistent with how the model is used afterward: predicting the next element from the previous ones.
+## The Difference Between Training and Generation
 
-## Why Did Transformers Beat RNNs in Large Language Models?
+This is one of the most common sources of confusion. **During training**, the system knows the real text and is trained to raise the probability of the correct token. If the sentence is "I visited the city of Damascus in ..." and the real next element is "summer," a loss is computed that measures how far the model's distribution is from the target, and the weights are then updated with optimization algorithms based on Gradient Descent.
 
-The main reasons:
+**During use**, there is no correct answer known in advance. The model gives a distribution that might assign "summer" 0.28, "Syria" 0.17, "the year" 0.11, "winter" 0.09, and so on, and the decoding strategy then determines what gets selected. After a token is chosen, it is appended to the context, and the process repeats.
 
-- Positions can be processed with far more parallelism during training compared to RNNs.
-- Distant relations are represented directly through attention.
-- Scalability to huge models and datasets.
-- Multi-Head Attention allows learning multiple kinds of relations.
-- They combine easily with large-scale training techniques.
+## Text Generation Strategies
 
-This evolution paved the way for large autoregressive models such as GPT and others.
+### Greedy Search
 
-# Does the Model "Understand" or Merely Compute Probability?
+It picks the highest-probability token at each step. Its advantage is that it is simple, consistent, and relatively fast, but it may produce predictable or repetitive text, and it does not guarantee that the best local decision at each step will lead to the best complete sequence.
 
-At the level of the core training objective, the model learns to estimate token probabilities.
+### Beam Search
 
-But reducing the behavior of large models to the phrase "just picking the most probable word" is inaccurate for two reasons.
+It keeps several candidate paths instead of just one. It is often used in specific sequence tasks, but it is not the ideal choice for every form of open-ended writing; neural generation research has shown that increasing the focus on the highest probability alone can produce less natural text in some open-ended generation tasks.
 
-First, the model builds complex internal representations of context during training, and these representations can support tasks such as reasoning, summarization, translation, and question answering.
+### Temperature
 
-Second, the model does not always pick the highest-probability option; the decoding method may use sampling, and model behavior also depends on the context, post-training, alignment, and the tools in use.
+Temperature reshapes the probability distribution before sampling: a lower value makes the distribution sharper and the results more conservative, while a higher value makes it flatter and more varied. Temperature is not literally a "creativity meter," but a parameter that affects the probability distribution, and therefore the likelihood of choosing less probable tokens.
 
-So the more precise statement is:
+### Top-k
 
-> A generative model produces a probability distribution over the next token based on a learned representation of context, and the generation strategy then determines how the actual output is selected.
+We keep the `k` most probable tokens and then sample from them; if `k=50`, every element outside the top fifty is discarded.
 
-# What Is the Difference Between Training and Generation?
+### Top-p, or Nucleus Sampling
 
-This is one of the most confusing points.
-
-## During Training
-
-The system knows the true text and is trained to raise the probability of the correct token.
-
-For example:
-
-> I visited the city of Damascus in ...
-
-If the true next element is "summer," a loss is computed measuring how far the model's distribution is from the target.
-
-The weights are then updated using optimization algorithms based on Gradient Descent.
-
-## During Inference
-
-There is no known correct answer.
-
-The model gives a distribution such as:
-
-- summer 0.28
-- Syria 0.17
-- the year 0.11
-- winter 0.09
-- ...
-
-The decoding strategy then determines what gets selected.
-
-After a token is chosen, it is appended to the context, and the process repeats.
-
-# What Are the Best-Known Text Generation Strategies?
-
-## Greedy Search
-
-At each step it picks the highest-probability token.
-
-Its advantages:
-
-- Simple.
-- Deterministic.
-- Relatively fast.
-
-But it can produce predictable or repetitive text, and it does not guarantee that the locally best decision at each step leads to the best overall sequence.
-
-## Beam Search
-
-Keeps several candidate paths instead of just one.
-
-It is used a lot in constrained sequential tasks, but it is not the ideal choice for every form of open-ended writing. Neural text generation research has shown that increasing the focus on likelihood maximization alone can produce less natural text in some open-ended generation tasks.
-
-## Temperature
-
-Temperature reshapes the probability distribution before sampling.
-
-Generally:
-
-- Lower temperature → a sharper distribution and more conservative results.
-- Higher temperature → a flatter, more varied distribution.
-
-Temperature is not literally a "creativity dial"; it is a parameter that affects the probability distribution and hence the likelihood of choosing less-preferred tokens.
-
-## Top-k
-
-We keep the highest `k` tokens by probability and sample from them.
-
-If `k=50`, everything outside the top 50 is discarded.
-
-## Top-p or Nucleus Sampling
-
-Instead of a fixed count, we choose the smallest set of tokens whose probabilities sum to a value such as `p=0.9`.
-
-The candidate set's size thus changes with the model's confidence.
+Instead of a fixed number, we choose the smallest set of tokens whose probabilities sum to a value such as `p=0.9`, so the size of the candidate set changes with the model's degree of confidence.
 
 ![Comparison of Top-k with k=3 and Top-p with p=0.9 on a single probability distribution over eight tokens: the first keeps three tokens, the second keeps five until the cumulative sum reaches 0.90](/images/articles/body/next-token-prediction-4.avif "Top-k keeps a fixed number of candidates, while Top-p keeps the smallest set whose probabilities sum to p, so its size changes with the model's confidence — Illustration: Techno Enjaz")
 
-# Why Is Arabic a Special Challenge for Predictive Models?
+The paper **The Curious Case of Neural Text Degeneration** proposed this method as a way to cut off the unreliable tail of the distribution while preserving more diversity than strict maximization methods allow in open-ended generation.
 
-The issue is not that Arabic is "difficult" in general, but that it has properties the system must handle appropriately in the data, encoding, and evaluation.
+## Why Is Arabic a Special Challenge?
 
-## 1. Morphological and Derivational Richness
+The problem is not that Arabic is "hard" in general, but that it has characteristics the system must handle appropriately in its data, tokenization, and evaluation.
 
-A single Arabic word can contain:
+### Morphological and Derivational Richness
 
-- A conjunction.
-- A preposition.
-- A definite article.
-- A root.
-- A pattern (an awzan, or derivational template).
-- Pronouns or suffixes.
-
-For example:
-
-> wa-bi-kitābihim ("and with their book")
-
-may carry several linguistic units inside the same written form.
+A single Arabic word may combine a conjunction, a preposition, a definite article, a root, a pattern, and pronouns or suffixes. A word like «وبكتابهم» ("and with their book") carries several linguistic units within a single written form.
 
 ![Morphological segmentation of the word "wa-bi-kitābihim" into the conjunction waw, the preposition ba, the noun "book", and the pronoun "them", with a comparison of three ways to tokenize it: one token for the whole word, a hypothetical statistical split, and a morphology-aware split](/images/articles/body/next-token-prediction-5.avif "A single Arabic word may carry a conjunction, a preposition, a noun, and a pronoun; and how it is split into tokens affects vocabulary size and root sharing across words (the statistical split here is a hypothetical example) — Illustration: Techno Enjaz")
 
-For this reason, treating every surface form as an independent unit can produce a huge vocabulary and higher data sparsity.
+Treating every surface form as an independent unit may therefore produce a huge vocabulary and higher data sparsity, and Arabic NLP research has stressed for many years that tokenization and morphological processing are central to processing Arabic.
 
-Arabic NLP research has long confirmed that tokenization and morphological processing are central to processing Arabic.
+### Non-Concatenative Morphology
 
-## 2. Non-Concatenative Morphology
+Arabic is not limited to prefixes and suffixes; an important part of its morphology rests on the **root and pattern**, meaning changes can occur within the structure of the word itself. This poses a challenge for tokenization algorithms that rely mainly on statistically merging or splitting adjacent segments, and 2025 research on languages with non-concatenative morphology showed that traditional subword algorithms may not always represent root-and-pattern structure naturally.
 
-Arabic is not merely a language that uses prefixes and suffixes.
+### The Absence of Diacritics in Most Texts
 
-A significant part of its morphology relies on **the root and the pattern**, meaning changes can occur inside the structure of the word itself.
+Ordinary Arabic text is usually written without short vowel marks, so a single written form may admit more than one reading or meaning, and context is what helps the model narrow down the possibilities.
 
-This challenges segmentation algorithms that fundamentally rely on statistically merging or splitting adjacent segments.
+### Diglossia and Dialects
 
-2025 research on non-concatenative languages clarified that conventional subword algorithms may not always represent root-and-pattern structure naturally.
+The Arab world uses Modern Standard Arabic, multiple local dialects, intermediate registers between them, and code-switching between Arabic and English, French, and other languages. Recent studies on code-switched Arabic indicate that the Arabic linguistic environment is multi-layered in a way that makes building models, data, and evaluation more complex than treating "Arabic" as a single homogeneous block.
 
-## 3. The Absence of Diacritics in Most Texts
+### Variation in Informal Writing
 
-Ordinary Arabic text is usually written without short vowel marks.
+On social networks in particular, we find spelling variations, elongated letters, Arabizi, foreign words, dialects with no fixed spelling standard, and code-switching within the same sentence, all factors that make tokenization, normalization, and prediction harder.
 
-The same written form can therefore admit more than one reading or meaning.
+## Is a "Morphological" Tokenizer Enough to Solve Arabic?
 
-Context is what helps the model narrow the possibilities.
+**No**, and this point became clearer in 2025 and 2026 research. Earlier studies showed that adding morphological information to tokenization can improve Arabic representations and some tasks, and the MorphBPE paper at ACL 2026 presented results indicating that morphology-aware tokenization can improve morphological consistency and lower Language Model Cross-Entropy, with improvements in Arabic reading comprehension within its experimental setup.
 
-## 4. Diglossia and Dialects
+But another study at LREC 2026 examined the representation of root and pattern in seven Arabic and multilingual models and tokenizers, and found that **a tokenizer's alignment with morphological structure is neither a necessary nor, on its own, a sufficient condition for a model's ability to generate morphological forms well**. The moral:
 
-The Arabic-speaking world uses:
+> Arabic quality is not determined by the tokenizer alone; data, model size, training architecture, dialect distribution, evaluation quality, and post-training all intertwine with it.
 
-- Modern Standard Arabic.
-- Multiple local dialects.
-- Intermediate levels.
-- Code-switching between Arabic and English, French, or others.
+## How Have Modern Arabic Models Evolved?
 
-Recent studies on code-switched Arabic indicate that the Arabic linguistic environment is multilayered in a way that makes building models, data, and evaluation more complex than treating "Arabic" as a single homogeneous kind.
+### Jais
 
-## 5. Informal Writing Variation
+Jais appeared in 2023 as a family of generative models centered on Arabic and English, with a base model and a chat version. The base version published in the paper had 13 billion parameters and used a Decoder-only architecture derived from GPT-3, trained on a mix of Arabic, English, and code, and the family later expanded to different sizes and context lengths.
 
-Especially on social media we find:
+### Jais 2
 
-- Spelling variations.
-- Letter stretching.
-- Arabizi.
-- Foreign words.
-- Dialects with no fixed spelling standard.
-- Code-switching within the same sentence.
+In December 2025, Inception, Cerebras, and MBZUAI announced Jais 2, a newer generation of open-weight Arabic models that the published materials describe as designed from the ground up for strong performance in Modern Standard Arabic and dialects, with greater attention to cultural and linguistic diversity. In 2026, a detailed technical paper on the Jais 2 family appeared, including versions of up to 70 billion parameters, with an Arabic-specific vocabulary and comparisons on Arabic and cultural benchmarks.
 
-This raises the difficulty of tokenization, normalization, and prediction.
+### ALLaM
 
-# Is a "Morphological" Tokenizer Enough to Solve Arabic?
+ALLaM is a family of language models focused on Arabic and English. Its technical paper, published in 2024, explains that it uses an autoregressive Decoder-only architecture and addresses vocabulary expansion, training on an Arabic-English mix, and knowledge transfer between the two languages, along with subsequent alignment with human preferences.
 
-**No.**
+What matters here is not ranking Jais and ALLaM to declare one "the best model," but that they are examples of Arabic NLP moving from merely using multilingual models to **designing and training models centered on Arabic itself**.
 
-This is a point that emerged more clearly in 2025 and 2026 research.
+## Comparing N-gram, RNN, LSTM, and Transformer
 
-Earlier studies showed that adding morphological information to tokenization can improve Arabic representations and some tasks.
-
-The MorphBPE paper at ACL 2026 reported results indicating that morphology-aware tokenization can improve morphological consistency and reduce language model cross-entropy, with gains in Arabic reading comprehension within its experimental settings.
-
-But another study at LREC 2026 examined root-and-pattern representation across seven Arabic and multilingual models and tokenizers, and found that **alignment between a tokenizer's segmentation and morphological structure is neither a necessary nor, by itself, a sufficient condition for the model to generate morphological forms well**.
-
-The takeaway:
-
-> Arabic quality is not determined by the tokenizer alone; it intertwines with the data, model size, training architecture, dialect distribution, evaluation quality, and post-training.
-
-# How Have Modern Arabic Models Evolved?
-
-## Jais
-
-Jais appeared in 2023 as a family of generative models centered on Arabic and English, with a base model and a chat version.
-
-The base version published in the paper was 13 billion parameters and used a Decoder-only architecture derived from GPT-3, trained on a mixture of Arabic, English, and code.
-
-Later, the Jais family expanded to different sizes and contexts.
-
-## Jais 2
-
-In December 2025, Inception, Cerebras, and MBZUAI announced Jais 2, a newer generation of open-weight Arabic models.
-
-The published materials describe the family as designed from the ground up for strong performance in Modern Standard Arabic and dialects, with greater attention to cultural and linguistic diversity.
-
-In 2026, a detailed technical paper for the Jais 2 family appeared, covering versions up to 70 billion parameters, with a customized Arabic vocabulary and comparisons on Arabic and cultural benchmarks.
-
-## ALLaM
-
-ALLaM is a family of language models focused on Arabic and English.
-
-The technical paper published in 2024 clarifies that it uses a Decoder-only autoregressive architecture, and covers vocabulary extension, training on an Arabic-English mixture, and knowledge transfer between the two languages, plus later alignment with human preferences.
-
-The important point is not ranking Jais and ALLaM as the "best model," but that both exemplify Arabic NLP's shift from merely using multilingual models to **designing and training models centered on Arabic itself**.
-
-# How Do We Compare N-gram, RNN, LSTM, and Transformer?
-
-| Model | Context Representation | Key Strength | Key Limitation |
+| Model | Context Representation | Key Advantage | Key Limitation |
 |---|---|---|---|
-| N-gram | Last N−1 elements | Simple and interpretable | Data sparsity and limited context |
-| RNN | Accumulated Hidden State | Longer context than N-gram | Distant dependencies and sequential processing |
-| LSTM | Hidden State + Cell State + Gates | Better memory for long relations | Still relatively sequential |
-| Transformer | Self-Attention | Direct relations, better parallelism, scalability | Cost of conventional attention rises with context length |
-| Decoder-only LLM | Causal Self-Attention + broad training | Broadly capable text generation | Training/inference cost, data quality, hallucination, context limits |
+| N-gram | The last N−1 elements | Simple and interpretable | Data sparsity and limited context |
+| RNN | Accumulated hidden state | Longer context than N-grams | Difficulty with distant dependencies and sequential processing |
+| LSTM | Hidden State + Cell State + Gates | Better memory for long-range relationships | Still relatively sequential |
+| Transformer | Self-Attention | Direct relationships, better parallelism, and scalability | Standard attention cost rises with context length |
+| Decoder-only LLM | Causal Self-Attention + large-scale training | Broadly capable text generation | Training/serving cost, data quality, hallucination, context limits |
 
-# Is Next Token Prediction Enough to Build an Advanced Language Model?
+## Is Next-Token Prediction Enough to Build an Advanced Language Model?
 
-Training on Next Token Prediction is a very important foundation for Autoregressive generative models, but it is not the whole story.
+Training on Next Token Prediction is a vitally important foundation for autoregressive generative models, but it is not the whole story. Modern models may also go through stages such as pretraining, instruction tuning, supervised fine-tuning, preference optimization or other alignment methods, tool-use training, safety tuning, and domain adaptation.
 
-Modern models may also pass through stages such as:
+So the model the end user interacts with is usually not just a network whose training ended at predicting the next token on raw text. Even so, the next-element prediction task remains **the core computational engine of step-by-step generation** in a large number of modern language models.
 
-- Pretraining.
-- Instruction Tuning.
-- Supervised Fine-Tuning.
-- Preference Optimization or other alignment methods.
-- Tool use training.
-- Safety tuning.
-- Domain adaptation.
+## Common Misconceptions About Next-Word Prediction
 
-So the model an end user employs is not usually just a network whose training ended at predicting the next token on raw text.
+| The Common Claim | The Correction |
+|---|---|
+| "The model looks for the most frequently used word" | Not necessarily; a simple N-gram relies heavily on frequency, but a modern Transformer produces probabilities from a complex representation of context learned in training |
+| "Every token is a word" | Wrong; a token may be part of a word, a symbol, or another unit |
+| "A Transformer sees the whole future sentence when generating" | In causal language models it does not see the future, because the causal mask prevents it |
+| "The highest probability always gives the best text" | Not necessarily; greedy decoding may differ greatly from sampling, and research has shown that maximizing probability alone is not always the best strategy for open-ended generation |
+| "A morphological tokenizer = an excellent Arabic model" | Not enough; tokenization matters, but model quality depends on a whole system including data, training, architecture, and evaluation |
+| "Modern models predict one word and then stop" | No; the chosen token is appended to the context and the process repeats until the model reaches a stopping condition or the generation limit |
 
-Even so, next-element prediction remains **the core computational engine of step-by-step generation** in a large number of modern language models.
+## What Is the Future of Text Prediction in Arabic?
 
-# What Are the Common Misconceptions About Next Word Prediction?
+The direction of progress does not seem confined to increasing parameter counts. Several fronts are advancing together: more efficient Arabic tokenization, better representation of morphology, roots, and patterns, higher-quality dialect data, handling code-switching, open-weight Arabic models, longer and more efficient context, more efficient attention techniques, better Arabic and cultural evaluations, reducing hallucination and improving grounding, integrating tools and external retrieval (such as using [the MCP protocol standard](#article/model-context-protocol-mcp)), and smaller, more efficient models for local use and edge devices.
 
-## "The model looks for the most commonly used word"
+Recent research on Morphology-Aware Tokenization confirms that the question is not yet settled; there is clear progress, but the relationship between the shape of tokens and actual linguistic ability is more complex than any single simple rule can capture.
 
-Not necessarily.
+## Conclusion
 
-A simple N-gram depends heavily on counts, but a modern Transformer produces its probabilities based on a complex representation of context learned during training.
+Next-word prediction began as a relatively simple statistical problem: counting what usually comes after a short context. With N-grams, context was a limited window; with RNNs, history came to be compressed into a hidden state; then LSTMs made retaining distant information more stable. Transformers took the idea to a different level with attention and scalable contextual processing, and Decoder-only Transformers became the foundation of a large number of modern generative language models.
 
-## "Every token is a word"
+But the more accurate term today is usually **Next Token Prediction**, because the model does not necessarily work with whole words. And for Arabic, the problem does not end with translating an English model or adding Arabic words to the vocabulary; morphology, dialects, diacritics, informal writing, code-switching, and the tokenization method all affect a model's effectiveness.
 
-Wrong.
-
-A token may be part of a word, a punctuation mark, or another unit.
-
-## "The Transformer sees the whole future sentence when generating"
-
-In Causal Language Models it does not; the Causal Mask prevents that.
-
-## "Highest probability always gives the best text"
-
-Not necessarily.
-
-Greedy decoding may differ greatly from sampling, and research has shown that likelihood maximization alone is not always the best strategy for open-ended generation.
-
-## "A morphological tokenizer = an excellent Arabic model"
-
-Not sufficient.
-
-Tokenization matters, but a model's quality depends on an entire stack including data, training, architecture, and evaluation.
-
-## "Modern models predict one word and stop"
-
-No.
-
-The chosen token is appended to the context and the process repeats until the model reaches a stop condition or the generation limit.
-
-# What Is the Future of Text Prediction in Arabic?
-
-The direction of progress does not appear confined to adding parameters.
-
-Several important axes:
-
-- More efficient tokenization for Arabic.
-- Better representation of morphology, roots, and patterns.
-- Higher-quality dialect data.
-- Handling code-switching.
-- Open-weight Arabic models.
-- Longer, more efficient context.
-- More efficient attention techniques.
-- Better Arabic and cultural evaluations.
-- Reducing hallucination and improving grounding.
-- Integrating tools and external retrieval (such as using [the MCP protocol standard](#article/model-context-protocol-mcp)).
-- Smaller, more efficient models for local use and edge devices.
-
-And recent research on Morphology-Aware Tokenization confirms the question is not settled; there is clear progress, but the relationship between token shape and actual linguistic capability is more complex than one simple rule.
-
-# Conclusion
-
-Next-word prediction began as a relatively simple statistical problem: counting what usually follows a short context.
-
-With N-grams, context was a limited window.
-
-With RNNs, history came to be compressed into a hidden state.
-
-Then LSTM made holding distant information more stable.
-
-Transformers moved the idea to a different level using attention and scalable context processing, and decoder-only Transformers became the foundation of a large number of modern generative language models.
-
-But the more precise term today is usually **Next Token Prediction**, because the model does not necessarily deal in whole words.
-
-For Arabic, the problem does not stop at translating an English model or adding Arabic words to a vocabulary. Morphology, dialects, diacritics, informal writing, code-switching, and the tokenization method all affect model efficiency.
-
-This is why understanding "how does the model choose the next element?" is not merely an explanation of a small algorithm; it is an entry point into understanding how modern language models generate text step by step.
+That is why understanding "How does the model choose the next element?" is not just an explanation of a small algorithm, but a gateway to understanding how modern language models generate text step by step.
 
 ## Sources and References
 

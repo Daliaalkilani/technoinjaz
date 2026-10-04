@@ -14,496 +14,162 @@ Suggested Slug: internet-of-things-iot
 
 **The Internet of Things (IoT) is a system of connected physical devices that collect data from the real world, transmit it across communication networks, and then use it in applications or processing systems to make a decision or execute an action.**
 
-The "thing" may be a small temperature sensor, an electricity meter, a smartwatch, an industrial machine, a car, a camera, an irrigation system, or a medical device.
+The "thing" may be a small temperature sensor, an electricity meter, a smartwatch, an industrial machine, a car, a camera, an irrigation system, or a medical device. But a device's internet connection alone does not make it a complete IoT system.
 
-Yet merely having an internet connection does not make a device a complete IoT system.
+The system usually consists of a connected chain that starts in the **physical world** itself, where **sensors and devices** capture real measurements such as temperature, humidity, and motion. These measurements cross the **connectivity** layer toward a **gateway or edge node** that aggregates, cleans, and perhaps processes the data locally before uploading it, and then reach a **cloud or on-premises platform** that handles **processing and analytics**, turning raw data into meaningful information. At the top of the chain stands the **application**, which translates this information into a decision, and the **action or automation** that executes the decision in the real world, completing a cycle that began with a sensor and ends with a motor, a valve, or a notification.
 
-The system is often composed of an interconnected chain that begins with the **physical world** itself, where **sensors and devices** capture real measurements such as temperature, humidity, and motion. These measurements travel across a **connectivity** layer toward a **gateway or edge node** that aggregates and filters the data — and perhaps processes it locally — before uploading it, and then reach a **cloud or local platform** responsible for **processing and analytics**, turning raw data into meaningful information. At the top sits the **application**, which translates that information into a decision, and the **action or automation** that executes the decision back onto the physical world — completing the cycle that began at a sensor and ends at a motor, a valve, or a notification.
+The real value does not come merely from "connecting things," but from turning measurements into information, and then into a decision or action.
 
-The real value comes not merely from "connecting things," but from turning measurements into information, and then into a decision or an action.
+## How Does the Internet of Things Work? The Loop of a Smart Irrigation System
 
-# How Does the Internet of Things Work?
+The logic of IoT becomes clear when we follow a smart irrigation system step by step. The loop begins with **sensing**: a sensor in the soil measures moisture, temperature, and perhaps light. Then comes **conversion to data**, where physical measurements become digital values, such as soil moisture at 21% and temperature at 31°C.
 
-Suppose we have a smart irrigation system.
+Next comes **connectivity**, as the device sends its data using a suitable technology, whether Bluetooth LE, Wi-Fi, Zigbee, Thread, LoRaWAN, NB-IoT, LTE-M, or 5G. The data then moves to **processing**, reaching a local gateway, an edge server, a cloud platform, or an in-house system.
 
-## 1. Sensing
+Then comes the **decision**: the system may apply a simple rule, such as turning irrigation on when soil moisture drops below a defined threshold, or use a more complex analysis combining soil condition, weather, crop, water consumption, and historical data. Finally, **actuation**: a command is sent to the water valve to start irrigation.
 
-The soil sensor measures:
-
-- Moisture.
-- Temperature.
-- And possibly light.
-
-## 2. Conversion into Data
-
-The physical measurements are converted into digital values.
-
-For example:
-
-```text
-Soil Moisture = 21%
-Temperature = 31°C
-```
-
-## 3. Connectivity
-
-The device sends the data using a suitable technology, such as:
-
-- Bluetooth LE.
-- Wi-Fi.
-- Zigbee.
-- Thread.
-- LoRaWAN.
-- NB-IoT.
-- LTE-M.
-- 5G.
-
-## 4. Processing
-
-The data may arrive at:
-
-- A local gateway.
-- An edge server.
-- A cloud platform.
-- Or an on-premises enterprise system.
-
-## 5. Decision
-
-The system applies a rule or a model:
-
-```text
-if soil_moisture < threshold:
-    irrigation = ON
-```
-
-Or it uses more sophisticated analytics that combine:
-
-- Soil condition.
-- Weather.
-- Crop.
-- Water consumption.
-- Historical data.
-
-## 6. Actuation
-
-A command is sent to the water valve to start irrigation.
-
-This loop:
-
-**Sense → Connect → Process → Decide → Act**
-
-lies at the heart of a great many IoT systems.
+This loop, sensing, then connecting, then processing, then deciding, then acting, is the essence of a large number of IoT systems.
 
 ![Smart irrigation system loop with five stages: sensing, then connectivity, then processing, then decision, then actuation by opening the water valve, with a 21% moisture reading and an if soil_moisture below-threshold rule](/images/articles/body/internet-of-things-iot-3.avif "The Sense → Connect → Process → Decide → Act loop in a smart irrigation system: the sensor reading travels across the network, the rule decides to open the valve, and irrigation changes the next reading — Illustration: Techno Enjaz")
 
-# What Are the Core Components of an IoT System?
+## The Core Components of an IoT System
 
-## Devices and Sensors
+### Devices and Sensors
 
-These are the point of contact with the real world.
+These are the point of contact with the real world, and they may measure temperature, humidity, pressure, vibration, light, location, speed, flow, air quality, and vital signs. They may also include actuators that execute commands such as opening a valve, starting a motor, changing a temperature, locking a door, or stopping a machine.
 
-They may measure:
+### The Controller or Embedded Computer
 
-- Temperature.
-- Humidity.
-- Pressure.
-- Vibration.
-- Light.
-- Location.
-- Speed.
-- Flow.
-- Air quality.
-- Vital signs.
+It receives sensor data and processes part of it, and may be a microcontroller, a system on chip (SoC), a PLC, an Embedded Linux device, or an industrial controller. It is not necessary to send every raw reading to the cloud.
 
-They may also contain actuators to execute commands such as:
+### The Connectivity Layer
 
-- Opening a valve.
-- Starting a motor.
-- Changing a temperature.
-- Locking a lock.
-- Stopping a machine.
+It moves data between devices and the rest of the system, and the choice made here changes power consumption, range, cost, speed, latency, battery life, and ease of deployment.
 
-## The Microcontroller or Embedded Computer
+### The Gateway
 
-It receives sensor data and processes part of it.
+Some devices do not connect to the cloud directly. A short-range BLE sensor may connect to a nearby **gateway** that receives its transmissions, and the gateway then forwards the data across the internet to the **cloud**, where it is stored and processed. With this arrangement, the sensor benefits from a low-power protocol that cannot sustain a direct internet connection, while the gateway carries the heavier processing load and its higher cost. A gateway can also aggregate data from several devices, translate between protocols, filter data, enforce security policies, and run local logic.
 
-It may be:
+### Edge Computing
 
-- A microcontroller.
-- A SoC.
-- A PLC.
-- An embedded Linux device.
-- An industrial controller.
+Edge computing processes data close to its source instead of sending everything to a distant data center, and it helps when we need fast response, less bandwidth consumption, continued operation when the internet is weak, local video processing, or less transmission of sensitive data.
 
-It is not necessary to send every raw reading to the cloud.
+### Cloud / Backend
 
-## The Connectivity Layer
+It may handle data storage, device management, analytics, alerts, APIs, user management, AI models, and monitoring dashboards.
 
-It carries data between the devices and the rest of the system.
+### The Application
 
-The choice here changes:
+This is what the user or another system sees, and it may be a dashboard, a mobile app, a maintenance system, a monitoring center, an API, an ERP system, a digital twin, or an automation engine.
 
-- Power consumption.
-- Range.
-- Cost.
-- Speed.
-- Latency.
-- Battery life.
-- Ease of deployment.
+## IoT Is Not a Single Layer
 
-## Gateway
+A common mistake is talking about IoT as if it were a single protocol, when in reality it is stacked layers, each with its own options:
 
-Some devices do not connect to the cloud directly.
+| Layer | Examples |
+|---|---|
+| Application | MQTT / CoAP / HTTP / AMQP / Matter |
+| Transport | TCP / UDP / QUIC |
+| Network | IPv4 / IPv6 |
+| Link / Radio | Wi-Fi / BLE / Thread / Zigbee / Cellular / LoRa |
 
-A short-range BLE sensor may connect to a nearby **gateway** that receives its transmissions; the gateway then forwards the data over the internet to the **cloud**, where it is stored and processed. This arrangement lets the sensor benefit from a low-energy protocol that cannot sustain a direct internet connection, while the gateway absorbs the heavier processing and its higher cost.
+Not all of these options come together in every device. That is why we must always distinguish between **the radio or connectivity technology**, **the network protocol**, **the application protocol**, and **the data model**.
 
-The gateway can:
+## IoT Connectivity Technologies
 
-- Aggregate data from multiple devices.
-- Translate between protocols.
-- Filter data.
-- Apply security policies.
-- Run local logic.
+No single connectivity technology suits every use, and each has its natural place.
 
-## Edge Computing
+### Wi-Fi
 
-Edge computing processes data close to its source instead of sending everything to a remote data center.
+Wi-Fi suits cases that need relatively high bandwidth and a direct IP network connection, in a home, office, or facility that has Wi-Fi infrastructure, such as cameras, home appliances, displays, and gateways. Its potential limitations are higher power consumption than low-power technologies, dependence on access-point infrastructure, and range and congestion depending on the environment.
 
-It helps when we need:
+### Bluetooth Low Energy — BLE
 
-- Fast response.
-- Reduced bandwidth.
-- Continued operation when internet connectivity is poor.
-- Local video processing.
-- Less transmission of sensitive data.
+Bluetooth LE was designed to operate with high energy efficiency and supports more than one communication mode: point-to-point, broadcast, and mesh. It is common in wearables, personal medical devices, sensors, proximity applications, and setting up smart devices. Current Bluetooth SIG documents also point to its growing role in **Ambient IoT**, where some future devices may rely on energy harvested from the environment instead of traditional batteries.
 
-## Cloud / Backend
+### Zigbee
 
-It may handle:
+Zigbee is built on the IEEE 802.15.4 standard and is known for low-power mesh networks, used in smart homes, lighting, buildings, sensing, and control. In November 2025, the Connectivity Standards Alliance announced **Zigbee 4.0**, which added improvements in security and compatibility and support for Sub-GHz bands through Suzi, along with improvements in setup and operation. Zigbee has not stood still at the old versions that appear in many IoT explainers.
 
-- Data storage.
-- Device management.
-- Analytics.
-- Alerts.
-- APIs.
-- User management.
-- AI models.
-- Monitoring dashboards.
+### Thread
 
-## The Application
+Thread is a low-power, IP-based mesh protocol designed for the Internet of Things. It relies on IPv6, operates as a mesh network that does not depend on a single central hub that could become a point of failure, suits low-power devices, is used in modern smart home ecosystems, and is one of the most important network layers that Matter runs on.
 
-This is what the user or another system sees.
+### LoRa and LoRaWAN
 
-It may be:
-
-- A dashboard.
-- A mobile app.
-- A maintenance system.
-- A control room.
-- An API.
-- An ERP system.
-- A digital twin.
-- An automation engine.
-
-# IoT Is Not "a Single Layer"
-
-A common mistake is to talk about IoT as if it were one protocol.
-
-In reality, there are multiple layers.
-
-For example:
-
-```text
-Application:
-MQTT / CoAP / HTTP / AMQP / Matter
-
-Transport:
-TCP / UDP / QUIC
-
-Network:
-IPv4 / IPv6
-
-Link / Radio:
-Wi-Fi / BLE / Thread / Zigbee / Cellular / LoRa
-```
-
-Not all of these options exist in every device.
-
-This is why we must distinguish between:
-
-- **The radio or connectivity technology.**
-- **The network protocol.**
-- **The application protocol.**
-- **The data model.**
-
-# What Are IoT's Key Connectivity Technologies?
-
-No single technology suits every use case.
-
-## Wi-Fi
-
-Suitable when we need:
-
-- Relatively high bandwidth.
-- A direct connection to an IP network.
-- A home, office, or facility environment that already has Wi-Fi infrastructure.
-
-Examples:
-
-- Cameras.
-- Home appliances.
-- Displays.
-- Gateways.
-
-Potential limitations:
-
-- Higher power consumption than low-power technologies.
-- Dependence on access point infrastructure.
-- Range and congestion depend on the environment.
-
-## Bluetooth Low Energy — BLE
-
-Bluetooth LE was designed to operate with high energy efficiency and supports more than one connection mode, including:
-
-- Point-to-point.
-- Broadcast.
-- Mesh.
-
-It is common in:
-
-- Wearables.
-- Personal medical devices.
-- Sensors.
-- Proximity applications.
-- Provisioning of smart devices.
-
-Current Bluetooth SIG documentation also points to its growing role in **Ambient IoT**, where some future devices may rely on energy harvested from the environment instead of conventional batteries.
-
-## Zigbee
-
-Zigbee is built on IEEE 802.15.4 and is best known for low-power mesh networks.
-
-It is used in:
-
-- Smart homes.
-- Lighting.
-- Buildings.
-- Sensors and control.
-
-And in November 2025 the Connectivity Standards Alliance announced **Zigbee 4.0**, which added improvements in security and interoperability, support for Sub-GHz bands via Suzi, and improvements to provisioning and operation.
-
-Zigbee, then, did not stop at the older versions that appear in many IoT explainers.
-
-## Thread
-
-Thread is a low-power, IP-based mesh protocol designed for the Internet of Things.
-
-Its characteristics include:
-
-- IPv6.
-- Mesh networking.
-- No single central hub as a point of failure.
-- Suitability for low-power devices.
-- Use in modern smart home systems.
-
-It is one of the most important network layers on which Matter runs.
-
-## LoRa and LoRaWAN
-
-There is an important difference between the two terms.
-
-### LoRa
-
-The radio/modulation technology.
-
-### LoRaWAN
-
-The network protocol that organizes communication between:
-
-- End devices.
-- Gateways.
-- Network servers.
+There is an important difference between the two terms: **LoRa** is the radio and modulation technology, while **LoRaWAN** is the network protocol that organizes communication among end devices, gateways, and network servers.
 
 ![LoRaWAN architecture diagram from the end device to the gateway and then to network, join, and application servers in the cloud](/images/articles/body/internet-of-things-iot-1.avif "LoRaWAN architecture: the end device transmits over LoRa radio to the gateway, which forwards packets across the internet to the network server, join server, and application server — Source: Lorawan-arch, Wikimedia Commons, CC0")
 
-LoRaWAN suits applications that need:
+LoRaWAN suits applications that need long distances, little data, long battery life, and non-continuous transmission, such as agriculture, environmental monitoring, infrastructure, and some city applications. The LoRaWAN 1.0.4 specification describes the protocol as optimized for battery-powered devices, whether fixed or mobile.
 
-- Long distances.
-- Small amounts of data.
-- Long battery life.
-- Non-continuous transmission.
+### NB-IoT
 
-Such as:
+A cellular LPWAN technology especially suited to smart meters, infrastructure sensors, and low-data devices, with wide cellular coverage and long battery life.
 
-- Agriculture.
-- Environmental monitoring.
-- Infrastructure.
-- Some city-scale applications.
+### LTE-M
 
-The LoRaWAN 1.0.4 specification describes the protocol as optimized for battery-powered devices, whether stationary or mobile.
+LTE-M offers more flexibility than NB-IoT for some applications, especially mobile devices, tracking, wearables, relatively higher data rates, and some voice cases. By the end of 2025, combined active NB-IoT and LTE-M connections worldwide surpassed **one billion connections** according to the GSMA, confirming that they are not merely transitional technologies whose role has ended.
 
-## NB-IoT
+### 5G and RedCap
 
-A Cellular LPWAN technology particularly suited to:
+5G matters for classes of IoT that need higher bandwidth, lower latency under certain conditions, private industrial networks, high device density, and advanced quality of service, but it is not necessary for all IoT. RedCap/eRedCap, meanwhile, aims to deliver part of 5G's capabilities with lower complexity, lower power, and lower cost than full-capability 5G.
 
-- Smart meters.
-- Infrastructure sensors.
-- Low-data devices.
-- Wide cellular coverage.
-- Long battery life.
+The detailed relationship between 5G and the Internet of Things deserves its own explanation, which we devote to the article [5G and the Internet of Things](#article/5g-iot).
 
-## LTE-M
-
-Offers more flexibility than NB-IoT for some applications, especially:
-
-- Mobile devices.
-- Tracking.
-- Wearables.
-- Relatively higher data rates.
-- Some voice use cases.
-
-And by the end of 2025, the total number of active NB-IoT and LTE-M connections worldwide exceeded **one billion connections**, according to the GSMA — confirming that these are not merely transitional technologies whose time has passed.
-
-## 5G and RedCap
-
-5G matters for some classes of IoT that need:
-
-- Higher bandwidth.
-- Lower latency under specific conditions.
-- Private industrial networks.
-- Very high device density.
-- Advanced QoS.
-
-But it is not necessary for every IoT deployment.
-
-RedCap/eRedCap, meanwhile, aim to deliver a portion of 5G capabilities with:
-
-- Less complexity.
-- Less power.
-- Lower cost than full-capability 5G.
-
-> The detailed relationship between 5G and IoT deserves a page of its own; this section should therefore be linked to the **5G and the Internet of Things** article rather than repeating its entire content here.
-
-# Comparing IoT Connectivity Technologies
+### Comparing IoT Connectivity Technologies
 
 | Technology | Typical Range | Power Consumption | Data Volume | Example Uses |
 |---|---|---|---|---|
 | BLE | Short | Very low | Low–medium | Wearables and sensors |
 | Wi-Fi | Local | Medium–high | High | Cameras and home appliances |
-| Zigbee | Short–medium / Mesh | Low | Low | Lighting and buildings |
-| Thread | Local mesh | Low | Low–medium | Smart Home over IP |
+| Zigbee | Short–medium/Mesh | Low | Low | Lighting and buildings |
+| Thread | Local mesh | Low | Low–medium | IP-based smart home |
 | LoRaWAN | Long | Very low | Very low | Agriculture and monitoring |
 | NB-IoT | Wide cellular | Low | Low | Meters and infrastructure |
 | LTE-M | Wide cellular | Low | Low–medium | Tracking and wearables |
 | RedCap/eRedCap | Wide cellular | Medium | Medium | Mid-tier IoT |
-| Full 5G NR | Wide cellular | Highest | High | Video, industry, and high-performance applications |
+| Full 5G NR | Wide cellular | Higher | High | Video, industry, and high-performance applications |
 
-This is a conceptual comparison; real performance varies with the device, spectrum, implementation, and environment.
+This is a conceptual comparison; real performance varies by device, spectrum, implementation, and environment.
 
-# How Do You Choose a Connectivity Technology?
+### How Do You Choose a Connectivity Technology?
 
-Start with these questions:
+The choice starts with specific questions: How much data is there? How often will the device transmit? How many years must the battery last? What is the distance? Is the device mobile? Is Wi-Fi or a cellular network available? What latency is required? How many devices are there? What do the hardware and connectivity fees cost? How sensitive is the data? And what happens if the connection drops?
 
-1. How much data is there?
-2. How often will the device transmit?
-3. How many years must the battery last?
-4. What is the distance?
-5. Is the device mobile?
-6. Is there Wi-Fi or a cellular network?
-7. What latency is required?
-8. How many devices are there?
-9. What does the hardware cost?
-10. What are the connectivity fees?
-11. How sensitive is the data?
-12. What happens if connectivity is lost?
+A moisture sensor in a field is not treated like an industrial quality camera. The first may need LoRaWAN or NB-IoT, a battery lasting years, and small messages; the second may need Ethernet, Wi-Fi, or 5G with edge processing.
 
-Example:
+## IoT Application Protocols
 
-A soil moisture sensor in a field must not be treated like an industrial-grade camera.
+Above the connectivity layer come the application protocols that define how devices and services exchange their messages.
 
-The first may need:
+### MQTT
 
-- LoRaWAN or NB-IoT.
-- Years of battery life.
-- Small messages.
+**MQTT 5.0** is an OASIS standard based on the **Publish / Subscribe** model. Instead of each device connecting directly to every consumer of the data, the sensor publishes its temperature messages to a central **broker**, which in turn distributes them to all subscribers, such as a monitoring dashboard and an alerting service, without the publisher knowing any of them. This decoupling allows new consumers to be added without touching the device, and the device to be changed without updating the consumers, because the only contract they share is the topic name, not an address.
 
-The second may need:
-
-- Ethernet.
-- Wi-Fi.
-- 5G.
-- Edge processing.
-
-# What Are IoT's Key Application Protocols?
-
-## MQTT
-
-**MQTT 5.0** is an OASIS standard based on the model:
-
-**Publish / Subscribe**
-
-Instead of each device connecting directly to every consumer of its data, the sensor publishes its temperature readings to a central **broker**, and the broker in turn distributes them to every subscriber — a monitoring dashboard and an alerting service, for instance — without the publisher knowing any of them. This decoupling lets new consumers be added without touching the device, and the device replaced without updating the consumers, because the only thing they share is a topic name rather than an address.
-
-Advantages:
-
-- Decouples producers from consumers.
-- Relatively lightweight messages.
-- Three QoS levels.
-- Suitable for distributed systems.
+Its advantages include decoupling producers from consumers, relatively lightweight messages, three quality-of-service (QoS) levels, and suitability for distributed systems.
 
 ![Sequence diagram of MQTT message exchange between two clients and a broker, including connection, subscribing to a topic, and publishing temperature readings](/images/articles/body/internet-of-things-iot-2.avif "MQTT message exchange through a broker: client A subscribes to the temperature/roof topic, receives the retained value, then every new reading published by client B on the same topic — Source: Simon A. Eugster, Wikimedia Commons, CC BY-SA 4.0")
 
-But describing MQTT as "automatically saving energy" is inaccurate; power consumption also depends on:
+But describing MQTT as "automatically saving power" is inaccurate; power consumption also depends on the radio link, keep-alive messages, message rate, TLS, the device, and session design.
 
-- The radio link.
-- Keep-alive.
-- Message rate.
-- TLS.
-- The device.
-- Session design.
+### CoAP
 
-## CoAP
-
-CoAP was designed for constrained nodes and networks.
-
-It is a web-style protocol that typically runs over UDP.
-
-The important point:
+CoAP was designed for constrained nodes and networks, and is a web-style protocol that usually runs over UDP. The important point here:
 
 > Relying on UDP does not simply mean CoAP is "unreliable."
 
-CoAP has mechanisms such as **Confirmable Messages and retransmission** when needed.
+CoAP has mechanisms such as **Confirmable Messages and retransmission** when needed, and it can be secured with mechanisms such as DTLS or OSCORE depending on the architecture.
 
-It can also be secured using mechanisms such as DTLS or OSCORE depending on the architecture.
+### HTTP
 
-## HTTP
+HTTP is useful when we need web APIs, easy integration with cloud services, a REST architecture, and broad system support, but it may be heavier than MQTT or CoAP on highly constrained devices. Reducing it to "running on TCP" is also no longer accurate for all its versions; HTTP/1.1 and HTTP/2 are usually tied to TCP, while HTTP/3 uses QUIC over UDP.
 
-HTTP is useful when we need:
+### AMQP
 
-- Web APIs.
-- Easy integration with cloud services.
-- A REST structure.
-- Broad support across systems.
+AMQP is a standard OASIS messaging protocol focused on reliable messaging, middleware, enterprise systems, and message exchange between services. It may suit backends or enterprise IoT platforms, but it is usually more complex than MQTT for very small IoT nodes.
 
-But it can be heavier than MQTT or CoAP for severely constrained devices.
-
-Also, reducing HTTP to "runs on TCP" is no longer accurate for all versions:
-
-- HTTP/1.1 and HTTP/2 are typically associated with TCP.
-- HTTP/3 uses QUIC over UDP.
-
-## AMQP
-
-AMQP is an OASIS messaging protocol focused on:
-
-- Reliable messaging.
-- Middleware.
-- Enterprise systems.
-- Message exchange between services.
-
-It can be suitable in enterprise backends or IoT platforms, but it is usually more complex than MQTT for very small IoT nodes.
-
-# MQTT vs CoAP vs HTTP?
+### MQTT, CoAP, or HTTP?
 
 | Question | MQTT | CoAP | HTTP |
 |---|---|---|---|
@@ -513,562 +179,171 @@ It can be suitable in enterprise backends or IoT platforms, but it is usually mo
 | Weak networks | Suitable | Very suitable | May be heavier |
 | Web integration | Via intermediary services or WebSockets | Can be bridged to the web | Direct |
 | Push/telemetry | Strong | Possible | Less natural |
-| Traditional APIs | Possible but not its primary goal | REST-like | Excellent |
+| Traditional APIs | Possible but not its main goal | REST-like | Excellent |
 
-There is no absolute "best IoT protocol."
+There is no "best IoT protocol" in absolute terms.
 
-# Where Does Matter Come In?
+## Matter and Interoperability
 
-Matter is not a replacement for Wi-Fi, Thread, or Bluetooth.
+### Where Does Matter Fit?
 
-It is an **IP-based application protocol** focused primarily on interoperability in the smart home.
+Matter is not a replacement for Wi-Fi, Thread, or Bluetooth, but **an IP-based application protocol** focused especially on interoperability in the smart home. It runs on top of network technologies such as Wi-Fi, Thread, and Ethernet, and uses Bluetooth LE in setup (commissioning) scenarios. In June 2026, **Matter 1.6** was released, adding improvements in setup, management across multiple ecosystems, and the exchange of device capabilities and states.
 
-Matter runs over network technologies such as:
-
-- Wi-Fi.
-- Thread.
-- Ethernet.
-
-And it uses Bluetooth LE in provisioning/commissioning scenarios.
-
-In June 2026, **Matter 1.6** was released, adding improvements in setup, multi-admin management, and the exchange of device capabilities and states.
-
-Matter matters because it addresses a problem different from the radio problem:
+Matter's importance lies in the fact that it addresses a different problem from the radio problem:
 
 > Not just "how does the packet arrive?" but "how does a device from company A understand a device from company B in a standardized way?"
 
-# Interoperability: The Challenge the Network Alone Cannot Solve
+### The Challenge the Network Alone Cannot Solve
 
-Two devices can both use Wi-Fi and still not understand each other.
+Two devices may both use Wi-Fi and still not understand each other. Interoperability requires agreement on discovery, identity, data models, commands, security, and semantics. This is where Matter, Zigbee profiles, Thread with IP, open standards, and APIs and data models become important. The problem is not just having a connection, but **having a shared meaning for data and commands**.
 
-Interoperability requires agreement on:
+## Applications of the Internet of Things
 
-- Discovery.
-- Identity.
-- Data models.
-- Commands.
-- Security.
-- Semantics.
+### Smart Cities
 
-That is where the following become important:
+IoT is used in lighting, water, parking, air monitoring, traffic, waste, and infrastructure. But the phrase "smart city" does not mean a single network; a city may use LoRaWAN for simple sensors, NB-IoT for meters, fiber for core systems, and 5G or Wi-Fi for video.
 
-- Matter.
-- Zigbee profiles.
-- Thread + IP.
-- Open standards.
-- APIs and data models.
+### Healthcare
 
-The problem is not just having a connection; it is **having a shared meaning for data and commands**.
+Its uses include wearables, remote monitoring, home measurement devices, equipment tracking, and alerts. But health data is sensitive, and no medical IoT device should be considered a diagnostic system merely because it can measure; healthcare applications need clinical validation where applicable, strong security, identity management, privacy protection, and compliance with local laws.
 
-# What Are the Applications of the Internet of Things?
+### Smart Industry
 
-## Smart Cities
+Industrial IoT supports condition monitoring, predictive maintenance, asset tracking, energy monitoring, quality control, and digital twins. A practical example illustrates this: sensors on an industrial motor stream their measurements to **analytics running at the edge** near the production line; these analytics detect **anomaly patterns** in vibration or temperature as soon as they appear and push the result directly to the **maintenance system**, which opens a work order before the fault turns into a breakdown. Raw data does not travel to a distant data center, and the critical decision is made close to its source.
 
-IoT can be used for:
+This is where the direct relationship with the **digital twin** appears: IoT data can feed a digital model of a real asset so that it can be monitored, simulated, and optimized.
 
-- Lighting.
-- Water.
-- Parking.
-- Air monitoring.
-- Traffic.
-- Waste.
-- Infrastructure.
+### Transport and Logistics
 
-But the phrase "smart city" does not mean one network.
+This includes fleet management, asset tracking, the cold chain, vehicle telemetry, and smart traffic systems.
 
-A city may use:
+### Energy
 
-- LoRaWAN for simple sensors.
-- NB-IoT for meters.
-- Fiber for core systems.
-- 5G or Wi-Fi for video.
+This includes smart meters, grid monitoring, demand response, energy management inside buildings, and renewable energy monitoring. Matter itself has begun expanding into home energy management, with capabilities added during its recent releases.
 
-## Healthcare
+### Agriculture
 
-Uses include:
-
-- Wearables.
-- Remote monitoring.
-- Home measurement devices.
-- Equipment tracking.
-- Alerts.
-
-But health data is sensitive, and no IoT device should be considered a diagnostic system merely because it can take a measurement.
-
-Healthcare applications require:
-
-- Clinical validation where appropriate.
-- Strong security.
-- Identity management.
-- Privacy protection.
-- Compliance with local laws.
-
-## Smart Industry
-
-Industrial IoT can support:
-
-- Condition Monitoring.
-- Predictive Maintenance.
-- Asset tracking.
-- Energy monitoring.
-- Quality control.
-- Digital Twins.
-
-A practical example illustrates this arrangement: sensors on an industrial motor stream their measurements into **analytics running at the edge**, near the production line; that analytics detects **anomaly patterns** in vibration or temperature the moment they appear, and pushes the result straight into the **maintenance system**, which opens a work order before the fault escalates into a breakdown. The raw data never travels to a distant data center; the critical decision is built close to its source.
-
-There is also a direct relationship with the **digital twin**: IoT data can feed a digital model of a real asset so that it can be monitored, simulated, and optimized.
-
-## Transport and Logistics
-
-Such as:
-
-- Fleet management.
-- Asset tracking.
-- Cold chain.
-- Vehicle telemetry.
-- Smart traffic systems.
-
-## Energy
-
-Such as:
-
-- Smart meters.
-- Grid monitoring.
-- Demand response.
-- Energy management inside buildings.
-- Renewable energy monitoring.
-
-Matter itself has also begun expanding into home energy management, including capabilities added in its recent releases.
-
-## Agriculture
-
-Such as:
-
-- Soil moisture.
-- Local weather.
-- Irrigation.
-- Livestock tracking.
-- Equipment monitoring.
-- Precision agriculture.
-
-Often, the following matter more than high speed:
-
-- Low power.
-- Long range.
-- Rural coverage.
+This includes soil moisture, local weather, irrigation, livestock tracking, equipment monitoring, and precision agriculture. In this field, low power, long range, and rural coverage usually matter more than high speed.
 
 ![A hand holding a phone showing soil moisture curves at multiple depths with live readings from a probe in a desert field](/images/articles/body/internet-of-things-iot-4.avif "Live soil moisture readings at several depths reach the farmer's phone from a probe in a pilot field in Kuwait — an example of low-data agricultural IoT — Source: IAEA Imagebank, Wikimedia Commons, CC BY 2.0")
 
-# What Is AIoT?
+## AIoT: Where the Internet of Things Meets Artificial Intelligence
 
-AIoT stands for Artificial Intelligence of Things.
+AIoT stands for Artificial Intelligence of Things, and its idea is that **IoT collects the data, and artificial intelligence analyzes it or uses it to make decisions**: detecting a fault in a machine, predicting motor failure, spotting anomalies in energy consumption, analyzing video at the edge, forecasting irrigation needs, or classifying sensor events. AI can run in three locations:
 
-The idea:
+| Location | How It Works |
+|---|---|
+| Cloud AI | Data is sent to the cloud for analysis |
+| Edge AI | The model runs close to the device |
+| TinyML | Very small models run on the microcontroller itself |
 
-**IoT collects the data, and artificial intelligence analyzes it or uses it to make decisions.**
-
-Examples:
-
-- Detecting a machine fault.
-- Predicting motor failure.
-- Detecting anomalies in energy consumption.
-- Video analysis on the edge.
-- Forecasting irrigation needs.
-- Classifying sensor events.
-
-AI can be implemented at:
-
-## Cloud AI
-
-Data is sent to the cloud.
-
-## Edge AI
-
-The model runs near the device.
-
-## TinyML
-
-Very small models run on the microcontroller itself.
-
-The closer processing moves to the source, the more we may reduce:
-
-- Latency.
-- Bandwidth.
-- Transmission of sensitive data.
-
-But we add challenges such as:
-
-- Model updates.
-- Limited memory.
-- Power constraints.
-- Performance monitoring.
+The closer processing moves to the source, the more latency, bandwidth, and transfer of sensitive data can be reduced, but with additional challenges such as updating models, limited memory, power constraints, and performance monitoring.
 
 ![Three layers for running artificial intelligence in AIoT: Cloud AI in the cloud, Edge AI near the device, and TinyML on the microcontroller itself, with what we gain and face as processing moves closer to the data source](/images/articles/body/internet-of-things-iot-5.avif "Cloud AI, Edge AI, and TinyML: moving closer to the source reduces time, bandwidth, and transfer of sensitive data, but adds memory and power constraints plus model updates and monitoring — Illustration: Techno Enjaz")
 
-# Why Is Security Part of IoT Design, Not an Afterthought?
+## Security: Part of the Design, Not an Afterthought
 
-An IoT device may stay in service for many years.
+### Why the Whole Lifecycle Must Be Considered
 
-During that period it may face:
+An IoT device may stay in service for many years, during which it faces new vulnerabilities, changes of ownership, aging firmware, leaked credentials, expiring certificates, backend changes, and attacks on APIs. That is why a device's design must account for its entire lifecycle.
 
-- New vulnerabilities.
-- Changes of ownership.
-- Outdated firmware.
-- Leaked credentials.
-- Expired certificates.
-- Backend changes.
-- Attacks on APIs.
+### What Does NIST Recommend?
 
-Device design must therefore respect the device's full lifecycle.
+In April 2026, NIST released the revision **NISTIR 8259 Rev.1**, updating the foundational activities IoT product manufacturers should consider. NISTIR 8259A also defines a baseline of device capabilities, including Device Identification, Device Configuration, Data Protection, Logical Access to Interfaces, Software Update, and Cybersecurity State Awareness. Current NIST catalogs add more detailed capabilities, including Device Security.
 
-## What Does NIST Recommend?
+### A Practical Security Checklist
 
-In April 2026, NIST issued **NISTIR 8259 Rev.1** to update the foundational activities that manufacturers of IoT products should consider.
+| Principle | What It Means in Practice |
+|---|---|
+| A unique identity | The device must be reliably identifiable |
+| No shared default passwords | And no fixed credentials across thousands of devices |
+| Data encryption | In transit, and at rest where needed |
+| Secure updates | Verifying firmware, signing updates, preventing dangerous downgrades, and planning for end of support |
+| Least privilege | Do not grant the device more access than it needs |
+| Closing unnecessary services | Every extra interface can become an attack surface |
+| Secret management | Do not store sensitive keys in an easily extractable way |
+| Logging and security state | Knowing whether the device is updated, whether logins have failed, whether the configuration changed, or whether an abnormal state appeared |
+| A post-sale plan | Defining the support period, the vulnerability reporting process, the update method, and end of life |
 
-NISTIR 8259A also defines a baseline of device capabilities, including:
+Security does not end on product launch day.
 
-- Device Identification.
-- Device Configuration.
-- Data Protection.
-- Logical Access to Interfaces.
-- Software Update.
-- Cybersecurity State Awareness.
+## Privacy in IoT
 
-Current NIST catalogues add more granular capabilities, including Device Security.
-
-## A Practical Security Checklist
-
-### Unique Identity
-
-The device must be reliably identifiable.
-
-### Do Not Use Shared Default Passwords
-
-Nor credentials that are identical across thousands of devices.
-
-### Encrypt Data
-
-- In transit.
-- And at rest where necessary.
-
-### Secure Updates
-
-You must:
-
-- Verify firmware.
-- Sign updates.
-- Prevent dangerous downgrades.
-- Have an end-of-support plan.
-
-### Least Privilege
-
-Do not give the device access to more than it needs.
-
-### Close Unnecessary Services
-
-Every additional interface may become an attack surface.
-
-### Secret Management
-
-Do not place sensitive keys where they can be extracted easily.
-
-### Logging and Security State
-
-It is important to know:
-
-- Is the device up to date?
-- Did a login fail?
-- Did the configuration change?
-- Did an abnormal condition appear?
-
-### Post-Sale Plan
-
-Security is not only launch day.
-
-You must define:
-
-- The support period.
-- How vulnerabilities are reported.
-- The update mechanism.
-- End-of-life.
-
-# Privacy in IoT
-
-A small device can collect very sensitive data.
-
-Such as:
-
-- Location.
-- Health.
-- Audio.
-- Video.
-- Behavior inside the home.
-- Consumption patterns.
-
-So ask:
-
-1. Do we need this data in the first place?
-2. Can it be processed locally?
-3. How long do we keep it?
-4. Who can access it?
-5. Does the user know what is collected?
-6. Can it be deleted?
-7. Is it used for another purpose?
-
-**Data Minimization** is a foundational principle:
+A small device may collect highly sensitive data, such as location, health, voice, video, behavior inside the home, and consumption patterns. That is why clear questions must be asked: Do we need this data at all? Can it be processed locally? How long do we keep it? Who can access it? Does the user know what is collected? Can it be deleted? And is it used for another purpose? **Data Minimization** remains the core principle:
 
 > Do not collect data you do not need.
 
-# Scaling Is Not Just "Number of Devices"
+## Scale and Reliability
 
-A system may look excellent at 50 devices and fail at 50 thousand.
+### Scaling Is Not Just "Number of Devices"
 
-Scalability covers:
+A system may look excellent at 50 devices and then fail at 50,000. Scalability covers provisioning, identity, certificates, messaging, broker capacity, database writes, over-the-air (OTA) updates, observability, device inventory, and failover.
 
-- Provisioning.
-- Identity.
-- Certificates.
-- Messaging.
-- Broker capacity.
-- Database writes.
-- OTA updates.
-- Observability.
-- Device inventory.
-- Failover.
+A well-known example is power returning after a widespread outage, when a million devices try to connect to the server at the same moment, causing a **Reconnect Storm**. That is why system behavior must be tested under network outages, power restoration, broker loss, a cloud region failure, and mass firmware updates.
 
-A famous instance of the problem:
+### What Does Reliability Mean in IoT?
 
-If power returns after a widespread outage and a million devices try to connect to the server at the same moment, a **Reconnect Storm** can occur.
+Not every message is equally important. A periodic temperature reading can occasionally lose one of its copies, but a machine-stop command or a medical alert may need delivery guarantees, acknowledgment, retries, redundancy, a timeout, and escalation. Reliability is designed at the application level, not by relying on a protocol's name alone.
 
-You must therefore test system behavior under:
+## The Future of IoT: What Is Changing in 2026?
 
-- Network outages.
-- Power restoration.
-- Loss of a broker.
-- Failure of a cloud region.
-- Mass firmware updates.
+### Interoperability Matters More
 
-# What Does Reliability Mean in IoT?
+Recent examples include Matter 1.6, Zigbee 4.0, Thread, and IP-based protocols, as the market tries to shrink the isolated islands between devices.
 
-Not every message carries the same importance.
+### AI Moves to the Edge
 
-A periodic temperature reading can sometimes lose a sample.
+Instead of sending all data to the cloud, more analysis happens inside the device itself, on the gateway, or at the edge.
 
-But a machine-stop command or a medical alert may need:
+### Ambient IoT
 
-- Delivery guarantees.
-- Acknowledgment.
-- Retry.
-- Redundancy.
-- Timeout.
-- Escalation.
+Devices that run on extremely low power, some relying on energy harvesting instead of a large traditional battery, and the Bluetooth SIG considers Bluetooth LE an important technology on this path.
 
-Reliability must be designed at the application level, not assumed from a protocol's name alone.
+### Cellular Massive IoT Continues
 
-# The Future of IoT: What Is Changing in 2026?
+NB-IoT and LTE-M surpassed one billion active connections worldwide by the end of 2025 according to the GSMA, while RedCap/eRedCap expands IoT options on 5G.
 
-## 1. Interoperability Becomes More Important
+### 6G / IMT-2030 Is Still a Standards Future
 
-The latest examples:
+In 2026, there is no mature commercial 6G network that can be relied on as the foundation for an IoT project. The ITU is currently working on **IMT-2030**, and announced in March 2026 that the expert group had agreed on draft performance requirements for the next generation, with the approval and evaluation process still ongoing. So figures such as terabits per second, sub-millisecond latency, or millions and billions of devices should not be presented as final, confirmed commercial characteristics today; the precise characteristics will be determined as the standards and evaluations are completed.
 
-- Matter 1.6.
-- Zigbee 4.0.
-- Thread.
-- IP-based protocols.
+## How Do You Start an IoT Project the Right Way?
 
-The market is trying to reduce the isolated islands between devices.
+Do not start by buying a sensor or choosing a cloud, but from the required decision, then progress through the following steps:
 
-## 2. AI Moves to the Edge
+| Step | What It Defines |
+|---|---|
+| 1. Define the problem | For example: we want to detect rising motor vibration before failure |
+| 2. Define the required data | Vibration, temperature, and revolutions per minute (RPM) |
+| 3. Define the sampling rate | Every millisecond, every second, or every hour? This changes the architecture entirely |
+| 4. Decide where processing happens | On the device, the gateway, the edge, or the cloud |
+| 5. Choose connectivity | Based on data, power, range, cost, mobility, and latency |
+| 6. Choose the application protocol | MQTT, CoAP, HTTP, or others depending on the system |
+| 7. Design security before implementation | Identity, keys, encryption, updates, permissions, and lifecycle |
+| 8. Design operations | How will you know a device has stopped, firmware is outdated, a battery is low, a certificate is about to expire, or the data does not make sense? |
+| 9. Test failure | Do not stop at the happy path; test offline operation, packet loss, reboots, network stress, thousands of devices, and upgrade failure |
 
-Instead of sending all data to the cloud, more analysis happens:
+## How Do We Choose Between Cloud and Edge?
 
-- Inside the device.
-- On the gateway.
-- At the edge.
+| Start with the Cloud When | Start with the Edge When |
+|---|---|
+| Latency is not highly sensitive | Fast response matters |
+| You need aggregated analytics | The data is large |
+| You need central storage | External connectivity is weak |
+| The connection is stable | Privacy matters |
+| | The system must keep running offline |
 
-## 3. Ambient IoT
+In many projects, the design is **hybrid**, combining both.
 
-Devices operating at extremely low consumption, some relying on energy harvesting instead of a large conventional battery.
+## Must Every Device Connect to the Internet Directly?
 
-The Bluetooth SIG considers Bluetooth LE a key technology on this path.
+No. In many systems, it is better for the sensor to connect to a local network, and from there to a gateway that handles the internet connection, rather than the sensor connecting to the internet directly. The gateway can hide internal devices, aggregate data, manage protocols, reduce consumption, enforce security policies, and keep working locally when the cloud is unavailable.
 
-## 4. Cellular Massive IoT Continues
+## Conclusion
 
-NB-IoT and LTE-M surpassed one billion active connections worldwide by the end of 2025, according to the GSMA.
+The Internet of Things is not a smart device or a single protocol, but **a complete system that links the physical world to software through sensing, connectivity, processing, decision-making, and actuation**. A system's success depends on a carefully considered balance among sensors, compute, connectivity, protocols, the split of processing between edge and cloud, interoperability, security, power, cost, and lifecycle.
 
-In parallel, RedCap/eRedCap are expanding IoT options on 5G.
-
-## 5. 6G / IMT-2030 Remains a Normative Future
-
-In 2026, there is no mature commercial 6G network to rely on as the foundation of an IoT project.
-
-The ITU is currently working on **IMT-2030**; in March 2026 it announced that the expert group had agreed on a draft of the next generation's performance requirements, with the evaluation and standardization process continuing.
-
-Therefore, figures such as:
-
-- Terabit/s.
-- Sub-millisecond.
-- Millions or billions of devices.
-
-should not be presented as confirmed final commercial characteristics today.
-
-The precise characteristics will be settled as the standards and evaluations are completed.
-
-# How Do You Start an IoT Project the Right Way?
-
-Do not start by buying a sensor or choosing a cloud.
-
-Start from the decision required.
-
-## Step 1: Define the Problem
-
-Example:
-
-> We want to detect rising motor vibration before failure.
-
-## Step 2: Define the Required Data
-
-- Vibration.
-- Temperature.
-- RPM.
-
-## Step 3: Define the Sampling Rate
-
-Do we need:
-
-- Every millisecond?
-- Every second?
-- Every hour?
-
-This changes the architecture entirely.
-
-## Step 4: Decide Where Processing Happens
-
-- Device.
-- Gateway.
-- Edge.
-- Cloud.
-
-## Step 5: Choose Connectivity
-
-Based on:
-
-- Data.
-- Power.
-- Range.
-- Cost.
-- Mobility.
-- Latency.
-
-## Step 6: Choose the Application Protocol
-
-Such as:
-
-- MQTT.
-- CoAP.
-- HTTP.
-- Others depending on the system.
-
-## Step 7: Design Security Before Implementation
-
-It covers:
-
-- Identity.
-- Keys.
-- Encryption.
-- Updates.
-- Permissions.
-- Lifecycle.
-
-## Step 8: Design Operations
-
-How will you know that:
-
-- A device went down?
-- Firmware is outdated?
-- A battery is weak?
-- A certificate is about to expire?
-- The data is implausible?
-
-## Step 9: Test Failure
-
-Do not test only the happy path.
-
-Test:
-
-- Offline operation.
-- Packet loss.
-- Restarts.
-- Network stress.
-- Thousands of devices.
-- Upgrade failure.
-
-# How Do You Choose Between Cloud and Edge?
-
-## Cloud first when:
-
-- Latency is not highly sensitive.
-- You need aggregated analytics.
-- You need centralized storage.
-- Connectivity is stable.
-
-## Edge first when:
-
-- Fast response matters.
-- Data volumes are huge.
-- External connectivity is weak.
-- Privacy matters.
-- The system must keep working offline.
-
-In many projects the design is **hybrid**.
-
-# Does the Internet of Things Mean Every Device Must Connect to the Internet Directly?
-
-No.
-
-In many systems:
-
-```text
-Sensor → Local Network → Gateway → Internet
-```
-
-beats:
-
-```text
-Sensor → Internet directly
-```
-
-because a gateway can:
-
-- Hide the internal devices.
-- Aggregate data.
-- Manage protocols.
-- Reduce consumption.
-- Apply security policies.
-- Keep working locally when the cloud is unreachable.
-
-# Conclusion
-
-The Internet of Things is not a smart device and not a single protocol; it is **an entire system that links the physical world to software through sensing, connectivity, processing, decision-making, and actuation**.
-
-The success of a system depends on a balanced choice among:
-
-- Sensors.
-- Compute.
-- Connectivity.
-- Protocols.
-- Edge/Cloud.
-- Interoperability.
-- Security.
-- Power.
-- Cost.
-- Lifecycle.
-
-And the most important question when designing any project is not:
-
-> "What is the newest technology we could use?"
-
-but rather:
+The most important question when designing any project is not "What is the newest technology we could use?" but:
 
 > **What is the least complex architecture that can meet the application's requirements securely, reliably, and maintainably over the device's lifetime?**
 

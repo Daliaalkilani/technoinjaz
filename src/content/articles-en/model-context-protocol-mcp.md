@@ -11,878 +11,286 @@ Suggested Slug: model-context-protocol-mcp
 
 # What Is the MCP Protocol? How Does It Connect AI Models to Tools and Data?
 
-**The Model Context Protocol (MCP) is an open standard that provides a unified way to connect AI applications to tools, data, and external systems.** Instead of building a different integration for every model and every service, a developer can create an MCP Server that exposes its capabilities in a standardized way, and MCP-capable applications can then connect to it to discover and use those capabilities.
+**The Model Context Protocol (MCP) is an open standard that provides a unified way to connect AI applications to tools, data, and external systems.** Instead of building a different integration for every model and every service, a developer can create an MCP Server that exposes its capabilities in a standardized way, so that MCP-capable applications can connect to it, discover those capabilities, and use them.
 
-The idea is best likened to a universal port for AI applications:
+The idea can be likened to a universal port for AI applications:
 
-> The intelligent application knows how to speak MCP, and the server knows how to expose tools and data over MCP, so the amount of "glue code" required between the two sides shrinks.
+> The AI application knows how to speak MCP, and the server knows how to expose tools and data via MCP, so the amount of "glue code" needed between the two shrinks.
 
-MCP appeared in November 2024 when Anthropic introduced it as an open standard for connecting AI systems to data sources and tools. Adoption then expanded rapidly, and in December 2025 the project was donated to the **Agentic AI Foundation (AAIF)** under the Linux Foundation, with the goal of anchoring neutral, open governance for the project.
+MCP appeared in November 2024, when Anthropic introduced it as an open standard for connecting AI systems to data sources and tools, and its adoption then spread quickly. In December 2025, the project was donated to the Linux Foundation's **Agentic AI Foundation (AAIF)**, with the aim of establishing neutral, open governance for it. By 2026, MCP was in use across a large number of AI products, agents, and development environments, and multiple platforms outside the Anthropic ecosystem had adopted it.
 
-By 2026, MCP had become part of a large number of AI products, agents, and development environments, and it has been adopted by multiple platforms outside the Anthropic ecosystem.
+## The Problem MCP Tries to Solve
 
-## What Problem Is MCP Trying to Solve?
+A language model alone usually cannot directly access your company's database, the files on your machine, GitHub, a CRM, the billing system, the calendar, an internal search engine, SaaS services, code execution tools, or the organization's private APIs. For the model to use these systems, there must be a connection layer.
 
-On its own, a language model usually cannot access:
+Before a shared standard emerged, integration was built in a handcrafted way: every language model needed its own integration with every service, written in the project's language and with its team's assumptions. Model A connects to the documents service through a connector its team wrote, and to the billing system through another connector of entirely different design; then model B arrives and needs both bridges rebuilt from scratch with a third and fourth interface. The result is a web of crisscrossing integrations whose size equals the number of models multiplied by the number of services, each strand with its own release history, security vulnerabilities, and maintenance cycle. As models and tools multiply, this web swells until adding a single service becomes an enterprise project in its own right.
 
-- Your company's database.
-- Files on your machine.
-- GitHub.
-- A CRM.
-- A billing system.
-- A calendar.
-- An internal search engine.
-- SaaS services.
-- Code execution tools.
-- Enterprise-internal APIs.
+MCP flips the equation through a single unified intermediate layer: each AI application talks to external services through an **MCP Client** the developer embeds in the application, each data or tool provider exposes its capabilities through an **MCP Server** that follows the protocol, and the conversation between the two runs over the **MCP protocol**, which standardizes the format for discovering capabilities, invoking tools, and reading resources. Complexity thus turns from a product into a sum: each side adopts the standard only once, so new services appear to every model without modification, and new models reach every existing service without building special bridges.
 
-For the model to use these systems, a bridging layer must exist.
-
-Before a common standard existed, integration was built ad hoc: every language model needed its own custom connector to every service, written in the language of the project and shaped by the assumptions of the team behind it. Model A reached the documentation service through a connector its team wrote, and the billing system through another connector with a completely different design; when model B arrived, both bridges had to be rebuilt a third and fourth time. The result was a crisscrossing mesh of integrations whose size equals the number of models multiplied by the number of services, and every strand of that mesh carried its own version history, security caveats, and maintenance cycle. As models and tools multiply, the mesh grows combinatorially until adding a single service becomes a project in itself.
-
-MCP proposes to invert this equation with a unified intermediary layer: each AI application talks to the outside world through an **MCP Client** embedded by the developer, each data or tool provider exposes its capabilities through an **MCP Server** that conforms to the protocol, and the conversation between the two sides flows over the **MCP protocol**, which standardizes how capabilities are discovered, tools are invoked, and resources are read. Complexity thus shifts from a product to a sum: each side implements the standard exactly once, so new services appear to every existing model without modification, and new models reach every existing service without building bespoke bridges.
-
-This does not eliminate APIs or databases; it adds a **standardized layer aimed at AI applications and agents** on top of them.
+This does not eliminate APIs or databases; it adds on top of them **a standardized layer oriented toward AI applications and agents**.
 
 ![A diagram comparing connecting three language models to three services through nine cross-cutting proprietary integrations, versus connecting them through a single MCP layer where each service corresponds to an MCP Server](/images/articles/body/model-context-protocol-mcp-1.avif "Without a common standard, every model needs a proprietary integration with every service (N × M); with MCP, it is enough for each side to speak the protocol once (N + M) — Illustration: Techno Enjaz")
 
-# Is MCP a New API?
+## MCP Versus What Resembles It
 
-**It is not a replacement for the API in the traditional sense.**
+MCP is often confused with technologies that sit in different layers, and distinguishing among them is a prerequisite for understanding its real role.
 
-If you have a REST API such as:
+### Is MCP a New API?
 
-```text
-GET /customers/123
-POST /tickets
-```
+**It is not a replacement for an API in the traditional sense.** If you have a REST API offering operations such as fetching customer 123's data via `GET /customers/123` or creating a ticket via `POST /tickets`, an MCP Server may use that API behind the scenes.
 
-an MCP Server may use that API behind the scenes.
+The difference is that MCP defines a unified way for an AI application to discover what is available, read tool descriptions, learn the input schema, invoke the tool, receive the result, access resources and context, and use the prompts or extra capabilities the server supports. **REST/OpenAPI** describes the interface of a service or system, while **MCP** describes how AI applications communicate with servers that offer them tools and context, and the two can work together.
 
-The difference is that MCP defines a uniform way for an AI application to:
+### MCP and Function Calling
 
-- Discover what is available.
-- Read tool descriptions.
-- Learn the input schema.
-- Invoke the tool.
-- Receive the result.
-- Access resources and context.
-- Use prompts or additional capabilities the server supports.
+This is one of the most common questions. **Function Calling** is a capability within a model or its API that lets the model choose a function from a set of functions defined for it, such as `get_weather(city)` or `send_email(to, subject, body)`. But the developer usually remains responsible for defining the functions, wiring them to services, managing the connection, returning the results, and writing the integration.
 
-So:
+**MCP** standardizes a larger part of this system: the server exposes a set of tools and resources in a standardized way, and any compatible client can discover and work with them. In short:
 
-**REST/OpenAPI** describes an interface to a service or system.
+> Function Calling defines how the model requests a function invocation, while MCP defines a broader interface for discovering, connecting, and using external capabilities between an AI application and an independent server.
 
-**MCP** describes how AI applications communicate with servers that offer them tools and context.
+And they are not necessarily competitors; an MCP application may use the model's Tool Calling mechanism to decide which tool from an MCP server to invoke.
 
-And the two can work together.
+### MCP, LangChain, and LlamaIndex
 
-# What Is the Difference Between MCP and Function Calling?
+The difference here lies in the architectural layer. **LangChain** is a framework for building applications and agents based on language models, and may manage agents, tools, workflows, model calls, retrieval, and state. **LlamaIndex** is a framework that focuses heavily on connecting AI models to data and building Retrieval/RAG systems and data agents. **MCP**, by contrast, is not a framework for building the whole application, but a **Protocol / Standard** that defines how the application communicates with external services.
 
-This is one of the most common questions.
+That is why an application built with LangChain or LlamaIndex can use MCP servers, rather than MCP being a replacement for them. The two frameworks answer the question "How do I build the application?", while MCP answers "How does the application talk to external tools and data in a standardized way?"
 
-## Function Calling
+### MCP and RAG
 
-This is a capability inside a model or API that lets the model choose a function from a set of functions defined for it.
+**RAG** retrieves information related to the question and places it into the model's context. In its typical path, the question enters a **vector search** over an embedding space, the **semantically closest documents** are retrieved and injected into the language model's context, and the model formulates its answer from them. The whole pattern revolves around filling the context with relevant content before generation, and goes no further.
 
-Example:
+**MCP**, on the other hand, is a general communication standard: an MCP server can expose a tool that performs a RAG search, but it can also create an issue, run a query, send a message, read a file, or trigger a workflow. RAG is a pattern or technique, while MCP is a protocol capable of carrying capabilities that include RAG and much more.
 
-```text
-get_weather(city)
-send_email(to, subject, body)
-```
+### Is MCP an Agent Framework?
 
-But the developer usually remains responsible for:
+No. MCP alone does not define the plan, the memory policy, the reasoning loop, the retry strategy, multi-agent orchestration, or goal decomposition; all of these are the responsibility of the agent framework or the host. What MCP gives an agent is a standardized way to reach the outside world.
 
-- Defining the functions.
-- Wiring them to services.
-- Managing the connection.
-- Returning results.
-- Writing the integration.
+## MCP Architecture: Three Roles
 
-## MCP
+MCP is usually explained through three main roles.
 
-Unifies a larger portion of that stack.
+### The Host (MCP Host)
 
-A server can expose a set of tools and resources in a standardized way, and a compatible client can discover them and work with them.
+This is the application the user interacts with and that uses MCP capabilities, whether an AI assistant, a code editor, a desktop application, an agent platform, or a custom application within an organization. The host is what decides how tools are presented to the model, how user approval is managed, and what data enters the context.
 
-In short:
+### The Client (MCP Client)
 
-> Function Calling defines how the model requests a function invocation, while MCP defines a broader interface for discovering, wiring, and using external capabilities between an AI application and an independent server.
+This is the component that speaks the MCP protocol with the server, handling the connection, protocol version negotiation, capability discovery, sending requests, receiving results, and error handling. The client may be an internal part of the host that the user never sees directly.
 
-And the two are not necessarily competitors; an MCP application may use the model's internal tool-calling mechanism to decide which tool from an MCP server should be invoked.
+### The Server (MCP Server)
 
-# What Is the Difference Between MCP and LangChain or LlamaIndex?
-
-The difference lies in the architectural layer.
-
-## LangChain
-
-A framework for building applications and agents that rely on language models.
-
-It may manage:
-
-- Agents.
-- Tools.
-- Workflows.
-- Model calls.
-- Retrieval.
-- State.
-
-## LlamaIndex
-
-A framework focused heavily on connecting AI models to data and building Retrieval/RAG systems and data agents.
-
-## MCP
-
-Is not a framework for building the entire application.
-
-It is a **protocol/standard** defining how the application communicates with external services.
-
-That is why an application built with LangChain or LlamaIndex can use MCP servers, rather than MCP being a replacement for them.
-
-The conceptual difference:
-
-```text
-LangChain / LlamaIndex = How do I build the application?
-
-MCP = How does the application talk to external tools and data in a standardized way?
-```
-
-# What Are the Components of MCP's Architecture?
-
-MCP is usually explained through three primary roles:
-
-## 1. MCP Host
-
-The application the user interacts with, which consumes MCP capabilities.
-
-Plausible examples:
-
-- An intelligent assistant.
-- A code editor.
-- A desktop application.
-- An Agent Platform.
-- A custom application inside an enterprise.
-
-The host decides how tools are presented to the model, how user approval is managed, and which data enters the context.
-
-## 2. MCP Client
-
-The component that speaks the MCP protocol with a server.
-
-It handles tasks such as:
-
-- Connecting.
-- Negotiating the protocol version.
-- Discovering capabilities.
-- Sending requests.
-- Receiving results.
-- Handling errors.
-
-A client may be an internal part of the host, so the user never sees it directly.
-
-## 3. MCP Server
-
-Exposes functions or data to the application.
-
-It may wrap:
-
-- A database.
-- A SaaS API.
-- A file system.
-- A Git repository.
-- A cloud service.
-- An internal service.
-- An analytics tool.
-- A business system.
-
-Very important:
+It exposes functions or data to the application, and may wrap a database, a SaaS API, a file system, a Git repository, a cloud service, an internal service, an analytics tool, or a business system. And here is a crucial point:
 
 > An MCP Server is not the language model itself.
 
-It is a service that lets an AI application reach external capabilities in an organized way.
+It is a service that lets an AI application access external capabilities in an organized way.
 
 ![MCP architecture diagram: a Host application containing the language model and three MCP Clients, each client connected over JSON-RPC to an MCP Server exposing Tools, Resources, and Prompts and wrapping a backend system](/images/articles/body/model-context-protocol-mcp-2.avif "The Host is the application the user deals with, and inside it sits an MCP client per server; the server is not the model but a layer exposing tools, resources, and prompts on top of a backend system — Illustration: Techno Enjaz")
 
-# What Does an MCP Server Expose?
+## What Does an MCP Server Expose?
 
-Among the most fundamental MCP concepts:
+A server offers three basic kinds of capabilities, which are among the most important concepts in MCP.
 
-## Tools
+### Tools
 
-Functions that can be invoked to perform an operation.
+Callable functions that perform an operation, such as creating a ticket (`create_ticket`), searching a repository (`search_repository`), running a query (`run_query`), sending a message (`send_message`), or generating a report (`generate_report`). A tool usually contains a name, a description, an input schema, sometimes an output schema, and actual execution logic inside the server. In the latest 2026 specification, tool schemas support a wider range of JSON Schema 2020-12, giving input and output descriptions more flexibility.
 
-Such as:
+### Resources
 
-```text
-create_ticket
-search_repository
-run_query
-send_message
-generate_report
-```
+Data or content the application can access, such as a file, documentation, a log, a database schema, or project content. Resources can be thought of as readable context rather than executable actions.
 
-A tool typically includes:
+### Prompts
 
-- A name.
-- A description.
-- An input schema.
-- Sometimes an output schema.
-- Actual execution logic inside the server.
+Prompt templates or flows the server provides for the client to display or use, useful when the server wants to offer a ready-made language workflow tied to its tools or data. But these prompts must not be treated as automatically trusted security instructions; the host is responsible for how any external instructions are merged into the model's context.
 
-In the latest 2026 specification, Tool schemas now support the broader scope of JSON Schema 2020-12, making the description of inputs and outputs more flexible.
+## How Does a Tool Invocation Work over MCP?
 
-## Resources
+The process follows a clear sequence: the application receives the user's question, the host or model recognizes the need for an external capability, the client knows the tools available on the MCP server, and the model or application logic selects the appropriate tool. The host may ask for the user's approval if the operation is sensitive, then the client sends the tool call request, the server executes the operation and returns the result, the application adds it to the context, and the model generates a final response or continues with further steps.
 
-Data or content the application can access.
+Take, for example, a user who asks: "Show me the last three open support tickets for customer X." Instead of the model guessing, the request travels an organized path: the user asks the host, which selects the appropriate tool, `search_support_tickets`, and invokes it through the MCP client; the request reaches the server, which translates it into a call to the support system's API. The result returns as structured data that enters the model's context, and the model formulates it into a readable answer. At every link in this chain, an interface with defined behavior is at work, not free guessing.
 
-Such as:
-
-- A file.
-- Documentation.
-- A record.
-- A database schema.
-- Project content.
-
-Resources are best thought of as readable context rather than executable actions.
-
-## Prompts
-
-Prompt templates or flows a server provides so the client can present or use them.
-
-These can be useful when the server wants to offer a ready-made linguistic workflow tied to its tools or data.
-
-But prompts must not be treated as security instructions trusted automatically; the host is responsible for how any external instruction is merged into the model's context.
-
-# How Does Tool Invocation Work over MCP?
-
-The process can be simplified as follows:
-
-1. The application receives the user's question.
-2. The Host/Model recognizes the need for an external capability.
-3. The Client knows the tools available from the MCP Server.
-4. The model or application logic selects a suitable tool.
-5. The Host may request the user's approval if the operation is sensitive.
-6. The Client sends a Tool Call request.
-7. The MCP Server executes the operation.
-8. The Server returns the result.
-9. The application adds the result to the context.
-10. The model generates a final response or continues with further steps.
-
-Example:
-
-The user:
-
-> "Show me the last three open support tickets for customer X."
-
-Instead of the model guessing, the request travels an organized path: the user asks the AI Host, the Host selects the right tool — search_support_tickets — and invokes it through the MCP client, so the request reaches the MCP Server, which translates it into a call on the support system's API. The result comes back as structured data that enters the language model's context, and the model shapes it into a readable answer for the user. At every link in this chain a well-defined interface is at work, not free-form guessing.
-
-MCP's value here is not that the model "somehow knows about tickets"; it is that access to them now flows through an organized, reusable interface.
+MCP's value here is not that the model "now knows the tickets," but that access to them now runs through an organized, reusable interface.
 
 ![Sequence diagram of a tool invocation over MCP between the user, the Host, the client, the server, and the support system's interface, from the question and tool discovery to the final answer](/images/articles/body/model-context-protocol-mcp-3.avif "The ten steps of a tool call: tool discovery, model selection, user approval when needed, then tools/call and server execution, and an organized result returning to the context — Illustration: Techno Enjaz")
 
-# Does MCP Use JSON-RPC?
+## The Protocol and Its Transports
 
-Yes — MCP uses structured messages based on **JSON-RPC 2.0**.
+### Does MCP Use JSON-RPC?
 
-But note that the details of the connection lifecycle evolved across protocol versions.
+Yes, MCP uses structured messages built on **JSON-RPC 2.0**. But the details of the connection lifecycle have evolved with protocol releases, and articles that described MCP in early 2025 may differ technically from the current specification in 2026.
 
-Articles describing MCP in early 2025 may differ technically from the 2026 specification.
+### The Most Important Release of 2026
 
-# What Is the Latest Major MCP Release in 2026?
+On **July 28, 2026**, the `2026-07-28` specification was released, one of the biggest updates since the protocol's launch. Among its most important changes is the protocol core over HTTP moving further toward a **stateless request/response** model, which makes it easier to place servers behind load balancers, reduces reliance on sticky sessions, improves scalability, makes each request more independent, and simplifies routing and authorization in the infrastructure.
 
-On **July 28, 2026**, MCP specification version `2026-07-28` was released — one of the largest updates since the protocol launched.
+The release also added header-based routing, authorization improvements, cache hints for tool, prompt, and resource lists, an extensions framework, and changes to long-running operations and multi-turn interactions. This is critically important when reading older tutorials: **MCP is evolving fast, so always check which Protocol Version an example targets.**
 
-One of the most significant changes is a shift of the protocol's HTTP core toward a more **Stateless request/response** model.
+### The stdio Transport
 
-The operational benefits:
+This transport suits especially cases where the host runs the MCP server locally as a child process, with communication over stdin and stdout. It is common in local tools and code editors, and its advantages are local simplicity and no need to open a network port. But the server receives whatever level of access the operating system and its launch environment grant it, so running an untrusted server locally can be dangerous.
 
-- Easier placement of servers behind load balancers.
-- Less dependence on sticky sessions.
-- Improved scalability.
-- Making each request more self-contained.
-- Easier routing and authorization at the infrastructure level.
+### The Streamable HTTP Transport
 
-The release also added:
-
-- Header-based routing.
-- Authorization improvements.
-- Cache hints for tool/prompt/resource lists.
-- An extensions framework.
-- Changes to long-running operations and multi-turn interactions.
-
-This is a crucial point when reading old tutorials: **MCP has evolved quickly, so always verify which protocol version an example targets.**
-
-# What Are MCP's Current Transports?
-
-## stdio
-
-Especially suitable when a host runs a local MCP server as a child process.
-
-Communication happens over:
-
-- stdin.
-- stdout.
-
-This is common for local tools and code editors.
-
-Its advantages:
-
-- Simple locally.
-- No network port needed.
-- Suitable for local tools.
-
-But the server gets the level of access its operating system and execution environment grant it, so running an untrusted server locally can be a risk.
-
-## Streamable HTTP
-
-The modern path for remote servers.
-
-It allows the use of ordinary HTTP infrastructure with streaming support when needed.
-
-And in specification `2026-07-28`, the architecture became more stateless at the protocol level.
+This is the modern path for remote servers, allowing ordinary HTTP infrastructure to be used with streaming support when needed, and in the `2026-07-28` specification its structure became more stateless at the protocol level.
 
 ![A comparison between stdio transport, where the Host runs the MCP server as a child process on the same machine, and Streamable HTTP transport, where requests pass through a gateway to remote servers](/images/articles/body/model-context-protocol-mcp-4.avif "stdio: a local server as a child process exchanging messages over stdin/stdout with no network port. Streamable HTTP: independent requests that can be routed through a gateway and load balancer, while legacy HTTP+SSE is now deprecated — Illustration: Techno Enjaz")
 
-## What About HTTP + SSE?
+### What About HTTP + SSE?
 
-This point needs an update in many older explainers.
+This is a point many older explainers need to update. The HTTP+SSE-based transport was used in earlier releases, but in the latest specification the **Legacy HTTP+SSE transport is deprecated**, with a transition period. So when building a new integration in 2026, legacy HTTP+SSE should not be presented as the main modern path.
 
-The legacy transport built on HTTP+SSE was used in earlier versions, but in the latest specification the **legacy HTTP+SSE transport is deprecated**, with a transition period.
+## What Else Changed in MCP 2026 Besides Transport?
 
-So when building a new integration in 2026, legacy HTTP+SSE should not be presented as the modern primary path.
+### Header-Based Routing
 
-# What Else Changed in MCP in 2026 Beyond Transport?
+Modern Streamable HTTP requests carry information such as the method and name in standardized headers, helping gateways, web application firewalls (WAF), load balancers, rate limiters, and authorization layers make decisions without fully parsing the request body every time.
 
-Several important changes.
+### Cacheable Lists
 
-## Header-based routing
+Results of operations such as tools/list, prompts/list, resources/list, and resources/read can include caching information, reducing needless re-fetching of lists.
 
-Modern Streamable HTTP requests carry information such as Method/Name in standard headers, which helps:
+### Authorization Hardening
 
-- Gateways.
-- WAFs.
-- Load balancers.
-- Rate limiting.
-- Authorization layers.
+The specification became stricter in some details of OAuth, issuer validation, and credential isolation between authorization servers.
 
-make decisions without full parsing of the body every time.
+### Extensions
 
-## Cacheable lists
+The protocol now has an official extensions framework instead of pushing every new feature into the core, with examples such as Tasks, MCP Apps, and enterprise-oriented extensions.
 
-Results such as:
+### Features on the Deprecation Path
 
-- tools/list
-- prompts/list
-- resources/list
-- resources/read
+In the 2026 release, features such as Roots, Sampling, and Logging were placed on a deprecation path within the core, with newer alternatives and directions. This does not mean they disappear immediately; there is a deprecation policy and a compatibility period, but it does mean new projects should read the current specification instead of relying on old examples.
 
-can include caching information, reducing needless re-fetching of lists.
+## Security: Standardization Is Not Protection
 
-## Authorization hardening
+### Does MCP Make an AI System Secure Automatically?
 
-The specification became stricter about some OAuth details, Issuer validation, and credential isolation between authorization servers.
+**No**, and this is one of the most important points of all. MCP standardizes the way of communicating, but it does not automatically solve poor permission design, prompt injection, tool misuse, secret leakage, execution of dangerous commands, untrusted servers, misleading schemas, malicious tool results, confused deputy problems, or excessive permissions.
 
-## Extensions
+If you give a tool like `delete_all_customer_data()` full permissions, MCP will not make it safe merely because it is exposed through a standard protocol. Security is a shared responsibility among the host, the client, the server, the identity provider, the backend tool, the developer, and the user or organization.
 
-There is now an official framework for extensions instead of pushing every new feature into Core.
+### The Most Important MCP Security Practices
 
-Examples:
+| Practice | What It Means in Practice |
+|---|---|
+| Least Privilege | Give each server and tool the fewest permissions possible; a read tool does not need write, admin, or access to every tenant, and a tool that reads tickets does not need permission to delete accounts |
+| Separate reading from writing | Keep tools like `get_customer` and `list_invoices` separate from `refund_invoice` and `delete_customer`, so the host can apply different approval policies |
+| User approval for sensitive operations | Before sending an email, publishing content, deleting a file, transferring money, creating a user, or modifying production, the host asks for clear confirmation |
+| Do not trust a tool's description alone | The description comes from the server and may be misleading if the server is untrusted; treat servers like any software dependency: verify the source, review the code or vendor, pin versions where needed, and monitor updates |
+| Validate all inputs | MCP tools are not exempt from traditional security rules; prevent SQL injection, command injection, path traversal, SSRF, and unsafe deserialization |
+| Separate authentication secrets | Do not put API keys in the prompt; use secret managers, OAuth, and scoped, short-lived tokens |
+| Log impactful operations | An audit trail showing who requested the action, with which tool, when, with what parameters, what the result was, and whether the user approved, without storing sensitive information needlessly |
+| Set rate limits | The model may call a tool many times; use limits, quotas, budgets, timeouts, and idempotency where needed |
+| Treat tool output as untrusted data | Content fetched from the internet or an external document may carry prompt injection, so not every sentence in it should become higher-authority instructions |
+| Isolate execution | Tools that run code or system commands need containers, sandboxes, and restrictions on the file system, network, CPU, and memory |
 
-- Tasks.
-- MCP Apps.
-- Enterprise-oriented extensions.
+As an example of the third practice, OpenAI supports, in its MCP integration within the Responses API, an approval mode for sensitive tool requests instead of allowing every tool without review. As for the last practice, **sandboxing is not something MCP does automatically**; the application and server must provide these boundaries.
 
-## Deprecated features
+### How Does Authentication Work in MCP?
 
-In the 2026 release, features such as:
+In remote MCP over HTTP, OAuth can enter the access process. The general idea is that the MCP server acts as a resource server; the client discovers the authorization requirements, the user or application obtains a token from an appropriate authorization server, the server validates it, and permissions are restricted by scopes and identity. The 2026 release strengthened authorization requirements, including issuer validation and preventing credentials from being reused across authorization servers improperly. The key principle for developers:
 
-- Roots.
-- Sampling.
-- Logging.
+> Authentication answers "Who are you?", while Authorization answers "What are you allowed to do?"
 
-were put on a deprecation path within Core, with replacements and newer directions.
+A successful login does not mean a tool should receive every permission.
 
-This does not mean they vanish immediately; there is a deprecation policy and a compatibility period, but it does mean new projects should read the current specification rather than rely on old examples.
+## The Adoption Ecosystem: Who Uses MCP Today?
 
-# Does MCP Automatically Make an AI System Secure?
+### Is MCP Only for Claude?
 
-**No.**
+No. Although Anthropic originally introduced MCP in 2024, the protocol has become a much broader standard, especially after it was donated in December 2025 to the Agentic AI Foundation under the Linux Foundation. Current examples of its use include Claude and Claude Desktop/Code, the OpenAI API and products that support MCP, Google Antigravity, Visual Studio Code and other editors and agents, Dify, and enterprise and custom applications. That is why MCP should no longer be described as "the Claude protocol."
 
-This is one of the most important points to understand.
+### How Does OpenAI Use MCP?
 
-MCP unifies the way systems communicate, but it does not automatically solve:
+OpenAI supports MCP within the **Responses API** through a tool of type `mcp`. An application can connect a remote MCP server via its Server URL, and there are mechanisms for connecting to private servers or servers behind a firewall through the Secure MCP Tunnel in supported products. The server, the allowed tools, authorization, and the approval policy can all be specified. This is a clear example of the protocol's value: the same server can be consumed by different AI environments as long as they support MCP, instead of building a custom connector for every provider.
 
-- Poorly designed permissions.
-- Prompt injection.
-- Tool misuse.
-- Secret leakage.
-- Dangerous command execution.
-- Untrusted servers.
-- Misleading schemas.
-- Malicious tool results.
-- Confused deputy problems.
-- Excessive permissions.
+### How Does Claude Use MCP?
 
-If you give a tool:
+Claude Desktop was among the first environments to support MCP, and the experience later evolved with **Desktop Extensions / MCP Bundles**, making it easier to install local servers instead of asking users to edit configuration files by hand every time. Anthropic's platform and API also support connecting to MCP servers in various scenarios.
 
-```text
-delete_all_customer_data()
-```
+The value here is not some "magic memory" inside Claude, but that MCP allows it to be connected to external services that can provide files, search, databases, tools, and memory stores; the memory itself comes from the external system, not from MCP acting as a database.
 
-full permissions, MCP will not make it safe merely because it is exposed through a standardized protocol.
+### What About Google Antigravity?
 
-Security is a shared responsibility among:
+Google documents support for **local and remote MCP servers** within Antigravity, so a developer can connect the agent environment to Google/Google Cloud servers or other servers and use MCP to provide external tools and context. This is a clearer example than claiming that "MCP increased Antigravity's accuracy by some percentage"; the support is documented, while the size of any accuracy or productivity gain requires an independent measurement study.
 
-- The Host.
-- The Client.
-- The Server.
-- The Identity Provider.
-- The backend tool.
-- The developer.
-- The user or organization.
+### What About Dify?
 
-# What Are MCP's Key Security Practices?
+Dify added MCP support gradually and then introduced native support in two directions: using MCP servers as tools inside agents and workflows, and exposing Dify apps or workflows as an MCP server for external clients to consume. Dify thus becomes a good example of the protocol working in both directions: sometimes Dify is a client reaching an external server via MCP, and sometimes an external client reaches a Dify app or workflow via MCP. But you must always check the **Protocol Version** that a given Dify release supports, because MCP itself changes quickly.
 
-## 1. Least Privilege
+## When Do You Actually Need MCP?
 
-Give every server and tool the fewest permissions possible.
+| MCP Is Useful When | A Direct Integration May Be Simpler When |
+|---|---|
+| You have several tools and data sources | You have only one tool |
+| You want to support more than one AI host | The application is small and static |
+| You want to separate integration logic from the application | You do not need interoperability |
+| You are building an ecosystem of reusable tools | The external service has an excellent direct SDK |
+| You need tool discovery | There is no chance the connector will be reused |
+| You want to swap the model without rebuilding every connector | Adding MCP would add an operational layer with no clear value |
+| You want to publish an AI service that multiple clients can use | |
 
-Do not give a read tool:
+A good standard does not mean it must be used in every project.
 
-- Write permission.
-- Admin permission.
-- Access to every tenant.
+## An Architectural Example of a Company Project
 
-If it only needs to read tickets, do not grant it the right to delete accounts.
+Suppose an organization wants an assistant that can search documents, read the CRM, create a support ticket, and run a sales report.
 
-## 2. Separate Reading from Writing
+This assistant can be built with a multi-server MCP architecture: among its components, the assistant contains one or more **MCP Clients**, and each client connects to a dedicated **MCP Server** for one part of the system: a documents server enabling search and reading, a CRM server exposing customer data, a support system server enabling ticket creation, and an analytics server running sales reports. When the user asks "Open a ticket for customer so-and-so and include their sales report," the assistant discovers through the protocol which server holds the needed tools, invokes the ticketing tool from the support server and the reporting tool from the analytics server, and combines the results into a single answer.
 
-It is better to design tools such as:
+The real value of this separation shows in governance: each server can have its own **authentication** mechanism suited to its service's sensitivity, tightly set **scopes** granting the least privilege possible, independent **logging** that makes it easy to trace who did what and when, and **rate limits** protecting backend systems from abuse, plus a clearly **responsible team** for operating and developing it.
 
-```text
-get_customer
-list_invoices
-```
+This organization is better engineering than giving a single model unified credentials that reach every system directly, because any breach or error remains confined to a single server's scope instead of spreading to the whole system.
 
-separately from:
+## How Do You Design a Good MCP Tool?
 
-```text
-refund_invoice
-delete_customer
-```
+### Specific
 
-so the Host can apply different approval policies.
+The tool `get_invoice(invoice_id)` is better than `do_accounting_task(text)`; the clearer the function, the easier it is to validate and to scope its permissions.
 
-## 3. Require User Approval for Sensitive Operations
+### With a Precise Schema
 
-Before:
+Define the types, the required fields, enumerated values (Enum) where possible, value ranges, and the output structure.
 
-- Sending email.
-- Publishing content.
-- Deleting a file.
-- Moving money.
-- Creating a user.
-- Modifying production.
+### With a Clear, Non-Promotional Description
 
-the Host can demand explicit confirmation.
+From the description, the model should know what the tool does, what it does not do, when it should be used, and what its side effects are.
 
-OpenAI, for example, supports an approval pattern for sensitive tool requests in its MCP integration within the Responses API, instead of allowing every tool without review.
+### Idempotent Where Possible
 
-## 4. Do Not Trust a Tool's Description Alone
+Re-reading a file is usually safe, but an operation like "Send Payment" needs more careful design to prevent unintended duplication.
 
-The tool description comes from the server.
+### Separating Preview from Execution
 
-If the server is untrusted, it may present a tool with a misleading description.
+For sensitive operations, separating a preview tool such as `preview_refund()` from an execution tool such as `execute_refund()` may be better than a single tool that executes directly.
 
-Treat MCP servers like any software dependency:
+## Common MCP Design Mistakes
 
-- Verify the source.
-- Review the code or the vendor.
-- Pin versions when needed.
-- Monitor updates.
-- Never install random servers with broad permissions.
+| Mistake | Why It Is Dangerous |
+|---|---|
+| One server with every permission | It becomes a major point of risk |
+| An overly generic tool such as `run_any_sql(query)` without restrictions | In many systems it is better to expose narrower operations or a read-only query layer |
+| Passing secrets into the context | The model does not need to see an API key to use a tool |
+| Trusting external tool data | External content may be malicious |
+| No approval step | Especially for operations that change the outside world |
+| Confusing protocol security with application security | Having OAuth does not protect you from a tool with bad logic |
+| Relying on an old tutorial | MCP has evolved quickly, especially in transport and the protocol lifecycle in 2026 |
 
-## 5. Validate All Inputs
+## What Should Be Watched in the Coming Period?
 
-An MCP tool is not exempt from traditional security rules.
+The roadmap published in August 2026 points to a continued focus on scalability, enterprise readiness, agent communication, governance, extensions, authorization improvements, and more mature operation on enterprise infrastructure. Any technical article about MCP should therefore be treated as content that needs periodic refreshing; the protocol is still evolving faster than mature network technologies such as HTTP or SMTP.
 
-You must prevent:
+## Conclusion
 
-- SQL injection.
-- Command injection.
-- Path traversal.
-- SSRF.
-- Unsafe deserialization.
+The Model Context Protocol does not make the model smarter in itself, does not replace APIs, and does not build a complete agent. Its core value is **standardizing the way AI applications connect to external tools and data**.
 
-## 6. Keep Credentials and Secrets Separated
+The system is easiest to grasp through the division of roles within it: the language model understands the context, generates the answer, and decides when its task needs an external capability; the MCP protocol provides the standard communication language through which the model reaches that capability; the MCP Server defines the external capabilities and actually executes them behind a uniform interface; and the host orchestrates the whole scene, from managing the model and permissions to the user experience and the shared context. The language model generates the tool invocation request step by step based on [next-token prediction in language models](#article/next-token-prediction).
 
-Never place API keys inside a prompt.
+The most important change in 2026 is that MCP is no longer a nascent experiment from a single company, but a widely adopted standard that moved to independent governance, with its specification evolving toward a more scalable Streamable HTTP and a stateless core at the protocol level, along with major improvements in authorization and extensions.
 
-Use:
-
-- Secret managers.
-- OAuth.
-- Scoped tokens.
-- Short-lived credentials.
-
-## 7. Log Impactful Operations
-
-Preferably keep an audit trail showing:
-
-- Who requested the action?
-- Which tool was used?
-- When?
-- With what parameters?
-- What was the result?
-- Was user approval obtained?
-
-without storing sensitive information unnecessarily.
-
-## 8. Apply Rate Limits
-
-The model may invoke a tool repeatedly.
-
-Use:
-
-- Limits.
-- Quotas.
-- Budgets.
-- Timeouts.
-- Idempotency where necessary.
-
-## 9. Treat Tool Output as Untrusted Data
-
-If a server fetches content from the internet or an external document, it may contain prompt injection.
-
-Not every sentence inside tool output should turn into higher-authority instructions.
-
-## 10. Isolate Execution
-
-If a tool executes code or system commands:
-
-- Container.
-- Sandbox.
-- Filesystem restrictions.
-- Network restrictions.
-- CPU/Memory limits.
-
-But **sandboxing is not something MCP does automatically**; the application and the server must provide these boundaries.
-
-# How Does Authentication Work in MCP?
-
-With remote MCP over HTTP, OAuth can enter the access flow.
-
-The general idea:
-
-1. The MCP Server acts as the Resource Server.
-2. The Client discovers the authorization requirements.
-3. The user/application obtains a token from a suitable Authorization Server.
-4. The Server validates the token.
-5. Permissions are constrained by scopes and identity.
-
-In the 2026 release, authorization requirements were strengthened, including Issuer validation and preventing the improper reuse of credentials across authorization servers.
-
-The key principle for developers:
-
-> Authentication answers "who are you?", while authorization answers "what are you allowed to do?".
-
-A successful login does not mean a tool should get every permission.
-
-# Is MCP Exclusive to Claude?
-
-No.
-
-Although Anthropic introduced MCP in 2024, the protocol has become a much broader standard.
-
-It was donated in December 2025 to the Agentic AI Foundation under the Linux Foundation, and it is now used across multiple companies and products.
-
-Current examples:
-
-- Claude and Claude Desktop/Code.
-- The OpenAI API and products supporting MCP.
-- Google Antigravity.
-- Visual Studio Code and other editors/agents.
-- Dify.
-- Enterprise and custom applications.
-
-This is why MCP should no longer be described today as "Claude's protocol."
-
-# How Does OpenAI Use MCP Today?
-
-OpenAI supports MCP within the **Responses API** through a tool of type `mcp`.
-
-The application can connect a remote MCP Server using a Server URL, and mechanisms exist to reach private servers or servers behind a firewall via Secure MCP Tunnel in supported products.
-
-You can specify:
-
-- The server.
-- The allowed tools.
-- Authorization.
-- The approval policy.
-
-This is an important illustration of the protocol's value: the same server can be consumed from different AI environments if they support MCP, instead of building a proprietary connector per vendor.
-
-# How Does Claude Use MCP?
-
-Claude Desktop was among the first environments to support MCP.
-
-The experience later evolved with **Desktop Extensions / MCP Bundles** to ease installing local servers, instead of asking users to hand-edit config files every time.
-
-The Anthropic stack and its API also support connecting to MCP servers in different scenarios.
-
-The value is not "magical memory" inside Claude; it is that MCP lets Claude be wired to external services that can provide:
-
-- Files.
-- Search.
-- Databases.
-- Tools.
-- Memory stores.
-
-The memory itself comes from the external system, not from MCP as a database.
-
-# What About Google Antigravity?
-
-Google documents support for **local and remote MCP Servers** inside Antigravity.
-
-A developer can wire an agent environment to Google/Google Cloud servers or other servers, and use MCP to provide external tools and context.
-
-This is clearer evidence than the claim that "MCP improved Antigravity's accuracy by some percentage"; the support is documented, while the magnitude of any accuracy or productivity gain requires an independent measurement study.
-
-# What About Dify?
-
-Dify added MCP support gradually and then shipped native two-way support:
-
-- Using MCP Servers as tools inside agents/workflows.
-- Exposing Dify applications or workflows as an MCP Server for external clients.
-
-This makes Dify a good example of the protocol working in both directions:
-
-```text
-Dify → MCP Client → External Server
-```
-
-or:
-
-```text
-External Client → MCP → Dify App/Workflow
-```
-
-But always verify the **protocol version** supported by the specific Dify release, because MCP itself changes quickly.
-
-# Is MCP the Same as RAG?
-
-No.
-
-## RAG
-
-Retrieves information relevant to the question and places it into the model's context.
-
-In the typical path, the question enters a **vector search** over an embedding space that retrieves the semantically nearest **documents**, and those documents are injected into the language model's context so the model formulates its answer on top of them. The whole pattern revolves around enriching the context with relevant content before generation, and goes no further than that.
-
-## MCP
-
-Is a general connectivity standard.
-
-An MCP server can expose a tool that performs a RAG search.
-
-But it can also:
-
-- Create an issue.
-- Run a query.
-- Send a message.
-- Read a file.
-- Trigger a workflow.
-
-So RAG is a pattern/technique, while MCP is a protocol that can carry capabilities including RAG and much else.
-
-# Is MCP an Agent Framework?
-
-No.
-
-MCP by itself does not define:
-
-- A plan.
-- A memory policy.
-- A reasoning loop.
-- A retry strategy.
-- Multi-agent orchestration.
-- Goal decomposition.
-
-These are the responsibility of an agent framework or the host.
-
-MCP gives an agent a standardized way to reach the outside world.
-
-# When Do You Actually Need MCP?
-
-MCP is useful when:
-
-- You have multiple tools and data sources.
-- You want to support more than one AI host.
-- You want to separate integration logic from the application.
-- You are building an ecosystem of reusable tools.
-- You need tool discovery.
-- You want to swap the model without rebuilding every connector.
-- You want to publish an AI service that multiple clients can consume.
-
-# When Might You Not Need MCP?
-
-Direct integration may be simpler if:
-
-- You have only one tool.
-- The application is small and static.
-- You do not need interoperability.
-- The external service has an excellent direct SDK.
-- There is no chance of reusing the connector.
-- Adding MCP would add an operational layer with no clear value.
-
-A good standard does not mean it belongs in every project.
-
-# An Architectural Example Inside a Company
-
-Suppose the organization wants an assistant that can:
-
-- Search documentation.
-- Read the CRM.
-- Create a support ticket.
-- Run a sales report.
-
-You could build such an assistant as a multi-server MCP architecture: the assistant embeds one or more **MCP Clients** inside its own components, and each client connects to a dedicated **MCP Server** responsible for one slice of the estate — a documents server exposing search and retrieval, a CRM server presenting customer records, a support server that can open tickets, and an analytics server that runs sales reports. When the user asks to "open a ticket for customer X and pull their sales report," the assistant discovers through the protocol which server owns the needed tools, invokes the ticketing tool on the support server and the reporting tool on the analytics server, and weaves both results into a single answer.
-
-The real value of this separation shows up in governance: each server can carry its own **authentication** mechanism suited to the sensitivity of its service, tightly scoped **permissions** granting least privilege, **independent logging** that makes it easy to trace who did what and when, **rate limits** protecting the backing systems, and a clear **owning team**. That organization is engineering-wise far better than handing a single model unified credentials that reach directly into every system, because any breach or mistake stays contained within one server's boundary instead of spreading across the whole estate.
-
-# How Do You Design a Good MCP Tool?
-
-A good tool should be:
-
-## Specific
-
-Better:
-
-```text
-get_invoice(invoice_id)
-```
-
-than:
-
-```text
-do_accounting_task(text)
-```
-
-The clearer the function, the easier validation and permissions become.
-
-## Precisely Schematized
-
-Define:
-
-- Types.
-- Required fields.
-- Enums where possible.
-- Value bounds.
-- Output structure.
-
-## A Clear, Non-Marketing Description
-
-The model should know:
-
-- What does it do?
-- What does it not do?
-- When to use it?
-- What side effects exist?
-
-## Idempotent Where Possible
-
-Re-reading a file is usually safe.
-
-"Send Payment" needs more careful design to prevent unintended repetition.
-
-## Separating Preview from Execute
-
-For sensitive operations:
-
-```text
-preview_refund()
-execute_refund()
-```
-
-may beat one tool that executes directly.
-
-# What Are Common MCP Design Mistakes?
-
-## One Server with Every Permission
-
-It becomes a major risk point.
-
-## Overly General Tools
-
-Such as:
-
-```text
-run_any_sql(query)
-```
-
-without constraints.
-
-In many systems, narrower operations or a read-only query layer is better.
-
-## Passing Secrets Inside Context
-
-The model does not need to see the API key to use a tool.
-
-## Trusting External Tool Data
-
-External content may be malicious.
-
-## No Approval Step
-
-Especially for operations that change the outside world.
-
-## Confusing Protocol Security with Application Security
-
-Having OAuth does not protect you from a tool with bad logic.
-
-## Relying on an Old Tutorial
-
-MCP has evolved quickly, especially transport and the protocol lifecycle in 2026.
-
-# What Should Be Watched in MCP Going Forward?
-
-The roadmap published in August 2026 points to continued focus on:
-
-- Scalability.
-- Enterprise readiness.
-- Agent communication.
-- Governance.
-- Extensions.
-- Authorization improvements.
-- More mature operations on enterprise infrastructure.
-
-Any technical article about MCP should be treated as content that needs periodic refreshes; the protocol is still evolving faster than mature networking technologies like HTTP or SMTP.
-
-# Conclusion
-
-The Model Context Protocol does not make the model smarter by itself, does not replace APIs, and does not build a complete agent.
-
-Its core value is **standardizing how AI applications connect to external tools and data**.
-
-The system is easiest to grasp through the division of roles within it. The language model is what understands the context, generates the answer, and decides when the task needs an external capability; the MCP protocol provides the standard communication language through which the model reaches that capability; the MCP Server is what defines and actually executes the external capabilities behind a uniform interface; and the Host orchestrates the whole scene — managing the model, permissions, the user experience, and the shared context. The language model generates the tool invocation request step by step based on [next-token prediction in language models](#article/next-token-prediction).
-
-The biggest change in 2026 is that MCP is no longer a nascent experiment from one company; it became a widely adopted standard that moved to independent governance, with its specification evolving toward more scalable Streamable HTTP and a stateless protocol-level core, plus major improvements in authorization and extensions.
-
-But standardization is not a synonym for security.
-
-MCP's success in a production environment depends on:
-
-- Least privilege.
-- Authentication & authorization.
-- Human approvals.
-- Validation.
-- Isolation.
-- Auditability.
-- Server trust.
-- Version management.
-- And never giving the model more than it needs.
+But standardization is not a synonym for security. MCP's success in a production environment depends on least privilege, authentication and authorization, human approvals, input validation, isolation, auditability, server trust, version management, and not giving the model more than it needs.
 
 ## Sources and References
 
