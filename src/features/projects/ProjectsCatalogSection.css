@@ -200,7 +200,7 @@
 }
 
 .category-pill-btn.active .cat-count {
-  background: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
   font-weight: 700;
 }
