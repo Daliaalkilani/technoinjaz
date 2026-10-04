@@ -167,16 +167,17 @@ export function CinematicFooter() {
       if (elementsToAnimate.length) {
         gsap.fromTo(
           elementsToAnimate,
-          { y: 30, opacity: 0.4 },
+          { y: 30, opacity: 0.75 },
           {
             y: 0,
             opacity: 1,
             stagger: 0.12,
+            duration: 0.6,
             ease: "power2.out",
             scrollTrigger: {
               trigger: wrapperRef.current,
-              start: "top 90%",
-              end: "bottom 95%",
+              start: "top 92%",
+              end: "top 55%",
               scrub: 1,
             },
           }
@@ -358,15 +359,6 @@ export function CinematicFooter() {
                 </span>
               </div>
             )}
-
-            {/* Official email — blue, under stay-updated newsletter */}
-            <a
-              href="mailto:info@technoenjaz.com"
-              className="footer-official-email"
-              dir="ltr"
-            >
-              info@technoenjaz.com
-            </a>
           </div>
 
           {/* Interactive Magnetic Pills Layout */}
