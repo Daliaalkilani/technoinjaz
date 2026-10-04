@@ -177,16 +177,16 @@
 }
 
 .category-pill-btn.active {
-  background: #0284c7;
-  border-color: #0284c7;
+  background: #0369a1;
+  border-color: #0369a1;
   color: #ffffff;
   font-weight: 600;
   box-shadow: 0 4px 16px rgba(2, 132, 199, 0.35);
 }
 
 [data-theme="light"] .category-pill-btn.active {
-  background: #0284c7;
-  border-color: #0284c7;
+  background: #0369a1;
+  border-color: #0369a1;
   color: #ffffff;
   box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25);
 }
@@ -197,6 +197,12 @@
   font-size: 11px;
   background: rgba(255, 255, 255, 0.12);
   color: inherit;
+}
+
+.category-pill-btn.active .cat-count {
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  font-weight: 700;
 }
 
 [data-theme="light"] .cat-count {
