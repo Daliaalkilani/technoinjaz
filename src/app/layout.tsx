@@ -52,6 +52,8 @@ export default function RootLayout({
             connections the loader background would otherwise sit as a plain dark box
             for seconds waiting for these two images to be discovered after CSS load. */}
         <link rel="preload" as="image" href="/loader/assets/rocket-body.webp" fetchPriority="high" />
+        <link rel="preload" as="image" href="/_img/images/home/hero-dark.640.avif" fetchPriority="high" media="(max-width: 768px)" />
+        <link rel="preload" as="image" href="/_img/images/home/hero-dark.1280.avif" fetchPriority="high" media="(min-width: 769px)" />
         <link rel="preload" as="image" href="/loader/assets/launch-button.webp" fetchPriority="high" />
         <script src="/loader/loader.js" defer />
       </head>

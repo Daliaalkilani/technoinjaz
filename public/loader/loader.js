@@ -110,7 +110,7 @@
 
   const state = {
     phase: 'idle', active: false, progress: 0, indeterminate: false,
-    demo: config.demo !== false, loop: false, duration: 2500, startedAt: 0, arrivalAt: 0,
+    demo: config.demo !== false, loop: false, duration: 1700, startedAt: 0, arrivalAt: 0,
     readyRequested: false, sound: false, calm: false,
     charge: 0, engine: 0, warp: 0, destroyed: false, runId: 0,
     pose: { x: 0, y: 0, s: 1, r: 0, opacity: 1 },
@@ -270,7 +270,7 @@
     reset(true);
     state.runId += 1;
     state.demo = true;
-    state.duration = Number(options.duration || 2500);
+    state.duration = Number(options.duration || 1700);
     state.active = true; state.startedAt = performance.now(); state.elapsed = 0;
     setPhase('charging');
     audio.start(); audio.chirp(); addWave(point(.489, .834));

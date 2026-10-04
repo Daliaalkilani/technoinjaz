@@ -34,7 +34,7 @@ export function LoaderProvider({ children }: { children: React.ReactNode }) {
     };
 
     window.addEventListener('techno:completed', handleCompleted, { once: true });
-    timer = setTimeout(handleCompleted, 2700);
+    timer = setTimeout(handleCompleted, 2100);
 
     return () => {
       window.removeEventListener('techno:completed', handleCompleted);
