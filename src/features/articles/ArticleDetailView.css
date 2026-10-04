@@ -905,36 +905,18 @@
   text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
 }
 
-/* Tables */
-.article-fullscreen-markdown-body table {
-  width: 100%;
-  border-collapse: collapse;
+/* Tables: the card (border, radius, background, scroll) is .md-table-wrap in
+   globals.css — keep border/radius/display off the <table> itself. */
+.article-fullscreen-markdown-body .md-table-wrap {
   margin: 2rem 0;
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  overflow: hidden;
-  display: block;
-  overflow-x: auto;
-}
-
-.article-fullscreen-markdown-body th {
-  background: rgba(255, 255, 255, 0.08);
-  color: #38bdf8;
-  padding: 12px 18px;
-  font-weight: 700;
-  text-align: start;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .article-fullscreen-markdown-body td {
-  padding: 12px 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
   color: #cbd5e1;
 }
 
-.article-fullscreen-markdown-body tr:hover td {
-  background: rgba(255, 255, 255, 0.02);
+.article-fullscreen-markdown-body tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.025);
 }
 
 /* Code Blocks */
@@ -992,20 +974,12 @@
   color: #0c4a6e;
 }
 
-[data-theme="light"] .article-fullscreen-markdown-body table {
-  background: #ffffff;
-  border-color: rgba(0, 0, 0, 0.08);
-}
-
-[data-theme="light"] .article-fullscreen-markdown-body th {
-  background: #f1f5f9;
-  color: #0369a1;
-  border-bottom-color: rgba(0, 0, 0, 0.08);
-}
-
 [data-theme="light"] .article-fullscreen-markdown-body td {
-  border-top-color: rgba(0, 0, 0, 0.06);
   color: #334155;
+}
+
+[data-theme="light"] .article-fullscreen-markdown-body tbody tr:hover td {
+  background: rgba(2, 132, 199, 0.03);
 }
 
 [data-theme="light"] .article-fullscreen-markdown-body pre {
@@ -1593,8 +1567,7 @@
   overflow-wrap: anywhere;
 }
 
-.article-fullscreen-markdown-body pre,
-.article-fullscreen-markdown-body table {
+.article-fullscreen-markdown-body pre {
   max-width: 100%;
   overflow-x: auto;
 }

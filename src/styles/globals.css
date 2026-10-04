@@ -1192,41 +1192,84 @@ picture {
   color: #0284c7;
 }
 
-/* Tables: horizontal scroll inside the box; columns keep a readable width. */
+/* Tables: the wrapper IS the card (border, radius, background, scroll); the
+   <table> inside is a plain full-width table. Page CSS used to put the border
+   and radius on the <table> itself with display:block — that boxes the block,
+   not the rows (an anonymous inner table shrink-wraps the content), so few
+   columns huddled to one side on desktop, rows spilled past the border on
+   phones, and the wrapper's own clip cut the table's rounded border. */
 .md-table-wrap {
   max-width: 100%;
   overflow-x: auto;
+  overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  margin: 24px 0;
-  border-radius: 10px;
+  margin: 28px 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.6);
+}
+
+.md-table-wrap:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
 }
 
 .md-table-wrap > table {
+  display: table !important;
   margin: 0 !important;
-  min-width: 100%;
-  width: max-content;
-  max-width: none;
+  /* fills the card on every width (no dead zone); when the columns' min-width
+     can't fit (phones) it grows past the card and scrolls inside it */
+  width: 100%;
+  max-width: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  border-collapse: separate !important;
+  border-spacing: 0;
+  background: transparent !important;
   overflow: visible !important;
 }
 
-.md-table-wrap th,
-.md-table-wrap td {
+.md-table-wrap table th,
+.md-table-wrap table td {
   min-width: 7.5em;
   max-width: 18em;
+  padding: 14px 18px;
+  text-align: start;
   overflow-wrap: normal !important;
   word-break: normal;
   vertical-align: top;
+  border: 0;
+}
+
+.md-table-wrap table th {
+  background: rgba(56, 189, 248, 0.08);
+  color: #38bdf8;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.28);
+}
+
+.md-table-wrap table tbody tr + tr td {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-theme='light'] .md-table-wrap {
+  border-color: rgba(15, 23, 42, 0.12);
+  background: #ffffff;
+}
+
+[data-theme='light'] .md-table-wrap table th {
+  background: #f0f7fc;
+  color: #0369a1;
+  border-bottom-color: rgba(2, 132, 199, 0.25);
+}
+
+[data-theme='light'] .md-table-wrap table tbody tr + tr td {
+  border-top-color: rgba(15, 23, 42, 0.08);
 }
 
 .md-table-wrap code {
   overflow-wrap: normal !important;
   white-space: nowrap;
-}
-
-@media (min-width: 900px) {
-  .md-table-wrap > table {
-    width: 100%;
-  }
 }
 
 /* "المصادر والمراجع" (end of articles / projects): collapsed, opens on tap */
