@@ -234,7 +234,7 @@ Suggested Slug: model-context-protocol-mcp
 
 فالمعيار الجيد لا يعني وجوب استخدامه في كل مشروع.
 
-ومشروع [تطبيق دليل الطالب الجامعي الرقمي](/projects/student-university-guide-app) مثال على العمود الأيسر: فمساعده الافتراضي يستدعي Google Gemini مباشرة لمطابقة السؤال مع قاعدة أسئلة شائعة ثابتة، أي مصدر بيانات واحد لا يحتاج طبقة MCP.
+ومشروع [تطبيق دليل الطالب الجامعي الرقمي](/projects/student-university-guide-app) مثال على العمود الأيسر: فمساعده الافتراضي يستدعي Google Gemini مباشرة لمطابقة السؤال مع قاعدة أسئلة شائعة ثابتة، أي مصدر بيانات واحد لا يحتاج طبقة MCP. وفي تنفيذنا الفعلي لهذا التطبيق كان الربط المباشر بالنموذج كافيًا لهذا النطاق المحدود؛ فقيمة MCP تظهر حين تتعدد الأدوات ومصادر البيانات التي يجب أن يصل إليها المساعد.
 
 ## مثال معماري لمشروع داخل شركة
 
@@ -331,3 +331,13 @@ Suggested Slug: model-context-protocol-mcp
 
 12. Dify — Built-in two-way MCP support  
     https://dify.ai/blog/v1-6-0-built-in-two-way-mcp-support
+
+### وثائق رسمية ومعايير إضافية
+
+- [Model Context Protocol — Official specification](https://modelcontextprotocol.io/specification/)
+
+- [JSON-RPC Working Group — JSON-RPC 2.0 Specification](https://www.jsonrpc.org/specification)
+
+- [IETF — The OAuth 2.1 Authorization Framework (Internet-Draft)](https://datatracker.ietf.org/doc/draft-ietf-oauth-v2-1/)
+
+- [MDN Web Docs — Server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events)

@@ -33,6 +33,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     s('/faq'),
     s('/about'),
     s('/contact'),
+    s('/privacy-policy'),
     // Real team member profiles (placeholders like "team-slot-5" are excluded —
     // they're unfilled seats, not searchable content).
     ...teamMembers

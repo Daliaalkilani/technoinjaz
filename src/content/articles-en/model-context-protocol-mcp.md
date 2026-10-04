@@ -234,7 +234,7 @@ Dify added MCP support gradually and then introduced native support in two direc
 
 A good standard does not mean it must be used in every project.
 
-Our [digital student guide app](/projects/student-university-guide-app) is an example of the right-hand column: its virtual assistant calls Google Gemini directly to match a question against a fixed FAQ base — a single data source with no need for an MCP layer.
+Our [digital student guide app](/projects/student-university-guide-app) is an example of the right-hand column: its virtual assistant calls Google Gemini directly to match a question against a fixed FAQ base — a single data source with no need for an MCP layer. In our actual build of this app, a direct connection to the model was enough for that limited scope; MCP's value shows up once the assistant has to reach many tools and data sources.
 
 ## An Architectural Example of a Company Project
 
@@ -331,3 +331,13 @@ But standardization is not a synonym for security. MCP's success in a production
 
 12. Dify — Built-in two-way MCP support  
     https://dify.ai/blog/v1-6-0-built-in-two-way-mcp-support
+
+### Official documentation & standards
+
+- [Model Context Protocol — Official specification](https://modelcontextprotocol.io/specification/)
+
+- [JSON-RPC Working Group — JSON-RPC 2.0 Specification](https://www.jsonrpc.org/specification)
+
+- [IETF — The OAuth 2.1 Authorization Framework (Internet-Draft)](https://datatracker.ietf.org/doc/draft-ietf-oauth-v2-1/)
+
+- [MDN Web Docs — Server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events)

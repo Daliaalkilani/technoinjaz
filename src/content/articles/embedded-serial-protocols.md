@@ -122,7 +122,7 @@ Suggested Slug: embedded-serial-protocols
 
 لأنها بسيطة، ولا تحتاج Clock، وتعمل بسهولة مع محوّل USB-to-UART، وتناسب سجلات الـConsole، ويسهل مراقبتها بمحلل منطقي. ومثالها الأشهر جلسة Bring-up على لوحة جديدة: يتصل الـUART في المتحكم بـ**جسر USB-UART** صغير على اللوحة، فيظهر الجسر للحاسوب منفذًا تسلسليًا افتراضيًا، ويفتح المهندس طرفية على حاسوبه فيرى رسائل السجل وردود الأوامر مباشرة. بهذا تبقى UART من أوائل الواجهات التي يلجأ إليها مهندس Firmware عند إحياء أي لوحة، لأنها قناة تشخيص بسيطة لا تحتاج شاشة ولا شبكة.
 
-ولا يقتصر دورها على التشخيص: ففي مشروع [الروبوت الأرضي متعدد الاتصالات](/projects/remote-controlled-ground-robot) تصل وحدة Bluetooth HC-05 بمتحكم Arduino UNO عبر واجهة UART، لتنقل أوامر التحكم اللاسلكية إلى الروبوت.
+ولا يقتصر دورها على التشخيص: ففي مشروع [الروبوت الأرضي متعدد الاتصالات](/projects/remote-controlled-ground-robot) تصل وحدة Bluetooth HC-05 بمتحكم Arduino UNO عبر واجهة UART، لتنقل أوامر التحكم اللاسلكية إلى الروبوت. وفي تنفيذنا الفعلي لهذا المشروع كان استقرار الوصلة اللاسلكية وتنسيق عمل عدة وحدات إلكترونية على منصة واحدة من أبرز التحديات، وهو ما يجعل فهم طبقة UART نفسها خطوة أولى في تشخيص أي خلل في الأوامر.
 
 ### متى لا تكون UART مناسبة؟
 
@@ -522,3 +522,13 @@ UART وI²C وSPI وRS‑232 ليست بروتوكولات أمنية. فإذا 
 
 8. Analog Devices — RS232 Quick Guide  
    https://www.analog.com/media/en/technical-documentation/product-selector-card/rs232%20quick%20guide.pdf
+
+### وثائق رسمية ومعايير إضافية
+
+- [Arduino Docs — Wire (I2C) library reference](https://docs.arduino.cc/language-reference/en/functions/communication/wire/)
+
+- [Arduino Docs — SPI library reference](https://docs.arduino.cc/language-reference/en/functions/communication/SPI/)
+
+- [Linux Kernel Documentation — Introduction to I2C and SMBus](https://docs.kernel.org/i2c/summary.html)
+
+- [Linux Kernel Documentation — Overview of Linux kernel SPI support](https://docs.kernel.org/spi/spi-summary.html)

@@ -1,4 +1,4 @@
-import { SITE_URL, ORG_ID, WEBSITE_ID, ORG, absoluteUrl } from '@/config/site';
+import { SITE_URL, ORG_ID, WEBSITE_ID, ORG, ABDULGHANI_SOCIALS, absoluteUrl } from '@/config/site';
 import type { BlogArticle } from '@/data/blogArticlesData';
 import type { ProjectItem } from '@/data/projectsData';
 import type { FaqItem } from '@/data/faqData';
@@ -7,14 +7,7 @@ import { projectTags, plainExcerpt } from '@/lib/text';
 
 const ABDULGHANI_ID = `${SITE_URL}/#abdulghani-alhamdi`;
 const ABDULGHANI_URL = absoluteUrl('/about#team-showcase');
-const ABDULGHANI_SAME_AS = [
-  'https://www.facebook.com/share/19ZeJgTRzk/',
-  'https://www.instagram.com/abdalgani_h1',
-  'https://x.com/Abdalganih2',
-  'https://github.com/abdalganih1',
-  'https://t.me/abdalganih',
-  'https://wa.me/963958794195'
-];
+const ABDULGHANI_SAME_AS = Object.values(ABDULGHANI_SOCIALS);
 
 export function abdulghaniPersonSchema() {
   const url = ABDULGHANI_URL;

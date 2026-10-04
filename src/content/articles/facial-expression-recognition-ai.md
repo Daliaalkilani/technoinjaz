@@ -34,7 +34,7 @@ Suggested Slug: facial-expression-recognition-ai
 
 سؤالها «من هو هذا الشخص؟»، وتتخذ صورتين: التحقق (Verification)، أي هل هذا الشخص هو صاحب الهوية المدّعاة؟ والتعريف (Identification)، أي أي شخص في قاعدة البيانات يطابق هذا الوجه؟ وهي بذلك مهمة **هوية بيومترية**.
 
-ومن أمثلتها مشروعنا [نظام التحكم في الدخول بالتعرف على الوجه](/projects/face-recognition-access-control-project)، الذي يطابق الوجه أمام الكاميرا مع الصور المرجعية للأشخاص المصرّح لهم ليميّزهم من الوجوه المجهولة — وهي مهمة مختلفة تمامًا عن قراءة تعبير الوجه.
+ومن أمثلتها مشروعنا [نظام التحكم في الدخول بالتعرف على الوجه](/projects/face-recognition-access-control-project)، الذي يطابق الوجه أمام الكاميرا مع الصور المرجعية للأشخاص المصرّح لهم ليميّزهم من الوجوه المجهولة — وهي مهمة مختلفة تمامًا عن قراءة تعبير الوجه. وأثناء بناء النظام لاحظنا أن جودة التقاط الوجه ترتبط بوضوح الصورة والإضاءة وزاوية الكاميرا، فراعينا موضع الكاميرا ومجال رؤيتها في تصميم النموذج الأولي؛ وهي العوامل نفسها التي تضاعف صعوبة قراءة التعبيرات.
 
 ### التعرف على تعابير الوجه (FER)
 
@@ -417,3 +417,13 @@ Suggested Slug: facial-expression-recognition-ai
 
 10. Picard — Affective Computing  
     https://mitpress.mit.edu/9780262661157/affective-computing/
+
+### وثائق رسمية ومعايير إضافية
+
+- [Google AI Edge — MediaPipe Face Detector](https://ai.google.dev/edge/mediapipe/solutions/vision/face_detector)
+
+- [Google AI Edge — MediaPipe Face Landmarker](https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker)
+
+- [PyTorch — torchvision: Transforming and augmenting images](https://docs.pytorch.org/vision/stable/transforms.html)
+
+- [NIST — AI Risk Management Framework (AI RMF)](https://www.nist.gov/itl/ai-risk-management-framework)

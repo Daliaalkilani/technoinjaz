@@ -339,7 +339,7 @@ AIoT اختصار لـArtificial Intelligence of Things، وفكرته أن **Io
 
 لا. ففي كثير من الأنظمة يكون الأفضل أن يتصل الحساس بشبكة محلية، ومنها إلى بوابة تتولى الاتصال بالإنترنت، بدل أن يتصل الحساس بالإنترنت مباشرة. فالبوابة تستطيع إخفاء الأجهزة الداخلية، وتجميع البيانات، وإدارة البروتوكولات، وتقليل الاستهلاك، وتطبيق السياسات الأمنية، والاستمرار في العمل محليًا عند انقطاع السحابة.
 
-وتجد مثالًا عمليًا على الحلقة المحلية التي تسبق الإنترنت في مشروعنا [نظام قياس مستوى الماء في الخزان بمستشعر فوق صوتي](/projects/ultrasonic-water-level-monitoring-project)، حيث يقرأ Arduino الحساس ويرسل النسبة إلى تطبيق الهاتف عبر Bluetooth دون منصة سحابية؛ وإضافة بوابة أو اتصال Wi‑Fi هي الخطوة التي تنقله إلى منظومة IoT كاملة.
+وتجد مثالًا عمليًا على الحلقة المحلية التي تسبق الإنترنت في مشروعنا [نظام قياس مستوى الماء في الخزان بمستشعر فوق صوتي](/projects/ultrasonic-water-level-monitoring-project)، حيث يقرأ Arduino الحساس ويرسل النسبة إلى تطبيق الهاتف عبر Bluetooth دون منصة سحابية؛ وإضافة بوابة أو اتصال Wi‑Fi هي الخطوة التي تنقله إلى منظومة IoT كاملة. وفي تنفيذنا الفعلي لهذا المشروع ظهرت انقطاعات مؤقتة في اتصال Bluetooth عند زيادة المسافة أو وجود تداخل، كما لاحظنا أن عوامل مثل الحرارة والرطوبة قد تؤثر في قراءة الحساس فوق الصوتي، فاحتجنا إلى مراعاة تصحيح القراءات أثناء التطوير.
 
 ## الخلاصة
 
@@ -392,3 +392,13 @@ AIoT اختصار لـArtificial Intelligence of Things، وفكرته أن **Io
 
 14. ITU — IMT-2030 technical requirements for the 6G future  
     https://www.itu.int/hub/2026/03/imt-2030-technical-requirements-for-the-6g-future/
+
+### وثائق رسمية ومعايير إضافية
+
+- [IETF / RFC Editor — RFC 8446: The Transport Layer Security (TLS) Protocol Version 1.3](https://www.rfc-editor.org/info/rfc8446)
+
+- [IETF / RFC Editor — RFC 6455: The WebSocket Protocol](https://www.rfc-editor.org/info/rfc6455)
+
+- [MDN Web Docs — The WebSocket API](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
+
+- [AWS — What is AWS IoT? (Developer Guide)](https://docs.aws.amazon.com/iot/latest/developerguide/what-is-aws-iot.html)

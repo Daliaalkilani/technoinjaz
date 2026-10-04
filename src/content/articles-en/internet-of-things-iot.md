@@ -339,7 +339,7 @@ In many projects, the design is **hybrid**, combining both.
 
 No. In many systems, it is better for the sensor to connect to a local network, and from there to a gateway that handles the internet connection, rather than the sensor connecting to the internet directly. The gateway can hide internal devices, aggregate data, manage protocols, reduce consumption, enforce security policies, and keep working locally when the cloud is unavailable.
 
-For a hands-on example of the local loop that comes before the internet, see our [ultrasonic water tank level monitoring project](/projects/ultrasonic-water-level-monitoring-project): an Arduino reads the sensor and sends the level percentage to a phone app over Bluetooth with no cloud platform — adding a gateway or Wi-Fi link is the step that would turn it into a full IoT system.
+For a hands-on example of the local loop that comes before the internet, see our [ultrasonic water tank level monitoring project](/projects/ultrasonic-water-level-monitoring-project): an Arduino reads the sensor and sends the level percentage to a phone app over Bluetooth with no cloud platform — adding a gateway or Wi-Fi link is the step that would turn it into a full IoT system. In our actual build of this project, temporary Bluetooth dropouts appeared when the distance increased or interference was present, and we noted that factors such as temperature and humidity can affect the ultrasonic sensor's reading, so correcting readings had to be accounted for during development.
 
 ## Conclusion
 
@@ -392,3 +392,13 @@ The most important question when designing any project is not "What is the newes
 
 14. ITU — IMT-2030 technical requirements for the 6G future  
     https://www.itu.int/hub/2026/03/imt-2030-technical-requirements-for-the-6g-future/
+
+### Official documentation & standards
+
+- [IETF / RFC Editor — RFC 8446: The Transport Layer Security (TLS) Protocol Version 1.3](https://www.rfc-editor.org/info/rfc8446)
+
+- [IETF / RFC Editor — RFC 6455: The WebSocket Protocol](https://www.rfc-editor.org/info/rfc6455)
+
+- [MDN Web Docs — The WebSocket API](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
+
+- [AWS — What is AWS IoT? (Developer Guide)](https://docs.aws.amazon.com/iot/latest/developerguide/what-is-aws-iot.html)

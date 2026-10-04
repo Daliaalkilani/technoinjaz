@@ -421,6 +421,9 @@ export function CinematicFooter() {
               <MagneticButton as={Link} href="/faq" prefetch={true} className="footer-glass-pill footer-pill-secondary">
                 {t.nav?.faq || (lang === 'en' ? 'FAQ' : 'الأسئلة الشائعة')}
               </MagneticButton>
+              <MagneticButton as={Link} href="/privacy-policy" prefetch={true} className="footer-glass-pill footer-pill-secondary">
+                {lang === 'en' ? 'Privacy Policy' : 'سياسة الخصوصية'}
+              </MagneticButton>
             </div>
           </div>
         </div>

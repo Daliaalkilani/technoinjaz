@@ -1,6 +1,7 @@
 'use client';
 import ResponsiveImage from '@/components/ui/ResponsiveImage';
 import TableOfContents from '@/components/ui/TableOfContents';
+import AuthorBioCard from './AuthorBioCard';
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -341,6 +342,9 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               </div>
             );
           })()}
+
+          {/* About the author (E-E-A-T) */}
+          <AuthorBioCard isEn={isEn} />
 
           {/* Questions & answers about this article */}
           {qa}

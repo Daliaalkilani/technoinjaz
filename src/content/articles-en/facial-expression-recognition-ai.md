@@ -34,7 +34,7 @@ Its question is "Where is the face in the image?", and its output is usually a b
 
 Its question is "Who is this person?", and it takes two forms: Verification, meaning is this person the owner of the claimed identity? And Identification, meaning which person in the database matches this face? It is therefore a **biometric identity** task.
 
-One example is our [face recognition access control project](/projects/face-recognition-access-control-project), which matches the face in front of the camera against reference images of authorized people to tell them apart from unknown faces — a completely different task from reading the face's expression.
+One example is our [face recognition access control project](/projects/face-recognition-access-control-project), which matches the face in front of the camera against reference images of authorized people to tell them apart from unknown faces — a completely different task from reading the face's expression. While building that system we noticed that face capture quality depends on image clarity, lighting and camera angle, so we took the camera's position and field of view into account in the prototype — the very same factors that make reading expressions even harder.
 
 ### Facial Expression Recognition (FER)
 
@@ -417,3 +417,13 @@ When FER is built this way, it becomes a useful tool for computer vision and hum
 
 10. Picard — Affective Computing  
     https://mitpress.mit.edu/9780262661157/affective-computing/
+
+### Official documentation & standards
+
+- [Google AI Edge — MediaPipe Face Detector](https://ai.google.dev/edge/mediapipe/solutions/vision/face_detector)
+
+- [Google AI Edge — MediaPipe Face Landmarker](https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker)
+
+- [PyTorch — torchvision: Transforming and augmenting images](https://docs.pytorch.org/vision/stable/transforms.html)
+
+- [NIST — AI Risk Management Framework (AI RMF)](https://www.nist.gov/itl/ai-risk-management-framework)

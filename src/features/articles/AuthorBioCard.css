@@ -1,0 +1,142 @@
+/* ==========================================================================
+   ARTICLE AUTHOR BIO CARD (below the article body)
+   ========================================================================== */
+
+.author-bio-card {
+  margin: 2.5rem 0 2rem;
+  padding: 22px 24px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(0, 210, 255, 0.06) 0%, rgba(10, 238, 195, 0.03) 100%), var(--bg-card);
+  border: 1px solid rgba(0, 210, 255, 0.18);
+  color: var(--text-main);
+}
+
+.author-bio-kicker {
+  display: inline-block;
+  margin-bottom: 14px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  letter-spacing: 0.02em;
+}
+
+.author-bio-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.author-bio-photo-link {
+  flex-shrink: 0;
+}
+
+.author-bio-photo {
+  display: block;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(0, 210, 255, 0.45);
+  box-shadow: 0 0 0 4px rgba(0, 210, 255, 0.08);
+}
+
+.author-bio-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.project-markdown-body .author-bio-name,
+.author-bio-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-main);
+  text-decoration: none;
+}
+
+.author-bio-name:hover {
+  color: var(--accent-cyan);
+}
+
+.author-bio-role {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--accent-teal);
+}
+
+.project-markdown-body .author-bio-desc,
+.author-bio-desc {
+  margin: 8px 0 4px;
+  font-size: 0.93rem;
+  line-height: 1.75;
+  color: var(--text-muted);
+}
+
+.author-bio-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.project-markdown-body .author-bio-more,
+.author-bio-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  text-decoration: none;
+}
+
+.author-bio-more:hover {
+  text-decoration: underline;
+}
+
+/* Smaller social buttons + brand-neutral (cyan/teal) hover for GitHub & Instagram */
+.author-bio-card .social-btn {
+  width: 36px;
+  height: 36px;
+}
+
+.author-bio-card .social-btn::before {
+  width: 31px;
+  height: 31px;
+}
+
+.author-bio-card .social-btn svg {
+  width: 17px;
+  height: 17px;
+}
+
+.author-bio-card .social-btn.github {
+  background: linear-gradient(135deg, #24292e 0%, #0e7490 100%);
+}
+
+.author-bio-card .social-btn.instagram {
+  background: linear-gradient(135deg, #f58529 0%, #dd2a7b 100%);
+}
+
+@media (max-width: 575.98px) {
+  .author-bio-card {
+    padding: 18px;
+  }
+
+  .author-bio-main {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .author-bio-footer {
+    justify-content: center;
+  }
+}
+
+[data-theme="light"] .author-bio-card {
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.06) 0%, rgba(13, 148, 136, 0.04) 100%), #ffffff;
+  border-color: rgba(2, 132, 199, 0.2);
+}

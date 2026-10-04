@@ -30,6 +30,7 @@ export async function GET() {
 - [الأسئلة الشائعة](${absoluteUrl('/faq')})
 - [من نحن](${absoluteUrl('/about')})
 - [اتصل بنا](${absoluteUrl('/contact')})
+- [سياسة الخصوصية](${absoluteUrl('/privacy-policy')})
 
 ## Team Profiles
 ` ;

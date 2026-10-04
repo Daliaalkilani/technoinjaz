@@ -38,7 +38,7 @@ In Object Detection, for example, the model may identify a person, a car, and a 
 
 **Face Recognition**, meanwhile, is not just general image classification; its question is usually "Does this face belong to a specific identity?", it relies on representations and identity matching, and it carries different privacy and security implications. That is why the success of an Image Classifier should not be taken as automatic evidence that an Object Detector or a face recognition system will succeed.
 
-Our [AI weapon detection project](/projects/weapon-detection-yolo-ai) shows the difference in practice: rather than assigning one label to the whole frame, it uses YOLOv8 to locate a knife or pistol within the camera feed with a bounding box.
+Our [AI weapon detection project](/projects/weapon-detection-yolo-ai) shows the difference in practice: rather than assigning one label to the whole frame, it uses YOLOv8 to locate a knife or pistol within the camera feed with a bounding box. While building the system we noticed that changes in lighting and in the angles at which objects appear directly affect detection quality, and that balancing processing speed against detection accuracy is an engineering decision made separately for each operating environment.
 
 ## How Does a Computer See an Image?
 
@@ -395,3 +395,13 @@ The best system is the one that solves the right task, trains on representative 
 
 13. C. Shorten, T. M. Khoshgoftaar — A survey on Image Data Augmentation for Deep Learning  
     https://journalofbigdata.springeropen.com/articles/10.1186/s40537-019-0197-0
+
+### Official documentation & standards
+
+- [PyTorch — torchvision: Models and pre-trained weights](https://docs.pytorch.org/vision/stable/models.html)
+
+- [Google for Developers — Machine Learning Crash Course: Classification](https://developers.google.com/machine-learning/crash-course/classification)
+
+- [TensorFlow — Image classification tutorial](https://www.tensorflow.org/tutorials/images/classification)
+
+- [Keras — Transfer learning & fine-tuning](https://keras.io/guides/transfer_learning/)

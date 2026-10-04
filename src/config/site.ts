@@ -22,4 +22,14 @@ export const ORG = {
   descriptionAr: 'مكتب هندسي متخصص في تطوير البرمجيات المعقدة، النظم السحابية، إنترنت الأشياء، وحلول الذكاء الاصطناعي في سوريا والوطن العربي.',
 } as const;
 
+/** Founder's public profiles — Person.sameAs in JSON-LD and the article author card. */
+export const ABDULGHANI_SOCIALS = {
+  facebook: 'https://www.facebook.com/share/19ZeJgTRzk/',
+  instagram: 'https://www.instagram.com/abdalgani_h1',
+  x: 'https://x.com/Abdalganih2',
+  github: 'https://github.com/abdalganih1',
+  telegram: 'https://t.me/abdalganih',
+  whatsapp: 'https://wa.me/963958794195',
+} as const;
+
 export const absoluteUrl = (path: string) => `${SITE_URL}${path === '/' ? '' : path}`;

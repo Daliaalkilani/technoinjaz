@@ -122,7 +122,7 @@ A common mistake is equating UART with TTL. More accurately, a UART peripheral m
 
 Because it is simple, needs no clock, works easily with a USB-to-UART adapter, suits console logs, and is easy to monitor with a logic analyzer. Its best-known example is a bring-up session on a new board: the microcontroller's UART connects to a small **USB-UART bridge** on the board, which appears to the computer as a virtual serial port, and the engineer opens a terminal on their laptop and sees log messages and command responses directly. That is why UART remains one of the first interfaces a firmware engineer reaches for when bringing any board to life: it is a simple diagnostic channel that needs neither a screen nor a network.
 
-Its role goes beyond debugging, too: in our [multi-link ground robot project](/projects/remote-controlled-ground-robot), an HC-05 Bluetooth module connects to an Arduino UNO over UART to carry the wireless control commands to the robot.
+Its role goes beyond debugging, too: in our [multi-link ground robot project](/projects/remote-controlled-ground-robot), an HC-05 Bluetooth module connects to an Arduino UNO over UART to carry the wireless control commands to the robot. In our actual build of this project, wireless link stability and coordinating several electronic modules on one platform were among the main challenges — which is why understanding the UART layer itself is the first step in diagnosing any glitch in the commands.
 
 ### When Is UART Not Suitable?
 
@@ -522,3 +522,13 @@ So instead of asking "Which protocol is faster?", ask:
 
 8. Analog Devices — RS232 Quick Guide  
    https://www.analog.com/media/en/technical-documentation/product-selector-card/rs232%20quick%20guide.pdf
+
+### Official documentation & standards
+
+- [Arduino Docs — Wire (I2C) library reference](https://docs.arduino.cc/language-reference/en/functions/communication/wire/)
+
+- [Arduino Docs — SPI library reference](https://docs.arduino.cc/language-reference/en/functions/communication/SPI/)
+
+- [Linux Kernel Documentation — Introduction to I2C and SMBus](https://docs.kernel.org/i2c/summary.html)
+
+- [Linux Kernel Documentation — Overview of Linux kernel SPI support](https://docs.kernel.org/spi/spi-summary.html)

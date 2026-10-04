@@ -38,7 +38,7 @@ Suggested Slug: ai-image-classification
 
 أما **Face Recognition** فليست مجرد تصنيف صور عام؛ فسؤالها غالبًا «هل هذا الوجه يعود إلى هوية معينة؟»، وهي تعتمد على تمثيلات ومطابقة هوية، وتحمل آثارًا مختلفة على الخصوصية والأمن. ولهذا لا ينبغي اعتبار نجاح Image Classifier دليلًا تلقائيًا على نجاح Object Detector أو نظام تعرف على الوجوه.
 
-ويوضح مشروعنا [نظام الكشف عن الأسلحة بالذكاء الاصطناعي](/projects/weapon-detection-yolo-ai) هذا الفرق عمليًا: فهو لا يكتفي بتصنيف الإطار كاملًا، بل يستخدم YOLOv8 لتحديد مكان السكين أو المسدس داخل بث الكاميرا بإطار محيط.
+ويوضح مشروعنا [نظام الكشف عن الأسلحة بالذكاء الاصطناعي](/projects/weapon-detection-yolo-ai) هذا الفرق عمليًا: فهو لا يكتفي بتصنيف الإطار كاملًا، بل يستخدم YOLOv8 لتحديد مكان السكين أو المسدس داخل بث الكاميرا بإطار محيط. وأثناء بناء النظام لاحظنا أن تغيّر ظروف الإضاءة وزوايا ظهور الأجسام يؤثر مباشرة في جودة الكشف، وأن الموازنة بين سرعة المعالجة ودقة الكشف قرار هندسي يُتخذ في كل بيئة تشغيل على حدة.
 
 ## كيف يرى الحاسوب الصورة؟
 
@@ -395,3 +395,13 @@ F_1 = \frac{2 \times \text{Precision} \times \text{Recall}}{\text{Precision} + \
 
 13. C. Shorten, T. M. Khoshgoftaar — A survey on Image Data Augmentation for Deep Learning  
     https://journalofbigdata.springeropen.com/articles/10.1186/s40537-019-0197-0
+
+### وثائق رسمية ومعايير إضافية
+
+- [PyTorch — torchvision: Models and pre-trained weights](https://docs.pytorch.org/vision/stable/models.html)
+
+- [Google for Developers — Machine Learning Crash Course: Classification](https://developers.google.com/machine-learning/crash-course/classification)
+
+- [TensorFlow — Image classification tutorial](https://www.tensorflow.org/tutorials/images/classification)
+
+- [Keras — Transfer learning & fine-tuning](https://keras.io/guides/transfer_learning/)
