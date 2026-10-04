@@ -2,8 +2,9 @@
 
 import React, { useEffect, useId } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Play, Clock, Sparkles } from 'lucide-react';
+import { X, Play, Clock, Sparkles, Bookmark, BookmarkCheck } from 'lucide-react';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
+import { useSavedProjects } from '@/hooks/useSavedProjects';
 import './VideoPlayerModal.css';
 
 export interface VideoModalData {
@@ -17,6 +18,8 @@ export interface VideoModalData {
   tagEn?: string;
   description?: string;
   descriptionEn?: string;
+  cover?: string;
+  image?: string;
 }
 
 export interface VideoPlayerModalProps {
@@ -60,6 +63,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
   const titleId = useId();
+  const { isSaved, toggleSave } = useSavedProjects();
 
   const prevFocusedElement = React.useRef<HTMLElement | null>(null);
 
@@ -96,6 +100,23 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
   const rawUrl = video.youtubeUrl || video.url || video.id;
   const youtubeId = extractYouTubeId(rawUrl);
   const isDirectVideo = rawUrl && (rawUrl.endsWith('.mp4') || rawUrl.endsWith('.webm'));
+  const saved = video.id ? isSaved(video.id) : false;
+  const handleToggleSave = () => {
+    if (!video.id) return;
+    toggleSave({
+      id: video.id,
+      title: video.title,
+      titleEn: video.titleEn,
+      category: 'فيديوهات هندسية',
+      categoryLabel: displayTag,
+      description: video.description || '',
+      descriptionEn: video.descriptionEn,
+      type: 'video',
+      duration: video.duration,
+      url: video.youtubeUrl || video.url,
+      image: video.cover || video.image
+    });
+  };
 
   const modalContent = (
     <div
@@ -132,6 +153,19 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
             </h2>
           </div>
 
+          <div className="video-modal-header-actions">
+          {video.id && (
+            <button
+              type="button"
+              className={`video-modal-save-btn ${saved ? 'is-saved' : ''}`}
+              onClick={handleToggleSave}
+              aria-pressed={saved}
+              title={saved ? (isEn ? 'Remove from Saved' : 'إزالة من المحفوظات') : (isEn ? 'Save Video' : 'حفظ الفيديو')}
+            >
+              {saved ? <BookmarkCheck size={17} /> : <Bookmark size={17} />}
+              <span>{saved ? (isEn ? 'Saved' : 'محفوظ') : (isEn ? 'Save' : 'حفظ')}</span>
+            </button>
+          )}
           <button
             type="button"
             className="video-modal-close-btn"
@@ -141,6 +175,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
           >
             <X size={20} />
           </button>
+          </div>
         </div>
 
         {/* Video Player Frame */}

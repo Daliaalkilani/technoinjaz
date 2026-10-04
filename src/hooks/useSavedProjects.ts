@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { getLoggedInUser, requireAuth } from '@/lib/auth';
+import { getLoggedInUser, requireAuth, apiRequest, AUTH_EVENT } from '@/lib/auth';
 
 export interface SavedProject {
   id: string;
@@ -22,141 +22,148 @@ export interface SavedProject {
   savedAt: number;
 }
 
-const LEGACY_STORAGE_KEY = 'techno_saved_projects';
-const EVENT_NAME = 'techno_saved_projects_updated';
+type ItemType = 'project' | 'video' | 'article';
 
-function getStorageKey(): string | null {
-  const user = getLoggedInUser();
-  if (!user) return null;
-  const userKey = (user.email || user.name || 'user')
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, '_');
-  return `techno_saved_projects_${userKey}`;
+interface ServerItem {
+  itemType: ItemType;
+  itemSlug: string;
+  createdAt: number;
+  meta: Record<string, string>;
 }
 
-function getStoredProjects(): SavedProject[] {
-  if (typeof window === 'undefined') return [];
+// Saved items live in D1 (/api/saved). One module-level store is shared by every
+// component using the hook, so the list is fetched once per session, not per card.
+let store: SavedProject[] = [];
+let loadedFor: string | null = null;
+let loading: Promise<void> | null = null;
+const listeners = new Set<(items: SavedProject[]) => void>();
+let authListenerBound = false;
+
+const emit = () => listeners.forEach((fn) => fn(store));
+
+const toItemType = (type: SavedProject['type']): ItemType =>
+  type === 'article' ? 'article' : type === 'video' ? 'video' : 'project';
+
+function fromServer(it: ServerItem): SavedProject {
+  const m = it.meta || {};
+  const subtype = m.subtype as SavedProject['type'] | undefined;
+  return {
+    id: it.itemSlug,
+    title: m.title || it.itemSlug,
+    titleEn: m.titleEn,
+    category: m.category || '',
+    categoryLabel: m.categoryLabel,
+    description: m.description || '',
+    descriptionEn: m.descriptionEn,
+    type: it.itemType === 'project' && subtype && subtype !== 'article' && subtype !== 'video' ? subtype : it.itemType,
+    url: m.url,
+    image: m.image,
+    duration: m.duration,
+    savedAt: it.createdAt
+  };
+}
+
+function load(force = false): Promise<void> {
   const user = getLoggedInUser();
-  // Unauthenticated guests have no permission and zero saved items
-  if (!user) return [];
-
-  const key = getStorageKey();
-  if (!key) return [];
-
-  try {
-    let raw = localStorage.getItem(key);
-    // Auto-migrate from legacy key if user-specific key is empty
-    if (!raw) {
-      const legacyRaw = localStorage.getItem(LEGACY_STORAGE_KEY);
-      if (legacyRaw) {
-        raw = legacyRaw;
-        localStorage.setItem(key, legacyRaw);
-      }
-    }
-
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (e) {
-    console.error('Error reading saved projects:', e);
-    return [];
+  if (!user) {
+    store = [];
+    loadedFor = null;
+    emit();
+    return Promise.resolve();
   }
+  if (!force && loadedFor === user.name) return loading ?? Promise.resolve();
+  loadedFor = user.name;
+  loading = apiRequest<{ items: ServerItem[] }>('/api/saved').then((res) => {
+    if (res.ok) store = res.items.map(fromServer);
+    else if (res.status === 401) store = [];
+    emit();
+  });
+  return loading;
+}
+
+async function persist(item: SavedProject, save: boolean): Promise<boolean> {
+  const payload = { item_type: toItemType(item.type), item_slug: item.id };
+  const res = save
+    ? await apiRequest('/api/saved', {
+        method: 'POST',
+        body: {
+          ...payload,
+          meta: {
+            title: item.title,
+            titleEn: item.titleEn,
+            description: item.description,
+            descriptionEn: item.descriptionEn,
+            category: item.category,
+            categoryLabel: item.categoryLabel,
+            image: item.image,
+            url: item.url,
+            duration: item.duration,
+            subtype: item.type
+          }
+        }
+      })
+    : await apiRequest('/api/saved', { method: 'DELETE', body: payload });
+  if (!res.ok && res.status === 401) requireAuth();
+  return res.ok;
 }
 
 export function useSavedProjects() {
-  const [savedProjects, setSavedProjects] = useState<SavedProject[]>([]);
-
-  const sync = useCallback(() => {
-    setSavedProjects(getStoredProjects());
-  }, []);
+  const [savedProjects, setSavedProjects] = useState<SavedProject[]>(store);
 
   useEffect(() => {
-    setSavedProjects(getStoredProjects());
-    window.addEventListener(EVENT_NAME, sync);
-    window.addEventListener('techno_auth_updated', sync);
-    window.addEventListener('storage', sync);
+    listeners.add(setSavedProjects);
+    setSavedProjects(store);
+    if (!authListenerBound) {
+      // Bound once for the whole store, not per hook instance (avoids N refetches).
+      authListenerBound = true;
+      window.addEventListener(AUTH_EVENT, () => load(true));
+    }
+    load();
     return () => {
-      window.removeEventListener(EVENT_NAME, sync);
-      window.removeEventListener('techno_auth_updated', sync);
-      window.removeEventListener('storage', sync);
+      listeners.delete(setSavedProjects);
     };
-  }, [sync]);
+  }, []);
 
-  const isSaved = useCallback(
-    (id: string) => {
-      const user = getLoggedInUser();
-      if (!user) return false;
-      return savedProjects.some((p) => p.id === id);
-    },
-    [savedProjects]
-  );
+  const isSaved = useCallback((id: string) => savedProjects.some((p) => p.id === id), [savedProjects]);
 
   const toggleSave = useCallback((project: Omit<SavedProject, 'savedAt'>) => {
     // If not authenticated, open login and abort saving
-    if (!requireAuth()) {
-      return false;
-    }
+    if (!requireAuth()) return false;
 
-    const key = getStorageKey();
-    if (!key) return false;
-
-    const current = getStoredProjects();
-    const exists = current.some((p) => p.id === project.id);
-    let updated: SavedProject[];
-
-    if (exists) {
-      updated = current.filter((p) => p.id !== project.id);
-    } else {
-      const newItem: SavedProject = {
-        ...project,
-        savedAt: Date.now()
-      };
-      updated = [newItem, ...current];
-    }
-
-    try {
-      localStorage.setItem(key, JSON.stringify(updated));
-      setSavedProjects(updated);
-      window.dispatchEvent(new CustomEvent(EVENT_NAME));
-    } catch (e) {
-      console.error('Error saving projects to localStorage:', e);
-    }
-
-    return !exists; // true if saved, false if removed
+    const existing = store.find((p) => p.id === project.id);
+    const before = store;
+    const item: SavedProject = existing ?? { ...project, savedAt: Date.now() };
+    // Optimistic update, rolled back if the server refuses.
+    store = existing ? store.filter((p) => p.id !== project.id) : [item, ...store];
+    emit();
+    persist(item, !existing).then((ok) => {
+      if (!ok) {
+        store = before;
+        emit();
+      }
+    });
+    return !existing; // true if saved, false if removed
   }, []);
 
   const removeSaved = useCallback((id: string) => {
-    const user = getLoggedInUser();
-    if (!user) return;
-
-    const key = getStorageKey();
-    if (!key) return;
-
-    const current = getStoredProjects();
-    const updated = current.filter((p) => p.id !== id);
-    try {
-      localStorage.setItem(key, JSON.stringify(updated));
-      setSavedProjects(updated);
-      window.dispatchEvent(new CustomEvent(EVENT_NAME));
-    } catch (e) {
-      console.error('Error removing project:', e);
-    }
+    const existing = store.find((p) => p.id === id);
+    if (!existing) return;
+    const before = store;
+    store = store.filter((p) => p.id !== id);
+    emit();
+    persist(existing, false).then((ok) => {
+      if (!ok) {
+        store = before;
+        emit();
+      }
+    });
   }, []);
 
   const clearAll = useCallback(() => {
-    const user = getLoggedInUser();
-    if (!user) return;
-
-    const key = getStorageKey();
-    if (!key) return;
-
-    try {
-      localStorage.removeItem(key);
-      setSavedProjects([]);
-      window.dispatchEvent(new CustomEvent(EVENT_NAME));
-    } catch (e) {
-      console.error('Error clearing saved projects:', e);
-    }
+    const items = store;
+    store = [];
+    emit();
+    Promise.all(items.map((it) => persist(it, false))).then(() => load(true));
   }, []);
 
   return {
@@ -165,7 +172,8 @@ export function useSavedProjects() {
     isSaved,
     toggleSave,
     removeSaved,
-    clearAll
+    clearAll,
+    reload: () => load(true)
   };
 }
 

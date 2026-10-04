@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import AuthSwitch from './AuthSwitch';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
+import { apiRequest, apiErrorMessage, setSessionDisplay } from '@/lib/auth';
 import './AuthPage.css';
 
 /**
@@ -42,40 +43,39 @@ export default function AuthPage({ initialMode = 'login', onBack, onSuccess } = 
 
   const handleBackAction = onBack || defaultBack;
 
-  const handleAuthComplete = (data, defaultName) => {
-    try {
-      const user = {
-        name: data?.name || data?.email?.split('@')[0] || defaultName,
-        email: data?.email || 'user@technoenjaz.com',
-        joined: isEn ? 'Member since 2026' : 'عضو منذ 2026',
-        status: isEn ? 'Verified Account' : 'حساب موثق'
-      };
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('techno_logged_out');
-        localStorage.setItem('techno_user', JSON.stringify(user));
-        window.dispatchEvent(new CustomEvent('techno_auth_updated', { detail: user }));
-        window.dispatchEvent(new CustomEvent('storage'));
-      }
-      if (onSuccess) {
-        onSuccess(user);
-      } else {
-        let returnPath = null;
-        try {
-          returnPath = sessionStorage.getItem('techno_auth_return_path') || sessionStorage.getItem('techno_auth_return_hash');
-          sessionStorage.removeItem('techno_auth_return_path');
-          sessionStorage.removeItem('techno_auth_return_hash');
-        } catch (e) {}
-
-        if (returnPath && !returnPath.startsWith('/login') && !returnPath.startsWith('/register') && !returnPath.startsWith('#login') && !returnPath.startsWith('#register')) {
-          router.push(returnPath);
-        } else {
-          router.push('/account');
-        }
-      }
-    } catch (e) {
-      console.error('Error during auth handling:', e);
-      handleBackAction();
+  const navigateAfterAuth = (user) => {
+    if (onSuccess) {
+      onSuccess(user);
+      return;
     }
+    let returnPath = null;
+    try {
+      returnPath = sessionStorage.getItem('techno_auth_return_path') || sessionStorage.getItem('techno_auth_return_hash');
+      sessionStorage.removeItem('techno_auth_return_path');
+      sessionStorage.removeItem('techno_auth_return_hash');
+    } catch (e) {}
+
+    // Only same-site paths are honoured (no open redirect via sessionStorage).
+    const safe = returnPath && returnPath.startsWith('/') && !returnPath.startsWith('//');
+    if (safe && !returnPath.startsWith('/login') && !returnPath.startsWith('/register')) {
+      router.push(returnPath);
+    } else {
+      router.push('/account');
+    }
+  };
+
+  /**
+   * Calls the real auth endpoint. Resolves to an error message for AuthSwitch
+   * to display, or null on success (the session cookie is set by the server;
+   * only the display name is cached locally).
+   */
+  const submitAuth = async (endpoint, payload) => {
+    const res = await apiRequest(endpoint, { method: 'POST', body: payload });
+    if (!res.ok) return apiErrorMessage(res.error, isEn);
+    setSessionDisplay(res.user);
+    // Brief pause so the success banner is seen before navigating away.
+    setTimeout(() => navigateAfterAuth(res.user), 700);
+    return null;
   };
 
   return (
@@ -101,8 +101,8 @@ export default function AuthPage({ initialMode = 'login', onBack, onSuccess } = 
         {/* Sliding AuthSwitch component */}
         <AuthSwitch
           initialState={initialMode === 'register' ? 'signUp' : 'signIn'}
-          onSignIn={(data) => handleAuthComplete(data, isEn ? 'Techno User' : 'مستخدم تكنو')}
-          onSignUp={(data) => handleAuthComplete(data, isEn ? 'New Member' : 'عضو جديد')}
+          onSignIn={(data) => submitAuth('/api/auth/login', { email: data.email, password: data.password })}
+          onSignUp={(data) => submitAuth('/api/auth/register', { name: data.name, email: data.email, password: data.password })}
         />
       </div>
     </div>

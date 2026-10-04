@@ -3,7 +3,7 @@ import ResponsiveImage from '@/components/ui/ResponsiveImage';
 import TableOfContents from '@/components/ui/TableOfContents';
 import AuthorBioCard from './AuthorBioCard';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { 
@@ -16,15 +16,14 @@ import {
   Share2, 
   Check, 
   MessageSquare, 
-  Send, 
-  User, 
   Home, 
   BookOpen
 } from 'lucide-react';
-import type { BlogArticle, BlogComment } from '@/data/blogArticlesData';
+import type { BlogArticle } from '@/data/blogArticlesData';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { useSavedProjects } from '@/hooks/useSavedProjects';
-import { getLoggedInUser, requireAuth } from '@/lib/auth';
+import { requireAuth, apiRequest, AUTH_EVENT } from '@/lib/auth';
+import ArticleComments from './ArticleComments';
 import { SITE_URL } from '@/config/site';
 import '@/features/projects/ProjectDetailView.css';
 import './ArticleDetailView.css';
@@ -60,76 +59,49 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   const tocItems = isEn && tocEn && tocEn.length ? tocEn : toc;
   const { isSaved, toggleSave } = useSavedProjects();
 
-  const [commentText, setCommentText] = useState('');
   const [copied, setCopied] = useState(false);
-  const [likes, setLikes] = useState<number>(article.initialLikes);
+  // Real engagement from D1: null until the first response arrives.
+  const [likes, setLikes] = useState<number | null>(null);
   const [isLiked, setIsLiked] = useState<boolean>(false);
-  const [comments, setComments] = useState<BlogComment[]>(article.initialComments || []);
+  const [likePending, setLikePending] = useState(false);
+  const [commentCount, setCommentCount] = useState<number | null>(null);
 
-  // Sync likes and comments with localStorage
+  const likeUrl = `/api/articles/${encodeURIComponent(article.slug)}/like`;
+
   useEffect(() => {
-    try {
-      const storedLikes = localStorage.getItem('techno_blog_likes');
-      if (storedLikes) {
-        const parsed = JSON.parse(storedLikes);
-        if (parsed[article.id]) {
-          setLikes(parsed[article.id].count);
-          setIsLiked(parsed[article.id].userLiked);
+    const loadLikes = () =>
+      apiRequest<{ count: number; liked: boolean }>(likeUrl).then((res) => {
+        if (res.ok) {
+          setLikes(res.count);
+          setIsLiked(res.liked);
         }
-      }
-    } catch (e) {}
+      });
+    loadLikes();
+    window.addEventListener(AUTH_EVENT, loadLikes);
+    return () => window.removeEventListener(AUTH_EVENT, loadLikes);
+  }, [likeUrl]);
 
-    try {
-      const storedComments = localStorage.getItem('techno_blog_comments');
-      if (storedComments) {
-        const parsed = JSON.parse(storedComments);
-        if (parsed[article.id]) {
-          setComments(parsed[article.id]);
-        }
-      }
-    } catch (e) {}
-  }, [article.id]);
-
-  const handleToggleLike = () => {
-    if (!requireAuth()) return;
-    const nextLiked = !isLiked;
-    const nextCount = nextLiked ? likes + 1 : Math.max(0, likes - 1);
+  const handleToggleLike = async () => {
+    if (!requireAuth() || likePending) return;
+    const prevLiked = isLiked;
+    const prevCount = likes ?? 0;
+    const nextLiked = !prevLiked;
     setIsLiked(nextLiked);
-    setLikes(nextCount);
-
-    try {
-      const stored = localStorage.getItem('techno_blog_likes');
-      const map = stored ? JSON.parse(stored) : {};
-      map[article.id] = { count: nextCount, userLiked: nextLiked };
-      localStorage.setItem('techno_blog_likes', JSON.stringify(map));
-    } catch (e) {}
+    setLikes(Math.max(0, prevCount + (nextLiked ? 1 : -1)));
+    setLikePending(true);
+    const res = await apiRequest<{ count: number; liked: boolean }>(likeUrl, { method: nextLiked ? 'POST' : 'DELETE', body: {} });
+    setLikePending(false);
+    if (res.ok) {
+      setLikes(res.count);
+      setIsLiked(res.liked);
+    } else {
+      setLikes(prevCount);
+      setIsLiked(prevLiked);
+      if (res.status === 401) requireAuth();
+    }
   };
 
-  const handleAddComment = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!requireAuth()) return;
-    if (!commentText.trim()) return;
-
-    const loggedUser = getLoggedInUser();
-    const newComment: BlogComment = {
-      id: `comm-${Date.now()}`,
-      author: loggedUser?.name || (isEn ? 'Techno Engineer' : 'مهندس زائر'),
-      avatar: '/images/team/abdulghani.jpg',
-      text: commentText.trim(),
-      date: isEn ? 'Just now' : 'الآن'
-    };
-
-    const nextComments = [newComment, ...comments];
-    setComments(nextComments);
-    setCommentText('');
-
-    try {
-      const stored = localStorage.getItem('techno_blog_comments');
-      const map = stored ? JSON.parse(stored) : {};
-      map[article.id] = nextComments;
-      localStorage.setItem('techno_blog_comments', JSON.stringify(map));
-    } catch (err) {}
-  };
+  const handleCommentCount = useCallback((n: number) => setCommentCount(n), []);
 
   const handleShare = () => {
     const url = `${SITE_URL}/articles/${article.slug}`;
@@ -259,7 +231,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               aria-pressed={isLiked}
             >
               <Heart size={18} fill={isLiked ? '#ef4444' : 'none'} color={isLiked ? '#ef4444' : 'currentColor'} />
-              <span>{likes}</span>
+              {likes !== null && <span>{likes}</span>}
             </button>
 
             <button
@@ -281,10 +253,10 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                 document.querySelector<HTMLTextAreaElement>('.comment-textarea')?.focus({ preventScroll: true });
               }}
               title={isEn ? "Comments" : "التعليقات"}
-              aria-label={isEn ? `Comments (${comments.length})` : `التعليقات (${comments.length})`}
+              aria-label={isEn ? `Comments (${commentCount ?? 0})` : `التعليقات (${commentCount ?? 0})`}
             >
               <MessageSquare size={17} />
-              <span>{comments.length}</span>
+              {commentCount !== null && <span>{commentCount}</span>}
             </button>
 
             <button
@@ -349,68 +321,8 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
           {/* Questions & answers about this article */}
           {qa}
 
-          {/* Discussion */}
-          <section className="article-discussion-section" id="article-discussion">
-            <div className="discussion-header">
-              <div className="discussion-title-wrap">
-                <MessageSquare size={20} className="discussion-icon" />
-                <h2 className="discussion-title">
-                  {isEn ? `Technical Discussion (${comments.length})` : `النقاش الهندسي والملاحظات (${comments.length})`}
-                </h2>
-              </div>
-            </div>
-
-            <form onSubmit={handleAddComment} className="comment-input-form">
-              <div className="comment-form-inner">
-                <textarea
-                  className="comment-textarea"
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  placeholder={isEn ? "Add your engineering insight or technical query..." : "أضف تعليقك أو استفسارك الهندسي حول محتوى المقال..."}
-                  aria-label={isEn ? "Technical comment" : "تعليقك الهندسي"}
-                  rows={3}
-                />
-                <div className="comment-form-actions">
-                  <button
-                    type="submit"
-                    className="comment-submit-btn"
-                    disabled={!commentText.trim()}
-                  >
-                    <Send size={15} />
-                    <span>{isEn ? "Post Comment" : "نشر التعليق"}</span>
-                  </button>
-                </div>
-              </div>
-            </form>
-
-            <div className="comments-stream-list">
-              {comments.length === 0 ? (
-                <div className="no-comments-box">
-                  <User size={32} className="no-comments-icon" />
-                  <p>{isEn ? "Be the first to share an engineering perspective on this topic." : "كن أول من يشارك برأي أو استفسار هندسي حول هذا الموضوع."}</p>
-                </div>
-              ) : (
-                comments.map((comm) => (
-                  <div key={comm.id} className="comment-item-card">
-                    <div className="comment-item-avatar">
-                      {comm.avatar ? (
-                        <img src={comm.avatar} alt={comm.author} />
-                      ) : (
-                        <div className="avatar-placeholder">{comm.author[0]}</div>
-                      )}
-                    </div>
-                    <div className="comment-item-body">
-                      <div className="comment-meta">
-                        <span className="comment-author-name">{comm.author}</span>
-                        <span className="comment-time-ago">{comm.date}</span>
-                      </div>
-                      <p className="comment-message-text">{comm.text}</p>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </section>
+          {/* Discussion (comments + replies from D1) */}
+          <ArticleComments slug={article.slug} isEn={isEn} onCountChange={handleCommentCount} />
 
           {/* End-of-article navigation */}
           <nav className="project-end-nav" aria-label={isEn ? "Article navigation" : "التنقل بين المقالات"}>

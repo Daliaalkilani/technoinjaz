@@ -19,7 +19,7 @@ import ScrollToTop from './ScrollToTop';
 import ScrollProgress from '@/components/effects/ScrollProgress';
 import '@/components/ui/Skeleton.css';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
-import { getLoggedInUser } from '@/lib/auth';
+import { getLoggedInUser, refreshSession } from '@/lib/auth';
 import { User, Menu, WifiOff } from 'lucide-react';
 import MobileNavDrawer from './MobileNavDrawer';
 const TabletDock = dynamic(() => import('./TabletDock'), { ssr: false });
@@ -112,6 +112,9 @@ export function AppShell({ children }: AppShellProps) {
   useEffect(() => {
     setMounted(true);
     setCurrentUser(getLoggedInUser());
+    // The cached display name is only a hint: confirm the httpOnly session with
+    // the server (fires techno_auth_updated if it changed, e.g. expired).
+    refreshSession();
     const handleAuthSync = () => {
       setCurrentUser(getLoggedInUser());
     };

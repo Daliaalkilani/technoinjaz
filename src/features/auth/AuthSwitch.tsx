@@ -12,7 +12,9 @@ import {
   UserPlus,
   ArrowLeft,
   ArrowRight,
-  CheckCircle2
+  CheckCircle2,
+  AlertCircle,
+  Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useThemeLanguage } from "@/context/ThemeLanguageContext";
@@ -55,10 +57,13 @@ const GitHubIcon = ({ size = 17 }: { size?: number }) => (
   </svg>
 );
 
+/** Resolves to an error message to show, or null on success. */
+type AuthHandler = (data: any) => Promise<string | null> | string | null | void;
+
 export interface AuthSwitchProps {
   initialState?: "signIn" | "signUp" | string;
-  onSignIn?: (data: any) => void;
-  onSignUp?: (data: any) => void;
+  onSignIn?: AuthHandler;
+  onSignUp?: AuthHandler;
   className?: string;
 }
 
@@ -76,6 +81,8 @@ export function AuthSwitch({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [submitted, setSubmitted] = useState<string | null>(null);
   const [welcomeToast, setWelcomeToast] = useState<string | null>(null);
+  const [pending, setPending] = useState<"signIn" | "signUp" | null>(null);
+  const [error, setError] = useState<{ form: "signIn" | "signUp"; message: string } | null>(null);
 
   // Form states
   const [signInData, setSignInData] = useState({
@@ -91,26 +98,55 @@ export function AuthSwitch({
     confirmPassword: ""
   });
 
-  const handleSignInSubmit = (e: React.FormEvent) => {
+  const handleSignInSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (pending) return;
+    setError(null);
+    setSubmitted(null);
+    setPending("signIn");
+    const failure = onSignIn ? await onSignIn(signInData) : null;
+    setPending(null);
+    if (failure) {
+      setError({ form: "signIn", message: failure });
+      return;
+    }
     setSubmitted("signIn");
-    const displayName = signInData.email ? signInData.email.split('@')[0] : (isEn ? "Valued Guest" : "زائرنا الكريم");
     setWelcomeToast(
       isEn
-        ? `Welcome back, ${displayName}! Delighted to have you with us again.`
-        : `مرحباً بك يا ${displayName}! سعداء بتواجدك معنا مجدداً.`
+        ? "Welcome back! Delighted to have you with us again."
+        : "مرحباً بعودتك! سعداء بتواجدك معنا مجدداً."
     );
-    if (onSignIn) onSignIn(signInData);
     setTimeout(() => setSubmitted(null), 3500);
     setTimeout(() => setWelcomeToast(null), 4500);
   };
 
-  const handleSignUpSubmit = (e: React.FormEvent) => {
+  const handleSignUpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (pending) return;
+    setError(null);
+    setSubmitted(null);
+    if (signUpData.password.length < 8) {
+      setError({ form: "signUp", message: isEn ? "Password must be at least 8 characters." : "كلمة المرور يجب أن تكون 8 أحرف على الأقل." });
+      return;
+    }
+    setPending("signUp");
+    const failure = onSignUp ? await onSignUp(signUpData) : null;
+    setPending(null);
+    if (failure) {
+      setError({ form: "signUp", message: failure });
+      return;
+    }
     setSubmitted("signUp");
-    if (onSignUp) onSignUp(signUpData);
     setTimeout(() => setSubmitted(null), 3500);
   };
+
+  const errorBanner = (form: "signIn" | "signUp") =>
+    error?.form === form ? (
+      <div className="auth-switch-error" role="alert">
+        <AlertCircle size={18} />
+        <span>{error.message}</span>
+      </div>
+    ) : null;
 
   return (
     <div className={cn("auth-switch-root", className)} dir={isEn ? "ltr" : "rtl"}>
@@ -123,6 +159,7 @@ export function AuthSwitch({
             onClick={() => {
               setIsSignUp(false);
               setSubmitted(null);
+              setError(null);
             }}
           >
             <LogIn size={15} />
@@ -134,6 +171,7 @@ export function AuthSwitch({
             onClick={() => {
               setIsSignUp(true);
               setSubmitted(null);
+              setError(null);
             }}
           >
             <UserPlus size={15} />
@@ -156,6 +194,7 @@ export function AuthSwitch({
                 <span>{isEn ? "Signed in successfully! Welcome back." : "تم تسجيل الدخول بنجاح! مرحباً بعودتك."}</span>
               </div>
             )}
+            {errorBanner("signIn")}
 
             {SOCIAL_SIGN_IN && (
             <>
@@ -196,6 +235,7 @@ export function AuthSwitch({
                   <input
                     id="signin-email"
                     type="email"
+                    autoComplete="email"
                     required
                     placeholder="name@example.com"
                     value={signInData.email}
@@ -216,6 +256,7 @@ export function AuthSwitch({
                   <input
                     id="signin-password"
                     type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
                     required
                     placeholder="••••••••"
                     value={signInData.password}
@@ -261,9 +302,13 @@ export function AuthSwitch({
                 </button>
               </div>
 
-              <button type="submit" className="auth-switch-submit-btn">
-                <LogIn size={16} />
-                <span>{isEn ? "Sign In" : "تسجيل الدخول"}</span>
+              <button type="submit" className="auth-switch-submit-btn" disabled={pending !== null} aria-busy={pending === "signIn"}>
+                {pending === "signIn" ? <Loader2 size={16} className="auth-switch-spin" /> : <LogIn size={16} />}
+                <span>
+                  {pending === "signIn"
+                    ? (isEn ? "Signing in…" : "جارٍ تسجيل الدخول…")
+                    : (isEn ? "Sign In" : "تسجيل الدخول")}
+                </span>
               </button>
             </form>
           </div>
@@ -281,6 +326,7 @@ export function AuthSwitch({
                 <span>{isEn ? "Account created successfully! Welcome to Techno Enjaz." : "تم إنشاء الحساب بنجاح! أهلاً بك في تكنو إنجاز."}</span>
               </div>
             )}
+            {errorBanner("signUp")}
 
             {SOCIAL_SIGN_IN && (
             <>
@@ -321,6 +367,9 @@ export function AuthSwitch({
                   <input
                     id="signup-name"
                     type="text"
+                    autoComplete="name"
+                    minLength={2}
+                    maxLength={80}
                     required
                     placeholder={isEn ? "John Smith" : "محمد أحمد"}
                     value={signUpData.name}
@@ -333,13 +382,15 @@ export function AuthSwitch({
               </div>
 
               <div className="auth-switch-input-group">
-                <label className="auth-switch-label">{isEn ? "Email Address" : "البريد الإلكتروني"}</label>
+                <label htmlFor="signup-email" className="auth-switch-label">{isEn ? "Email Address" : "البريد الإلكتروني"}</label>
                 <div className="auth-switch-input-wrapper">
                   <span className="auth-switch-input-icon">
                     <Mail size={16} />
                   </span>
                   <input
+                    id="signup-email"
                     type="email"
+                    autoComplete="email"
                     required
                     placeholder="name@example.com"
                     value={signUpData.email}
@@ -352,13 +403,16 @@ export function AuthSwitch({
               </div>
 
               <div className="auth-switch-input-group">
-                <label className="auth-switch-label">{isEn ? "Password" : "كلمة المرور"}</label>
+                <label htmlFor="signup-password" className="auth-switch-label">{isEn ? "Password (8+ characters)" : "كلمة المرور (8 أحرف على الأقل)"}</label>
                 <div className="auth-switch-input-wrapper">
                   <span className="auth-switch-input-icon">
                     <Lock size={16} />
                   </span>
                   <input
+                    id="signup-password"
                     type={showConfirmPassword ? "text" : "password"}
+                    autoComplete="new-password"
+                    minLength={8}
                     required
                     placeholder="••••••••"
                     value={signUpData.password}
@@ -378,9 +432,13 @@ export function AuthSwitch({
                 </div>
               </div>
 
-              <button type="submit" className="auth-switch-submit-btn">
-                <UserPlus size={16} />
-                <span>{isEn ? "Create Free Account" : "إنشاء حساب مجاني"}</span>
+              <button type="submit" className="auth-switch-submit-btn" disabled={pending !== null} aria-busy={pending === "signUp"}>
+                {pending === "signUp" ? <Loader2 size={16} className="auth-switch-spin" /> : <UserPlus size={16} />}
+                <span>
+                  {pending === "signUp"
+                    ? (isEn ? "Creating account…" : "جارٍ إنشاء الحساب…")
+                    : (isEn ? "Create Free Account" : "إنشاء حساب مجاني")}
+                </span>
               </button>
             </form>
           </div>
@@ -422,6 +480,7 @@ export function AuthSwitch({
                   onClick={() => {
                     setIsSignUp(true);
                     setSubmitted(null);
+                    setError(null);
                   }}
                   className="auth-switch-overlay-btn"
                 >
@@ -449,6 +508,7 @@ export function AuthSwitch({
                   onClick={() => {
                     setIsSignUp(false);
                     setSubmitted(null);
+                    setError(null);
                   }}
                   className="auth-switch-overlay-btn"
                 >

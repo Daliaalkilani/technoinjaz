@@ -372,6 +372,39 @@
 }
 
 /* Success notification */
+.auth-switch-error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #f87171;
+  font-family: var(--font-readex), sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+[data-theme="light"] .auth-switch-error {
+  color: #dc2626;
+  background: rgba(239, 68, 68, 0.07);
+}
+
+.auth-switch-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.auth-switch-spin {
+  animation: auth-switch-spin 0.9s linear infinite;
+}
+
+@keyframes auth-switch-spin {
+  to { transform: rotate(360deg); }
+}
+
 .auth-switch-success {
   background: rgba(16, 185, 129, 0.12);
   border: 1px solid rgba(16, 185, 129, 0.35);

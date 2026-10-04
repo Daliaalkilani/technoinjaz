@@ -331,7 +331,7 @@ export const ProjectReelsFeed: React.FC = () => {
       id: 'rc-' + Date.now(),
       author,
       authorEn: author,
-      avatar: user?.avatar || '',
+      avatar: '',
       timeAgo: isEn ? 'Just now' : 'الآن',
       timeAgoEn: 'Just now',
       content: commentInput.trim(),
