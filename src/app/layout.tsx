@@ -45,6 +45,13 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: THEME_LANG_BOOT }} />
         <link rel="stylesheet" href="/loader/loader.css" />
         <link rel="preload" as="style" href="/fonts/readex-pro.css" />
+        {/* Pre-bundle guard: skeleton placeholder words must never flash as dark text
+            before Skeleton.css is applied. */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: '.sk-text,.sk-text::before{color:transparent!important}',
+          }}
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `if (window.trustedTypes && window.trustedTypes.createPolicy) { window.trustedTypes.createPolicy('default', { createHTML: (s) => s }); }`,
