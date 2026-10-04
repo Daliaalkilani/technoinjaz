@@ -263,7 +263,7 @@ export const LiveProjectsShowcase: React.FC = () => {
                   onClick={handlePrev}
                   title="Previous"
                 >
-                  <ChevronRight size={19} />
+                  {lang === 'ar' ? <ChevronRight size={19} /> : <ChevronLeft size={19} />}
                 </button>
                 <button
                   type="button"
@@ -271,7 +271,7 @@ export const LiveProjectsShowcase: React.FC = () => {
                   onClick={handleNext}
                   title="Next"
                 >
-                  <ChevronLeft size={19} />
+                  {lang === 'ar' ? <ChevronLeft size={19} /> : <ChevronRight size={19} />}
                 </button>
               </div>
             </div>

@@ -144,6 +144,8 @@
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .author-capsule-avatar {
@@ -161,6 +163,8 @@
   gap: 8px;
   font-size: 0.825rem;
   color: #cbd5e1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .author-capsule-name {

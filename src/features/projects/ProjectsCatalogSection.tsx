@@ -185,7 +185,7 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
           {filteredProjects.map((project) => {
             const saved = isSaved(project.slug);
             const cleanExcerpt = plainExcerpt(isEn ? (project.excerptEn || project.excerpt) : project.excerpt, project.metaDesc);
-            const cleanTags = projectTags(project.tags);
+            const cleanTags = projectTags(isEn && project.tagsEn?.length ? project.tagsEn : project.tags);
 
             const projectUrl = `/projects/${project.slug}`;
 
