@@ -755,6 +755,141 @@
   animation: spin 0.8s linear infinite;
 }
 
+/* Reader fallbacks (the 3D book could not start): the pages in a plain scrolling
+ * list, or the browser's own PDF viewer — never a dead error screen. */
+.flipbook-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  /* top: clear of the floating close button */
+  padding: 58px 8px 24px;
+  box-sizing: border-box;
+}
+
+.flipbook-fallback[data-mode="embed"] {
+  overflow: hidden;
+  padding-bottom: 0;
+}
+
+.flipbook-fallback-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 12px;
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 860px;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e2e8f0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+[data-theme="light"] .flipbook-fallback-note {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(15, 23, 42, 0.12);
+  color: #0f172a;
+}
+
+.flipbook-fallback-reason {
+  flex-basis: 100%;
+  max-width: min(90vw, 560px);
+  font-size: 0.72rem;
+  opacity: 0.65;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.flipbook-open-direct {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: 12px;
+  background: #0284c7;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.flipbook-loading-cover .flipbook-open-direct {
+  margin-top: 4px;
+  padding: 12px 24px;
+}
+
+.flipbook-loading-cover .flipbook-error-cover {
+  max-height: min(48vh, 420px);
+  max-width: min(70vw, 300px);
+  border-radius: 10px;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.55);
+  object-fit: contain;
+}
+
+.flipbook-loading-cover .flipbook-error-text {
+  max-width: min(90vw, 560px);
+  padding: 0 12px;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.flipbook-fallback-page {
+  position: relative;
+  flex-shrink: 0;
+  width: min(100%, 860px);
+  aspect-ratio: 210 / 297;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.flipbook-fallback-page canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* placeholder until the page's canvas is drawn */
+.flipbook-fallback-page:empty::before {
+  content: "";
+  position: absolute;
+  top: calc(50% - 26px);
+  left: calc(50% - 12px);
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(14, 165, 233, 0.2);
+  border-top-color: #0ea5e9;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.flipbook-fallback-page:empty::after {
+  content: attr(data-label);
+  position: absolute;
+  inset: calc(50% + 8px) 0 auto;
+  text-align: center;
+  color: #64748b;
+  font-size: 0.88rem;
+}
+
+.flipbook-fallback-frame {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  border: 0;
+  background: #ffffff;
+}
+
 /* Modal Bottom Navigation Controls */
 .flipbook-footer {
   height: 64px;
