@@ -74,6 +74,12 @@ export function personSchema(member: any) {
     ...(member.image ? { image: absoluteUrl(member.image) } : {}),
     jobTitle: member.role,
     description: member.shortBio || member.bio,
+    knowsAbout: member.skills || undefined,
+    sameAs: [
+      ...(member.github ? [member.github] : []),
+      ...(member.facebook ? [member.facebook] : []),
+      ...(member.linkedin ? [member.linkedin] : [])
+    ],
     worksFor: {
       '@id': ORG_ID
     }
