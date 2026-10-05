@@ -278,7 +278,7 @@ export const teamMembers = [
   },
   {
     // Profile details and photo pending; Dunia's photo is used temporarily (owner's request).
-    id: 'rawan-habhab', // data sent 2026-10-05: links added; photo still pending (GitHub has only identicon)
+    id: 'rawan-habhab', // data + photo sent 2026-10-05
     name: 'م. روان هبهاب',
     nameEn: 'Eng. Rawan Habhab',
     title: 'م. روان هبهاب',
@@ -293,7 +293,7 @@ export const teamMembers = [
     departmentEn: 'Techno Enjaz Team',
     specialization: '',
     specializationEn: '',
-    image: '/images/team/dunia.640.avif',
+    image: '/images/team/rawan.jpg',
     link: '#team-showcase',
     bio: 'عضوة في فريق تكنو إنجاز.',
     bioEn: 'Member of the Techno Enjaz engineering team.',
