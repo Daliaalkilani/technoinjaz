@@ -86,10 +86,8 @@ void main() {
     vec2 cellSize = vec2(1.0) / vec2(float(cellsPerRow));
     vec2 cellOffset = vec2(float(cellX), float(cellY)) * cellSize;
 
-    // Aspect must come from a single atlas CELL (one photo), not the whole atlas
-    // texture — using the atlas made the crop (and apparent zoom) depend on how many
-    // member photos were loaded, so the photo suddenly zoomed/reframed at times.
-    float imageAspect = float(texSize.x) / float(max(float(uAtlasSize), 1.0)) / float(texSize.y);
+    ivec2 texSize = textureSize(uTex, 0);
+    float imageAspect = float(texSize.x) / float(texSize.y);
     float containerAspect = 1.0;
     
     float scale = max(imageAspect / containerAspect, 

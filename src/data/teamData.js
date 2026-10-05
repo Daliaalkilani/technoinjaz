@@ -377,34 +377,6 @@ export const teamMembers = [
     projectsEn: [],
     location: 'حماة، سوريا',
     locationEn: 'Hama, Syria'
-  },
-  {
-    id: 'rama-turkmeni',
-    name: 'راما سعد تركماني',
-    nameEn: 'Rama Saad Turkmeni',
-    title: 'راما تركماني',
-    titleEn: 'Rama Turkmeni',
-    role: 'مطوّرة واجهات أمامية ومتخصصة سوشال ميديا',
-    roleEn: 'Front-End Developer & Social Media Specialist',
-    badge: 'مطوّرة واجهات أمامية',
-    badgeEn: 'Front-End Developer',
-    description: 'مطوّرة واجهات أمامية ومتخصصة بإدارة وسائل التواصل الاجتماعي',
-    descriptionEn: 'Front-end developer and social media specialist',
-    department: 'فريق تكنو إنجاز',
-    departmentEn: 'Techno Enjaz Team',
-    specialization: 'تطوير الواجهات الأمامية وصناعة المحتوى الرقمي',
-    specializationEn: 'Front-end development & digital content',
-    image: '/images/team/placeholder-female.svg',
-    link: '#team-showcase',
-    bio: 'مطوّرة واجهات أمامية ومتخصصة بسوشال ميديا، تعمل على بناء واجهات ويب حديثة وسهلة الاستخدام وإدارة الحضور الرقمي للعلامة.',
-    bioEn: 'Front-end developer and social media specialist, building modern, user-friendly web interfaces and managing digital presence.',
-    shortBio: 'مطوّرة واجهات أمامية ومتخصصة سوشال ميديا.',
-    shortBioEn: 'Front-end developer & social media specialist.',
-    skills: ['HTML', 'CSS', 'JavaScript', 'React', 'Social Media'],
-    skillsEn: ['HTML', 'CSS', 'JavaScript', 'React', 'Social Media'],
-    github: 'https://github.com/ramaturkmeni',
-    facebook: 'https://www.facebook.com/share/1EqYrMyYz3/',
-    email: 'rturkmeni960@gmail.com'
   }
 ];
 
