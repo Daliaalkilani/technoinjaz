@@ -225,7 +225,7 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
 
         const loadingTask = pdfjs.getDocument({
           url: pdfUrl,
-          cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/cmaps/',
+          cMapUrl: '/vendor/pdfjs/cmaps/',
           cMapPacked: true,
           // fetch the file in ranges as pages are needed instead of all of it first
           disableAutoFetch: true,
