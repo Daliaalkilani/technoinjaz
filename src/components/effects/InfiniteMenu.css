@@ -73,9 +73,10 @@
 }
 
 .active-member-card.inactive {
-  opacity: 0.18;
+  opacity: 0;
   transform: translateY(-50%) scale(0.95);
   pointer-events: none;
+  visibility: hidden;
   filter: none;
 }
 
