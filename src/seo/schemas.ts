@@ -16,9 +16,9 @@ export function abdulghaniPersonSchema() {
     '@id': ABDULGHANI_ID,
     name: 'المهندس عبد الغني الحمدي',
     alternateName: [
-      'Eng. Abdulghani Alhamdi',
+      'Eng. Abdalgani Alhamdi',
       'م. عبد الغني الحمدي',
-      'Abdulghani Al-Hamdi',
+      'Abdalgani Al-Hamdi',
       'عبد الغني الحمدي'
     ],
     url,
@@ -215,7 +215,7 @@ export function blogPosting(article: BlogArticle) {
       '@type': 'Person',
       '@id': ABDULGHANI_ID,
       name: article.author.name,
-      alternateName: [article.author.nameEn, 'المهندس عبد الغني الحمدي', 'Abdulghani Alhamdi'],
+      alternateName: [article.author.nameEn, 'المهندس عبد الغني الحمدي', 'Abdalgani Alhamdi'],
       jobTitle: article.author.role,
       description: article.author.roleEn,
       url: ABDULGHANI_URL,

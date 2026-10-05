@@ -2,9 +2,9 @@ export const teamMembers = [
   {
     id: 'abdulghani',
     name: 'المهندس عبد الغني الحمدي',
-    nameEn: 'Eng. Abdulghani Alhamdi',
+    nameEn: 'Eng. Abdalgani Alhamdi',
     title: 'م. عبد الغني الحمدي',
-    titleEn: 'Eng. Abdulghani Alhamdi',
+    titleEn: 'Eng. Abdalgani Alhamdi',
     role: 'مستشار في المشاريع الهندسية ومدرب تقني',
     roleEn: 'Engineering Projects Consultant & Technical Trainer',
     badge: 'مؤسس وقائد فريق تكنو إنجاز',

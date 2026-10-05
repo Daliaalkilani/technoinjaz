@@ -53,7 +53,7 @@ export const projectReelsData: ProjectReel[] = [
     liveUrl: 'https://hisab-erp.pages.dev/login',
     engineer: {
       name: 'م. عبد الغني الحمدي',
-      nameEn: 'Eng. Abdulghani Alhamdi',
+      nameEn: 'Eng. Abdalgani Alhamdi',
       role: 'مدير الفريق التقني',
       roleEn: 'Lead Tech Director',
       avatar: '/images/team/abdulghani.jpg'
@@ -139,7 +139,7 @@ export const projectReelsData: ProjectReel[] = [
     liveUrl: 'https://projectforge-e3q.pages.dev/',
     engineer: {
       name: 'م. عبد الغني الحمدي',
-      nameEn: 'Eng. Abdulghani Alhamdi',
+      nameEn: 'Eng. Abdalgani Alhamdi',
       role: 'مدير الفريق التقني',
       roleEn: 'Lead Tech Director',
       avatar: '/images/team/abdulghani.jpg'
@@ -177,7 +177,7 @@ export const projectReelsData: ProjectReel[] = [
     liveUrl: 'https://cv.abdalgani.com/',
     engineer: {
       name: 'م. عبد الغني الحمدي',
-      nameEn: 'Eng. Abdulghani Alhamdi',
+      nameEn: 'Eng. Abdalgani Alhamdi',
       role: 'مدير الفريق وقائد التطوير',
       roleEn: 'Team Director & Lead Architect',
       avatar: '/images/team/abdulghani.jpg'
@@ -215,7 +215,7 @@ export const projectReelsData: ProjectReel[] = [
     liveUrl: 'https://khazama.pages.dev/',
     engineer: {
       name: 'م. عبد الغني الحمدي',
-      nameEn: 'Eng. Abdulghani Alhamdi',
+      nameEn: 'Eng. Abdalgani Alhamdi',
       role: 'مدير الفريق التقني',
       roleEn: 'Lead Tech Director',
       avatar: '/images/team/abdulghani.jpg'

@@ -7,7 +7,7 @@ import './TestimonialsSection.css';
 
 // Real trainees' words about their training with the Techno Enjaz team (published
 // with the owner's approval). The team — not one person — is who they refer to: the
-// owner corrected an earlier data-entry mistake that named Eng. Abdulghani.
+// owner corrected an earlier data-entry mistake that named Eng. Abdalgani.
 const TESTIMONIALS = [
   {
     name: 'م. زهراء الحمود',

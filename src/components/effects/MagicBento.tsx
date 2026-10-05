@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import ResponsiveImage from '@/components/ui/ResponsiveImage';
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { gsap } from 'gsap';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
@@ -827,11 +828,10 @@ const MagicBento: React.FC<MagicBentoProps> = ({
               {card.image && (
                 <div className={`magic-bento-card__media ${isFeatured ? 'magic-bento-card__media--featured' : ''}`}>
                   <Link href={`/articles/${targetSlug}`} prefetch={true} className="magic-bento-card__media-link block w-full h-full" tabIndex={-1}>
-                    <img
+                    <ResponsiveImage
                       src={card.image}
                       alt={cardTitle}
                       className={`magic-bento-card__img ${isFeatured ? 'magic-bento-card__img--full' : ''}`}
-                      loading="lazy"
                     />
                   </Link>
                 </div>

@@ -24,8 +24,8 @@ export async function generateMetadata({
   const member = teamMembers.find((m) => m.id === id);
   if (!member) return { title: 'عضو الفريق غير موجود' };
 
-  const isAbdulghani = id === 'abdulghani';
-  const description = isAbdulghani
+  const isAbdalgani = id === 'abdulghani';
+  const description = isAbdalgani
     ? 'المهندس عبد الغني الحمدي، مستشار في المشاريع الهندسية ومشاريع التخرج التقنية، ومدرب في الأردوينو والروبوتيك والتحكم، وقائد ومؤسس تكنو إنجاز. أشرف على 500+ مشروع تقني.'
     : (member.shortBio || member.bio || `${member.name} - ${member.role} في تكنو إنجاز`);
 

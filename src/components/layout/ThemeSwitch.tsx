@@ -67,12 +67,12 @@ export function ThemeSwitch({ className = '' }: ThemeSwitchProps) {
         color: isLight ? '#0284c7' : '#ffffff',
         cursor: 'pointer',
         overflow: 'hidden',
-        transition: 'all 0.25s ease',
+        transition: 'background 0.25s ease, opacity 0.25s ease, transform 0.25s ease',
         flexShrink: 0
       }}
     >
       <Sun
-        className={`absolute h-5 w-5 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+        className={`absolute h-5 w-5 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
           isLight 
             ? 'scale-100 translate-y-0 opacity-100' 
             : 'scale-50 translate-y-5 opacity-0'
@@ -86,11 +86,11 @@ export function ThemeSwitch({ className = '' }: ThemeSwitchProps) {
           transform: isLight ? 'scale(1) translateY(0)' : 'scale(0.5) translateY(20px)',
           opacity: isLight ? 1 : 0,
           pointerEvents: isLight ? 'auto' : 'none',
-          transition: 'all 300ms cubic-bezier(0.34, 1.56, 0.64, 1)'
+          transition: 'opacity 300ms cubic-bezier(0.34, 1.56, 0.64, 1), transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1)'
         }}
       />
       <Moon
-        className={`absolute h-5 w-5 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+        className={`absolute h-5 w-5 transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
           !isLight 
             ? 'scale-100 translate-y-0 opacity-100' 
             : 'scale-50 translate-y-5 opacity-0'
@@ -104,7 +104,7 @@ export function ThemeSwitch({ className = '' }: ThemeSwitchProps) {
           transform: !isLight ? 'scale(1) translateY(0)' : 'scale(0.5) translateY(20px)',
           opacity: !isLight ? 1 : 0,
           pointerEvents: !isLight ? 'auto' : 'none',
-          transition: 'all 300ms cubic-bezier(0.34, 1.56, 0.64, 1)'
+          transition: 'opacity 300ms cubic-bezier(0.34, 1.56, 0.64, 1), transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1)'
         }}
       />
     </button>

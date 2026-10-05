@@ -9,7 +9,7 @@ const { whatsapp: _whatsapp, ...AUTHOR_SOCIALS } = ABDULGHANI_SOCIALS;
 
 /** "About the author" box rendered under every article body (E-E-A-T). */
 export default function AuthorBioCard({ isEn }: { isEn: boolean }) {
-  const name = isEn ? 'Eng. Abdul Ghani Al-Hamdi' : 'م. عبد الغني الحمدي';
+  const name = isEn ? 'Eng. Abdalgani Alhamdi' : 'م. عبد الغني الحمدي';
   return (
     <aside className="author-bio-card" aria-label={isEn ? 'About the author' : 'عن الكاتب'}>
       <span className="author-bio-kicker">{isEn ? 'About the author' : 'عن الكاتب'}</span>

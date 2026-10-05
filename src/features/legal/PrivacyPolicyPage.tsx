@@ -128,10 +128,6 @@ export default function PrivacyPolicyPage() {
   return (
     <section className="privacy-page-container" dir={isEn ? 'ltr' : 'rtl'}>
       <header className="privacy-header">
-        <span className="privacy-badge">
-          <ShieldCheck size={15} />
-          <span>{isEn ? 'Your data, protected' : 'بياناتك في أمان'}</span>
-        </span>
         <h1 className="privacy-title">{isEn ? 'Privacy Policy' : 'سياسة الخصوصية'}</h1>
         <p className="privacy-lead">
           {isEn

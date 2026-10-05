@@ -47,7 +47,7 @@ export interface BlogArticle {
 export const ARTICLE_AUTHOR: BlogArticle['author'] = {
   id: 'abdulghani',
   name: 'م. عبد الغني الحمدي',
-  nameEn: 'Eng. Abdul Ghani Al-Hamdi',
+  nameEn: 'Eng. Abdalgani Alhamdi',
   role: 'المؤسس والمهندس الرئيسي في تكنو إنجاز',
   roleEn: 'Founder & Lead Engineer at Techno Enjaz',
   avatar: '/images/team/abdulghani.jpg'
