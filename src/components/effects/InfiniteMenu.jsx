@@ -967,7 +967,9 @@ class InfiniteGridMenu {
     let damping = 5 / timeScale;
     let cameraTargetZ = 3 * this.scaleFactor;
 
-    const isMoving = this.control.isPointerDown || Math.abs(this.smoothRotationVelocity) > 0.01;
+    const isMoving = this.control.isPointerDown
+      || Math.abs(this.smoothRotationVelocity) > 0.01
+      || this.isTransitioning; // a tour hop keeps the card hidden for its whole duration
 
     if (isMoving !== this.movementActive) {
       this.movementActive = isMoving;
