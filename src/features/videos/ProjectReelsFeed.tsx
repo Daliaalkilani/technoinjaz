@@ -464,10 +464,11 @@ export const ProjectReelsFeed: React.FC = () => {
                   <img
                     src={reel.cover}
                     alt={title}
-                    className="reel-cover"
+                    className={`reel-cover ${reel.kind === 'video' && reel.localSrc && isActive && hydrated && localVideoOk[reel.id] === true ? 'is-covered' : ''}`}
                     loading={index === 0 ? 'eager' : 'lazy'}
                     fetchPriority={index === 0 ? 'high' : 'auto'}
                     decoding="async"
+                    aria-hidden={reel.kind === 'video' && reel.localSrc && isActive && hydrated && localVideoOk[reel.id] === true ? true : undefined}
                   />
                   {reel.kind === 'video' && reel.localSrc && isActive && hydrated && localVideoOk[reel.id] === true && (
                     <video

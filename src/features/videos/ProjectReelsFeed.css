@@ -933,3 +933,12 @@ body:has(.reels-shell) .cinematic-footer-wrapper {
   object-fit: cover;
   object-position: center;
 }
+
+
+/* While the actual video plays, the Ken Burns cover is fully hidden — otherwise its
+   progressive image load scans top-to-bottom behind the playing video. */
+.reel-cover.is-covered {
+  opacity: 0 !important;
+  animation: none !important;
+  visibility: hidden;
+}
