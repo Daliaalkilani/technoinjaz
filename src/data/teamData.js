@@ -278,7 +278,7 @@ export const teamMembers = [
   },
   {
     // Profile details and photo pending; Dunia's photo is used temporarily (owner's request).
-    id: 'rawan-habhab',
+    id: 'rawan-habhab', // data sent 2026-10-05: links added; photo still pending (GitHub has only identicon)
     name: 'م. روان هبهاب',
     nameEn: 'Eng. Rawan Habhab',
     title: 'م. روان هبهاب',
@@ -302,8 +302,12 @@ export const teamMembers = [
     skills: [],
     skillsEn: [],
     socials: {
+      github: 'https://github.com/rwanhbhab58-ard',
+      facebook: 'https://www.facebook.com/share/1EUj6iYKGQ/',
       email: 'rwanhbhab58@gmail.com'
     },
+    github: 'https://github.com/rwanhbhab58-ard',
+    facebook: 'https://www.facebook.com/share/1EUj6iYKGQ/',
     email: 'rwanhbhab58@gmail.com',
     projects: [],
     projectsEn: [],
