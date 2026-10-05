@@ -111,7 +111,7 @@ export const ProjectReelsFeed: React.FC = () => {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false); // sound on by default
   const [pulse, setPulse] = useState<{ id: string; type: 'play' | 'pause'; n: number } | null>(null);
   // The YouTube iframe is created only after hydration: rendered on the server it
   // loaded before React attached onLoad, so it never became visible.
@@ -267,6 +267,7 @@ export const ProjectReelsFeed: React.FC = () => {
     FEED_REELS.forEach((r, i) => {
       const v = localVideoRefs.current[r.id];
       if (!v) return;
+      v.muted = mutedRef.current;
       if (i === activeIndex && !isPaused) { v.play().catch(() => {}); }
       else { v.pause(); }
     });
@@ -455,7 +456,6 @@ export const ProjectReelsFeed: React.FC = () => {
                       className="reel-iframe reel-local-video"
                       src={reel.localSrc}
                       poster={reel.cover}
-                      muted
                       loop
                       playsInline
                       autoPlay

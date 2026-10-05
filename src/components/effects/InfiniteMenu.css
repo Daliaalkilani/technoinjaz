@@ -214,6 +214,30 @@
   backdrop-filter: blur(6px);
 }
 
+/* الأجهزة اللوحية الكبيرة (آيباد برو 13، إلخ): البطاقة تنزل تحت الدائرة بلا تغطية */
+@media (min-width: 851px) and (max-width: 1200px) {
+  .active-member-card,
+  [dir="rtl"] .active-member-card,
+  [dir="ltr"] .active-member-card {
+    right: auto !important;
+    left: 50% !important;
+    top: auto !important;
+    bottom: 90px !important;
+    transform: translateX(-50%) translateY(0) !important;
+    width: min(420px, calc(100% - 48px)) !important;
+    max-width: 420px !important;
+    padding: 16px 20px !important;
+    box-sizing: border-box !important;
+    z-index: 40 !important;
+  }
+  .active-member-card.active {
+    transform: translateX(-50%) translateY(0) scale(1) !important;
+  }
+  .active-member-card.inactive {
+    transform: translateX(-50%) translateY(0) scale(0.95) !important;
+  }
+}
+
 /* التجاوب مع الشاشات الصغيرة والمتوسطة */
 @media (max-width: 850px) {
   .active-member-card,

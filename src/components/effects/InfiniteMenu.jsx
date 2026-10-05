@@ -750,7 +750,15 @@ class InfiniteGridMenu {
 
     this.icoGeo = new IcosahedronGeometry();
     this.icoGeo.subdivide(1).spherize(this.SPHERE_RADIUS);
-    this.instancePositions = this.icoGeo.vertices.map(v => v.position);
+    // Reposition members on the sphere WITHOUT changing their sequence: sort the icosahedron
+    // vertices top-to-bottom (then by longitude) so consecutive members sit in a clean
+    // ordered spiral instead of scattered points. Mapping stays i -> sortedVertex[i % len].
+    const __sortedVerts = this.icoGeo.vertices
+      .map(v => v.position)
+      .map(p => ({ y: p[1], lon: Math.atan2(p[2], p[0]), p }))
+      .sort((a, b) => (b.y - a.y) || (a.lon - b.lon))
+      .map(o => o.p);
+    this.instancePositions = __sortedVerts;
     this.DISC_INSTANCE_COUNT = this.icoGeo.vertices.length;
     this.#initDiscInstances(this.DISC_INSTANCE_COUNT);
 
@@ -977,7 +985,7 @@ class InfiniteGridMenu {
       const nearestVertexIndex = this.#findNearestVertexIndex();
       this.targetMemberIndex = nearestVertexIndex % Math.max(1, this.items.length);
       this.targetVertexIndex = nearestVertexIndex;
-      this.onActiveItemChange(this.targetMemberIndex);
+      // No onActiveItemChange while dragging: the label must not flip mid-spin.
 
       cameraTargetZ += this.control.rotationVelocity * 80 + 2.5;
       damping = 7 / timeScale;
@@ -1000,7 +1008,7 @@ class InfiniteGridMenu {
         this.targetMemberIndex = this.tourMembers[0] ?? 0;
         this.targetVertexIndex = this.#findBestVertexForMember(this.targetMemberIndex);
         this.#beginTourMove();
-        this.onActiveItemChange(this.targetMemberIndex);
+        // Announce at settle, not at spin start.
       }
 
       if (this.isTransitioning) {
@@ -1045,7 +1053,7 @@ class InfiniteGridMenu {
           this.targetMemberIndex = nextIndex;
           this.targetVertexIndex = this.#findBestVertexForMember(nextIndex);
           this.#beginTourMove();
-          this.onActiveItemChange(this.targetMemberIndex);
+          // Announce at settle, not at hop start.
         }
       }
     }
