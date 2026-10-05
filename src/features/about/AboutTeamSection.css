@@ -125,32 +125,3 @@
     z-index: 5;
   }
 }
-
-
-/* Founder byline & credentials card (E-E-A-T) */
-.about-founder-card {
-  max-width: 860px;
-  margin: 24px auto 8px;
-  padding: 20px 24px;
-  border-radius: 16px;
-  background: var(--about-card-bg, rgba(2, 132, 199, 0.07));
-  border: 1px solid var(--about-card-border, rgba(2, 132, 199, 0.25));
-  text-align: right;
-}
-[dir="ltr"] .about-founder-card { text-align: left; }
-.about-founder-byline {
-  display: block;
-  font-weight: 700;
-  font-size: 0.95rem;
-  color: var(--text-main);
-  margin-bottom: 8px;
-}
-.about-founder-bio {
-  margin: 0 0 12px;
-  font-size: 0.9rem;
-  line-height: 1.8;
-  color: var(--text-muted);
-}
-.about-founder-links { display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.85rem; }
-.about-founder-links a { color: #0284c7; text-decoration: none; font-weight: 600; }
-.about-founder-links a:hover { text-decoration: underline; }

@@ -123,7 +123,7 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
           >
             <ResponsiveImage
               src="/images/brand/techno-logo.png"
-              alt="شعار تكنو إنجاز"
+              alt=""
               className="mobile-drawer-brand-logo"
               sizes="96px"
             />
