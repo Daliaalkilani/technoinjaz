@@ -498,7 +498,16 @@ export const ProjectReelsFeed: React.FC = () => {
                   <button
                     type="button"
                     className={`reel-sound ${isMuted ? 'is-muted' : ''}`}
-                    onClick={() => setIsMuted(m => !m)}
+                    onClick={() => {
+                      setIsMuted(m => !m);
+                      // Apply within the same user gesture (browser autoplay policy):
+                      const cur = FEED_REELS[activeIndexRef.current];
+                      const v = localVideoRefs.current[cur.id];
+                      if (v) {
+                        v.muted = isMuted; // toggling: current true -> will be false
+                        if (!isMuted) v.play().catch(() => {});
+                      }
+                    }}
                     aria-pressed={!isMuted}
                     aria-label={isMuted ? (isEn ? 'Unmute' : 'تشغيل الصوت') : (isEn ? 'Mute' : 'كتم الصوت')}
                     tabIndex={isActive ? 0 : -1}

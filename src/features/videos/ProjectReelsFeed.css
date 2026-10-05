@@ -222,7 +222,7 @@ body:has(.reels-shell) .cinematic-footer-wrapper {
   position: absolute;
   top: 14px;
   inset-inline-end: 14px;
-  z-index: 4;
+  z-index: 6; /* above reel-tap (z2) so the first tap reaches the sound button */
   display: inline-flex;
   align-items: center;
   gap: 0;
