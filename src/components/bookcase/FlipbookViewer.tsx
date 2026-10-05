@@ -355,7 +355,8 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
       } catch (err: any) {
         console.error('Error initializing 3D flipbook:', err);
         if (isMounted) {
-          setError(isEn ? 'Failed to render 3D Flipbook.' : 'تعذر تحميل صفحات الكتاب التفاعلية.');
+          const reason = err?.message ? ` (${String(err.message).slice(0, 80)})` : '';
+          setError(isEn ? `Failed to render the interactive book${reason}.` : `تعذر تحميل صفحات الكتاب التفاعلية${reason}.`);
           setLoading(false);
         }
       }
@@ -549,6 +550,16 @@ export const FlipbookViewer: React.FC<FlipbookViewerProps> = ({
             <div className="flipbook-loading-cover">
               <Info size={32} color="#ef4444" />
               <span>{error}</span>
+              {pdfUrl && (
+                <a
+                  href={pdfUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ marginTop: 16, padding: '12px 24px', borderRadius: 12, background: '#0284c7', color: '#fff', textDecoration: 'none', fontWeight: 700 }}
+                >
+                  {isEn ? 'Open the PDF file directly' : 'افتح ملف الـPDF مباشرة'}
+                </a>
+              )}
             </div>
           )}
 
