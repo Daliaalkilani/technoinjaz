@@ -291,6 +291,18 @@ export const ProjectReelsFeed: React.FC = () => {
       else { v.pause(); }
     });
   }, [activeIndex, isPaused]);
+  /* When a local video becomes available (probe resolves) while its reel is already
+     active, the effect above already ran — start it explicitly or it stays frozen. */
+  useEffect(() => {
+    const r = FEED_REELS[activeIndex];
+    if (!r || localVideoOk[r.id] !== true || isPaused) return;
+    const t = window.setTimeout(() => {
+      const v = localVideoRefs.current[r.id];
+      if (v && v.paused) { v.muted = mutedRef.current; v.play().catch(() => {}); }
+    }, 60);
+    return () => window.clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeIndex, localVideoOk, isPaused]);
 
   const onIframeLoad = (e: React.SyntheticEvent<HTMLIFrameElement>) => {
     const el = e.currentTarget;
