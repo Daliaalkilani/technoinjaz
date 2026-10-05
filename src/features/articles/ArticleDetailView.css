@@ -1014,6 +1014,36 @@
   background: rgba(2, 132, 199, 0.03);
 }
 
+/* Light-mode contrast fixes (Lighthouse AA): category accents, meta text, tags */
+[data-theme="light"] .article-lead-category-pill,
+[data-theme="light"] .article-lead-category-wrap .project-category-badge,
+[data-theme="light"] .breadcrumb-category-pill,
+[data-theme="light"] .breadcrumb-category {
+  color: #0369a1 !important; /* overrides inline #3b82f6 (3.7:1) -> 5.9:1 */
+  border-color: rgba(2, 132, 199, 0.35) !important;
+  background: rgba(2, 132, 199, 0.07) !important;
+}
+
+[data-theme="light"] .article-lead-readtime {
+  color: #475569; /* #94a3b8 2.9:1 -> 7.5:1 */
+}
+
+[data-theme="light"] .author-capsule-date {
+  color: #475569;
+}
+
+[data-theme="light"] .article-tag-chip {
+  color: #0369a1; /* #0284c7 3.7:1 -> 5.9:1 */
+  background: rgba(2, 132, 199, 0.07);
+  border-color: rgba(2, 132, 199, 0.25);
+}
+
+[data-theme="light"] .article-fullscreen-markdown-body code {
+  /* #38bdf8 on white = 2.1:1 (fails AA). #0369a1 = 5.9:1 */
+  color: #0369a1;
+  background: rgba(2, 132, 199, 0.08);
+}
+
 [data-theme="light"] .article-fullscreen-markdown-body pre {
   background: #0f172a;
   border-color: rgba(0, 0, 0, 0.1);
