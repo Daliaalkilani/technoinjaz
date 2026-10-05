@@ -252,10 +252,25 @@ export const ProjectReelsFeed: React.FC = () => {
   /* Sync the YouTube player with paused / muted state. */
   useEffect(() => {
     ytCommand(iframeRef.current, isPaused ? 'pauseVideo' : 'playVideo');
+    Object.values(localVideoRefs.current).forEach((v) => {
+      if (!v) return;
+      if (isPaused) { v.pause(); } else { v.play().catch(() => {}); }
+    });
   }, [isPaused]);
   useEffect(() => {
     ytCommand(iframeRef.current, isMuted ? 'mute' : 'unMute');
+    Object.values(localVideoRefs.current).forEach((v) => { if (v) v.muted = isMuted; });
   }, [isMuted]);
+
+  /* Start the active local video, pause the rest. */
+  useEffect(() => {
+    FEED_REELS.forEach((r, i) => {
+      const v = localVideoRefs.current[r.id];
+      if (!v) return;
+      if (i === activeIndex && !isPaused) { v.play().catch(() => {}); }
+      else { v.pause(); }
+    });
+  }, [activeIndex, isPaused]);
 
   const onIframeLoad = (e: React.SyntheticEvent<HTMLIFrameElement>) => {
     const el = e.currentTarget;
