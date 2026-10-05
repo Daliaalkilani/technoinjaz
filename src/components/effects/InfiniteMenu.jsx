@@ -1072,6 +1072,12 @@ class InfiniteGridMenu {
     // Alternate the side of the arc so consecutive swipes don't look mechanical.
     this.tourBow = (this.tourBow > 0 ? -1 : 1) * (0.16 + Math.random() * 0.12);
     this.isTransitioning = true;
+    // Mark the card as moving for the whole hop, not only while rotation velocity
+    // is high — otherwise the previous member's text stays visible mid-transition.
+    if (!this.movementActive) {
+      this.movementActive = true;
+      this.onMovementChange(true);
+    }
     this.control.snapTargetDirection = undefined;
   }
 
