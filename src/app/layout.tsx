@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Readex_Pro } from 'next/font/google';
 import '@/styles/globals.css';
-import 'katex/dist/katex.min.css';
+import 'katex/dist/katex-swap.min.css';
 import '@/styles/article-content.css';
 import { ThemeLanguageProvider } from '@/context/ThemeLanguageContext';
 import { LoaderProvider } from '@/context/LoaderContext';

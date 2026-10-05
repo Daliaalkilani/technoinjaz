@@ -198,10 +198,11 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
         {/* Author */}
         <div className="article-author-capsule-row">
           <div className="article-author-capsule-pill">
-            <img
+            <ResponsiveImage
               src={article.author.avatar}
               alt={authorName}
               className="author-capsule-avatar"
+              sizes="60px"
             />
             <div className="author-capsule-text">
               <span className="author-capsule-byline">
@@ -279,7 +280,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
           src={article.image}
           alt={title}
           className="project-featured-image"
-          sizes="(max-width: 1279.98px) calc(100vw - 32px), 1200px"
+          sizes="(max-width: 719.98px) calc(100vw - 32px), (max-width: 1279.98px) 648px, 1200px"
           priority
         />
       </div>
