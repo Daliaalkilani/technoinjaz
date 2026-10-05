@@ -388,10 +388,18 @@
   background: rgba(0, 0, 0, 0.4);
   padding: 2px 14px;
   border-radius: 999px;
-  max-width: 240px;
+  min-width: 0;
+  max-width: min(92%, 560px);
   overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Show the full URL: shrink the font instead of ellipsizing on narrow screens */
+.preview-window-address .preview-url-text {
+  font-size: clamp(0.58rem, 2.2vw, 0.78rem);
+  letter-spacing: 0;
+  white-space: nowrap;
+  overflow: visible;
 }
 
 .preview-window-body.preview-image-container {
@@ -489,7 +497,7 @@
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 14px;
   margin-top: 1.25rem;
   padding: 0.25rem 0.5rem;
 }
@@ -502,7 +510,16 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
   padding: 0;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  transition: background 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Invisible 24x24 touch target centered on the 10px dot (mobile tap accuracy) */
+.spotlight-dot::before {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  border-radius: 999px;
 }
 
 .spotlight-dot:hover {

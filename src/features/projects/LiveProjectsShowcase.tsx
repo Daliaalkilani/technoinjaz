@@ -338,7 +338,7 @@ export const LiveProjectsShowcase: React.FC = () => {
                     <span className="preview-dot green" />
                   </div>
                   <div className="preview-window-address">
-                    <span>https://{activeProject.displayDomain}</span>
+                    <span className="preview-url-text">https://{activeProject.displayDomain}</span>
                   </div>
                 </div>
                 <div className="preview-window-body preview-image-container">
