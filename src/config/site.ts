@@ -24,6 +24,7 @@ export const ORG = {
 
 /** Founder's public profiles — Person.sameAs in JSON-LD and the article author card. */
 export const ABDULGHANI_SOCIALS = {
+  email: 'info@abdalgani.com',
   facebook: 'https://www.facebook.com/share/19ZeJgTRzk/',
   instagram: 'https://www.instagram.com/abdalgani_h1',
   x: 'https://x.com/Abdalganih2',

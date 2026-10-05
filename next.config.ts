@@ -17,6 +17,9 @@ const nextConfig: NextConfig = {
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'Content-Security-Policy', value: "require-trusted-types-for 'script'" },
+          // HTML must revalidate after each deploy: a cached page referencing purged
+          // chunk hashes crashes with "Application error: client-side exception".
+          { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
         ],
       },
     ];
