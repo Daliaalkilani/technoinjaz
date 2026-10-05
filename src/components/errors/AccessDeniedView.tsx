@@ -1,6 +1,8 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
+import { Home, LogIn } from 'lucide-react';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import ErrorScene from './ErrorScene';
 import './ErrorPages.css';
@@ -36,6 +38,16 @@ export const AccessDeniedView: React.FC<AccessDeniedViewProps> = ({
             : `ليس لديك ترخيص الوصول الكافي لعرض ${resourceName ? `"${resourceName}"` : 'هذا المورد الهندسي المحمي'}. يرجى تسجيل الدخول بحساب معتمد أو مراجعة إدارة النظام.`}
         </p>
 
+        <div className="te-error-actions">
+          <Link href="/login" className="te-error-btn te-error-btn-primary">
+            <LogIn size={16} />
+            <span>{isEn ? 'Sign In' : 'تسجيل الدخول'}</span>
+          </Link>
+          <Link href="/" className="te-error-btn te-error-btn-secondary">
+            <Home size={16} />
+            <span>{isEn ? 'Return Home' : 'العودة للرئيسية'}</span>
+          </Link>
+        </div>
 
       </div>
     </div>
