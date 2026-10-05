@@ -325,7 +325,7 @@ export function ArticlesListing({
       {displayedArticles.length === 0 ? (
         <div className="blog-empty-state">
           <BookOpen size={48} className="blog-empty-icon" />
-          <h3>{isEn ? "No Articles Found" : "لم يتم العثور على مقالات تطابق بحثك"}</h3>
+          <h2>{isEn ? "No Articles Found" : "لم يتم العثور على مقالات تطابق بحثك"}</h2>
           <p>{isEn ? "Try adjusting your search query or selecting another category." : "جرب تعديل كلمات البحث أو اختيار تصنيف آخر."}</p>
           <button
             type="button"
@@ -387,11 +387,11 @@ export function ArticlesListing({
                     </span>
                   </div>
 
-                  <h3 className="card-main-title">
+                  <h2 className="card-main-title">
                     <Link href={`/articles/${article.slug}`} prefetch={true} className="card-main-title-link">
                       {title}
                     </Link>
-                  </h3>
+                  </h2>
 
                   <p className="card-main-excerpt">{excerpt}</p>
 
