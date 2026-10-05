@@ -109,7 +109,26 @@ export const ProjectReelsFeed: React.FC = () => {
   const isEn = lang === 'en';
   const { isSaved, toggleSave } = useSavedProjects();
 
-  const [activeIndex, setActiveIndex] = useState(0);
+  // Deep link support: /videos?reel=<youtubeId or slug> opens that reel directly.
+  const deepLinkHandledRef = useRef(false);
+  const initialIndex = (() => {
+    if (typeof window === 'undefined') return 0;
+    const wanted = new URLSearchParams(window.location.search).get('reel');
+    if (!wanted) return 0;
+    const i = FEED_REELS.findIndex(r => r.id === wanted || r.youtubeId === wanted ||
+      (r.youtubeId && r.youtubeId === wanted));
+    return i >= 0 ? i : 0;
+  })();
+
+  const [activeIndex, setActiveIndex] = useState(initialIndex);
+  useEffect(() => {
+    if (initialIndex > 0 && !deepLinkHandledRef.current) {
+      deepLinkHandledRef.current = true;
+      const el = feedRef.current?.querySelector<HTMLElement>(`[data-index="${initialIndex}"]`);
+      el?.scrollIntoView({ behavior: 'auto', block: 'start' });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [isPaused, setIsPaused] = useState(false);
   const [isMuted, setIsMuted] = useState(false); // sound on by default
   const [pulse, setPulse] = useState<{ id: string; type: 'play' | 'pause'; n: number } | null>(null);

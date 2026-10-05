@@ -2,12 +2,11 @@
 
 import Link from 'next/link';
 import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, Bookmark, BookmarkCheck, Play } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Play } from 'lucide-react';
 import CardSwap, { Card } from '@/features/videos/VideoCardSwap';
-import VideoPlayerModal, { type VideoModalData } from '@/features/videos/VideoPlayerModal';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
+import { useRouter } from 'next/navigation';
 import SectionBackground from './SectionBackground';
-import { useSavedProjects } from '@/hooks/useSavedProjects';
 import { videosList, type VideoItem } from '@/data/videosData';
 import './ProjectsSection.css';
 import './VideosSection.css';
@@ -27,8 +26,7 @@ const VideosSection: React.FC<VideosSectionProps> = ({
   showNavigateButton = true
 }) => {
   const { lang, t } = useThemeLanguage();
-  const { isSaved, toggleSave } = useSavedProjects();
-  const [activeModalVideo, setActiveModalVideo] = useState<VideoModalData | null>(null);
+  const router = useRouter();
 
   return (
     <section id="videos" className="videos-section" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
@@ -70,7 +68,6 @@ const VideosSection: React.FC<VideosSectionProps> = ({
               height={425}
             >
               {videosList.map((vid) => {
-                const isItemSaved = isSaved(vid.id);
                 const title = lang === 'en' ? vid.titleEn : vid.title;
                 const desc = lang === 'en' ? vid.descriptionEn : vid.description;
                 const tag = lang === 'en' ? vid.tagEn : vid.tag;
@@ -79,12 +76,12 @@ const VideosSection: React.FC<VideosSectionProps> = ({
                   <Card key={vid.id} customClass="video-card">
                     <div
                       className="video-card-inner"
-                      onClick={() => setActiveModalVideo(vid)}
-                      role="button"
+                      onClick={() => router.push(`/videos?reel=${vid.id}`)}
+                      role="link"
                       tabIndex={0}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' || e.key === ' ') {
-                          setActiveModalVideo(vid);
+                          router.push(`/videos?reel=${vid.id}`);
                         }
                       }}
                     >
@@ -93,30 +90,7 @@ const VideosSection: React.FC<VideosSectionProps> = ({
                           <span className="video-card-tag">{tag}</span>
                           <span className="video-card-duration">{vid.duration}</span>
                         </div>
-                        <button
-                          type="button"
-                          className={`video-save-btn ${isItemSaved ? 'is-saved' : ''}`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleSave({
-                              id: vid.id,
-                              title: vid.title,
-                              titleEn: vid.titleEn,
-                              category: 'فيديوهات هندسية',
-                              categoryLabel: tag,
-                              description: vid.description,
-                              descriptionEn: vid.descriptionEn,
-                              type: 'video',
-                              duration: vid.duration,
-                              url: vid.youtubeUrl,
-                              image: vid.cover
-                            });
-                          }}
-                          title={isItemSaved ? (lang === 'ar' ? 'تم الحفظ في المفضلة' : 'Saved to Library') : (lang === 'ar' ? 'حفظ الفيديو في المفضلة' : 'Save Video to Library')}
-                        >
-                          {isItemSaved ? <BookmarkCheck size={13} /> : <Bookmark size={13} />}
-                          <span>{isItemSaved ? (lang === 'ar' ? 'محفوظ' : 'Saved') : (lang === 'ar' ? 'حفظ' : 'Save')}</span>
-                        </button>
+
                       </div>
 
                       {/* Video Cover Image */}
@@ -162,11 +136,7 @@ const VideosSection: React.FC<VideosSectionProps> = ({
       </div>
 
       {/* In-page Video Player Modal */}
-      <VideoPlayerModal
-        isOpen={Boolean(activeModalVideo)}
-        onClose={() => setActiveModalVideo(null)}
-        video={activeModalVideo}
-      />
+
     </section>
   );
 };
