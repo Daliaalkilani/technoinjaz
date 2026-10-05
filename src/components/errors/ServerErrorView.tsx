@@ -15,10 +15,18 @@ export interface ServerErrorViewProps {
 export const ServerErrorView: React.FC<ServerErrorViewProps> = ({ error, reset }) => {
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
+  const [retrying, setRetrying] = React.useState(false);
 
   const handleRetry = () => {
+    setRetrying(true);
     if (reset) {
-      reset();
+      try { reset(); } catch { /* fall through to full reload */ }
+      // reset() re-renders the boundary, but if the underlying error persists the
+      // view would stay unchanged — verify we actually left the error screen.
+      window.setTimeout(() => {
+        setRetrying(false);
+        if (typeof window !== 'undefined') window.location.reload();
+      }, 2500);
     } else if (typeof window !== 'undefined') {
       window.location.reload();
     }
@@ -66,9 +74,10 @@ export const ServerErrorView: React.FC<ServerErrorViewProps> = ({ error, reset }
             type="button"
             className="te-error-btn te-error-btn-primary"
             onClick={handleRetry}
+            disabled={retrying}
           >
-            <RotateCcw size={16} />
-            <span>{isEn ? 'Try Again' : 'إعادة المحاولة'}</span>
+            <RotateCcw size={16} className={retrying ? 'te-error-spin' : undefined} />
+            <span>{retrying ? (isEn ? 'Retrying…' : 'جارٍ إعادة المحاولة…') : (isEn ? 'Try Again' : 'إعادة المحاولة')}</span>
           </button>
 
 

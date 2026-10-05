@@ -548,3 +548,8 @@ body:has(.te-error-wrapper) {
     max-height: 86vh;
   }
 }
+
+/* Retry button: spinner while a real retry is in flight */
+.te-error-spin { animation: te-error-spin-kf 0.9s linear infinite; }
+@keyframes te-error-spin-kf { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.te-error-btn:disabled { opacity: 0.7; cursor: wait; }
