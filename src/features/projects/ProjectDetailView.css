@@ -1280,3 +1280,13 @@
   outline-offset: 8px;
   border-radius: 6px;
 }
+
+/* Light mode: keep CTA button text white (contrast on the blue background) */
+[data-theme="light"] .project-cta-btn,
+.light .project-cta-btn {
+  color: #ffffff;
+}
+[data-theme="light"] .project-cta-btn:hover,
+.light .project-cta-btn:hover {
+  color: #ffffff;
+}
