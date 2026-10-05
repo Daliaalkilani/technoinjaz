@@ -1,0 +1,9 @@
+# HTML pages must revalidate after each deploy, otherwise visitors keep a cached page
+# whose chunk hashes no longer exist -> "Application error: a client-side exception".
+/*
+  Cache-Control: public, max-age=0, must-revalidate
+  X-Content-Type-Options: nosniff
+
+# Immutable build assets keep long caching (hash in filename)
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
