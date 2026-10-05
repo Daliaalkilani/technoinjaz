@@ -67,6 +67,24 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
         </p>
       </div>
 
+      {/* Founder byline & credentials (E-E-A-T: visible author + expertise) */}
+      <div className="about-founder-card" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+        <span className="about-founder-byline">
+          {lang === 'ar' ? 'بقلم: م. عبد الغني الحمدي — مؤسس المنصة' : 'By: Eng. Abdalgani Alhamdi — Founder'}
+        </span>
+        <p className="about-founder-bio">
+          {lang === 'ar'
+            ? 'مهندس تحكم أوتوماتيكي وحاسوب من جامعة البعث (الجائزة الأولى في فرع الباسل)، ومشرف على أكثر من 500 مشروع تخرج وتدريب عملي في الأنظمة المدمجة والروبوتات والتحكم الصناعي خلال أكثر من 10 سنوات خبرة ميدانية. في عملنا اليومي مع الطلبة اخترنا مبدأ: كل مشروع نبنيه يُختبر فعلياً على أرض الواقع قبل تسليمه — من اختيار القطع حتى آخر سطر كود.'
+            : 'Automatic Control & Computer Engineering engineer (Al-Baath University, Al-Bassel First Rank Award), supervisor of 500+ graduation and training projects in embedded systems, robotics, and industrial control over 10+ years of hands-on practice. In our daily work with students we hold to one rule: every project we build is physically tested end-to-end before delivery — from component selection to the last line of code.'}
+        </p>
+        <div className="about-founder-links">
+          <a href="/contact">{lang === 'ar' ? 'تواصل معنا' : 'Contact us'}</a>
+          <a href="https://www.ieee.org/" target="_blank" rel="noopener">{lang === 'ar' ? 'IEEE' : 'IEEE'}</a>
+          <a href="https://www.sciencedirect.com/" target="_blank" rel="noopener">ScienceDirect</a>
+          <a href="https://www.arduino.cc/" target="_blank" rel="noopener">Arduino</a>
+        </div>
+      </div>
+
       {/* Team Moments Ring */}
       <div
         id="team-moments-section"

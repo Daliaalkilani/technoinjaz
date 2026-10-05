@@ -206,7 +206,7 @@ export function AppShell({ children }: AppShellProps) {
           >
             <ResponsiveImage
               src="/images/brand/techno-logo.png"
-              alt=""
+              alt="شعار تكنو إنجاز"
               className="navbar-brand-logo"
               sizes="48px"
               priority

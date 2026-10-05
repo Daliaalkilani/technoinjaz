@@ -3,7 +3,7 @@ import TestimonialsSection from '@/features/about/TestimonialsSection';
 import AboutTeamSection from '@/features/about/AboutTeamSection';
 import { pageMetadata } from '@/seo/metadata';
 import { JsonLd } from '@/seo/JsonLd';
-import { webPage, abdulghaniPersonSchema } from '@/seo/schemas';
+import { webPage, abdulghaniPersonSchema, breadcrumb } from '@/seo/schemas';
 
 export const dynamic = 'force-static';
 
@@ -36,7 +36,11 @@ export default function AboutPage() {
       <JsonLd
         data={[
           webPage({ path: '/about', name: 'من نحن وفريق العمل', type: 'AboutPage' }),
-          abdulghaniPersonSchema()
+          abdulghaniPersonSchema(),
+          breadcrumb([
+            { name: 'الرئيسية', path: '/' },
+            { name: 'من نحن', path: '/about' }
+          ])
         ]}
       />
       <AboutTeamSection headingLevel="h1" />
