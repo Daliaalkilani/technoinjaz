@@ -450,6 +450,40 @@ export const blogArticlesData: BlogArticle[] = [
     initialLikes: 245,
     initialComments: []
   },
+  {
+    id: 'ai-agent-benchmark-zeros-vs-opens',
+    slug: 'ai-agent-benchmark-zeros-vs-opens',
+    title: 'مقارنة معيارية بين الوكلاء الذكيين ZeroClaw وOpenClaw: منهجية التقييم والنتائج',
+    titleEn: 'Benchmarking AI Agents: ZeroClaw vs OpenClaw — Methodology and Results',
+    seoTitle: 'مقارنة معيارية بين الوكلاء الذكيين ZeroClaw وOpenClaw وكيف تختار',
+    metaDescription: 'دراسة مقارنة معيارية بين وكلاء الذكاء الاصطناعي ZeroClaw وOpenClaw: منهجية بناء الحاضنة التقييمية، مهام الاختبار، مؤشرات الأداء، ومتى تختار كل وكيل في بيئات العمل الفعلية.',
+    category: 'ذكاء اصطناعي',
+    categoryEn: 'Artificial Intelligence',
+    categoryColor: '#a855f7',
+    image: '/images/articles/ai-agent-benchmark-zeros-vs-opens.jpg',
+    publishDate: '6 أكتوبر 2026',
+    publishDateEn: 'Oct 6, 2026',
+    publishedAt: '2026-10-06',
+    readTime: '14 دقيقة قراءة',
+    readTimeEn: '14 min read',
+    author: ARTICLE_AUTHOR,
+    excerpt: 'كيف نقيس أداء وكلاء الذكاء الاصطناعي بموضوعية؟ منهجية عملية لبناء مقارنة معيارية عادلة بين ZeroClaw وOpenClaw عبر مهام واقعية، وتحليل الفروق التي تهم فعلياً عند اختيار وكيل للعمل اليومي.',
+    excerptEn: 'How do we measure AI agent performance objectively? A practical methodology for building a fair benchmark comparing ZeroClaw and OpenClaw on realistic tasks, and analyzing the differences that actually matter when picking a daily-driver agent.',
+    content: [
+      'انتشرت وكلاء الذكاء الاصطناعي (AI Agents) بسرعة كبيرة، لكن معظم المقارنات المتاحة تظل انطباعية: تجربة سريعة هنا وحكم عام هناك.',
+      'تقدم هذه الدراسة منهجية معيارية منظمة لمقارنة وكيلين منفتحين هما ZeroClaw وOpenClaw عبر مهام واقعية متدرجة الصعوبة، مع تعريف صريح لمؤشرات القياس وشروط التشغيل.',
+      'الخلاصة العملية ليست أن وكيل "أفضل" من الآخر بشكل مطلق، بل أن لكل منهما مناطق قوة تظهر بوضوح عند قياس النجاح على المهام، وزمن الإنجاز، واستقرار السلوك عبر التكرارات.'
+    ],
+    contentEn: [
+      'AI agents have spread fast, yet most available comparisons remain impressionistic: a quick trial here, a sweeping verdict there.',
+      'This study lays out a structured benchmarking methodology for comparing two open agents, ZeroClaw and OpenClaw, across realistic tasks of escalating difficulty, with explicit metrics and run conditions.',
+      'The practical takeaway is not that one agent is absolutely better, but that each has strength zones that become clear when measuring task success, completion time, and behavioral stability across repeated runs.'
+    ],
+    tags: ['وكلاء_الذكاء_الاصطناعي', 'ZeroClaw', 'OpenClaw', 'مقارنة_معيارية', 'أتمتة'],
+    tagsEn: ['AI Agents', 'ZeroClaw', 'OpenClaw', 'Benchmarking', 'Automation'],
+    initialLikes: 168,
+    initialComments: []
+  },
 ];
 
 export const blogCategories = [

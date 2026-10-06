@@ -750,4 +750,25 @@ export const ARTICLE_QA: Record<string, QAItem[]> = {
     },
   ],
 
+  'ai-agent-benchmark-zeros-vs-opens': [
+    {
+      q: 'كيف تُقاس جودة وكيل ذكاء اصطناعي بموضوعية؟',
+      a: 'بتعريف مؤشرات صريحة قبل التشغيل: نسبة نجاح المهام، زمن الإنجاز لكل مهمة، عدد المحاولات حتى النجاح، واستقرار السلوك عبر تكرار نفس المهمة عدة مرات. المقارنة العادلة تشترط نفس شروط التشغيل ونفس التعليمات لكل وكيل.',
+      qEn: 'How do you objectively measure AI agent quality?',
+      aEn: 'By defining explicit metrics before running: task success rate, time per task, attempts until success, and behavioral stability when repeating the same task several times. A fair comparison requires identical run conditions and identical instructions for each agent.',
+    },
+    {
+      q: 'متى يُفضّل ZeroClaw على OpenClaw؟',
+      a: 'عندما تكون أولوية المهمة دقة اتباع التعليمات والاكتمال الحرفي للنطاق المطلوب، خاصة في المهام ذات الخطوات المحددة بوضوح. أما OpenClaw فيبرز في المهام المفتوحة التي تحتاج استكشافاً وحلولاً إبداعية.',
+      qEn: 'When is ZeroClaw preferable to OpenClaw?',
+      aEn: 'When the task prioritizes instruction-following precision and literal scope completion, especially in clearly specified step-based tasks. OpenClaw stands out on open-ended tasks that require exploration and creative problem-solving.',
+    },
+    {
+      q: 'هل تنطبق نتائج المقارنة على كل أنواع المهام؟',
+      a: 'لا. أي مقارنة معيارية تعكس المهام والشروط التي اختُبرت فيها. النتائج موجهة نحو فهم مناطق قوة كل وكيل وليست حكماً شاملاً، وينبغي إعادة الاختبار على مهام بيئة عملك قبل تبني وكيل معين.',
+      qEn: 'Do the benchmark results apply to every task type?',
+      aEn: "No. Any benchmark reflects the tasks and conditions it was tested under. The results are meant to reveal each agent's strength zones, not as a sweeping verdict — re-test on your own workload before adopting an agent.",
+    },
+  ],
+
 };

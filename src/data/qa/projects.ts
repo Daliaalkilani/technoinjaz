@@ -486,4 +486,550 @@ export const PROJECT_QA: Record<string, QAItem[]> = {
       aEn: "The system adds a PIR motion sensor to detect abnormal movement within a defined range and a flame sensor for early fire detection, providing an extra layer of safety and rapid response.",
     },
   ],
+
+  "tech-support-chatbot-robot": [
+    {
+      q: "ما الذي يقدمه روبوت الدردشة التقنية؟",
+      a: "روبوت دردشة تعليمي ذكي يجيب عن أسئلة الطلاب في البرمجة والشبكات على مدار الساعة، عبر تفاعل نصي وصوتي مبني على معالجة اللغات الطبيعية وقاعدة معرفة تقنية متخصصة، مع حركة ذراع بسيطة تضيف طابعاً تفاعلياً.",
+      qEn: "What does the technical chatbot robot offer?",
+      aEn: "An intelligent educational chatbot that answers students' programming and networking questions around the clock, via text and voice interaction built on NLP and a specialized technical knowledge base, with simple arm motion adding a physical, engaging touch.",
+    },
+    {
+      q: "ما التقنيات المستخدمة في المشروع؟",
+      a: "يعتمد النظام على JavaScript ونموذج Gemini-live-2.5-flash مع واجهات APIs للصوت والربط الشبكي، عتادياً يستخدم لوحة NodeMCU ESP8266 للاتصال اللاسلكي ومحرك سيرفو MG995 لحركة الذراع، مع بطارية 18650 ووحدة LM2596 ونظام BMS.",
+      qEn: "What technologies does the project use?",
+      aEn: "The system is built with JavaScript and the Gemini-live-2.5-flash model, plus APIs for voice and networking. On the hardware side it uses a NodeMCU ESP8266 board for wireless connectivity and an MG995 servo for arm motion, powered by an 18650 battery with an LM2596 converter and a BMS.",
+    },
+    {
+      q: "هل يعمل الروبوت دون اتصال بالإنترنت؟",
+      a: "لا، يعتمد النظام بالكامل على المعالجة السحابية عبر نموذج الذكاء الاصطناعي، لذلك لا يعمل في وضع عدم الاتصال. كما لا يقدم استشارات طبية أو قانونية أو نفسية، ويقتصر الجانب الحركي على حركة الذراع فقط.",
+      qEn: "Does the robot work without internet?",
+      aEn: "No. The system relies entirely on cloud processing through the AI model, so it cannot run offline. It also provides no medical, legal, or psychological advice, and its motion is limited to the arm.",
+    },
+  ],
+
+  "chemical-mixing-station-plc": [
+    {
+      q: "ما الذي تديره محطة الخلط الآلية؟",
+      a: "نظام تحكم تتابعي بمنظومة خلط سوائل كيميائية يدير دورة كاملة: تعبئة الخزان الرئيسي بالمادتين A وB حسب حساسات المستوى، ثم خلط لمدة 10 ثوانٍ لتجانس الخليط، ثم تفريغ آلي، مع مراقبة حرارية مستمرة.",
+      qEn: "What does the automated mixing station manage?",
+      aEn: "A sequential control system for a chemical liquid mixing station running a complete cycle: filling the main tank with materials A and B per level-sensor readings, mixing for 10 seconds to homogenize, automatic discharge, and continuous thermal monitoring.",
+    },
+    {
+      q: "ما التقنيات المستخدمة؟",
+      a: "وحدة PLC من Delta مبرمجة بـ WPLSoft عبر شبكات Ladder وتعليمات المؤقتات والعدادات وMOV، مع واجهة مراقبة على DOPSoft، وحساسات مستوى سائل وحساس حرارة RTD وصمامات كهربائية.",
+      qEn: "What technologies are used?",
+      aEn: "A Delta PLC programmed in WPLSoft with ladder networks, timers, counters, and MOV instructions, a monitoring interface in DOPSoft, liquid-level sensors, an RTD temperature sensor, and solenoid valves.",
+    },
+    {
+      q: "كيف يضمن النظام السلامة الصناعية؟",
+      a: "يتضمن نظام إنذار مبكر يُفعّل عند تجاوز درجة حرارة الخليط الحدود المسموح بها، مع مراقبة فورية للمتغيرات التشغيلية واستجابة سريعة للحالات غير الطبيعية، واختُبرت الدورة الكاملة في بيئة محاكاة.",
+      qEn: "How does the system ensure industrial safety?",
+      aEn: "An early-warning alarm activates when the mixture temperature exceeds allowed limits, with real-time monitoring of operating variables and fast response to abnormal conditions; the full cycle was validated in a simulation environment.",
+    },
+  ],
+
+  "short-range-delivery-robot": [
+    {
+      q: "ما وظيفة روبوت التوصيل؟",
+      a: "روبوت متحرك منخفض التكلفة ينقل الطلبات والأجسام الصغيرة لمسافات قصيرة داخل البيئات المغلقة كالمستشفيات والمختبرات والمكاتب، عبر التقاط الأجسام بذراع آلية ونقلها إلى الموقع المطلوب.",
+      qEn: "What does the delivery robot do?",
+      aEn: "A low-cost mobile robot that carries orders and small objects over short distances in indoor environments such as hospitals, labs, and offices, picking objects up with a robotic arm and delivering them to the target location.",
+    },
+    {
+      q: "ما مكونات الروبوت؟",
+      a: "لوحة Arduino Uno وحدة تحكم رئيسية، أربعة محركات تيار مستمر عبر دائرة L293D، ذراع بملقط يعمل بمحرك Servo، وحدة HC-05 Bluetooth للتحكم اللاسلكي مع تطبيق هاتف، حساس HC-SR04 للمسافات، وبطارية ليثيوم مع دائرة BMS.",
+      qEn: "What are the robot's components?",
+      aEn: "An Arduino Uno as the main controller, four DC motors through an L293D driver, a servo-driven gripper arm, an HC-05 Bluetooth module with a phone app for wireless control, an HC-SR04 distance sensor, and a lithium battery with a BMS.",
+    },
+    {
+      q: "ما حدود تشغيل الروبوت؟",
+      a: "صُمم للعمل داخل البيئات المغلقة على أرضيات مستوية، ويتعامل مع أجسام خفيفة تتناسب مع قدرة المحركات والذراع، ولا يعتمد في نسخته الحالية على الذكاء الاصطناعي أو الملاحة الذاتية.",
+      qEn: "What are the robot's operating limits?",
+      aEn: "It is designed for indoor environments with flat floors and light objects matched to motor and arm capacity; the current version does not use AI or autonomous navigation.",
+    },
+  ],
+
+  "focusbac-baccalaureate-app": [
+    {
+      q: "ما فكرة تطبيق FocusBac؟",
+      a: "تطبيق تعليمي مجاني لطلاب البكالوريا في الفرعين العلمي والأدبي يعتمد التعلم المصغر بمقاطع قصيرة ومركزة، وآلية تراكمية لا تفتح الدرس التالي إلا بعد اجتياز اختبار الدرس الحالي، مع نقاط وتحفيز بالألعاب.",
+      qEn: "What is the FocusBac app idea?",
+      aEn: "A free learning app for Baccalaureate students in scientific and literary tracks, built on microlearning with short focused segments and a cumulative mechanism that unlocks the next lesson only after passing the current lesson's quiz, with points and gamification.",
+    },
+    {
+      q: "ما الوظائف الإدارية للنظام؟",
+      a: "لوحة تحكم تدير المستخدمين وتصنيف المواد الدراسية والفروع والروابط التعليمية، مع مصادقة كاملة وتتبع تقدم كل طالب وتقارير متابعة.",
+      qEn: "What administrative functions does the system have?",
+      aEn: "An admin dashboard managing users, subject categories, tracks, and educational links, with full authentication, per-student progress tracking, and follow-up reports.",
+    },
+    {
+      q: "ما البنية التقنية للتطبيق؟",
+      a: "واجهات Flutter تعمل على Android وiOS، خلفية Laravel بنمط MVC مع Eloquent ORM ولوحة Filament، قاعدة بيانات علائقية تُدار بالترحيلات، وتواصل RESTful API مع تخزين مؤقت لتحسين الأداء.",
+      qEn: "What is the app's technical architecture?",
+      aEn: "Flutter frontends for Android and iOS, a Laravel backend using MVC with Eloquent ORM and a Filament panel, a relational database managed via migrations, RESTful API communication, and caching for performance.",
+    },
+  ],
+
+  "remote-computer-control-ai": [
+    {
+      q: "كيف يتحكم النظام بالحاسوب؟",
+      a: "بإيماءات اليد أمام كاميرا الويب دون أجهزة إدخال تقليدية: يلتقط النظام الإطارات ويعالجها بـ OpenCV، ويستخرج نقاط اليد الـ 21 عبر MediaPipe، ثم يصنف تسلسل الإيماءة زمنياً بنماذج CNN وLSTM وينفذ الأمر على نظام التشغيل.",
+      qEn: "How does the system control the computer?",
+      aEn: "Via hand gestures in front of a webcam, with no traditional input devices: frames are captured and processed with OpenCV, the 21 hand landmarks are extracted with MediaPipe, the gesture sequence is classified temporally with CNN/LSTM models, and the command is executed on the OS.",
+    },
+    {
+      q: "ما الوظائف المتوفرة؟",
+      a: "لوحة مفاتيح افتراضية للكتابة، وتحكم بسطوع الشاشة عبر تقارب أو إبعاد الإبهام والسبابة وصولاً إلى السطوع الأقصى، مع معالجة فورية في الزمن الحقيقي.",
+      qEn: "What functions are available?",
+      aEn: "A virtual keyboard for typing, screen brightness control by pinching or spreading thumb and index finger up to maximum, with real-time processing.",
+    },
+    {
+      q: "ما البيئة التقنية؟",
+      a: "Python ضمن بيئتي Anaconda وVS Code، مع MediaPipe لتتبع اليد وتقدير الوضعية ثنائية وثلاثية الأبعاد، وOpenCV للمعالجة، وNumPy ضمن عمليات البيانات.",
+      qEn: "What is the technical environment?",
+      aEn: "Python within Anaconda and VS Code, MediaPipe for hand tracking with 2D and 3D pose estimation, OpenCV for processing, and NumPy within data operations.",
+    },
+  ],
+
+  "student-assistance-robot": [
+    {
+      q: "ما الخدمات التي يقدمها الروبوت للطلاب؟",
+      a: "تسجيل بيانات الطلاب الجدد وتعديلها، والبحث عن المعلومات، وإنشاء المستندات الرسمية وطباعتها مباشرة، والإجابة عن الأسئلة الشائعة المتعلقة بشؤون الطلاب والامتحانات — كل ذلك عبر شاشة لمس وإدخال نصي أو صوتي.",
+      qEn: "What services does the robot offer students?",
+      aEn: "Registering and updating student records, information lookup, generating and directly printing official documents, and answering FAQs about student affairs and exams — all through a touchscreen with text or voice input.",
+    },
+    {
+      q: "كيف يفهم الروبوت الطلبات؟",
+      a: "يعتمد على تقنيات الذكاء الاصطناعي ومعالجة اللغة الطبيعية لتحليل الاستفسارات وفهم طلبات المستخدمين وتقديم الاستجابات المناسبة، مع واجهة تفاعلية كاملة الدعم للغة العربية وقاعدة بيانات مركزية.",
+      qEn: "How does the robot understand requests?",
+      aEn: "It uses AI and natural language processing to analyze inquiries, understand user requests, and deliver appropriate responses, with a fully Arabic-supporting interactive interface and a central database.",
+    },
+    {
+      q: "ما نتائج التجربة العملية؟",
+      a: "أظهرت الاختبارات قدرة النظام على تنفيذ المهام بكفاءة وتسهيل الإجراءات الإدارية وتقليل الوقت والجهد اللازمين للحصول على الخدمات الطلابية، مع نموذج أولي فعلي للروبوت يعمل ضمن بيئة الاستخدام الحقيقية.",
+      qEn: "What did practical testing show?",
+      aEn: "Tests showed the system efficiently executing its tasks, streamlining administrative procedures and cutting the time and effort needed for student services, with a working robot prototype operating in a real environment.",
+    },
+  ],
+
+  "reconstruction-decision-support": [
+    {
+      q: "ما وظيفة النظام؟",
+      a: "توثيق وتحليل الأضرار في المناطق المتضررة لدعم قرارات إعادة الإعمار: تطبيق أندرويد يجمع صوراً موسومة جغرافياً وأوصافاً نصية، ويُستخلص الموقع آلياً من بيانات الصورة نفسها لضمان التطابق المكاني.",
+      qEn: "What is the system's function?",
+      aEn: "Documenting and analyzing damage in affected areas to support reconstruction decisions: an Android app collects geotagged photos and textual descriptions, with the location extracted automatically from the image metadata itself to guarantee spatial consistency.",
+    },
+    {
+      q: "كيف يعالج النظام البيانات؟",
+      a: "تُرسل البيانات إلى خادم Laravel يمررها عبر وكيل ذكاء اصطناعي مدعوم بنموذج Gemini يوحّد أسماء المناطق غير المتجانسة ويحلل المحتوى النصي والبصري لتقدير مستوى الضرر بتصنيف موحّد قابل للتحليل الإحصائي.",
+      qEn: "How does the system process data?",
+      aEn: "Data is sent to a Laravel server feeding an AI agent powered by a Gemini model that unifies heterogeneous region names and analyzes textual and visual content to estimate damage level with a unified, statistically analyzable classification.",
+    },
+    {
+      q: "كيف تُعرض النتائج؟",
+      a: "عبر لوحة تحكم تفاعلية تعرض خرائط حرارية ومخططات تحليلية لتوزع الأضرار وشدتها على مستوى المناطق والمحافظات، بما يقلل الأخطاء البشرية ويدعم القرار المبني على بيانات موثوقة.",
+      qEn: "How are results presented?",
+      aEn: "Through an interactive dashboard with heat maps and analytical charts of damage distribution and severity across districts and governorates, reducing human error and supporting evidence-based decisions.",
+    },
+  ],
+
+  "cybershield-file-link-scanner": [
+    {
+      q: "ما الذي يقدمه CyberShield؟",
+      a: "فحصاً أمنياً موثوقاً للملفات والروابط الإلكترونية عبر خدمة VirusTotal متعددة المحركات، مقترناً بملخصات ذكاء اصطناعي تشرح النتائج التقنية بلغة مبسطة تساعد المستخدم على فهم الخطورة واتخاذ الإجراء المناسب.",
+      qEn: "What does CyberShield offer?",
+      aEn: "A trustworthy security scan of files and links via multi-engine VirusTotal, paired with AI summaries explaining technical results in plain language so users understand risk and take the right action.",
+    },
+    {
+      q: "من يستفيد من التطبيق؟",
+      a: "أي مستخدم يريد التحقق من سلامة ملف أو رابط قبل فتحه أو مشاركته، دون حاجة إلى خبرة أمنية، إذ تُعرض النتائج كملخصات مفهومة بدل التقارير التقنية الخام.",
+      qEn: "Who benefits from the app?",
+      aEn: "Anyone who wants to verify a file or link before opening or sharing it, with no security expertise needed — results appear as understandable summaries rather than raw technical reports.",
+    },
+    {
+      q: "ما نوع الكشف المتوفر؟",
+      a: "فحص الملفات ضد قواعد بيانات أمنية متعددة المحركات، وكشف الروابط الخبيثة ومحاولات التصيد قبل زيارتها، مع إرشاد المستخدم إلى الخطوة المناسبة حسب مستوى الخطورة.",
+      qEn: "What detection is available?",
+      aEn: "File scanning against multi-engine security databases, plus detection of malicious links and phishing attempts before they are visited, guiding the user to the right next step by risk level.",
+    },
+  ],
+
+  "projectforge-platform": [
+    {
+      q: "ما وظيفة ProjectForge؟",
+      a: "تبسيط وأتمتة اقتراح المشاريع الهندسية وتخطيطها وبناء فرق العمل، عبر ملف مهارات رقمي (Project-DNA) يحلل القدرات ويطابقها بمتطلبات المشاريع بخوارزميات توصية تعتمد الأوزان والمستويات.",
+      qEn: "What does ProjectForge do?",
+      aEn: "It simplifies and automates proposing engineering projects, planning them, and building teams, via a digital skills profile (Project-DNA) that analyzes capabilities and matches them to project requirements with weight-and-level recommendation algorithms.",
+    },
+    {
+      q: "ما مخرجات المنصة؟",
+      a: "خارطة طريق تنفيذية من بيئة محاكاة تخطيطية تشمل المراحل الزمنية والمخاطر، ومؤشر جاهزية رقمي استرشادي بناءً على تغطية المهارات وتوازن الفريق ومستوى الصعوبة — وهو مؤشر استرشادي وليس نموذجاً تنبؤياً معايراً.",
+      qEn: "What outputs does the platform produce?",
+      aEn: "An executive roadmap from a planning Sandbox covering timeline phases and risks, and a guidance-only readiness score based on skills coverage, team balance, and difficulty level — advisory, not a calibrated predictive model.",
+    },
+    {
+      q: "ما التقنيات المستخدمة؟",
+      a: "Flutter للواجهات على Android وiOS، وLaravel مع قاعدة MySQL للخلفية، ودمج Gemini Flash لتوليد المحتوى وبروتوكول MCP لتوحيد جلب سياق البيانات، مع مصادقة وتشفير TLS.",
+      qEn: "What technologies are used?",
+      aEn: "Flutter frontends for Android and iOS, a Laravel backend with MySQL, Gemini Flash for content generation, the MCP protocol to unify data-context retrieval, plus authentication and TLS encryption.",
+    },
+  ],
+
+  "ai-dental-diagnosis": [
+    {
+      q: "كيف يشخص النظام أمراض الفم والأسنان؟",
+      a: "يحلل الصور السريرية والشعاعية بنموذج لغوي رؤيوي (VLM) يفهم الصورة سياقياً ويولّد تقريراً تشخيصياً أولياً بالعربية على هيئة JSON صارم يحدد الأمراض المكتشفة كالتسوس والتهاب اللثة والكسور مع مواقعها بنظام FDI.",
+      qEn: "How does the system diagnose oral and dental diseases?",
+      aEn: "It analyzes clinical and radiographic images with a vision-language model (VLM) that understands the image contextually and generates a preliminary Arabic diagnostic report as strict JSON, identifying conditions like caries, gingivitis, and fractures with FDI-numbered locations.",
+    },
+    {
+      q: "ما فائدة نموذج SAM في النظام؟",
+      a: "يتجاوز دقة الصناديق الإحاطية التقريبية: يقص المنطقة المصابة على مستوى البكسل وينتج مضلعات تحدد حدود المرض بشكل تشريحي دقيق.",
+      qEn: "What is SAM's role in the system?",
+      aEn: "It goes beyond approximate bounding boxes: SAM crops the affected region at pixel level and produces polygons outlining the lesion with anatomical precision.",
+    },
+    {
+      q: "ما مكونات المنصة؟",
+      a: "واجهة React 19 وTypeScript مع خريطة أسنان تفاعلية ووضع داكن، وخادم Flask/Python يستدعي واجهات Gemini/Kimi السحابية ويشغل SAM محلياً، وقاعدة SQLite لسجلات المرضى، إضافة إلى موسوعة طبية ومركز دعم بالمحادثة.",
+      qEn: "What are the platform's components?",
+      aEn: "A React 19 and TypeScript interface with an interactive dental chart and dark mode, a Flask/Python server calling Gemini/Kimi cloud APIs and running SAM locally, an SQLite database for patient records, plus a medical encyclopedia and a chatbot support center.",
+    },
+  ],
+
+  "smart-air-writing-board": [
+    {
+      q: "ما الذي يفعله اللوح الذكي؟",
+      a: "يحول كاميرا الويب إلى أداة رسم وكتابة في الهواء عبر تتبع اليد بـ MediaPipe Hands وتمييز الإيماءات بحساب المسافات الهندسية، بدل السبورات الذكية وأجهزة الرسم المكلفة.",
+      qEn: "What does the Smart Board do?",
+      aEn: "It turns a webcam into an air-drawing and writing tool via MediaPipe Hands hand tracking and geometric-distance gesture discrimination, replacing costly smart whiteboards and drawing tablets.",
+    },
+    {
+      q: "ما الوظائف المتاحة؟",
+      a: "الرسم والكتابة الفورية، تغيير الألوان، المسح الجزئي والكامل، حفظ النتائج، وتحليل المعادلات الرياضية المكتوبة يدوياً واستخراج خطوات حلها عبر Google Gemini API.",
+      qEn: "What functions are available?",
+      aEn: "Instant drawing and writing, color changes, partial and full erase, saving results, and analyzing handwritten math equations and extracting solution steps via the Google Gemini API.",
+    },
+    {
+      q: "ما متطلبات التشغيل؟",
+      a: "كاميرا ويب تقليدية وجهاز بمواصفات متوسطة؛ النظام مكتوب بلغة Python ويستخدم OpenCV وMediaPipe وNumPy وPIL، وأثبت التنفيذ تفاعلاً طبيعياً بكفاءة على هذه الفئة من الأجهزة.",
+      qEn: "What are the operating requirements?",
+      aEn: "A conventional webcam and a mid-range computer; the system is written in Python using OpenCV, MediaPipe, NumPy, and PIL, and implementation showed efficient, natural interaction on this hardware class.",
+    },
+  ],
+
+  "code-analysis-assistant": [
+    {
+      q: "ما وظيفة المنصة؟",
+      a: "منصة EHCode Hub تعمل كحاضنة تقييم لمقارنة نماذج توليد الكود عبر عشرين مهمة برمجية موحدة في عشر فئات تشمل الويب المتكامل وواجهات API وتطبيقات الجوال والأتمتة وتصور البيانات.",
+      qEn: "What is the platform's function?",
+      aEn: "The EHCode Hub acts as a benchmark harness comparing code-generation models across twenty unified tasks in ten categories spanning full-stack web, APIs, mobile apps, automation, and data visualization.",
+    },
+    {
+      q: "ما مميزات البنية التقنية؟",
+      a: "خادم عارض مبني بـ Node.js اعتماداً حصرياً على وحداته المدمجة دون اعتماديات خارجية، وواجهة ديناميكية، ومساعد برمجي مدمج عبر iframe، ومشغل موحد يقلع المكونات بنقرة واحدة.",
+      qEn: "What are the architecture's strengths?",
+      aEn: "A viewer server built with Node.js using only its built-in modules — zero external dependencies — a dynamic frontend, an embedded coding assistant via iframe, and a unified one-click launcher for all components.",
+    },
+    {
+      q: "لماذا هذا التقييم مهم؟",
+      a: "يوفر بيئة موضوعية ومتكررة لقياس جودة واكتمال مخرجات نماذج توليد الشيفرات في فئات مختلفة، بما يدعم قرارات اختيار النموذج الأنسب لكل نوع مهمة في دورة تطوير البرمجيات.",
+      qEn: "Why does this evaluation matter?",
+      aEn: "It provides an objective, reproducible environment for measuring the quality and completeness of code-generation outputs across categories, supporting model-selection decisions across the software development lifecycle.",
+    },
+  ],
+
+  "markdown-pdf-api-mcp-tool": [
+    {
+      q: "ما المشكلة التي تحلها الأداة؟",
+      a: "فشل أدوات تحويل Markdown إلى PDF التقليدية في دعم العربية RTL بشكل صحيح، ودمج مخططات PlantUML بجودة عالية، وعرض معادلات LaTeX — كل ذلك دون أعباء إدارة خوادم تقليدية.",
+      qEn: "What problem does the tool solve?",
+      aEn: "Traditional Markdown-to-PDF tools fail at proper Arabic RTL support, high-quality PlantUML embedding, and LaTeX equation rendering — all without the burden of managing traditional servers.",
+    },
+    {
+      q: "كيف تعمل خطوط التحويل؟",
+      a: "تحليل Frontmatter ثم تحويل HTML مع تلوين الشيفرات بـ Highlight.js وعرض المعادلات بـ KaTeX، ودمج مخططات PlantUML كـ SVG متجهة مدمجة، وأخيراً توليد PDF عبر Cloudflare Browser Rendering بدعم RTL كامل.",
+      qEn: "How does the conversion pipeline work?",
+      aEn: "Frontmatter parsing, then HTML conversion with syntax highlighting via Highlight.js and equations via KaTeX, PlantUML diagrams embedded as inline vector SVGs, and finally PDF generation via Cloudflare Browser Rendering with full RTL support.",
+    },
+    {
+      q: "ما مزايا النظام؟",
+      a: "بنية Serverless كاملة على Cloudflare بأزمنة استجابة مثلى، وأمان يشمل مصادقة JWT وتشفير كلمات المرور وسجل تحويلات على D1، مع توافر الأداة كواجهة REST وقناة MCP.",
+      qEn: "What are the system's advantages?",
+      aEn: "A fully Serverless architecture on Cloudflare with optimal response times, security covering JWT authentication, password hashing, and conversion history on D1, exposed both as a REST API and an MCP channel.",
+    },
+  ],
+
+  "interactive-educational-robot": [
+    {
+      q: "ماذا يعلّم الروبوت الأطفال؟",
+      a: "التعرف على الأرقام والأحرف الإنجليزية عبر OCR، والألوان بتقنية HSV في ظروف إضاءة مختلفة، والفواكه والعناصر التعليمية بنماذج تعلم آلي مدربة مسبقاً، عبر كاميرا رقمية.",
+      qEn: "What does the robot teach children?",
+      aEn: "Recognizing numbers and English letters via OCR, colors using the HSV model under varying lighting, and fruits and educational objects with pre-trained machine learning models, all through a digital camera.",
+    },
+    {
+      q: "كيف يتفاعل الروبوت مع الطفل؟",
+      a: "حركياً عبر ثلاثة محركات سيرفو (واحد لليد واثنان للقدمين) تنفذ حركات تفاعلية، وصوتياً عبر ملفات مولدة بمنصة ElevenLabs بصوت مخصص تُشغل تلقائياً بعد التعرف على العنصر.",
+      qEn: "How does the robot interact with the child?",
+      aEn: "Physically via three servo motors (one arm, two legs) performing interactive movements, and vocally via clips generated on the ElevenLabs platform with a custom robot voice, played automatically after each recognition.",
+    },
+    {
+      q: "ما نتائج التجربة؟",
+      a: "أظهرت النتائج قدرة النظام على التعرف على العناصر المختلفة بدقة مناسبة وتقديم تجربة تعليمية تفاعلية فعالة، وفق منهجية شملت تحليل المتطلبات وجمع البيانات وتطوير النماذج واختبار الأداء.",
+      qEn: "What were the experiment results?",
+      aEn: "Results showed the system recognizing different objects with suitable accuracy and delivering an effective interactive learning experience, following a methodology covering requirements analysis, data collection, model development, and performance evaluation.",
+    },
+  ],
+
+  "online-fitness-coach": [
+    {
+      q: "ما الذي يقدمه المدرب الذكي؟",
+      a: "خططاً تدريبية مخصصة تولّد من البيانات الشخصية (العمر والوزن والطول والأهداف ومستوى النشاط) عبر Gemini API، مع نصائح يومية وتقارير تحليلية دورية ومحادثة بلغة طبيعية، دون أجهزة استشعار أو معالجة فيديو.",
+      qEn: "What does the smart coach deliver?",
+      aEn: "Personalized training plans generated by the Gemini API from personal data (age, weight, height, goals, activity level), plus daily tips, periodic analytical reports, and natural-language conversation — no sensing hardware or video processing required.",
+    },
+    {
+      q: "ما البنية التقنية؟",
+      a: "واجهة Flutter بلغة Dart، خادم Cloudflare Workers لحوسبة الحافة تقلل زمن الاستجابة، تخزين R2 للفيديوهات والملفات، وقاعدة بيانات علائقية D1 لإدارة المستخدمين والخطط والمواعيد.",
+      qEn: "What is the technical architecture?",
+      aEn: "A Flutter UI in Dart, Cloudflare Workers backend providing edge computing that cuts latency, R2 storage for videos and files, and a D1 relational database managing users, plans, and appointments.",
+    },
+    {
+      q: "من يستفيد من المنصة؟",
+      a: "المتدربون المنزليون الباحثون عن توجيه احترافي منخفض التكلفة، إذ تسد المنصة الفجوة بين التدريب الذاتي والاحترافية وتقلل الأخطاء الحركية المسببة للإصابات.",
+      qEn: "Who benefits from the platform?",
+      aEn: "Home trainees seeking affordable professional guidance; the platform bridges the gap between self-training and professional coaching and reduces injury-causing movement errors.",
+    },
+  ],
+
+  "nabd-child-psychological-assessment": [
+    {
+      q: "ما وظيفة نظام نبض؟",
+      a: "دعم التقييم النفسي الأولي للأطفال المتضررين من الحروب عبر تحليل السلوك غير اللفظي والخصائص الصوتية بالذكاء الاصطناعي، ليمنح الأخصائي مؤشرات موضوعية حول الحالة النفسية.",
+      qEn: "What is Nabd's function?",
+      aEn: "Supporting the preliminary psychological assessment of war-affected children by analyzing non-verbal behavior and vocal characteristics with AI, giving psychologists objective indicators of the child's state.",
+    },
+    {
+      q: "هل يحل النظام محل الأخصائي النفسي؟",
+      a: "لا؛ النظام أداة داعمة لاتخاذ القرار وليست بديلاً عن التشخيص السريري، ويقدم مؤشرات وتقارير أولية تساعد المختص في تقييم الحالة واتخاذ القرار المناسب.",
+      qEn: "Does the system replace the psychologist?",
+      aEn: "No; Nabd is a decision-support tool, not a replacement for clinical diagnosis. It provides preliminary indicators and reports that help the specialist evaluate the case and decide on next steps.",
+    },
+    {
+      q: "ما التقنية المستخدمة في التحليل؟",
+      a: "نموذج Google Gemini لتحليل التسجيلات الصوتية والبيانات السلوكية متعددة الوسائط، ضمن بيئة متكاملة لإدارة المستخدمين وملفات الأطفال وجلسات التقييم والتقارير.",
+      qEn: "What technology powers the analysis?",
+      aEn: "The Google Gemini model analyzes voice recordings and behavioral data multimodally, within an integrated environment for managing users, children's files, assessment sessions, and reports.",
+    },
+  ],
+
+  "rifq-pet-care-platform": [
+    {
+      q: "ما الذي يقدمه نظام رِفق؟",
+      a: "منصة عربية متكاملة لرعاية الحيوانات: عيادة ذكاء اصطناعي تشخص الأمراض الجلدية من الصور والفيديو وتحلل السلوك، ودردشة مع خبير سلوك، ونظام تبني إلكتروني، ومتجر مستلزمات، ونقاط ولاء، ولوحة تحكم بصلاحيات دقيقة.",
+      qEn: "What does the Rifq system offer?",
+      aEn: "A fully integrated Arabic platform for animal care: an AI clinic diagnosing skin conditions from photos and videos and analyzing behavior, a behavior-expert chat, an online adoption system, a supplies store, loyalty points, and an admin panel with fine-grained permissions.",
+    },
+    {
+      q: "كيف يصل المستخدم لملف الحيوان؟",
+      a: "كل حيوان مرتبط برمز QR فريد يعمل كمعرف سحابي آمن؛ مسحه بأي هاتف يتيح الوصول الفوري للملف الكامل بما يشمل السجل الطبي والتقييمات السلوكية.",
+      qEn: "How does a user access an animal's profile?",
+      aEn: "Every animal is linked to a unique QR code acting as a secure cloud identifier; scanning it with any phone gives instant access to the full profile, including medical records and behavioral assessments.",
+    },
+    {
+      q: "ما التقنيات المستخدمة؟",
+      a: "Laravel 12 مع لوحة Filament، ودمج Google Gemini للخدمات التشخيصية والاستشارية التوليدية، مع أنظمة تبني ومتجر إلكتروني وسلة مشتريات ونقاط ولاء.",
+      qEn: "What technologies are used?",
+      aEn: "Laravel 12 with the Filament admin panel, and Google Gemini integration for generative diagnostic and consultation services, plus adoption, e-commerce, cart, and loyalty systems.",
+    },
+  ],
+
+  "eeg-brain-device-control": [
+    {
+      q: "كيف يحول النظام إشارات الدماغ إلى حركة؟",
+      a: "تُستقبل إشارات EEG من لوحة OpenBCI Cyton ثمانية القنوات، وتُرشح بنوتش 50 هرتز وتمرير نطاق 8–30 هرتز وتطبَّع، ثم تُصنف إلى حالات حركية بشبكات EEGNet أو ShallowConvNet أو LDA، ويترجم محوّل الأوامر النتيجة إلى أوامر قيادة تُرسل عبر المنفذ التسلسلي إلى Arduino يقود مرحّلات السيارة النموذجية.",
+      qEn: "How does the system turn brain signals into motion?",
+      aEn: "EEG signals are received from an 8-channel OpenBCI Cyton board, filtered (50 Hz notch, 8–30 Hz band-pass) and normalized, then classified into motor states using EEGNet, ShallowConvNet, or LDA; a command mapper translates the result into driving commands sent over serial to an Arduino driving the model car's relays.",
+    },
+    {
+      q: "ما النتائج المسجلة؟",
+      a: "حقق نموذج فتح وإغلاق العينين دقة 86.22%، وأفضل دقة للمهام الحركية الثنائية على بيانات PhysioNet بلغت نحو 69.42%، واختُبر التحكم بالسيارة بزمن استجابة يقل عن 500 ميلي ثانية.",
+      qEn: "What results were recorded?",
+      aEn: "The eyes open/closed model achieved 86.22% accuracy, the best binary motor-task accuracy on PhysioNet was about 69.42%, and vehicle control was tested with under-500 ms response latency.",
+    },
+    {
+      q: "هل النظام جهاز طبي؟",
+      a: "لا؛ هو أداة بحثية تعليمية وليست جهازاً طبياً، وأي استخدام موسع يتطلب طبقات أمان كزر توقف طارئ وحدود سرعة ورفض الأوامر منخفضة الثقة، مع معالجة تحديات ندرة بيانات المعايرة وفجوة المجال بين الأجهزة.",
+      qEn: "Is the system a medical device?",
+      aEn: "No; it is an educational research tool, not a medical device. Any expanded use requires safety layers such as an emergency stop, speed limits, and low-confidence command rejection, plus handling scarce calibration data and device domain shift.",
+    },
+  ],
+
+  "smart-attendance-antispoofing": [
+    {
+      q: "كيف يمنع النظام تسجيل الحضور بالنيابة؟",
+      a: "بدمج تقنيات التحقق من حيوية الوجه (Anti-Spoofing) التي تحلل النسيج والعمق ثلاثي الأبعاد للتمييز بين الوجوه الحية والصور المطبوعة أو عروض الشاشات، مع بصمات وجهية عميقة بنموذج FaceNet512.",
+      qEn: "How does the system prevent proxy attendance?",
+      aEn: "By integrating liveness verification (anti-spoofing) that analyzes texture and 3D depth to distinguish live faces from printed photos or screen replays, combined with deep facial embeddings from the FaceNet512 model.",
+    },
+    {
+      q: "كيف يدعم النظام عدة قاعات؟",
+      a: "عبر تعدد المهام (Multithreading) لاستقبال بث كاميرات حتى أربع قاعات في وقت واحد دون تأثر دقة التعرف، مع إرسال النتائج لاسلكياً عبر NodeMCU ESP8266 لتشغيل مؤشرات LED خضراء/حمراء فورية.",
+      qEn: "How does it support multiple rooms?",
+      aEn: "Through multithreading that receives camera streams from up to four rooms simultaneously without hurting recognition accuracy, sending results wirelessly via NodeMCU ESP8266 to light instant green/red LED indicators.",
+    },
+    {
+      q: "ما إمكانات التقارير؟",
+      a: "إدارة الجلسات الدراسية والقاعات والمواد، وتوليد تقارير وإحصائيات دقيقة باستخدام Python وPandas وOpenPyXL، مع واجهة رسومية حديثة بـ CustomTkinter.",
+      qEn: "What reporting capabilities exist?",
+      aEn: "Management of class sessions, rooms, and courses, plus accurate reports and statistics generated with Python, Pandas, and OpenPyXL, and a modern CustomTkinter GUI.",
+    },
+  ],
+
+  "gov-services-automation": [
+    {
+      q: "ما الخدمات التي يؤتمتها النظام؟",
+      a: "ثلاث ركائز: تقديم الشكاوى الإلكترونية مع تتبع حالتها، والاستعلامات العامة كالبيانات العائلية وإثباتات الحالة الوظيفية، وعرض الفواتير الخدمية وتسديدها إلكترونياً.",
+      qEn: "What services does the system automate?",
+      aEn: "Three pillars: electronic complaint submission with status tracking, public inquiries such as family records and employment-status certificates, and viewing and paying utility bills online.",
+    },
+    {
+      q: "كيف تختلف واجهتا النظام؟",
+      a: "بوابة للمواطنين لتقديم الطلبات وتتبعها رقمياً دون أوراق، ولوحة إدارية للجهات الحكومية لمعالجة الطلبات وتغيير حالاتها (قيد المعالجة، منجز، مرفوض) وتوثيق القرارات.",
+      qEn: "How do the two interfaces differ?",
+      aEn: "A citizen portal for submitting and digitally tracking requests without paperwork, and an administrative dashboard for government entities to process requests and update statuses (pending, completed, rejected) with decision records.",
+    },
+    {
+      q: "ما الأثر الإداري المتوقع؟",
+      a: "تحسين جودة الخدمات العامة وتقليل الأخطاء البشرية وتسريع الأداء الإداري، مع إتاحة الخدمات بأمان على مدار الساعة وتصميم واجهة بسيطة تراعي سرعات الإنترنت المتوفرة.",
+      qEn: "What is the expected administrative impact?",
+      aEn: "Improved public-service quality, fewer human errors, faster administrative performance, safe 24/7 service availability, and a deliberately simple interface suited to available internet speeds.",
+    },
+  ],
+
+  "sports-injury-detection": [
+    {
+      q: "كيف يكشف النظام الأخطاء الحركية؟",
+      a: "يستخرج الهيكل العظمي من إطارات الفيديو بتقدير الوضعية، ويحول النقاط إلى تمثيل عددي، ثم يحلل تسلسل الحركة زمنياً بنموذج LSTM بدل الاكتفاء بلقطة منفردة، ليصنف الأداء صحيحاً أو خاطئاً.",
+      qEn: "How does the system detect movement errors?",
+      aEn: "It extracts the skeleton from video frames via pose estimation, converts keypoints into a numerical representation, then analyzes the motion sequence temporally with an LSTM model instead of isolated frames, classifying form as correct or incorrect.",
+    },
+    {
+      q: "ما نتائج التجربة؟",
+      a: "تمييز ناجح بين الأداء الصحيح والخاطئ في التمارين المختارة ضمن ظروف تصوير مناسبة، مع استجابة شبه فورية في الزمن الحقيقي.",
+      qEn: "What were the experiment results?",
+      aEn: "Successful discrimination between correct and incorrect form in the selected exercises under suitable recording conditions, with near-real-time responsiveness.",
+    },
+    {
+      q: "ما الهدف من النظام؟",
+      a: "توفير أداة موضوعية منخفضة التكلفة تساعد الرياضيين على تقييم أدائهم في غياب الإشراف المباشر، ودعم السلامة الرياضية والكشف المبكر عن الانحرافات الحركية.",
+      qEn: "What is the system's goal?",
+      aEn: "Providing an affordable, objective tool helping athletes evaluate performance without direct supervision, supporting sports safety and early detection of movement deviations.",
+    },
+  ],
+
+  "investment-project-management": [
+    {
+      q: "ما وظيفة المنصة؟",
+      a: "أتمتة وتنظيم إدارة المشاريع الهندسية الممولة باستثمار أجنبي، بحلقة وصل رقمية تضمن الشفافية بين المستثمرين والإدارة والفرق الميدانية عبر هيكلية ورش العمل الفنية ولوحات تحكم لكل دور.",
+      qEn: "What is the platform's function?",
+      aEn: "Automating and organizing the management of foreign-investment engineering projects, as a digital intermediary guaranteeing transparency among investors, administration, and field teams via a technical-workshops structure and role-based dashboards.",
+    },
+    {
+      q: "كيف يعمل التوظيف الذكي؟",
+      a: "تحليل السير الذاتية بالذكاء الاصطناعي وفق معايير محددة لاختيار الكفاءات، مع دعم الذكاء الاصطناعي القابل للتفسير (Explainable AI) عبر مبررات واضحة لنتائج التقييم تعزز الثقة في قرارات التوظيف.",
+      qEn: "How does smart recruitment work?",
+      aEn: "AI-based resume evaluation against defined criteria to select the best candidates, with Explainable AI support providing clear justifications for evaluation outcomes that build trust in hiring decisions.",
+    },
+    {
+      q: "كيف يتابع العمال الميدانيون المهام؟",
+      a: "عبر تطبيق جوال مبني بـ Flutter وDart يتيح متابعة المهام اليومية وتحديث حالة الأعمال من موقع العمل بتدفق بيانات حي، ضمن نظام مبني بـ Laravel وFilament وLivewire.",
+      qEn: "How do field workers track tasks?",
+      aEn: "Via a Flutter and Dart mobile app for tracking daily tasks and updating work status from the job site with live data flow, within a system built on Laravel, Filament, and Livewire.",
+    },
+  ],
+
+  "wanted-person-recognition": [
+    {
+      q: "كيف يعمل نظام التعرف على المطلوبين؟",
+      a: "شبكة كاميرات موزعة تحلل الصور لحظياً بخوارزميات معالجة صور وتعلم عميق، وتطابق الوجوه مع قاعدة بيانات مطلوبين معدة مسبقاً، وتطلق إنذاراً فورياً عند الاكتشاف دون تدخل بشري مباشر.",
+      qEn: "How does the wanted-person recognition system work?",
+      aEn: "A distributed camera network analyzes images in real time with image-processing and deep-learning algorithms, matching faces against a pre-built wanted-persons database and firing instant alerts upon detection without direct human intervention.",
+    },
+    {
+      q: "ما البيئة التقنية؟",
+      a: "Python ضمن Anaconda وJupyter Notebook، وقاعدة بيانات SQLite لإدارة سجلات الأشخاص وحالات التعرف، مع خط معالجة متكامل يوثق حالات التعرف الناجحة وغير الناجحة.",
+      qEn: "What is the technical environment?",
+      aEn: "Python within Anaconda and Jupyter Notebook, an SQLite database managing person records and recognition events, and an integrated pipeline documenting both successful and failed recognition cases.",
+    },
+    {
+      q: "ما المشكلات التي يعالجها؟",
+      a: "استبدال المراجعة البشرية المبطئة والمعرضة للخطأ، وتوسيع التغطية عبر شبكة الكاميرات، وتسريع الاستجابة بكشف فوري، وخفض تكلفة المراقبة البشرية المستمرة في الأماكن الحيوية.",
+      qEn: "What problems does it solve?",
+      aEn: "Replacing slow, error-prone human review, expanding coverage through the camera network, accelerating response with instant detection, and cutting the cost of continuous human monitoring in critical venues.",
+    },
+  ],
+
+  "breast-cancer-diagnosis-ai": [
+    {
+      q: "كيف يجمع النظام بين مصدري البيانات؟",
+      a: "مساران متكاملان: تحليل صور الأشعة الطبية بخوارزمية YOLO لكشف المناطق الشاذة، وتحليل بيانات الفحوصات المخبرية بخوارزميات تصنيف مثل Random Forest، ثم دمج المخرجات لدعم قرار تشخيصي أدق.",
+      qEn: "How does the system combine the two data sources?",
+      aEn: "Two complementary tracks: YOLO-based analysis of radiology images detecting abnormal regions, and classification algorithms such as Random Forest processing laboratory data, with fused outputs supporting a more accurate diagnostic decision.",
+    },
+    {
+      q: "ما نتائج الأداء؟",
+      a: "أظهرت الاختبارات دقة عالية في التنبؤ مع تقليل الأخطاء البشرية وزمن المعالجة، ما يجعل النظام أداة فعالة لدعم الأطباء في عملية التشخيص.",
+      qEn: "What are the performance results?",
+      aEn: "Tests showed high prediction accuracy with reduced human error and processing time, making the system an effective tool supporting physicians in diagnosis.",
+    },
+    {
+      q: "كيف تُدخل البيانات؟",
+      a: "عبر واجهات سهلة الاستخدام تقبل البيانات بصور الأشعة أو ملفات Excel، بما يمنح مرونة في الاستخدام ويسهل دمج النظام في المؤسسات الطبية.",
+      qEn: "How is data entered?",
+      aEn: "Via easy-to-use interfaces accepting radiology images or Excel files, offering input flexibility and easing integration into medical institutions.",
+    },
+  ],
+
+  "face-attendance-timer-app": [
+    {
+      q: "كيف يعمل المؤقت الزمني في النظام؟",
+      a: "يحدد النافذة المسموحة للحضور لكل محاضرة؛ أي طالب يصل بعد الوقت المحدد يُعتبر غائباً تلقائياً، ويمنع النظام تسجيل حضور أي شخص من خارج المحاضرة، وعند الانتهاء تُمسح البيانات تلقائياً استعداداً للمحاضرة التالية.",
+      qEn: "How does the session timer work?",
+      aEn: "It defines the allowed arrival window per lecture; any student arriving after the cutoff is marked absent automatically, the system refuses attendance records for anyone not in the session, and data is cleared automatically when the lecture ends in preparation for the next one.",
+    },
+    {
+      q: "كيف يتحقق النظام من هوية الطالب؟",
+      a: "بتقنية بصمة الوجه عبر خوارزميات التعرف على الوجه ومحرك فرق للمقارنة، مع معمارية نظام ومخطط تدفق موثقين يضبطان مسار البيانات من الالتقاط إلى التسجيل.",
+      qEn: "How does the system verify student identity?",
+      aEn: "Using facial biometrics through face-recognition algorithms and a comparison engine, with a documented system architecture and flow diagram governing the data path from capture to registration.",
+    },
+    {
+      q: "ما المشكلات التي يعالجها؟",
+      a: "التزوير والتأخير وهدر الوقت في الطرق التقليدية، مع ضمان العدالة والشفافية في تسجيل الحضور وتخفيف العبء الإداري اليدوي.",
+      qEn: "What problems does it address?",
+      aEn: "Fraud, delays, and time waste in traditional methods, guaranteeing fair and transparent attendance tracking and easing the manual administrative burden.",
+    },
+  ],
+
+  "university-face-attendance-app": [
+    {
+      q: "ما وظائف النظام الجامعي؟",
+      a: "تسجيل حضور الطلاب وضبط دخولهم للقاعات التعليمية والامتحانية بالتعرف على الوجوه في الزمن الحقيقي، مع التحقق من القوائم الاسمية الرسمية للأرقام الجامعية وتوزيع القاعات.",
+      qEn: "What are the university system's functions?",
+      aEn: "Recording student attendance and controlling entry to teaching and exam halls with real-time face recognition, verified against official name lists containing university IDs and hall assignments.",
+    },
+    {
+      q: "كيف يمنع النظام الانتحال؟",
+      a: "بآليات كشف عن التلاعب تحلل الحركة والخصائص النسيجية لمنع الغش واستخدام الصور أو الفيديوهات، خاصة في البيئات الامتحانية الحساسة، مع سمات عميقة (Embeddings) تقارن بقاعدة بيانات مركزية.",
+      qEn: "How does the system prevent impersonation?",
+      aEn: "Through spoofing-detection mechanisms analyzing motion and texture to prevent cheating with photos or videos, especially in sensitive exam settings, with deep embeddings matched against a central database.",
+    },
+    {
+      q: "ما إمكانات الإدارة والتقارير؟",
+      a: "إدارة كاملة للتخصصات والسنوات والمواد والقاعات وبيانات الطلاب وجلسات المحاضرات بتعدد الكاميرات، مع تقارير يومية وسجلات تاريخية ولوحة تحليلات وأدوار لمسؤول أكاديمي وسكرتارية وموظف.",
+      qEn: "What are the management and reporting capabilities?",
+      aEn: "Full management of departments, years, courses, halls, student data, and lecture sessions with multi-camera support, plus daily reports, historical logs, an analytics dashboard, and academic-administrator, secretariat, and staff roles.",
+    },
+  ],
 };
