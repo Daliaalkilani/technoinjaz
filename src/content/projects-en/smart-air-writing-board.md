@@ -27,3 +27,7 @@ The system is designed and implemented in Python, using OpenCV for real-time vid
 ## Results
 
 Practical implementation demonstrated natural gesture-based interaction running efficiently on mid-range hardware, with the system extensible toward additional cognitive tasks that enhance its educational and practical value.
+
+## Planning a Similar System?
+
+If you are working on an interactive system based on computer vision and tracking and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

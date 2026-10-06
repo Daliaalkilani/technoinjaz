@@ -22,3 +22,7 @@ The app integrates several cloud services: VirusTotal performs the multi-engine 
 ## User experience
 
 The app is designed with a clear, simple interface so any user can scan their content without security expertise, presenting results as understandable summaries rather than raw technical reports.
+
+## Planning a Similar System?
+
+If you are working on an AI-powered security tool for scanning files and links and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

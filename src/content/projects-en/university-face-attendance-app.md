@@ -28,3 +28,7 @@ Full management of departments, academic years, courses, halls, student data, re
 ## Results
 
 Practical tests showed high recognition accuracy and response speed, with a real ability to strengthen educational security and curb manipulation, and future potential for integration with broader academic systems.
+
+## Planning a Similar System?
+
+If you are working on a face-recognition attendance and access-control system and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

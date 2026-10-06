@@ -27,3 +27,7 @@ The system's interfaces are designed for ease of use, offering flexible data ent
 ## Impact
 
 The system improves diagnostic quality and supports early medical decisions, providing a model for applying AI to medical imaging and laboratory analysis within a single pipeline.
+
+## Planning a Similar System?
+
+If you are working on a deep-learning medical diagnosis system and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

@@ -32,3 +32,7 @@ The control logic was developed in Delta WPLSoft using ladder networks, timers, 
 ## Project boundaries
 
 The project does not cover large-scale production lines or complex chemical reactions, does not use SCADA or DCS systems in full, and does not integrate AI into the control loop.
+
+## Planning a Similar System?
+
+If you are working on a PLC-based control system or industrial process automation and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

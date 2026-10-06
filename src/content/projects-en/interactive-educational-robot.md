@@ -28,3 +28,7 @@ The robot is equipped with three servo motors — one for the arm and two for th
 ## Methodology and results
 
 The project followed a structured methodology covering requirements analysis, data collection, model development, and performance evaluation. Results demonstrated suitable recognition accuracy and an effective interactive learning experience supporting cognitive skill development in early childhood.
+
+## Planning a Similar System?
+
+If you are working on an interactive educational robot for children and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

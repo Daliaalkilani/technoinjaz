@@ -27,3 +27,7 @@ The platform provides an objective, reproducible environment for comparing code-
 ## Impact
 
 The project gives development teams and researchers a practical tool for systematically evaluating code-generation models and improves decisions about adopting AI tooling in the software development lifecycle.
+
+## Planning a Similar System?
+
+If you are working on a smart tool for source-code analysis and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

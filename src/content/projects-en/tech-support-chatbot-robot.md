@@ -30,3 +30,7 @@ On the software side, the system is built with JavaScript and uses APIs for voic
 ## Boundaries and future work
 
 The system focuses exclusively on educational and technical support in programming, computer engineering, and networking; it provides no medical, legal, or psychological advice. It relies entirely on cloud processing and therefore cannot run offline, and its motion is limited to the arm. Future work could expand the knowledge base and add visual capabilities.
+
+## Planning a Similar System?
+
+If you are working on an AI-powered voice chatbot or intelligent assistant built on language models and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

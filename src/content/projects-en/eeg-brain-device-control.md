@@ -30,3 +30,7 @@ The eyes open/closed model achieved the highest recorded accuracy at 86.22%; the
 ## Boundaries and safety
 
 Main challenges are the scarcity of clean personal calibration data, poor channel quality, and the domain shift between recording devices. The system is an **educational research tool, not a medical device**; any expanded use requires safety layers such as an emergency stop, speed limits, and low-confidence command rejection.
+
+## Planning a Similar System?
+
+If you are working on a brain-computer interface or bio-signal control system and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

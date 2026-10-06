@@ -29,3 +29,7 @@ The system is built with Laravel plus Filament and Livewire for interactive deve
 ## Impact
 
 The platform integrates HR management with project management in a unified digital environment, boosting operational efficiency, transparency, and trust in hiring and field-execution decisions.
+
+## Planning a Similar System?
+
+If you are working on an engineering project-management platform for companies and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

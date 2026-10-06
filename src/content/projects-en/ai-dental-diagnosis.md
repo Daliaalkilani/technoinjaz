@@ -29,3 +29,7 @@ A modern architecture separates frontend and backend: the UI is built with React
 ## Impact
 
 Combining multimodal cloud models with local segmentation yields a high-accuracy diagnostic aid that supports clinical decisions and reduces reliance on manual examination, with room to expand to more conditions and advanced analyses.
+
+## Planning a Similar System?
+
+If you are working on an AI-based medical diagnosis system and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

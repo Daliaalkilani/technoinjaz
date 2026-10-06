@@ -29,3 +29,7 @@ The platform is built with Laravel 12 and the Filament admin panel, integrating 
 ## Impact
 
 Rifq promotes animal welfare values, facilitates safe adoptions, improves veterinary care quality through AI, and builds a trusted digital bridge between citizens and animal-care organizations.
+
+## Planning a Similar System?
+
+If you are working on a care-services or management platform and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

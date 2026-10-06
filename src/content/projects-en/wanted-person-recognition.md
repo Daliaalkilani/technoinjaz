@@ -31,3 +31,7 @@ The system is developed in Python within Anaconda and Jupyter Notebook environme
 - **Wider coverage:** a camera network spanning far more than manual monitoring.
 - **Faster response:** instant detection and alerting instead of delayed manual analysis.
 - **Lower cost:** an economical alternative to around-the-clock human monitoring.
+
+## Planning a Similar System?
+
+If you are working on a deep-learning face-recognition system and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

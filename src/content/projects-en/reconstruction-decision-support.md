@@ -27,3 +27,7 @@ Final results are presented in an interactive dashboard letting decision-makers 
 ## Impact
 
 The system transforms damage documentation from paper reports and human estimates into intelligent digital documentation, supporting evidence-based decisions in conflict and reconstruction environments through the integration of geospatial technologies, AI, and modern information systems.
+
+## Planning a Similar System?
+
+If you are working on a decision-support system based on data and image analysis and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

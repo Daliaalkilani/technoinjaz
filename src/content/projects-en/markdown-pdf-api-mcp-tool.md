@@ -31,3 +31,7 @@ A robust security architecture covering user authentication (JWT), password hash
 ## Outcomes
 
 The system produces high-quality PDFs with optimal response times, making it an ideal solution for developers and writers that eliminates traditional server maintenance — available both as an API and as an MCP channel for AI-tool integration.
+
+## Planning a Similar System?
+
+If you are working on an API or MCP integration for your product and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

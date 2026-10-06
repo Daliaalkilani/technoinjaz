@@ -32,3 +32,7 @@ The system relies on computer vision and AI: MediaPipe extracts and tracks the 2
 ## Environment and testing
 
 The system was developed in Python within Anaconda and VS Code environments; runtime captures document real-time gesture recognition and execution of brightness-control and virtual-keyboard commands.
+
+## Planning a Similar System?
+
+If you are working on a system based on computer vision and gesture control and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

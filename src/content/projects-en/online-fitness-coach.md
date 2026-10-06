@@ -27,3 +27,7 @@ The UI is built with Flutter and Dart for a smooth, responsive experience; the b
 ## Value
 
 The platform delivers an interactive, low-cost training environment combining accessibility with AI-backed guidance quality, putting professional-grade coaching within reach of home users.
+
+## Planning a Similar System?
+
+If you are working on an AI-powered fitness app or smart coach and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

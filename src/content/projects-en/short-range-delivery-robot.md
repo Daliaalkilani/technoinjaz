@@ -31,3 +31,7 @@ The mechanical chassis was designed and the system programmed in the Arduino IDE
 ## Test results
 
 Practical tests showed the robot performing pickup and delivery tasks with satisfactory stability and reliability within its design limits: flat indoor floors and light objects matched to the motor and arm capacity, without AI or autonomous navigation in the current version.
+
+## Planning a Similar System?
+
+If you are working on a mobile robot or autonomous vehicle and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

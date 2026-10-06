@@ -26,3 +26,7 @@ The system provides an integrated environment for managing users, children's fil
 ## Impact
 
 Nabd supports psychological work in crisis and war contexts by reducing subjectivity in preliminary assessment and accelerating indicator collection, while keeping the specialist as the decision-maker.
+
+## Planning a Similar System?
+
+If you are working on an AI-driven behavioral-analysis or psychological assessment system and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

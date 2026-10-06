@@ -28,3 +28,7 @@ An admin dashboard manages users, subject categories, tracks, and educational li
 ## Technical architecture
 
 The frontend is built with Flutter for Android and iOS; the backend uses Laravel with the MVC pattern, Eloquent ORM, and the Filament admin panel, a relational database managed through migrations, RESTful API communication, and caching for performance.
+
+## Planning a Similar System?
+
+If you are working on an educational app or academic platform for students and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

@@ -27,3 +27,7 @@ The implementation demonstrated the system's ability to distinguish correct from
 ## Future work
 
 The system can be extended to more exercises, made more robust under home lighting and varying camera angles, and integrated into a mobile app delivering instant feedback to trainees.
+
+## Planning a Similar System?
+
+If you are working on an AI system for sports image and video analysis and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

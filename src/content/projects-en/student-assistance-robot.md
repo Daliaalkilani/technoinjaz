@@ -27,3 +27,7 @@ The system is built on a central database and an Arabic-supporting interactive i
 ## Results
 
 Practical tests showed the system efficiently executing its tasks, streamlining administrative procedures and reducing the time and effort needed for student services, with a working robot prototype operating via its touchscreen in a real usage environment.
+
+## Planning a Similar System?
+
+If you are working on an interactive robot or smart touch interface and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

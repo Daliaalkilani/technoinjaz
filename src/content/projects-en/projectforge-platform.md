@@ -28,3 +28,7 @@ The frontends are built with Flutter for Android and iOS, with a Laravel (PHP) b
 ## Impact
 
 The platform improves project selection quality, planning efficiency, and team formation, boosting the success rate of engineering and academic projects.
+
+## Planning a Similar System?
+
+If you are working on a smart web platform for project and team management and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

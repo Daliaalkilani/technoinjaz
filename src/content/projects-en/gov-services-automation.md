@@ -26,3 +26,7 @@ The automation aims to improve public-service quality, minimize human error, and
 ## Methodology
 
 Implementation followed requirements analysis, then software development, then testing and evaluation to ensure a flexible, extensible architecture — with a deliberately simple, fast interface suited to the available internet speeds.
+
+## Planning a Similar System?
+
+If you are working on an automation system for services, inquiries, and invoicing and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

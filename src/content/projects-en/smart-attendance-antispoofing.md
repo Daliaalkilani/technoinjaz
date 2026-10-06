@@ -31,3 +31,7 @@ The system manages class sessions, rooms, and courses, generating accurate repor
 ## Impact
 
 The system is a practical model of AI and communications applications in smart educational environments, addressing wasted lecture time, unreliable paper records, and the administrative burden of manual data entry.
+
+## Planning a Similar System?
+
+If you are working on a face-recognition attendance system with anti-spoofing and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.
