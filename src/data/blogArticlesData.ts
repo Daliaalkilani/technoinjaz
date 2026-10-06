@@ -450,40 +450,6 @@ export const blogArticlesData: BlogArticle[] = [
     initialLikes: 245,
     initialComments: []
   },
-  {
-    id: 'digital-twin-research',
-    slug: 'digital-twin-research',
-    title: 'التوأم الرقمي: المفهوم والبنية التقنية والتطبيقات العملية',
-    titleEn: 'Digital Twin: Concept, Architecture, and Real-World Applications',
-    seoTitle: 'التوأم الرقمي: المفهوم والبنية التقنية والتطبيقات العملية والتحديات',
-    metaDescription: 'دليل معمّق لتقنية التوأم الرقمي Digital Twin: تعريفه والفرق بينه وبين المحاكاة، مكوناته التقنية من IoT والبيانات الضخمة والتعلم الآلي والسحابة، ودراسات حالة واقعية في المباني والتصنيع والرعاية الصحية، مع أبرز التحديات والتوجهات المستقبلية.',
-    category: 'التحول الرقمي',
-    categoryEn: 'Digital Transformation',
-    categoryColor: '#0aeec3',
-    image: '/images/articles/digital-twin-research.jpg',
-    publishDate: '5 أكتوبر 2026',
-    publishDateEn: 'Oct 5, 2026',
-    publishedAt: '2026-10-05',
-    readTime: '16 دقيقة قراءة',
-    readTimeEn: '16 min read',
-    author: ARTICLE_AUTHOR,
-    excerpt: 'التوأم الرقمي نموذج افتراضي ديناميكي يتزامن لحظياً مع النظام الحقيقي عبر بيانات الحساسات، فيتيح المراقبة والتنبؤ واختبار السيناريوهات قبل تطبيقها في الواقع — مع دراسات حالة في المباني والتصنيع والرعاية الصحية.',
-    excerptEn: 'A Digital Twin is a dynamic virtual model synchronized in real time with its physical counterpart via sensor data, enabling monitoring, prediction, and risk-free scenario testing — explored here through building, manufacturing, and healthcare case studies.',
-    content: [
-      'التوأم الرقمي (Digital Twin) نموذج افتراضي ديناميكي يحاكي نظاماً أو كائناً مادياً حقيقياً، ويتحدّث باستمرار بالبيانات المستمدة من النظام الحقيقي عبر الحساسات.',
-      'يستعرض المقال الفرق الجوهري بينه وبين المحاكاة التقليدية الثابتة، ومكوناته التقنية: إنترنت الأشياء، البيانات الضخمة، التعلم الآلي، والحوسبة السحابية.',
-      'يتضمن المقال ثلاث دراسات حالة واقعية: توأم رقمي لبيئة داخلية عبر EnergyPlus، وتوأم لنظام تصنيع مرن عبر Process Simulate رفع كفاءة التشغيل إلى 95%، وإطار سحابي لأقساط طوارئ ذكية عبر Azure Digital Twins.'
-    ],
-    contentEn: [
-      'A Digital Twin is a dynamic virtual model continuously updated with data from its physical counterpart through sensors.',
-      'The article clarifies the essential difference from static simulation and breaks down the technical stack: IoT, big data, machine learning, and cloud computing.',
-      'It includes three real case studies: an EnergyPlus indoor twin, a Process Simulate flexible manufacturing twin that raised efficiency to 95%, and a cloud-based smart emergency department framework on Azure Digital Twins.'
-    ],
-    tags: ['التوأم_الرقمي', 'إنترنت_الأشياء', 'الذكاء_الاصطناعي', 'المحاكاة', 'التحول_الرقمي', 'Digital_Twin'],
-    tagsEn: ["Digital Twin", "Internet of Things", "Artificial Intelligence", "Simulation", "Digital Transformation"],
-    initialLikes: 152,
-    initialComments: []
-  }
 ];
 
 export const blogCategories = [
