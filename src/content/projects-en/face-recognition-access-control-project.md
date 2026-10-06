@@ -2,7 +2,7 @@
 
 ## Project Summary
 
-An academic graduation project aiming to develop a prototype access control system for a sensitive area, within an applied scenario of a bank vault, based on computer vision and face recognition technologies. The project was prepared by students at the Syrian Virtual University during the 2024–2025 academic year, **with assistance and support from Techno Enjaz during the project's preparation and development**.
+An academic project aiming to develop a prototype access control system for a sensitive area, within an applied scenario of a bank vault, based on computer vision and face recognition technologies. The project was prepared by students at the Syrian Virtual University during the 2024–2025 academic year, **with assistance and support from Techno Enjaz during the project's preparation and development**.
 
 The prototype uses the laptop camera to capture images, then applies the OpenCV library to process the frames and the `face-recognition` library to extract facial features and compare them against reference images. When an authorized person is recognized, their entry time is recorded; when a face is unrecognized, its image is saved and an audible alert is triggered using the `playsound` library.
 
@@ -10,13 +10,13 @@ The prototype uses the laptop camera to capture images, then applies the OpenCV 
 
 | Item | Details |
 | --- | --- |
-| Project type | Academic graduation project / access control system prototype |
+| Project type | Access control system prototype |
 | Field | Computer vision and face recognition |
 | Usage context | Access control to a sensitive area within a bank vault scenario |
 | Academic institution | Syrian Virtual University |
 | Academic year | 2024–2025 |
 | Project status | Completed academic prototype |
-| Techno Enjaz role | Assisting the students in preparing and developing the project |
+| Techno Enjaz role | Supporting the engineering team in preparing and developing the project |
 | Programming language | Python |
 | Key technologies | OpenCV, `face-recognition`, `playsound` |
 
@@ -28,7 +28,7 @@ The project is academic and experimental; the available materials do not indicat
 
 ## Techno Enjaz's Role
 
-Techno Enjaz contributed by **assisting the students throughout the preparation and development of the graduation project**. The project is presented among the office's previous work as an academic experience the office helped support, while the project itself remains the students' own work within their university framework.
+Techno Enjaz contributed by **supporting the engineering team throughout the preparation and development of the project**. The project is presented among the office's previous work as an academic experience the office helped support, while the project itself remains the students' own work within their university framework.
 
 This page does not attribute to Techno Enjaz the implementation of a security system inside a bank or its operation in an actual financial facility.
 

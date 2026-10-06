@@ -33,7 +33,7 @@ export const PROJECT_QA: Record<string, QAItem[]> = {
   'weapon-detection-yolo-ai': [
     {
       q: 'ما هدف نظام الكشف عن الأسلحة بالذكاء الاصطناعي؟',
-      a: 'يهدف المشروع إلى تطوير نموذج رؤية حاسوبية يكتشف الأسلحة مثل السكين والمسدس من بث الكاميرا في الزمن الحقيقي. يعرض النظام موقع الجسم المكتشف داخل الإطار. وهو مشروع تخرج أكاديمي طوره الطلاب، وقدم مكتب تكنو إنجاز دعمًا وتوجيهًا تقنيًا أثناء تطويره.',
+      a: 'يهدف المشروع إلى تطوير نموذج رؤية حاسوبية يكتشف الأسلحة مثل السكين والمسدس من بث الكاميرا في الزمن الحقيقي. يعرض النظام موقع الجسم المكتشف داخل الإطار. وطوّره فريق هندسي بمساعدة ودعم تقني من مكتب تكنو إنجاز.',
       qEn: "What is the goal of the AI weapon detection system?",
       aEn: "The project aims to develop a computer vision model that detects weapons such as knives and pistols from a live camera feed in real time, showing the location of the detected object within the frame. It is an academic graduation project developed by students, and the Techno Enjaz office provided support and technical guidance during its development.",
     },
@@ -132,7 +132,7 @@ export const PROJECT_QA: Record<string, QAItem[]> = {
     },
     {
       q: 'ما التحديات التقنية التي واجهت المشروع؟',
-      a: 'شملت التحديات اختلاف الإضاءة وتأثيرها على جودة التعرف، وتشابه بعض العناصر بصريًا، والحجب الجزئي للأجسام. كما واجه المشروع اختلاف أداء الأجهزة المستخدمة والحاجة إلى تصميم واجهة مناسبة للأطفال. وهو مشروع تخرج في تقانة المعلومات قدمت فيه تكنو إنجاز إرشادًا ودعمًا تقنيًا للطلاب.',
+      a: 'شملت التحديات اختلاف الإضاءة وتأثيرها على جودة التعرف، وتشابه بعض العناصر بصريًا، والحجب الجزئي للأجسام. كما واجه المشروع اختلاف أداء الأجهزة المستخدمة والحاجة إلى تصميم واجهة مناسبة للأطفال. وطوّره فريق هندسي في مجال تقانة المعلومات بدعم تقني من تكنو إنجاز.',
       qEn: "What technical challenges did the project face?",
       aEn: "Challenges included varying lighting and its effect on recognition quality, visual similarity between some objects, and partial occlusion. The project also faced performance differences across devices and the need for a child-friendly interface. It is an Information Technology graduation project in which Techno Enjaz provided guidance and technical support to the students.",
     },
@@ -168,7 +168,7 @@ export const PROJECT_QA: Record<string, QAItem[]> = {
   'remote-controlled-ground-robot': [
     {
       q: 'ما الذي يختبره نموذج الروبوت الأرضي متعدد الاتصالات؟',
-      a: 'يختبر النموذج تكامل الحركة عن بعد، ونقل الصور عبر الكاميرا، والتحكم بالمكونات الإلكترونية ضمن منصة روبوتية واحدة. نُفذ ضمن مشروع أكاديمي في قسم هندسة الاتصالات بالجامعة الوطنية الخاصة للعام 2024–2025، وقدمت تكنو إنجاز دعمًا وتوجيهًا فنيًا أثناء تطويره.',
+      a: 'يختبر النموذج تكامل الحركة عن بعد، ونقل الصور عبر الكاميرا، والتحكم بالمكونات الإلكترونية ضمن منصة روبوتية واحدة. نُفذ ضمن مشروع أكاديمي في مجال هندسة الاتصالات، وقدمت تكنو إنجاز دعمًا وتوجيهًا فنيًا أثناء تطويره.',
       qEn: "What does the multi-connectivity ground robot prototype test?",
       aEn: "The prototype tests integrating remote motion, camera image transmission, and electronic component control within a single robotic platform. It was carried out as an academic project in the Communications Engineering department at the Private National University for 2024–2025, and Techno Enjaz provided support and technical guidance during development.",
     },
@@ -213,7 +213,7 @@ export const PROJECT_QA: Record<string, QAItem[]> = {
     },
     {
       q: 'هل أثبت التطبيق زيادة فعلية في السياحة؟',
-      a: 'لا، فلا يُدّعى وجود أثر اقتصادي أو زيادة فعلية في السياحة دون بيانات تشغيلية. النتيجة الأساسية هي نموذج تطبيقي يجمع تطبيق مستخدم وBackend وقاعدة بيانات ولوحة إدارة. وهو مشروع تخرج في هندسة الحاسوب للعام 2024-2025 دعمت تكنو إنجاز تطويره ووجهته مع فريق الطلاب.',
+      a: 'لا، فلا يُدّعى وجود أثر اقتصادي أو زيادة فعلية في السياحة دون بيانات تشغيلية. النتيجة الأساسية هي نموذج تطبيقي يجمع تطبيق مستخدم وBackend وقاعدة بيانات ولوحة إدارة. وطوّره فريق هندسة حاسوب بدعم وتوجيه من تكنو إنجازه مع فريق الطلاب.',
       qEn: "Did the app prove an actual increase in tourism?",
       aEn: "No. No economic impact or actual increase in tourism is claimed without operational data. The core result is an application prototype combining a user app, a backend, a database, and an admin dashboard. It is a Computer Engineering graduation project for 2024–2025 that Techno Enjaz supported and guided with the student team.",
     },
@@ -249,7 +249,7 @@ export const PROJECT_QA: Record<string, QAItem[]> = {
   'student-university-guide-app': [
     {
       q: 'ما المشكلة التي يعالجها تطبيق دليل الطالب الرقمي؟',
-      a: 'يعالج التطبيق تشتت المعلومات التي يحتاجها الطالب بين مصادر متعددة، مثل التخصصات والمقررات والخطط الدراسية ومشاريع التخرج السابقة. ويوفر نقطة وصول رقمية موحدة للبحث في المحتوى الأكاديمي، مع لوحة إدارة تساعد على تحديث المحتوى من جهة الإدارة.',
+      a: 'يعالج التطبيق تشتت المعلومات التي يحتاجها الطالب بين مصادر متعددة، مثل التخصصات والمقررات والخطط الدراسية والمشاريع السابقة. ويوفر نقطة وصول رقمية موحدة للبحث في المحتوى الأكاديمي، مع لوحة إدارة تساعد على تحديث المحتوى من جهة الإدارة.',
       qEn: "What problem does the digital student guide app address?",
       aEn: "The app addresses the fragmentation of the information students need across multiple sources, such as majors, courses, study plans, and previous graduation projects. It provides a unified digital access point for searching academic content, with an admin dashboard that helps the administration keep content up to date.",
     },
@@ -266,8 +266,8 @@ export const PROJECT_QA: Record<string, QAItem[]> = {
       aEn: "The mobile app was built with Flutter and Dart, and the backend, admin panel, and APIs with Laravel and PHP. API requests are authenticated via Laravel Sanctum, a relational database organizes student, major, and course data, and Google Gemini powers the virtual assistant.",
     },
     {
-      q: 'هل يرتبط التطبيق بأنظمة الدرجات والجداول الرسمية للجامعة؟',
-      a: 'لا، فلا يوجد تكامل مباشر موثق مع أنظمة الدرجات والجداول الرسمية، والتطبيق ليس نظام معلومات جامعيًا رسميًا. ويعتمد على نطاق محدد من بيانات الكلية مع تحديث جزء من المحتوى يدويًا. أعده الطلاب مشروع تخرج بمساعدة ودعم تقني من مكتب تكنو إنجاز.',
+      q: 'هل يرتبط التطبيق بأنظمة الدرجات والجداول الرسمية للجهة الأكاديمية؟',
+      a: 'لا، فلا يوجد تكامل مباشر موثق مع أنظمة الدرجات والجداول الرسمية، والتطبيق ليس نظام معلومات جامعيًا رسميًا. ويعتمد على نطاق محدد من البيانات الأكاديمية مع تحديث جزء من المحتوى يدويًا. طوّره فريق هندسي بمساعدة ودعم تقني من مكتب تكنو إنجاز.',
       qEn: "Is the app linked to the university's official grades and schedules systems?",
       aEn: "No. There is no documented direct integration with official grades and schedules systems, and the app is not an official university information system. It relies on a defined scope of faculty data with part of the content updated manually. Students built it as a graduation project with assistance and technical support from the Techno Enjaz office.",
     },
@@ -342,7 +342,7 @@ export const PROJECT_QA: Record<string, QAItem[]> = {
     },
     {
       q: 'هل استُخدم النظام داخل بنك فعلي؟',
-      a: 'لا، فخزينة البنك سيناريو تطبيقي اختير لدراسة استخدام التعرف على الوجه في التحكم بالوصول إلى المناطق الحساسة. المشروع تخرج أكاديمي أعده طلاب في الجامعة الافتراضية السورية للعام 2024–2025 بمساعدة مكتب تكنو إنجاز، ولا تشير المواد إلى نشره كنظام تشغيلي في بنك.',
+      a: 'لا، فخزينة البنك سيناريو تطبيقي اختير لدراسة استخدام التعرف على الوجه في التحكم بالوصول إلى المناطق الحساسة. طوّره فريق هندسي للعام 2024–2025 بمساعدة مكتب تكنو إنجاز، ولا تشير المواد إلى نشره كنظام تشغيلي في بنك.',
       qEn: "Has the system been used inside an actual bank?",
       aEn: "No. A bank vault is an applied scenario chosen to study using face recognition to control access to sensitive areas. The project is an academic graduation project prepared by students at the Syrian Virtual University for 2024–2025 with assistance from the Techno Enjaz office, and the materials do not indicate it was deployed as an operational system in a bank.",
     },
@@ -375,10 +375,115 @@ export const PROJECT_QA: Record<string, QAItem[]> = {
     },
     {
       q: 'هل يصلح النظام لإجراء انتخابات رسمية؟',
-      a: 'لا، فالمشروع نموذج تطبيقي أكاديمي ضمن مشروع فصلي في قسم هندسة الحاسوب، وليس نظام انتخابات حكومي أو منصة معتمدة رسميًا. ولا يُوصف بأنه يضمن سرية الاقتراع أو الأمان الكامل إلا بعد اختبارات أمنية واعتمادات مستقلة. وقد ساعد مكتب تكنو إنجاز الطلاب في دعم المشروع وتطويره.',
+      a: 'لا، فالمشروع نموذج تطبيقي أكاديمي وليس نظام انتخابات حكومي أو منصة معتمدة رسميًا. ولا يُوصف بأنه يضمن سرية الاقتراع أو الأمان الكامل إلا بعد اختبارات أمنية واعتمادات مستقلة. وقد ساعد مكتب تكنو إنجاز الطلاب في دعم المشروع وتطويره.',
       qEn: "Is the system suitable for official elections?",
       aEn: "No. The project is an academic application prototype within a semester project in the Computer Engineering department, not a government election system or an officially accredited platform. It should not be described as guaranteeing ballot secrecy or full security until independent security testing and certifications exist. The Techno Enjaz office helped the students support and develop the project.",
 
+    },
+  ],
+
+  'military-war-robot-ai': [
+    {
+      q: 'ما الفكرة الأساسية للروبوت الذكي؟',
+      a: 'روبوت ميداني يُتحكم به عن بُعد عبر تطبيق مخصص، مزوّد بكاميرا متطورة ووحدات تنفيذ آلية تعمل بخوارزميات معالجة الصور، بهدف تنفيذ المهام في بيئات خطرة وتقليل المخاطر البشرية.',
+      qEn: "What is the core idea of the intelligent robot?",
+      aEn: "A field robot controlled remotely via a dedicated app, equipped with an advanced camera and automated actuators powered by image-processing algorithms, to carry out missions in hazardous environments and reduce human risk.",
+    },
+    {
+      q: 'كيف يحدد الروبوت الأهداف؟',
+      a: 'يعتمد على خوارزمية YOLO لتحليل صور الكاميرا وتحديد الأهداف وتمييزها بدقة عالية في الوقت الفعلي، بما يتيح استجابة فورية دون تدخل بشري مباشر.',
+      qEn: "How does the robot identify targets?",
+      aEn: "It relies on the YOLO algorithm to analyze camera frames and identify and distinguish targets with high accuracy in real time, enabling immediate response without direct human intervention.",
+    },
+    {
+      q: 'ما تقنيات الاتصال المستخدمة في التحكم؟',
+      a: 'يدمج النظام تقنيات اتصال متعددة مثل البلوتوث والواي فاي لتسهيل التحكم عن بُعد ونقل البيانات وتحليلها في الوقت الفعلي بين الروبوت وجهاز المشغّل.',
+      qEn: "What communication technologies are used for control?",
+      aEn: "The system integrates multiple communication technologies such as Bluetooth and Wi-Fi to facilitate remote control and real-time data transfer and analysis between the robot and the operator's device.",
+    },
+  ],
+
+  'kindergarten-management-system': [
+    {
+      q: 'ما الذي يقدمه نظام إدارة رياض الأطفال؟',
+      a: 'نظام متكامل يربط إدارة الروضة بأولياء الأمور ويغطي سجلات الحضور والتقارير الصحية والملاحظات السلوكية والأنشطة، مع أدوات إدارة كاملة لبيانات الأطفال والفصول والإعلانات والجداول اليومية.',
+      qEn: "What does the kindergarten management system offer?",
+      aEn: "An integrated system connecting kindergarten administration with parents, covering attendance records, health reports, behavioral notes, and activities, with full admin tools for children's data, classrooms, announcements, and daily schedules.",
+    },
+    {
+      q: 'ما الأدوار الرئيسية التي يخدمها النظام؟',
+      a: 'ثلاثة أدوار: ولي الأمر الذي يتابع تقدم طفله ويتواصل مع الإدارة، والطفل الذي تدور حوله السجلات والتقارير، والإدارة التي تمتلك أدوات إدارة البيانات والفصول والإعلانات.',
+      qEn: "What are the main roles the system serves?",
+      aEn: "Three roles: the parent, who tracks their child's progress and communicates with the administration; the child, whose records and reports the system revolves around; and the administration, which manages data, classrooms, and announcements.",
+    },
+    {
+      q: 'لماذا اعتمد المشروع على Flutter وLaravel؟',
+      a: 'استُخدم Flutter لبناء واجهة محمولة تفاعلية موحدة، وLaravel لبناء وظائف خلفية قوية لإدارة البيانات، مع API شاملة موثقة وفق معايير OpenAPI (YAML) تضمن قابلية التوسع والتكامل المستقبلي.',
+      qEn: "Why did the project use Flutter and Laravel?",
+      aEn: "Flutter was used to build a unified interactive mobile front-end, and Laravel to build a robust back-end for data management, with a comprehensive API documented to OpenAPI (YAML) standards ensuring scalability and future integration.",
+    },
+  ],
+
+  'vehicle-data-analysis-system': [
+    {
+      q: 'ما وظيفة نظام تحليل بيانات المركبات؟',
+      a: 'نظام مؤتمت لإدارة نقاط الدخول يرصد لوحات المركبات ويلتقط صوراً لها، ثم يستخلص بيانات اللوحة بالرؤية الحاسوبية وOCR ويقارنها بقاعدة بيانات المركبات المصرّح لها ليتخذ قرار المرور أو الرفض لحظياً.',
+      qEn: "What does the vehicle data analysis system do?",
+      aEn: "An automated entry-point management system that monitors license plates and captures images, extracts plate data via computer vision and OCR, compares it against an authorized-vehicle database, and makes an instantaneous pass or deny decision.",
+    },
+    {
+      q: 'كيف يتعامل النظام مع المخالفات؟',
+      a: 'في حال عدم المطابقة أو وجود مخالفات مثل انتهاء التأمين أو تعميم أمني، يرسل النظام إنذاراً للجهات المختصة مع تفاصيل المركبة، بالإضافة إلى إشعارات لمالك المركبة.',
+      qEn: "How does the system handle violations?",
+      aEn: "In cases of mismatch or violations such as expired insurance or a security notice, the system sends an alert to the competent authorities with the vehicle's details, along with notifications to the vehicle owner.",
+    },
+    {
+      q: 'كيف يتم فتح حاجز الدخول؟',
+      a: 'عند السماح بالمرور، يُتحكم في حاجز الدخول آلياً عبر محرك سيرفو، مع إرسال إشعارات فورية لمالك المركبة تتضمن تفاصيل الرسوم المستحقة.',
+      qEn: "How is the entry barrier opened?",
+      aEn: "Upon clearance, the entry barrier is controlled automatically via a servo motor, with instant notifications sent to the vehicle owner including the applicable fees.",
+    },
+  ],
+
+  'calorie-counter-computer-vision': [
+    {
+      q: 'كيف يحسب النظام السعرات الحرارية؟',
+      a: 'يكفي تصوير الطبق ليتعرف النظام على مكوناته تلقائياً باستخدام خوارزمية YOLO، ثم يقدّر القيم الغذائية لكل مكوّن ومجموع الطبق دون وزن الطعام أو البحث اليدوي في الجداول.',
+      qEn: "How does the system calculate calories?",
+      aEn: "Simply photograph the dish: the system recognizes its components automatically using the YOLO algorithm, then estimates each component's nutritional value and the dish's total without weighing food or manually searching tables.",
+    },
+    {
+      q: 'ما التقنيات المستخدمة في المشروع؟',
+      a: 'اعتمد المشروع على YOLO ومكتبة Ultralytics للكشف وتحليل الصور، وOpenCV لمعالجة الصور، وTkinter لواجهة تفاعلية، وRoboflow لتحسين بيانات التدريب.',
+      qEn: "What technologies does the project use?",
+      aEn: "The project relies on YOLO and the Ultralytics library for detection and image analysis, OpenCV for image processing, Tkinter for an interactive interface, and Roboflow for improving training data.",
+    },
+    {
+      q: 'من يستفيد من هذا النظام؟',
+      a: 'يستفيد منه مرضى السكري والرياضيون وأخصائيو التغذية وكل من يرغب بمتابعة استهلاكه الغذائي بسهولة، بما ينسجم مع مفهوم الصحة الذكية في العصر الرقمي.',
+      qEn: "Who benefits from this system?",
+      aEn: "Diabetics, athletes, nutritionists, and anyone who wants to easily monitor their food intake, in line with the concept of smart health in the digital age.",
+    },
+  ],
+
+  'smart-security-surveillance-ai': [
+    {
+      q: 'ما الذي يميز نظام المراقبة الذكي عن الكاميرات التقليدية؟',
+      a: 'بدلاً من الاكتفاء بالتسجيل، يحلل النظام المشهد لحظياً: يكتشف الأسلحة بخوارزمية YOLO، ويحلل تسلسل الحركات بنموذج RNN لكشف العنف، ويرصد السلوكيات المشبوهة عبر MediaPipe.',
+      qEn: "What distinguishes the smart surveillance system from traditional cameras?",
+      aEn: "Rather than just recording, the system analyzes the scene in real time: it detects weapons with YOLO, analyzes motion sequences with an RNN model to identify violence, and spots suspicious behavior via MediaPipe.",
+    },
+    {
+      q: 'كيف يكتشف النظام السلوكيات المشبوهة؟',
+      a: 'يستخدم مكتبة MediaPipe لتحليل وضعيات الجسم والتعرف على سلوكيات مثل محاولة الوصول غير المصرح به إلى أماكن التخزين الحساسة، كفتح الأدراج أو الاقتراب منها من قبل أشخاص غير مخولين.',
+      qEn: "How does the system detect suspicious behavior?",
+      aEn: "It uses the MediaPipe library to estimate body poses and recognize behaviors such as unauthorized attempts to access sensitive storage areas, like opening drawers or approaching them by unauthorized individuals.",
+    },
+    {
+      q: 'ما دور الحساسات الفيزيائية في النظام؟',
+      a: 'يضيف النظام حساس الحركة (PIR) لرصد التحركات غير الطبيعية ضمن نطاق معين، وحساس اللهب (Flame Sensor) للكشف المبكر عن مؤشرات الحريق، ما يوفر طبقة إضافية من الأمان والاستجابة السريعة.',
+      qEn: "What role do the physical sensors play?",
+      aEn: "The system adds a PIR motion sensor to detect abnormal movement within a defined range and a flame sensor for early fire detection, providing an extra layer of safety and rapid response.",
     },
   ],
 };

@@ -749,4 +749,37 @@ export const ARTICLE_QA: Record<string, QAItem[]> = {
 
     },
   ],
+
+  'digital-twin-research': [
+    {
+      q: "ما الفرق الجوهري بين التوأم الرقمي والمحاكاة؟",
+      a: "المحاكاة نموذج رقمي ثابت يُبنى لأغراض محددة ويعتمد على بيانات تاريخية وافتراضات مسبقة، بينما التوأم الرقمي نموذج ديناميكي يتزامن باستمرار مع النظام الحقيقي عبر بيانات حية من الحساسات، فيتكيف فورياً مع المتغيرات وينتج تنبؤات محدّثة.",
+      qEn: "What is the essential difference between a digital twin and simulation?",
+      aEn: "Simulation is a static model built for specific purposes from historical data and assumptions, while a digital twin is a dynamic model continuously synchronized with the real system via live sensor data, adapting instantly to changing conditions and producing up-to-date predictions.",
+    },
+    {
+      q: "ما المكونات التقنية الأساسية للتوأم الرقمي؟",
+      a: "أربعة مكونات رئيسية: إنترنت الأشياء (IoT) لجمع البيانات من الحساسات وربط العالمين الفيزيائي والرقمي، والبيانات الضخمة لتخزين التدفقات الهائلة وتحليلها، والتعلم الآلي كعقل تحليلي للتنبؤ واكتشاف الأعطال، والحوسبة السحابية لتوفير موارد مرنة قابلة للتوسع.",
+      qEn: "What are the core technical components of a digital twin?",
+      aEn: "Four main components: IoT for sensor data collection linking the physical and digital worlds, big data for storing and analyzing massive streams, machine learning as the analytical engine for prediction and fault detection, and cloud computing for flexible, scalable resources.",
+    },
+    {
+      q: "ما النتائج التي حققتها دراسة التوأم الرقمي في التصنيع؟",
+      a: "كشفت المحاكاة اختناقاً في محطة التفريغ بنسبة تعطيل بلغت 81.53%، وبعد إضافة روبوت تعاوني وإعادة توزيع محطات العمل ارتفعت كفاءة التشغيل إلى 95.03%، مع بيئة تشغيل افتراضية ربطت التوأم بوحدات تحكم فعلية عبر OPC UA.",
+      qEn: "What results did the manufacturing digital twin study achieve?",
+      aEn: "The simulation uncovered a bottleneck at the unloading station with an 81.53% disruption rate; after adding a collaborative robot and redistributing workstations, operational efficiency rose to 95.03%, with a virtual commissioning environment linking the twin to real controllers via OPC UA.",
+    },
+    {
+      q: "كيف استُخدم التوأم الرقمي في أقسام الطوارئ؟",
+      a: "بُني إطار سحابي على Azure Digital Twins يراقب توفر الأسرّة لحظياً ويوجّه المرضى تلقائياً إلى المستشفى الأنسب حسب القرب والأسرّة المتاحة ووقت الوصول المقدر، مع تطبيق محمول بـFlutter ووظيفتين في Azure Functions: تحديث لحظي بحالة الأسرّة، واستجابة لطلبات المستخدمين.",
+      qEn: "How was the digital twin used in emergency departments?",
+      aEn: "A cloud framework on Azure Digital Twins monitors bed availability in real time and automatically routes patients to the most suitable hospital based on proximity, available beds, and estimated arrival time — with a Flutter mobile app and two Azure Functions: event-driven twin updates and HTTP-triggered user requests.",
+    },
+    {
+      q: "ما أبرز التحديات التي تواجه تبني التوائم الرقمية؟",
+      a: "تقنياً: دقة النمذجة للأنظمة المعقدة، وتكامل مصادر البيانات المتنوعة، والحاجة لبيانات ضخمة عالية الجودة، وارتفاع التكاليف. وغير تقنياً: أمن المعلومات والخصوصية (مثل متطلبات GDPR) ونقص الكفاءات المؤهلة التي تجمع بين الذكاء الاصطناعي وتحليل البيانات والنمذجة الهندسية.",
+      qEn: "What are the main challenges to digital twin adoption?",
+      aEn: "Technically: modeling accuracy for complex systems, integrating diverse data sources, the need for high-quality big data, and high costs. Non-technically: information security and privacy (such as GDPR requirements) and a shortage of qualified talent combining AI, data analysis, and engineering modeling.",
+    },
+  ],
 };

@@ -1,8 +1,8 @@
-# Developing the Digital Student Guide at Al-Wataniya Private University – Faculty of Engineering
+# Developing the Digital Student Guide
 
 ## Project Summary
 
-The **Student Guide at Al-Wataniya Private University – Faculty of Engineering** project is a digital application prepared by students as a computer engineering graduation project, **with technical assistance and support from the Techno Enjaz office during the project's development stages**. The system aims to bring together the academic information a student needs within a single interface, instead of relying on scattered sources, while providing an administration dashboard for updating content and managing parts of the system.
+The **Digital Student Guide** project is a digital application developed by an engineering team as a computer engineering project, **with technical assistance and support from the Techno Enjaz office during the project's development stages**. The system aims to bring together the academic information a student needs within a single interface, instead of relying on scattered sources, while providing an administration dashboard for updating content and managing parts of the system.
 
 The project relied on **Flutter** for the mobile application and **Laravel** for the back end and administration dashboard, together with a relational database and API interfaces. It also includes a virtual assistant that uses **Google Gemini** to analyze the intent behind the user's question and match it against a defined FAQ base, so that when a suitable match is found, the approved answer from the local knowledge base is displayed.
 
@@ -14,8 +14,8 @@ The project relied on **Flutter** for the mobile application and **Laravel** for
 
 | Item | Details |
 |---|---|
-| Project type | Digital university guide application / academic graduation project |
-| Academic institution | Al-Wataniya Private University – Faculty of Engineering – Computer Engineering Department |
+| Project type | Digital academic guide application |
+| Academic institution | Computer Engineering Department |
 | Year | 2024–2025 |
 | Techno Enjaz role | Technical assistance and support for the students during project implementation |
 | Mobile application | Flutter / Dart |
@@ -27,7 +27,7 @@ The project relied on **Flutter** for the mobile application and **Laravel** for
 
 ## The Problem the Project Addressed
 
-The project started from the problem of the information a university student needs being scattered across multiple sources, including information about majors, courses, study plans, faculty members, previous graduation projects, and content related to university life. This scatter can make reaching information slower and increases the student's reliance on scattered sources that may not be continuously updated.
+The project started from the problem of the information a university student needs being scattered across multiple sources, including information about majors, courses, study plans, faculty members, previous projects, and content related to university life. This scatter can make reaching information slower and increases the student's reliance on scattered sources that may not be continuously updated.
 
 The project therefore focused on creating a unified digital access point that allows students to search for and reach academic information in an organized way, along with an administration dashboard that helps the administration side keep the content updated.
 
@@ -39,7 +39,7 @@ The project covered developing a working prototype that includes a set of interc
 - Displaying study plans.
 - Browsing courses and their details.
 - Searching within the academic content.
-- Displaying content related to graduation projects and university achievements.
+- Displaying content related to past projects and academic achievements.
 - A student profile within the application's interfaces.
 - An administration dashboard for managing faculties, majors, courses, requests, and system administrators.
 - Authentication and linking between the mobile application and the back end via API.

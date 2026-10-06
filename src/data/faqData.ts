@@ -34,7 +34,7 @@ export interface FaqCategory {
 export const faqCategories: FaqCategory[] = [
   { id: 'all', name: 'الكل', nameEn: 'All' },
   { id: 'about', name: 'عن تكنو إنجاز', nameEn: 'About Us' },
-  { id: 'engineering', name: 'مشاريع التخرج والمشاريع الهندسية', nameEn: 'Graduation & Engineering' },
+  { id: 'engineering', name: 'المشاريع الهندسية', nameEn: 'Engineering Projects' },
   { id: 'development', name: 'تطوير المواقع والتطبيقات', nameEn: 'Web & Mobile Apps' },
   { id: 'cost', name: 'التكلفة والمدة وطريقة البدء', nameEn: 'Pricing & Timelines' },
   { id: 'contact', name: 'التواصل والمحتوى', nameEn: 'Contact & Content' }
@@ -47,7 +47,7 @@ export const faqData: FaqItem[] = [
     category: 'about',
     question: 'ما هي تكنو إنجاز؟',
     questionEn: 'What is Techno Enjaz?',
-    answer: 'تكنو إنجاز مكتب هندسي في مدينة حماة السورية ينفّذ مشاريع التخرج والمشاريع الهندسية في الذكاء الاصطناعي والرؤية الحاسوبية والروبوتات وأنظمة التحكم، ويطوّر المواقع والمتاجر والأنظمة السحابية، وينشر مقالات تقنية عربية مجانية.',
+    answer: 'تكنو إنجاز مكتب هندسي في مدينة حماة السورية ينفّذ المشاريع الهندسية في الذكاء الاصطناعي والرؤية الحاسوبية والروبوتات وأنظمة التحكم، ويطوّر المواقع والمتاجر والأنظمة السحابية، وينشر مقالات تقنية عربية مجانية.',
     answerEn: 'Techno Enjaz is an engineering bureau located in Hama, Syria, executing graduation and industrial engineering projects in AI, computer vision, robotics, and control systems, while developing modern cloud web apps, portals, and publishing free Arabic engineering research.',
     actionLabel: 'تعرّف علينا',
     actionLabelEn: 'About Us',
@@ -83,7 +83,7 @@ export const faqData: FaqItem[] = [
     category: 'about',
     question: 'من يقود فريق «تكنو إنجاز» ويشرف على الاستشارات والمشاريع؟',
     questionEn: 'Who leads the Techno Enjaz team and oversees consultancy and projects?',
-    answer: 'يقود الفريق المهندس عبد الغني الحمدي، مستشار في المشاريع الهندسية ومشاريع التخرج، ومدرب في المجالات التقنية. حاصل على بكالوريوس في هندسة التحكم الآلي والحواسيب من جامعة البعث (شهادة الباسل للمرتبة الأولى) ويدرس الماجستير في هندسة التحكم والأتمتة بجامعة حلب. ساهم في إنجاز والإشراف على أكثر من 500 مشروع تقني وتخرج خلال 5 سنوات، ونال المركز السادس بمسابقة «تميّز للإبداع والاختراع» على مستوى القطر. وهو مدرب في برمجة الأردوينو والروبوتيك والتحكم الصناعي، وشعاره: «التغيير يبدأ من الداخل، ابدأ بنفسك ثم غيّر العالم».',
+    answer: 'يقود الفريق المهندس عبد الغني الحمدي، مستشار في المشاريع الهندسية والتقنية، ومدرب في المجالات التقنية. حاصل على بكالوريوس في هندسة التحكم الآلي والحواسيب (شهادة الباسل للمرتبة الأولى) ويدرس الماجستير في هندسة التحكم والأتمتة. ساهم في إنجاز والإشراف على أكثر من 500 مشروع تقني خلال 5 سنوات، ونال المركز السادس بمسابقة «تميّز للإبداع والاختراع» على مستوى القطر. وهو مدرب في برمجة الأردوينو والروبوتيك والتحكم الصناعي، وشعاره: «التغيير يبدأ من الداخل، ابدأ بنفسك ثم غيّر العالم».',
     answerEn: 'The team is founded and led by Eng. Abdalgani Alhamdi, an Engineering Projects & Graduation Consultant and Technical Trainer. He holds a Bachelor\'s in Automatic Control & Computer Engineering from Al-Baath University (Al-Bassel First Rank Award) and is pursuing a Master\'s in Control & Automation at Aleppo University. Having supervised 500+ projects and achieved 6th place nationally in the "Tamayuz" Invention Competition, he trains in Arduino, robotics, and industrial control. Motto: "Change begins from within, start with yourself then change the world."',
     actionLabel: 'فريق العمل والخبرات',
     actionLabelEn: 'Our Team & Leadership',
@@ -91,13 +91,13 @@ export const faqData: FaqItem[] = [
     actionIconKey: 'sparkles'
   },
 
-  // 2. مشاريع التخرج والمشاريع الهندسية
+  // 2. المشاريع الهندسية
   {
     id: 'q-eng-1',
     category: 'engineering',
-    question: 'هل تنفّذون مشاريع التخرج لطلاب الهندسة؟',
+    question: 'هل تنفّذون المشاريع الهندسية لطلاب الهندسة؟',
     questionEn: 'Do you engineer graduation projects for engineering students?',
-    answer: 'نعم. نعمل على مشاريع التخرج في الذكاء الاصطناعي والرؤية الحاسوبية والروبوتات وأنظمة التحكم وتطبيقات الويب والموبايل، من تحديد الفكرة وحتى النموذج العامل والتوثيق.',
+    answer: 'نعم. نعمل على المشاريع الهندسية في الذكاء الاصطناعي والرؤية الحاسوبية والروبوتات وأنظمة التحكم وتطبيقات الويب والموبايل، من تحديد الفكرة وحتى النموذج العامل والتوثيق.',
     answerEn: 'Yes. We engineer comprehensive capstone and graduation projects in AI, computer vision, robotics, control systems, web, and mobile apps—from conceptualization to fully functioning prototypes and documentation.',
     actionLabel: 'الخدمات',
     actionLabelEn: 'Our Services',

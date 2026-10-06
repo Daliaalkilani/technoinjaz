@@ -229,7 +229,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
   {
     "id": "student-university-guide-app",
     "slug": "student-university-guide-app",
-    "titleEn": "Developing the Digital Student Guide at Al-Wataniya Private University – Faculty of Engineering",
+    "titleEn": "Developing the Digital Student Guide",
     "excerptEn": "A complete digital university guide with a search engine and an interactive virtual assistant, backed by a cloud administration dashboard to make it easier for students to access academic services.",
     "folderNameEn": "Student Guide at Al-Wataniya Private University – Faculty of Engineering",
     "seoTitleEn": "Developing a University Student Guide Using Flutter and Laravel | Techno Enjaz",
@@ -237,7 +237,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "altTextEn": "The home screen of the university student guide application",
     "tagsEn": ["Mobile Applications", "Flutter", "Laravel", "University Guide"],
     "folderName": "دليل الطالب في الجامعة الوطنية الخاصة – كلية الهندسة",
-    "title": "تطوير دليل الطالب الرقمي في الجامعة الوطنية الخاصة – كلية الهندسة",
+    "title": "تطوير دليل الطالب الرقمي",
     "excerpt": "دليل جامعي رقمي متكامل بمحرك بحث ومساعد افتراضي تفاعلي، مدعوم بلوحة إدارة سحابية لتسهيل وصول الطلاب للخدمات الأكاديمية.",
     "category": "mobile",
     "categoryNameAr": "تطبيقات موبايل وويب",
@@ -414,6 +414,130 @@ export const PROJECTS_DATA: ProjectItem[] = [
       "تعليم تفاعلي",
       "تطبيقات ذكية"
     ]
+  },
+  {
+    "id": "military-war-robot-ai",
+    "slug": "military-war-robot-ai",
+    "titleEn": "Intelligent Military Robot with AI Target Detection",
+    "excerptEn": "A remotely controlled intelligent military robot equipped with an automated turret and camera, using YOLO for accurate target identification with Bluetooth and Wi-Fi real-time communication.",
+    "folderName": "الروبوت الحربي",
+    "title": "روبوت حربي ذكي بالذكاء الاصطناعي",
+    "excerpt": "روبوت ميداني يُتحكم به عن بُعد عبر تطبيق مخصص، مزوّد بكاميرا ورشاش آلي يعملان تلقائياً باستخدام خوارزميات معالجة الصور وYOLO لتحديد الأهداف بدقة وتمييزها في الوقت الفعلي.",
+    "category": "systems",
+    "categoryNameAr": "أنظمة روبوتية ومتحكمات",
+    "categoryNameEn": "Robotics & Embedded Systems",
+    "seoTitle": "روبوت حربي ذكي بالذكاء الاصطناعي وتحديد الأهداف | تكنو إنجاز",
+    "metaDesc": "تصميم وتنفيذ روبوت ذكي يُتحكم به عن بُعد يعتمد على YOLO لتحديد الأهداف مع كاميرا وتحكم لاسلكي وتكامل تقنيات الاتصال.",
+    "altText": "روبوت حربي ذكي يعمل بالذكاء الاصطناعي مع كاميرا وتحكم عن بُعد",
+    "image": "/images/platforms/military-war-robot-ai.jpg",
+    "tags": [
+      "روبوتات",
+      "YOLO",
+      "تحكم لاسلكي",
+      "معالجة صور"
+    ],
+    "tagsEn": ["Robotics", "YOLO", "Wireless Control", "Image Processing"],
+    "pdfUrl": "/docs/projects/military-war-robot-ai.pdf",
+    "presentationUrl": "/presentations/military-war-robot-ai.pptx"
+  },
+  {
+    "id": "kindergarten-management-system",
+    "slug": "kindergarten-management-system",
+    "titleEn": "Kindergarten Management System with Flutter and Laravel",
+    "excerptEn": "An integrated kindergarten management platform connecting administration and parents, built with a Flutter mobile front-end and a Laravel API back-end serving parents, children, and staff.",
+    "folderName": "نظام إدارة رياض الأطفال",
+    "title": "نظام إدارة رياض الأطفال",
+    "excerpt": "نظام متكامل لإدارة رياض الأطفال يربط الإدارة بأولياء الأمور ويغطي سجلات الحضور والتقارير الصحية والأنشطة، مبني بواجهة Flutter وواجهة خلفية Laravel مع API موثق وفق معايير OpenAPI.",
+    "category": "mobile",
+    "categoryNameAr": "تطبيقات محمولة وأنظمة إدارية",
+    "categoryNameEn": "Mobile & Management Apps",
+    "seoTitle": "نظام إدارة رياض الأطفال Flutter وLaravel | تكنو إنجاز",
+    "metaDesc": "نظام متكامل لإدارة رياض الأطفال بواجهة Flutter وخلفية Laravel يتابع الحضور والتقارير والأنشطة ويَربط الإدارة بأولياء الأمور.",
+    "altText": "واجهة نظام إدارة رياض الأطفال على الهاتف المحمول",
+    "image": "/images/platforms/kindergarten-management-system.jpg",
+    "tags": [
+      "Flutter",
+      "Laravel",
+      "أنظمة إدارية",
+      "تطبيقات محمولة"
+    ],
+    "tagsEn": ["Flutter", "Laravel", "Management Systems", "Mobile Apps"],
+    "pdfUrl": "/docs/projects/kindergarten-management-system.pdf"
+  },
+  {
+    "id": "vehicle-data-analysis-system",
+    "slug": "vehicle-data-analysis-system",
+    "titleEn": "Vehicle Data Analysis and Reporting System with OCR",
+    "excerptEn": "An automated border-checkpoint prototype that reads license plates via computer vision and OCR, verifies them against an authorized-vehicle database, and controls the entry barrier automatically.",
+    "folderName": "نظام تحليل وتقييم بيانات المركبات وإرسالها للجهات المعنية",
+    "title": "نظام تحليل وتقييم بيانات المركبات وإرسالها للجهات المعنية",
+    "excerpt": "نظام مؤتمت لإدارة نقاط الدخول يقرأ لوحات المركبات بالرؤية الحاسوبية والتعرف الضوئي OCR، ويقارنها بقاعدة بيانات المركبات المصرّح لها ليتخذ قرار المرور آلياً مع إشعارات فورية وإنذارات للجهات المختصة.",
+    "category": "vision",
+    "categoryNameAr": "رؤية حاسوبية وأنظمة أمنية",
+    "categoryNameEn": "Computer Vision & Security",
+    "seoTitle": "نظام تحليل بيانات المركبات والتعرف على اللوحات OCR | تكنو إنجاز",
+    "metaDesc": "نظام ذكي لإدارة نقاط الدخول يتعرف على لوحات المركبات بتقنية OCR ويتخذ قرارات المرور آلياً مع إشعارات وإنذارات فورية.",
+    "altText": "نظام التعرف على لوحات المركبات في نقطة دخول",
+    "image": "/images/platforms/vehicle-data-analysis-system.jpg",
+    "tags": [
+      "رؤية حاسوبية",
+      "OCR",
+      "التعرف على اللوحات",
+      "أنظمة أمنية"
+    ],
+    "tagsEn": ["Computer Vision", "OCR", "License Plate Recognition", "Security Systems"],
+    "pdfUrl": "/docs/projects/vehicle-data-analysis-system.pdf",
+    "presentationUrl": "/presentations/vehicle-data-analysis-system.pptx"
+  },
+  {
+    "id": "calorie-counter-computer-vision",
+    "slug": "calorie-counter-computer-vision",
+    "titleEn": "Smart Calorie Counter Using Computer Vision",
+    "excerptEn": "A smart system that estimates the caloric content of food from images using YOLO food detection and deep learning, with an interactive Tkinter interface for health tracking.",
+    "folderName": "نظام ذكي لحساب عدد السعرات الحرارية باستخدام الرؤية الحاسوبية",
+    "title": "نظام ذكي لحساب السعرات الحرارية بالرؤية الحاسوبية",
+    "excerpt": "نظام ذكي يحسب السعرات الحرارية في الأطعمة من الصور عبر تحليل مكونات الطعام تلقائياً باستخدام خوارزمية YOLO والتعلم العميق، مع واجهة تفاعلية تدعم المتابعة الغذائية لمرضى السكري والرياضيين.",
+    "category": "vision",
+    "categoryNameAr": "رؤية حاسوبية وتطبيقات صحية",
+    "categoryNameEn": "Computer Vision & Health",
+    "seoTitle": "حساب السعرات الحرارية بالرؤية الحاسوبية وYOLO | تكنو إنجاز",
+    "metaDesc": "نظام ذكي يحسب السعرات الحرارية من صور الطعام باستخدام YOLO والتعلم العميق لتقدير القيم الغذائية ودعم القرارات الصحية.",
+    "altText": "نظام حساب السعرات الحرارية من صور الطعام بالذكاء الاصطناعي",
+    "image": "/images/platforms/calorie-counter-computer-vision.jpg",
+    "tags": [
+      "رؤية حاسوبية",
+      "YOLO",
+      "تعلم عميق",
+      "صحة ذكية"
+    ],
+    "tagsEn": ["Computer Vision", "YOLO", "Deep Learning", "Smart Health"],
+    "pdfUrl": "/docs/projects/calorie-counter-computer-vision.pdf",
+    "presentationUrl": "/presentations/calorie-counter-computer-vision.pptx"
+  },
+  {
+    "id": "smart-security-surveillance-ai",
+    "slug": "smart-security-surveillance-ai",
+    "titleEn": "Intelligent Security and Surveillance System Using AI",
+    "excerptEn": "An integrated security system for high-value shops combining YOLO weapon detection, RNN violence analysis, MediaPipe pose estimation for suspicious behavior, and PIR and flame sensors.",
+    "folderName": "نظام مراقبة وحماية أمني ذكي باستخدام تقنيات الذكاء الاصطناعي",
+    "title": "نظام مراقبة وحماية أمني ذكي بالذكاء الاصطناعي",
+    "excerpt": "نظام أمني ذكي لحماية المحال التجارية يكتشف الأسلحة تلقائياً بخوارزمية YOLO ويحلل تسلسل الحركات لكشف أنماط العنف، مع تحليل وضعيات الجسم عبر MediaPipe وحساسات فيزيائية للحركة واللهب للاستجابة السريعة.",
+    "category": "ai",
+    "categoryNameAr": "ذكاء اصطناعي وأنظمة أمنية",
+    "categoryNameEn": "AI & Security Systems",
+    "seoTitle": "نظام مراقبة وحماية أمني ذكي بالذكاء الاصطناعي | تكنو إنجاز",
+    "metaDesc": "نظام أمني ذكي يكتشف الأسلحة والسلوكيات المشبوهة بالرؤية الحاسوبية وYOLO وMediaPipe مع حساسات فيزيائية لحماية المحال.",
+    "altText": "نظام مراقبة أمني ذكي يكتشف الأسلحة والسلوك المشبوه",
+    "image": "/images/platforms/smart-security-surveillance-ai.jpg",
+    "tags": [
+      "ذكاء اصطناعي",
+      "YOLO",
+      "MediaPipe",
+      "أنظمة أمنية"
+    ],
+    "tagsEn": ["Artificial Intelligence", "YOLO", "MediaPipe", "Security Systems"],
+    "pdfUrl": "/docs/projects/smart-security-surveillance-ai.pdf",
+    "presentationUrl": "/presentations/smart-security-surveillance-ai.pptx"
   }
 ];
 

@@ -2,7 +2,7 @@
 
 ## Project Summary
 
-The Techno Enjaz office participated in supporting the development of the **Weapon Detection System Using Artificial Intelligence Technologies** project, a graduation project developed by students, with the support focused on the technical side, guiding the development of the software model and the solution architecture.
+The Techno Enjaz office participated in supporting the development of the **Weapon Detection System Using Artificial Intelligence Technologies** project, an engineering project developed by a technical team, with the support focused on the technical side, guiding the development of the software model and the solution architecture.
 
 The project aims to develop a computer vision model capable of detecting weapons from a camera feed using artificial intelligence technologies and the YOLO object detection algorithms. The system relies on analyzing images and video in real time to identify the presence of weapons such as knives and pistols and to display the location of the detected object within the frame.
 

@@ -9,11 +9,11 @@ export const teamMembers = [
     roleEn: 'Engineering Projects Consultant & Technical Trainer',
     badge: 'مؤسس وقائد فريق تكنو إنجاز',
     badgeEn: 'Founder & Leader of Techno Enjaz',
-    description: 'مستشار في مشاريع التخرج التقنية ومدرب في مجالات الأردوينو والروبوتيك والتحكم والأتمتة',
+    description: 'مستشار في المشاريع التقنية ومدرب في مجالات الأردوينو والروبوتيك والتحكم والأتمتة',
     descriptionEn: 'Consultant for engineering graduation projects & trainer in Arduino, robotics, and automation',
     department: 'الاستشارات الهندسية والتدريب التقني',
     departmentEn: 'Engineering Consultancy & Technical Training',
-    specialization: 'هندسة التحكم والأتمتة ومشاريع التخرج التقنية',
+    specialization: 'هندسة التحكم والأتمتة والمشاريع التقنية',
     specializationEn: 'Control & Automation Engineering & Technical Graduation Projects',
     image: '/images/team/abdulghani.640.avif',
     link: '#team-showcase',
@@ -25,15 +25,15 @@ export const teamMembers = [
     missionEn: 'Scientific and practical progress and advancement to elevate all disciplines.',
     goals: 'رفع الوعي للأشخاص الطموحين ومتابعتهم عن طريق استقطاب مشاريع وتدريبهم بها.',
     goalsEn: 'Raising awareness for ambitious talents and guiding them through project acquisition and intensive training.',
-    bio: 'مستشار في المشاريع الهندسية ومشاريع التخرج التقنية، ومدرب في مجالات الأردوينو والروبوتيك وأنظمة التحكم والأتمتة، أشرف على أكثر من 500 مشروع تقني وتخرج.',
+    bio: 'مستشار في المشاريع الهندسية والتقنية، ومدرب في مجالات الأردوينو والروبوتيك وأنظمة التحكم والأتمتة، أشرف على أكثر من 500 مشروع تقني.',
     bioEn: 'Engineering consultant specializing in graduation projects, and technical trainer in Arduino, robotics, and automation systems, supervised 500+ technical projects.',
-    shortBio: 'مستشار في المشاريع الهندسية ومشاريع التخرج، ومدرب تقني في الروبوتيك والأردوينو، أشرف على أكثر من 500 مشروع تقني.',
+    shortBio: 'مستشار في المشاريع الهندسية والتقنية، ومدرب تقني في الروبوتيك والأردوينو، أشرف على أكثر من 500 مشروع تقني.',
     shortBioEn: 'Engineering consultant & technical trainer in robotics and Arduino, supervised 500+ technical projects.',
     education: [
       {
         degree: 'ماجستير في هندسة التحكم والأتمتة',
         degreeEn: "Master's in Control Engineering & Automation",
-        institution: 'جامعة حلب',
+        institution: 'هندسة التحكم والأتمتة — ماجستير (قيد الدراسة)',
         institutionEn: 'University of Aleppo',
         status: 'قيد الإنجاز',
         statusEn: 'In Progress'
@@ -41,7 +41,7 @@ export const teamMembers = [
       {
         degree: 'بكالوريوس في هندسة التحكم الآلي والحواسيب',
         degreeEn: "Bachelor's in Automatic Control & Computer Engineering",
-        institution: 'جامعة البعث',
+        institution: 'هندسة التحكم الآلي والحواسيب — بكالوريوس',
         institutionEn: 'Al-Baath University',
         honors: 'شهادة الباسل للمرتبة الأولى للتفوق الدراسي (السنة الرابعة)',
         honorsEn: 'Al-Bassel First Rank Academic Excellence Award (4th Year)'
@@ -57,7 +57,7 @@ export const teamMembers = [
         titleEn: 'Al-Bassel Award for First Rank Academic Excellence'
       },
       {
-        title: 'إنجاز والإشراف على أكثر من 500 مشروع تقني وتخرج خلال 5 سنوات',
+        title: 'إنجاز والإشراف على أكثر من 500 مشروع تقني خلال 5 سنوات',
         titleEn: 'Supervision & Delivery of 500+ Technical & Graduation Projects'
       }
     ],
@@ -68,7 +68,7 @@ export const teamMembers = [
       { name: 'إدارة وتطوير المشاريع الهندسية', nameEn: 'Engineering Project Management' }
     ],
     skills: [
-      'استشارات مشاريع التخرج',
+      'استشارات المشاريع الهندسية',
       'برمجة الأردوينو',
       'الروبوتيك والروبوتات المتنقلة',
       'هندسة التحكم والأتمتة',
@@ -95,7 +95,7 @@ export const teamMembers = [
     },
     projects: [
       {
-        name: 'إشراف على أكثر من 500 مشروع تقني وتخرج',
+        name: 'إشراف على أكثر من 500 مشروع تقني',
         desc: 'توجيه هندسي وتطبيقي شامل لطلاب كليات الهندسة والتقنيات مع نماذج عملية واختبارات حقيقية.'
       },
       {
@@ -181,17 +181,17 @@ export const teamMembers = [
     specializationEn: '',
     image: '/images/team/dunia.640.avif',
     link: '#team-showcase',
-    bio: 'مهندسة ميكاترونيكس خريجة جامعة حمص، تجمع بين هندسة الميكاترونيكس والنمذجة ثلاثية الأبعاد، وتنسيق أطروحات التخرج وتطوير العروض الهندسية التقديمية.',
+    bio: 'مهندسة ميكاترونيكس تجمع بين هندسة الميكاترونيكس والنمذجة ثلاثية الأبعاد، وتنسيق الأطروحات الهندسية وتطوير العروض الهندسية التقديمية.',
     bioEn: 'Mechatronics Engineer (Homs University), combining mechatronics and 3D CAD modeling with graduation thesis coordination and engineering presentations.',
     shortBio: 'مهندسة ميكاترونيكس متخصصة في النمذجة ثلاثية الأبعاد وتنسيق الأطروحات الهندسية.',
     shortBioEn: 'Mechatronics engineer specializing in 3D modeling and thesis coordination.',
-    skills: ['هندسة الميكاترونيكس', 'النمذجة ثلاثية الأبعاد (SolidWorks)', 'تنسيق أطروحات التخرج', 'العروض الهندسية التقديمية', 'التوثيق الهندسي'],
+    skills: ['هندسة الميكاترونيكس', 'النمذجة ثلاثية الأبعاد (SolidWorks)', 'تنسيق الأطروحات الهندسية', 'العروض الهندسية التقديمية', 'التوثيق الهندسي'],
     skillsEn: ['Mechatronics Engineering', '3D CAD Modeling (SolidWorks)', 'Thesis Coordination', 'Engineering Presentations', 'Technical Documentation'],
     socials: {
       email: 'dunia.kimkai88@gmail.com'
     },
     projects: [
-      { name: 'تنسيق وإرشاد مشاريع التخرج الهندسية', desc: 'إشراف وتوجيه أطروحات التخرج وهيكلة الأبحاث والنتائج وفق المعايير الأكاديمية والهندسية' },
+      { name: 'تنسيق وإرشاد المشاريع الهندسية', desc: 'إشراف وتوجيه الأطروحات الهندسية وهيكلة الأبحاث والنتائج وفق المعايير الأكاديمية والهندسية' },
       { name: 'تصميم العروض والنمذجة الهندسية', desc: 'إعداد عروض تقديمية تفاعلية وتصاميم هندسية لتوضيح المفاهيم التقنية المتقدمة والمشاريع التطبيقية' }
     ],
     projectsEn: [

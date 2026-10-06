@@ -2,7 +2,7 @@
 
 ## Project Summary
 
-A digital tourism application that aims to bring together destination exploration services, hotel information, bookings, artisan products, and tourism content within a single platform. The project was developed as a computer engineering graduation project for 2024–2025, and it demonstrates the experience of the Techno Enjaz team and the participating students in designing and developing multi-sided digital solutions.
+A digital tourism application that aims to bring together destination exploration services, hotel information, bookings, artisan products, and tourism content within a single platform. The project was developed as a computer engineering project for 2024–2025, and it demonstrates the experience of the Techno Enjaz team and the participating students in designing and developing multi-sided digital solutions.
 
 **Techno Enjaz's role:**
 Techno Enjaz contributed to supporting and guiding the project's development alongside the student team, and to reviewing the technical and organizational aspects to reach a complete working prototype.

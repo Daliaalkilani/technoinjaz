@@ -6,7 +6,7 @@ The project team developed an interactive educational system based on artificial
 
 Techno Enjaz contributed to supporting the project's development in collaboration with the students, providing technical assistance and guidance during the model-building phases and the preparation of the system's software components.
 
-The project was submitted as a graduation project in Information Technology for the 2024–2025 academic year.
+The project was submitted as an Information Technology project for the 2024–2025 academic year.
 
 ---
 

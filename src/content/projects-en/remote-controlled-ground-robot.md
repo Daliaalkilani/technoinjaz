@@ -4,7 +4,7 @@
 
 The project team developed a ground robot prototype combining embedded control systems, wireless communications, and image processing. The prototype aims to test the integration of remote operation, camera image transmission, and electronic component control within a single robotic platform.
 
-The project was carried out as part of an academic project titled **"Design and Implementation of a Robot for Special Tasks"** in the Communications Engineering Department at Al-Wataniya Private University for the 2024–2025 academic year.
+The project was carried out as part of an academic project titled **"Design and Implementation of a Robot for Special Tasks"** in the Communications Engineering field for the 2024–2025 academic year.
 
 **Techno Enjaz** contributed to supporting the students during the project's development through technical assistance in building the prototype and integrating its components.
 
@@ -17,7 +17,7 @@ The project was carried out as part of an academic project titled **"Design and 
 | Project type | Multi-system ground robot prototype |
 | Field | Embedded systems - robotics - communications - computer vision |
 | Year | 2024–2025 |
-| Academic institution | Al-Wataniya Private University - Communications Engineering Department |
+| Academic institution | Communications Engineering Department |
 | Status | Prototype demonstration |
 | Techno Enjaz role | Technical support and guidance during prototype development |
 
