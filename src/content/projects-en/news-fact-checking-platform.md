@@ -120,3 +120,7 @@ These features are not a verified part of the current version.
 ## Do You Have a Similar Project?
 
 If you need to develop a platform for managing digital content or systems for review and verification, the Techno Enjaz team can study the project's requirements and provide the appropriate technical solution.
+
+## Planning a Similar System?
+
+If you are working on an AI-powered content-analysis web platform and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

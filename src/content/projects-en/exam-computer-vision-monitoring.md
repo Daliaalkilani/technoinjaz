@@ -66,3 +66,7 @@ The system does not prove that cheating has occurred; it monitors visual indicat
 ## Get in Touch
 
 If you are planning to develop solutions based on artificial intelligence and computer vision, the Techno Enjaz team can discuss your project's requirements and the suitable technical solutions.
+
+## Planning a Similar System?
+
+If you are working on a computer-vision-based monitoring system and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

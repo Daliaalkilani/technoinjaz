@@ -108,3 +108,7 @@ The project identified several directions that could be explored in later versio
 ## Have a Similar Project?
 
 If you are planning an application that needs image or video analysis and connecting computer vision models to an interactive interface, you can contact **Techno Enjaz** to discuss the technical requirements and the appropriate development scope.
+
+## Planning a Similar System?
+
+If you are working on an interactive computer-vision learning app and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

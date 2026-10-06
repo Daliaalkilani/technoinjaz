@@ -75,3 +75,7 @@ The technical challenges included:
 ## Have a Similar Project?
 
 If you are developing a project based on robotics or computer vision and need engineering support in prototype design, you can contact Techno Enjaz to discuss the project's requirements.
+
+## Planning a Similar System?
+
+If you are working on a motion-tracking robotic hand and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

@@ -141,3 +141,7 @@ The system is an academic application prototype — not a governmental election 
 ## Have a Similar Project?
 
 Do you need to develop a multi-role web system for managing digital operations and data? The Techno Enjaz team can help you analyze the requirements and develop the right solution.
+
+## Planning a Similar System?
+
+If you are working on a web platform for voting or institutional operations and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

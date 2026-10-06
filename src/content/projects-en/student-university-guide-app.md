@@ -106,3 +106,7 @@ The documented deliverables include:
 ## A Similar Student Project?
 
 If you are working on a software project or a digital system and need technical support in planning, development, or review, you can contact **Techno Enjaz** to discuss the scope of assistance appropriate for your project.
+
+## Planning a Similar System?
+
+If you are working on a digital guide app with a virtual assistant and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

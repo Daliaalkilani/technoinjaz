@@ -105,3 +105,7 @@ The project faced several technical challenges, including:
 ## Have a Similar Project?
 
 If you are developing an educational project or a system based on artificial intelligence and computer vision, you can contact Techno Enjaz to discuss the technical requirements and develop the right solution.
+
+## Planning a Similar System?
+
+If you are working on a computer-vision-based learning app and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

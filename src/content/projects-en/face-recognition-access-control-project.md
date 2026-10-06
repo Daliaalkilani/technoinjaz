@@ -100,3 +100,7 @@ To understand how recognizing a person's identity differs from reading their fac
 ## A Similar Project?
 
 If you are working on a similar technical project and need to discuss requirements or benefit from Techno Enjaz's experience in applied projects, you can contact the office to explore the appropriate scope of assistance for the project.
+
+## Planning a Similar System?
+
+If you are working on a face-recognition security system and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.
