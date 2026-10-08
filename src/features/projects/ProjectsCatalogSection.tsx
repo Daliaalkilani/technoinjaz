@@ -1,7 +1,7 @@
 'use client';
 import ResponsiveImage from '@/components/ui/ResponsiveImage';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { 
@@ -23,6 +23,7 @@ import { useSavedProjects } from '@/hooks/useSavedProjects';
 import { PROJECTS_DATA, type ProjectItem, type ProjectCategory } from '@/data/projectsData';
 import { plainExcerpt, projectTags } from '@/lib/text';
 import StickyFilterBar from '@/components/ui/StickyFilterBar';
+import { useSessionState } from '@/lib/useSessionState';
 import './ProjectsCatalogSection.css';
 
 interface ProjectsCatalogSectionProps {
@@ -35,12 +36,10 @@ export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ 
   const isEn = lang === 'en';
   const { isSaved, toggleSave } = useSavedProjects();
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<ProjectCategory>('all');
+  // Kept per tab so "back" from a project returns to the same filtered list
+  // (scroll position itself is restored by the layout's ScrollToTop).
+  const [searchTerm, setSearchTerm] = useSessionState('te_projects_search', '');
+  const [selectedCategory, setSelectedCategory] = useSessionState<ProjectCategory>('te_projects_category', 'all');
 
   const categories = useMemo(() => [
     { key: 'all' as ProjectCategory, labelAr: 'الكل', labelEn: 'All Projects', icon: <Layers size={16} /> },

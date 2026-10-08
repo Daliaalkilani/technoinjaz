@@ -21,6 +21,7 @@ import { useSavedProjects } from '@/hooks/useSavedProjects';
 import { requireAuth } from '@/lib/auth';
 import { SITE_URL } from '@/config/site';
 import StickyFilterBar from '@/components/ui/StickyFilterBar';
+import { useSessionState } from '@/lib/useSessionState';
 import './ArticlesListing.css';
 
 interface ArticlesListingProps {
@@ -37,9 +38,10 @@ export function ArticlesListing({
   const { isSaved, toggleSave } = useSavedProjects();
   const router = useRouter();
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [sortOrder, setSortOrder] = useState<'latest' | 'popular'>('latest');
+  // Kept per tab so "back" from an article returns to the same filtered list.
+  const [searchQuery, setSearchQuery] = useSessionState('te_articles_search', '');
+  const [selectedCategory, setSelectedCategory] = useSessionState('te_articles_category', 'all');
+  const [sortOrder, setSortOrder] = useSessionState<'latest' | 'popular'>('te_articles_sort', 'latest');
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   // Helper to build initial likes from data
