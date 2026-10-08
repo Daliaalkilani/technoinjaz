@@ -51,14 +51,20 @@ export default function TableOfContents({ items, title, variant }: TableOfConten
   const handleClick = (id: string, e: React.MouseEvent) => {
     e.preventDefault();
     setActiveId(id);
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    // iOS Safari cancels an in-flight smooth scroll when replaceState fires — delaying it
-    // fixes the "first TOC click scrolls to top" bug.
-    window.setTimeout(() => window.history.replaceState(null, '', `#${id}`), 900);
-    // On phones the accordion sits ABOVE the article: collapsing it mid-scroll shrinks
-    // the page and shifts the target up ~300px, landing past the heading. Close only
-    // after the smooth scroll has settled (duration matches the replaceState delay).
-    if (variant === 'accordion') window.setTimeout(() => setIsOpen(false), 900);
+    const go = () => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (variant === 'accordion') {
+      // On phones the accordion sits ABOVE the article: collapse it first and scroll once
+      // the page has reflowed, so the target is measured at its final position.
+      setIsOpen(false);
+      requestAnimationFrame(() => requestAnimationFrame(go));
+    } else {
+      go();
+    }
+    // Put the hash in the URL once the smooth scroll has settled (iOS Safari cancels an
+    // in-flight smooth scroll on replaceState). Keep Next.js's own history.state: a
+    // null state makes the App Router treat it as a fresh entry and jump to the top —
+    // the "first TOC click goes to the top of the page" bug after client navigation.
+    window.setTimeout(() => window.history.replaceState(window.history.state, '', `#${id}`), 900);
   };
 
   const list = (
