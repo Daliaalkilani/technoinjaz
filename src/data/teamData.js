@@ -86,11 +86,12 @@ export const teamMembers = [
       'Technical Mentorship'
     ],
     socials: {
-      // shown on his profile: X, GitHub, Facebook, email (Instagram / Telegram /
+      // shown on his profile: X, GitHub, Facebook, Telegram, email (Instagram /
       // WhatsApp stay in the structured data: abdulghaniPersonSchema sameAs + llms.txt)
       x: 'https://x.com/Abdalganih2',
       github: 'https://github.com/abdalganih1',
       facebook: 'https://www.facebook.com/share/19ZeJgTRzk/',
+      telegram: 'https://t.me/abdalganih',
       email: 'info@abdalgani.com'
     },
     projects: [
@@ -300,7 +301,6 @@ export const teamMembers = [
     email: 'rturkmeni960@gmail.com'
   },
   {
-    // Profile details and photo pending; Dunia's photo is used temporarily (owner's request).
     id: 'rawan-habhab', // data + photo sent 2026-10-05
     name: 'م. روان هبهاب',
     nameEn: 'Eng. Rawan Habhab',
@@ -318,12 +318,10 @@ export const teamMembers = [
     specializationEn: 'Arabic NLP & Machine Learning',
     image: '/images/team/rawan.jpg',
     link: '#team-showcase',
-    bio: 'مهندسة حاسوب متخصصة بالذكاء الاصطناعي ومعالجة اللغة العربية الطبيعية، تعمل على بناء تطبيقات ذكية عملية من جمع البيانات وتدريب النماذج حتى دمجها في تطبيقات قابلة للاستخدام.',
-    bioEn: 'Computer engineer specializing in AI and Arabic NLP, building practical intelligent applications — from data and model training to real-world apps.',
-    
-    bioEn: 'Computer engineer passionate about AI and software development, with hands-on experience in Python, C++, and intelligent applications, focusing on Arabic NLP, computer vision, and machine learning. She has built research-driven projects including university query classification with Arabic models like AraBERT and apps using OpenCV and MediaPipe, plus modern web frontends connected to AI services. She cares about practical end-to-end solutions — from problem understanding and data work to training models and shipping them in real applications.',
-    
-    shortBioEn: 'Computer engineer focused on AI and Arabic NLP (AraBERT), computer vision, and practical applications.',
+    bio: 'مهندسة حاسوب متخصصة بالذكاء الاصطناعي ومعالجة اللغة العربية، تبني تطبيقات ذكية عملية من البيانات وحتى التطبيق.',
+    bioEn: 'Computer engineer specializing in AI and Arabic NLP, building practical intelligent apps from data to product.',
+    shortBio: 'تطبيقات ذكية بمعالجة اللغة العربية والرؤية الحاسوبية.',
+    shortBioEn: 'Intelligent apps with Arabic NLP and computer vision.',
     skills: ['Python', 'NLP', 'تعلّم الآلة', 'الرؤية الحاسوبية', 'تطوير الويب'],
     skillsEn: ['Python', 'NLP', 'Machine Learning', 'Computer Vision', 'Web Development'],
     socials: {

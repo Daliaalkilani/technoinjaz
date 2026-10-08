@@ -7,7 +7,8 @@ import { projectTags, plainExcerpt } from '@/lib/text';
 
 const ABDULGHANI_ID = `${SITE_URL}/#abdulghani-alhamdi`;
 const ABDULGHANI_URL = absoluteUrl('/about#team-showcase');
-const ABDULGHANI_SAME_AS = Object.values(ABDULGHANI_SOCIALS);
+// sameAs takes profile URLs only (the email is exposed separately as `email`).
+const ABDULGHANI_SAME_AS = Object.values(ABDULGHANI_SOCIALS).filter((v) => /^https?:\/\//.test(v));
 
 export function abdulghaniPersonSchema() {
   const url = ABDULGHANI_URL;
