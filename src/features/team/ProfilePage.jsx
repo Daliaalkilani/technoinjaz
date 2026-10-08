@@ -93,21 +93,21 @@ export default function ProfilePage({ member, onBack }) {
             {memberVision && (
               <div className="triplet-card vision-card">
                 <div className="triplet-icon">🔭</div>
-                <h3 className="triplet-title">{isEn ? 'My Vision' : 'رؤيتي'}</h3>
+                <h2 className="triplet-title">{isEn ? 'My Vision' : 'رؤيتي'}</h2>
                 <p className="triplet-desc">{memberVision}</p>
               </div>
             )}
             {memberMission && (
               <div className="triplet-card mission-card">
                 <div className="triplet-icon">🚀</div>
-                <h3 className="triplet-title">{isEn ? 'My Mission' : 'رسالتي'}</h3>
+                <h2 className="triplet-title">{isEn ? 'My Mission' : 'رسالتي'}</h2>
                 <p className="triplet-desc">{memberMission}</p>
               </div>
             )}
             {memberGoals && (
               <div className="triplet-card goals-card">
                 <div className="triplet-icon">🎯</div>
-                <h3 className="triplet-title">{isEn ? 'My Goals' : 'الأهداف'}</h3>
+                <h2 className="triplet-title">{isEn ? 'My Goals' : 'الأهداف'}</h2>
                 <p className="triplet-desc">{memberGoals}</p>
               </div>
             )}

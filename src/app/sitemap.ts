@@ -3,6 +3,22 @@ import { getAllProjects } from '@/lib/content/projects';
 import { getAllArticles } from '@/lib/content/articles';
 import { teamMembers } from '@/data/teamData';
 import { absoluteUrl } from '@/config/site';
+import { execFileSync } from 'node:child_process';
+
+// Last commit touching a project's AR/EN content, so crawlers re-fetch pages that changed.
+// Falls back to no <lastmod> when git history is unavailable (e.g. shallow CI checkouts).
+function projectLastModified(slug: string): Date | undefined {
+  try {
+    const out = execFileSync(
+      'git',
+      ['log', '-1', '--format=%cI', '--', `src/content/projects/${slug}.md`, `src/content/projects-en/${slug}.md`],
+      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }
+    ).trim();
+    return out ? new Date(out) : undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 export const dynamic = 'force-static';
 
@@ -21,7 +37,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     s('/'),
     s('/projects'),
-    ...getAllProjects().map((p) => ({ ...s(`/projects/${p.slug}`), ...img(p.image) })),
+    ...getAllProjects().map((p) => {
+      const lastModified = projectLastModified(p.slug);
+      return { ...s(`/projects/${p.slug}`), ...(lastModified ? { lastModified } : {}), ...img(p.image) };
+    }),
     s('/articles'),
     ...getAllArticles().map((a) => ({
       url: absoluteUrl(`/articles/${a.slug}`),

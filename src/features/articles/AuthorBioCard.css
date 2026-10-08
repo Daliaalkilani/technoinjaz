@@ -140,3 +140,10 @@
   background: linear-gradient(135deg, rgba(2, 132, 199, 0.06) 0%, rgba(13, 148, 136, 0.04) 100%), #ffffff;
   border-color: rgba(2, 132, 199, 0.2);
 }
+
+/* Keep the base hover effect: the card's smaller ::before size must collapse on hover too. */
+.author-bio-card .social-btn:hover::before {
+  width: 0px;
+  height: 0px;
+  border-width: 0px;
+}

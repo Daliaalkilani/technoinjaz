@@ -59,14 +59,19 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
   const [copied, setCopied] = useState(false);
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
 
-  // Warm up the PDF reader in the background so the book opens quickly
+  // Warm up the PDF reader so the book opens quickly. The report is several MB, so the
+  // idle warm-up only runs on wide screens without Save-Data; phones warm it up on
+  // intent instead (touching / hovering / focusing the book or the PDF button).
   useEffect(() => {
     if (!project.pdfUrl) return;
+    const nav = navigator as Navigator & { connection?: { saveData?: boolean } };
+    if (nav.connection?.saveData || !window.matchMedia('(min-width: 1024px)').matches) return;
     const w = window as Window & { requestIdleCallback?: (cb: () => void) => number };
     const run = () => preloadFlipbook(project.pdfUrl);
     if (w.requestIdleCallback) w.requestIdleCallback(run);
     else setTimeout(run, 1500);
   }, [project.pdfUrl]);
+  const warmPdf = () => preloadFlipbook(project.pdfUrl);
 
   const handleShare = () => {
     const url = `${SITE_URL}/projects/${project.slug}`;
@@ -156,6 +161,8 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
               type="button"
               className="project-icon-btn project-action-btn--pdf"
               onClick={() => setIsPdfModalOpen(true)}
+              onPointerEnter={warmPdf}
+              onFocus={warmPdf}
               title={isEn ? "Read Project PDF Documentation" : "استعراض ملف المشروع (PDF)"}
             >
               <FileText size={18} />
@@ -225,6 +232,8 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
               <div 
                 className="book-3d-wrapper"
                 onClick={() => setIsPdfModalOpen(true)}
+                onPointerEnter={warmPdf}
+                onFocus={warmPdf}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
@@ -248,18 +257,19 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
                       />
                     ) : project.image ? (
                       <div className="book-cover-img-wrapper" style={{ position: 'relative', width: '100%', height: '100%' }}>
-                        <img
+                        <ResponsiveImage
                           src={project.image}
                           alt={(isEn ? (project.titleEn || project.title) : project.title)}
                           className="book-cover-img"
+                          sizes="(max-width: 640px) 360px, 480px"
                         />
                         <div className="book-cover-overlay">
-                          <h4 className="book-cover-title">{isEn ? (project.titleEn || project.title) : project.title}</h4>
+                          <p className="book-cover-title">{isEn ? (project.titleEn || project.title) : project.title}</p>
                         </div>
                       </div>
                     ) : (
                       <div className="book-cover-fallback">
-                        <h4 className="title" style={{ fontSize: '1rem' }}>{isEn ? (project.titleEn || project.title) : project.title}</h4>
+                        <p className="title" style={{ fontSize: '1rem' }}>{isEn ? (project.titleEn || project.title) : project.title}</p>
                       </div>
                     )}
                     {/* Realistic Physical Spine Hinge & Crease */}

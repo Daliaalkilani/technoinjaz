@@ -49,6 +49,13 @@ export function abdulghaniPersonSchema() {
   };
 }
 
+/** Public profile URLs of a team member (top-level fields + `socials`), deduplicated; email excluded. */
+export function memberProfileUrls(member: any): string[] {
+  const keys = ['linkedin', 'github', 'x', 'facebook', 'instagram', 'telegram'];
+  const urls = keys.flatMap((k) => [member[k], member.socials?.[k]]).filter(Boolean);
+  return [...new Set(urls as string[])];
+}
+
 export function personSchema(member: any) {
   if (member.id === 'abdulghani') {
     return abdulghaniPersonSchema();
@@ -64,11 +71,8 @@ export function personSchema(member: any) {
     jobTitle: member.role,
     description: member.shortBio || member.bio,
     knowsAbout: member.skills || undefined,
-    sameAs: [
-      ...(member.github ? [member.github] : []),
-      ...(member.facebook ? [member.facebook] : []),
-      ...(member.linkedin ? [member.linkedin] : [])
-    ],
+    sameAs: memberProfileUrls(member),
+    ...(member.socials?.email ? { email: member.socials.email } : {}),
     worksFor: {
       '@id': ORG_ID
     }

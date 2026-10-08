@@ -1364,3 +1364,44 @@ picture {
 #contact.footer-boot-placeholder:empty {
   visibility: hidden;
 }
+
+/* =========================================================================
+   Light-mode contrast (WCAG AA 4.5:1). The brand sky/cyan accents (#38bdf8,
+   #0284c7, #00d2ff) are tuned for the dark theme and drop to ~2–3.5:1 on the
+   light surfaces, so small text here uses the deeper sky-700/cyan-800 shades.
+   `html[...]` raises specificity above the per-feature `[data-theme] .x` rules.
+   ========================================================================= */
+html[data-theme="light"] .bottom-card-link,
+html[data-theme="light"] .bottom-card-link span,
+html[data-theme="light"] .article-tag-chip,
+html[data-theme="light"] .breadcrumb-category,
+html[data-theme="light"] .project-category-badge,
+html[data-theme="light"] .project-category-badge span,
+html[data-theme="light"] .related-project-cat,
+html[data-theme="light"] .te-toc__link,
+html[data-theme="light"] .te-toc__item.is-active .te-toc__link,
+html[data-theme="light"] .article-fullscreen-markdown-body h3 {
+  color: #0369a1;
+}
+
+html[data-theme="light"] .markdown-prose :not(pre) > code,
+html[data-theme="light"] .md-table-wrap :not(pre) > code {
+  color: #155e75;
+}
+
+html[data-theme="light"] .project-cta-btn {
+  background: #0369a1;
+}
+html[data-theme="light"] .project-cta-btn:hover {
+  background: #075985;
+}
+
+html[data-theme="light"] .project-action-btn--pptx {
+  color: #9a3412;
+}
+
+html[data-theme="light"] .card-readtime-capsule,
+html[data-theme="light"] .card-readtime-capsule span,
+html[data-theme="light"] .category-chip-count {
+  color: #64748b;
+}

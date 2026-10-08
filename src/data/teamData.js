@@ -152,7 +152,9 @@ export const teamMembers = [
     socials: {
       linkedin: 'https://www.linkedin.com/in/abdulhadyalkilani?utm_source=share_via&utm_content=profile&utm_medium=member_android',
       github: 'https://github.com/Abdulhady-Alkilani',
-      facebook: 'https://www.facebook.com/abdulhady.alkilani?mibextid=ZbWKwL'
+      facebook: 'https://www.facebook.com/abdulhady.alkilani?mibextid=ZbWKwL',
+      x: 'https://x.com/abdulhadyki',
+      email: 'abdulhadyki@gmail.com'
     },
     projects: [
       { name: 'منظومات الويب والأنظمة الذكية', desc: 'تطوير حلول برمجية متقدمة تربط التطبيقات بالخدمات السحابية ونماذج الذكاء الاصطناعي' }

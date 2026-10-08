@@ -6,6 +6,7 @@ import { faqData } from '@/data/faqData';
 import { ARTICLE_QA } from '@/data/qa/articles';
 import { PROJECT_QA } from '@/data/qa/projects';
 import { ORG, absoluteUrl } from '@/config/site';
+import { memberProfileUrls } from '@/seo/schemas';
 
 export const dynamic = 'force-static';
 
@@ -39,7 +40,11 @@ export async function GET() {
 ` ;
 
   for (const m of team.filter((t) => !t.isPlaceholder)) {
-    text += `### ${m.name} — ${m.role}\n- URL: ${absoluteUrl('/team/' + m.id)}\n- Bio: ${(m.shortBio || m.bio || '').slice(0, 200)}\n\n`;
+    const profiles = memberProfileUrls(m);
+    text += `### ${m.name} — ${m.role}\n- URL: ${absoluteUrl('/team/' + m.id)}\n- Bio: ${(m.shortBio || m.bio || '').slice(0, 200)}\n`;
+    if (profiles.length) text += `- Profiles: ${profiles.join(', ')}\n`;
+    if (m.socials?.email) text += `- Email: ${m.socials.email}\n`;
+    text += `\n`;
   }
 
   text += `

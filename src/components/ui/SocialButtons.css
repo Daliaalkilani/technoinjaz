@@ -201,3 +201,13 @@
 [data-theme="light"] .social-btn.x:hover {
   box-shadow: 0 6px 20px rgba(15, 20, 25, 0.3);
 }
+
+/* Size variants re-declare ::before dimensions with equal/higher specificity than the
+   base hover rule, which kept the inner disc on hover and hid the (now white) icon.
+   Re-assert the hover collapse at matching specificity for every variant. */
+.social-buttons-wrapper .social-btn:hover::before,
+.social-buttons-wrapper.large .social-btn:hover::before {
+  width: 0px;
+  height: 0px;
+  border-width: 0px;
+}

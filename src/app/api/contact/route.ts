@@ -135,7 +135,6 @@ export async function POST(request: Request) {
 
     const { env } = await getCloudflareContext();
     const db = (env as unknown as Env).DB;
-    if (!db) return NextResponse.json({ success: false, message: 'Storage not configured.' }, { status: 500 });
 
     const ip = request.headers.get('cf-connecting-ip') || null;
     const ua = (request.headers.get('user-agent') || '').slice(0, 300) || null;
@@ -164,14 +163,23 @@ export async function POST(request: Request) {
       try { waSent = (await sendWa(waUrl, waKey, name, data)) ? 1 : 0; } catch { waSent = 0; }
     }
 
-    const result = await db
-      .prepare(
-        'INSERT INTO contact_messages (name, specialization, university, email, phone, inquiry, lang, ip, user_agent, email_sent, wa_sent) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11)'
-      )
-      .bind(name, data.specialization || null, data.university || null, email || null, data.phone || null, inquiry, lang, ip, ua, emailSent, waSent)
-      .run();
+    let stored = false;
+    try {
+      if (!db) throw new Error('D1 binding "DB" is not configured');
+      const result = await db
+        .prepare(
+          'INSERT INTO contact_messages (name, specialization, university, email, phone, inquiry, lang, ip, user_agent, email_sent, wa_sent) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11)'
+        )
+        .bind(name, data.specialization || null, data.university || null, email || null, data.phone || null, inquiry, lang, ip, ua, emailSent, waSent)
+        .run();
+      stored = Boolean(result?.meta?.changes);
+    } catch (err) {
+      console.error('contact archive leg failed:', err instanceof Error ? err.message : err);
+    }
 
-    if (!result?.meta?.changes) return NextResponse.json({ success: false, message: 'Could not store message.' }, { status: 500 });
+    // Delivered if any leg reached the owner: reporting failure after the email went out
+    // makes the page fall back to the visitor's mail app, i.e. a duplicate message.
+    if (!stored && !emailSent && !waSent) return NextResponse.json({ success: false, message: 'Could not deliver message.' }, { status: 500 });
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error('contact api error', err);
