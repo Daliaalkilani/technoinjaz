@@ -226,6 +226,10 @@
 
 .project-featured-image {
   width: 100%;
+  /* Follow the image's own 16:9 ratio; without height:auto the HTML height attribute
+     (941) won, so phones showed a 348×520 portrait crop of a landscape cover. */
+  height: auto;
+  aspect-ratio: 16 / 9;
   max-height: 520px;
   object-fit: cover;
   /* Covers keep their subject in the upper two thirds and leave a dark empty band
