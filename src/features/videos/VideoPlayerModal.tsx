@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useId } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Play, Clock, Sparkles, Bookmark, BookmarkCheck } from 'lucide-react';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
@@ -66,6 +66,11 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
   const { isSaved, toggleSave } = useSavedProjects();
 
   const prevFocusedElement = React.useRef<HTMLElement | null>(null);
+  // Spinner over the black frame until the player shows its first frame (and while buffering).
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    setReady(false);
+  }, [isOpen, video]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -188,6 +193,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
               className="video-modal-iframe"
+              onLoad={() => window.setTimeout(() => setReady(true), 700)}
             />
           ) : isDirectVideo ? (
             <video
@@ -197,11 +203,19 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
               playsInline
               preload="metadata"
               className="video-modal-video"
+              onPlaying={() => setReady(true)}
+              onWaiting={() => setReady(false)}
+              onError={() => setReady(true)}
             />
           ) : (
             <div className="video-modal-fallback">
               <Play size={44} />
               <p>{isEn ? 'Video preview is unavailable' : 'تعذر تحميل مشغل الفيديو'}</p>
+            </div>
+          )}
+          {(youtubeId || isDirectVideo) && !ready && (
+            <div className="video-modal-loading" role="status" aria-label={isEn ? 'Loading video' : 'جارٍ تحميل الفيديو'}>
+              <span className="video-modal-loading-ring" aria-hidden="true" />
             </div>
           )}
         </div>

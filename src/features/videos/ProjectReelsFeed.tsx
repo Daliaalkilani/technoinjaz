@@ -137,6 +137,12 @@ export const ProjectReelsFeed: React.FC = () => {
   const [hydrated, setHydrated] = useState(false);
   const [localVideoOk, setLocalVideoOk] = useState<Record<string, boolean | undefined>>({});
   const localVideoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
+  // Per reel: true once the video is actually playing (false while it loads or buffers),
+  // so a spinner can sit on the cover instead of a still thumbnail.
+  const [mediaReady, setMediaReady] = useState<Record<string, boolean>>({});
+  const setReady = useCallback((id: string, ready: boolean) => {
+    setMediaReady((m) => (m[id] === ready ? m : { ...m, [id]: ready }));
+  }, []);
   // Instagram-style: the sound button shows while paused and for a moment after a
   // reel starts / sound is toggled, then hides while the video plays.
   const [peek, setPeek] = useState(true);
@@ -281,6 +287,12 @@ export const ProjectReelsFeed: React.FC = () => {
     Object.values(localVideoRefs.current).forEach((v) => { if (v) v.muted = isMuted; });
   }, [isMuted]);
 
+  /* A reel that becomes active mounts a fresh player: show the spinner until it plays. */
+  useEffect(() => {
+    const r = FEED_REELS[activeIndex];
+    if (r) setReady(r.id, false);
+  }, [activeIndex, setReady]);
+
   /* Start the active local video, pause the rest. */
   useEffect(() => {
     FEED_REELS.forEach((r, i) => {
@@ -307,6 +319,9 @@ export const ProjectReelsFeed: React.FC = () => {
   const onIframeLoad = (e: React.SyntheticEvent<HTMLIFrameElement>) => {
     const el = e.currentTarget;
     el.classList.add('is-loaded');
+    // The YouTube player paints its first frame shortly after the frame's `load`.
+    const activeId = FEED_REELS[activeIndex]?.id;
+    if (activeId) window.setTimeout(() => setReady(activeId, true), 700);
     // The embedded player needs a moment after `load` before it accepts commands.
     [250, 900, 2000].forEach(ms =>
       setTimeout(() => {
@@ -493,6 +508,8 @@ export const ProjectReelsFeed: React.FC = () => {
                       autoPlay
                       preload="metadata"
                       onError={() => setLocalVideoOk((m) => ({ ...m, [reel.id]: false }))}
+                      onPlaying={() => setReady(reel.id, true)}
+                      onWaiting={() => setReady(reel.id, false)}
                       tabIndex={-1}
                     />
                   )}
@@ -508,6 +525,12 @@ export const ProjectReelsFeed: React.FC = () => {
                     />
                   )}
                   <div className="reel-vignette" aria-hidden="true" />
+                  {reel.kind === 'video' && isActive && hydrated && !isPaused && !mediaReady[reel.id] &&
+                    ((reel.localSrc && localVideoOk[reel.id] === true) || (reel.youtubeId && localVideoOk[reel.id] !== true)) && (
+                    <div className="reel-loading" role="status" aria-label={isEn ? 'Loading video' : 'جارٍ تحميل الفيديو'}>
+                      <span className="reel-loading-ring" aria-hidden="true" />
+                    </div>
+                  )}
                 </div>
 
                 {/* Tap layer: play / pause */}

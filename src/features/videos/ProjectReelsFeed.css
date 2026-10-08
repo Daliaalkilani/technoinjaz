@@ -942,3 +942,49 @@ body:has(.reels-shell) .cinematic-footer-wrapper {
   animation: none !important;
   visibility: hidden;
 }
+
+/* Loading spinner over the cover until the active reel's video actually plays
+   (also while it re-buffers). Sits under the tap layer so play/pause still works. */
+.reel-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  background: radial-gradient(circle at center, rgba(0, 0, 0, 0.35) 0, rgba(0, 0, 0, 0) 55%);
+  animation: reel-loading-in 0.25s ease 0.15s both;
+}
+
+.reel-loading-ring {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.22);
+  border-top-color: #00d2ff;
+  border-right-color: #00d2ff;
+  animation: reel-loading-spin 0.85s linear infinite;
+  filter: drop-shadow(0 0 10px rgba(0, 210, 255, 0.45));
+}
+
+@keyframes reel-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes reel-loading-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reel-loading-ring {
+    animation-duration: 1.8s;
+  }
+}
