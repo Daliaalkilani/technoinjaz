@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { mat4, quat, vec2, vec3 } from 'gl-matrix';
 import SocialButtons from '@/components/ui/SocialButtons';
+import { buildNeighbors, focusView, loadSeating } from './sphereSeating';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import './InfiniteMenu.css';
 
@@ -60,9 +61,8 @@ precision highp float;
 uniform sampler2D uTex;
 uniform int uItemCount;
 uniform int uAtlasSize;
-uniform int uFocusActive;
-uniform int uFocusInstance;
-uniform int uFocusItem;
+// Member shown on each disc (seating plan computed in JS, see sphereSeating.js).
+uniform int uItemMap[64];
 
 out vec4 outColor;
 
@@ -71,15 +71,7 @@ in float vAlpha;
 flat in int vInstanceId;
 
 void main() {
-    int itemIndex = vInstanceId % uItemCount;
-    if (uFocusActive == 1) {
-        // While a member dwells at his seat, his face shows on that instance only:
-        // every other instance statically mapped to him borrows another member's face.
-        if (vInstanceId != uFocusInstance && itemIndex == uFocusItem && uItemCount > 1) {
-            int off = 1 + (vInstanceId % (uItemCount - 1));
-            itemIndex = (uFocusItem + off) % uItemCount;
-        }
-    }
+    int itemIndex = uItemMap[vInstanceId] % uItemCount;
     int cellsPerRow = uAtlasSize;
     int cellX = itemIndex % cellsPerRow;
     int cellY = itemIndex / cellsPerRow;
@@ -732,9 +724,7 @@ class InfiniteGridMenu {
       uFrames: gl.getUniformLocation(this.discProgram, 'uFrames'),
       uItemCount: gl.getUniformLocation(this.discProgram, 'uItemCount'),
       uAtlasSize: gl.getUniformLocation(this.discProgram, 'uAtlasSize'),
-      uFocusActive: gl.getUniformLocation(this.discProgram, 'uFocusActive'),
-      uFocusInstance: gl.getUniformLocation(this.discProgram, 'uFocusInstance'),
-      uFocusItem: gl.getUniformLocation(this.discProgram, 'uFocusItem')
+      uItemMap: gl.getUniformLocation(this.discProgram, 'uItemMap')
     };
 
     this.discGeo = new DiscGeometry(56, 1);
@@ -752,7 +742,7 @@ class InfiniteGridMenu {
     this.icoGeo.subdivide(1).spherize(this.SPHERE_RADIUS);
     // Reposition members on the sphere WITHOUT changing their sequence: sort the icosahedron
     // vertices top-to-bottom (then by longitude) so consecutive members sit in a clean
-    // ordered spiral instead of scattered points. Mapping stays i -> sortedVertex[i % len].
+    // ordered spiral instead of scattered points. Members are then seated by this.seat.
     const __sortedVerts = this.icoGeo.vertices
       .map(v => v.position)
       .map(p => ({ y: p[1], lon: Math.atan2(p[2], p[0]), p }))
@@ -760,6 +750,12 @@ class InfiniteGridMenu {
       .map(o => o.p);
     this.instancePositions = __sortedVerts;
     this.DISC_INSTANCE_COUNT = this.icoGeo.vertices.length;
+    // Who sits where: neighbours around any disc are always different members.
+    this.neighbors = buildNeighbors(this.instancePositions);
+    this.imageKeys = this.items.map(it => String(it.image || '').split('/').pop().replace(/\.(\d+\.)?(avif|jpe?g|png|webp)$/i, ''));
+    this.seat = loadSeating(this.neighbors, this.items.length, this.imageKeys);
+    this.itemMap = new Int32Array(64);
+    this.itemMapKey = '';
     this.#initDiscInstances(this.DISC_INSTANCE_COUNT);
 
     this.worldMatrix = mat4.create();
@@ -859,7 +855,7 @@ class InfiniteGridMenu {
     // While a member dwells at his seat, no other instance may repeat his face.
     if (this.targetVertexIndex >= 0 && !this.isTransitioning && !this.control.isPointerDown) {
       this.focusInstance = this.targetVertexIndex;
-      this.focusItem = this.targetMemberIndex % Math.max(1, this.items.length);
+      this.focusItem = this.seat[this.targetVertexIndex] ?? 0;
       this.focusActive = true;
     } else {
       this.focusActive = false;
@@ -916,9 +912,7 @@ class InfiniteGridMenu {
 
     gl.uniform1i(this.discLocations.uItemCount, this.items.length);
     gl.uniform1i(this.discLocations.uAtlasSize, this.atlasSize);
-    gl.uniform1i(this.discLocations.uFocusActive, this.focusActive ? 1 : 0);
-    gl.uniform1i(this.discLocations.uFocusInstance, this.focusInstance);
-    gl.uniform1i(this.discLocations.uFocusItem, this.focusItem);
+    gl.uniform1iv(this.discLocations.uItemMap, this.#currentItemMap());
 
     gl.uniform1f(this.discLocations.uFrames, this.#frames);
     gl.uniform1f(this.discLocations.uScaleFactor, this.scaleFactor);
@@ -985,7 +979,7 @@ class InfiniteGridMenu {
       this.isTransitioning = false;
       this.control.tourRotation = null;
       const nearestVertexIndex = this.#findNearestVertexIndex();
-      this.targetMemberIndex = nearestVertexIndex % Math.max(1, this.items.length);
+      this.targetMemberIndex = this.seat[nearestVertexIndex] ?? 0;
       this.targetVertexIndex = nearestVertexIndex;
       // No onActiveItemChange while dragging: the label must not flip mid-spin.
 
@@ -997,7 +991,7 @@ class InfiniteGridMenu {
         // Just released drag & drop: snap to the chosen member and reset dwell timer
         this.wasDragging = false;
         const nearestVertexIndex = this.#findNearestVertexIndex();
-        this.targetMemberIndex = nearestVertexIndex % Math.max(1, this.items.length);
+        this.targetMemberIndex = this.seat[nearestVertexIndex] ?? 0;
         this.targetVertexIndex = nearestVertexIndex;
         // Settle onto the released member (classic snap), then dwell there.
         this.isTransitioning = false;
@@ -1097,6 +1091,19 @@ class InfiniteGridMenu {
     return vec3.normalize(p, p);
   }
 
+  /** Seating shown this frame: the plan, adjusted so the centred member's ring is unique. */
+  #currentItemMap() {
+    const focus = this.focusActive ? this.focusInstance : -1;
+    const key = `${focus}`;
+    if (key !== this.itemMapKey) {
+      const view = focus >= 0 ? focusView(this.seat, this.neighbors, focus, this.items.length, this.imageKeys) : this.seat;
+      this.itemMap.fill(0);
+      this.itemMap.set(view.slice(0, 64));
+      this.itemMapKey = key;
+    }
+    return this.itemMap;
+  }
+
   #findBestVertexForMember(memberIndex) {
     const n = this.control.snapDirection;
     const inversOrientation = quat.conjugate(quat.create(), this.control.orientation);
@@ -1104,9 +1111,8 @@ class InfiniteGridMenu {
 
     let maxD = -Infinity;
     let bestVertex = 0;
-    const len = Math.max(1, this.items.length);
     for (let i = 0; i < this.instancePositions.length; ++i) {
-      if (i % len === memberIndex) {
+      if (this.seat[i] === memberIndex) {
         const d = vec3.dot(nt, this.instancePositions[i]);
         if (d > maxD) {
           maxD = d;
