@@ -1,56 +1,32 @@
-import { NextResponse } from 'next/server';
-import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { isSameOrigin, type D1 } from '@/lib/server/db';
+import { getDB, apiError, apiOk, isSameOrigin, readJson } from '@/lib/server/db';
+import { EMAIL_RE } from '@/lib/server/auth';
 import { isRateLimited, clientIp, HOUR } from '@/lib/server/rateLimit';
+import { startSubscription } from '@/lib/server/newsletter';
 
 export const dynamic = 'force-dynamic';
 
+/**
+ * POST { email, lang } → double opt-in: stores a pending subscription and emails a
+ * confirmation link. Answers { status: 'pending' | 'already', sent }.
+ */
 export async function POST(request: Request) {
-  if (!isSameOrigin(request)) return NextResponse.json({ success: false, message: 'Forbidden.' }, { status: 403 });
+  if (!isSameOrigin(request)) return apiError(403, 'forbidden');
+  const body = await readJson(request);
+  const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : '';
+  const lang = body?.lang === 'en' ? 'en' : 'ar';
+  if (!EMAIL_RE.test(email) || email.length > 254) return apiError(400, 'invalid_email');
+
   try {
-    const body = await request.json();
-    const email = body?.email ? String(body.email).trim().toLowerCase() : '';
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email || !emailRegex.test(email)) {
-      return NextResponse.json(
-        { success: false, message: 'Invalid email address provided.' },
-        { status: 400 }
-      );
-    }
-
-    const { env } = await getCloudflareContext();
-    const db = (env as { DB?: { prepare(q: string): { bind(...v: unknown[]): { run(): Promise<{ meta?: { changes?: number } }> } } } }).DB;
-    if (!db) {
-      return NextResponse.json(
-        { success: false, message: 'Storage not configured.' },
-        { status: 500 }
-      );
-    }
-
-    if (await isRateLimited(db as unknown as D1, [{ name: 'newsletter:ip', id: clientIp(request), limit: 10, windowMs: HOUR }])) {
-      return NextResponse.json({ success: false, message: 'Too many requests, please try again later.' }, { status: 429 });
-    }
-
-    const result = await db
-      .prepare(
-        'INSERT INTO subscribers (email) VALUES (?1) ON CONFLICT(email) DO NOTHING'
-      )
-      .bind(email)
-      .run();
-
-    const inserted = (result.meta?.changes ?? 0) > 0;
-    return NextResponse.json({
-      success: true,
-      message: inserted
-        ? 'Subscribed successfully.'
-        : 'This email is already subscribed.',
-      alreadySubscribed: !inserted,
-    });
-  } catch {
-    return NextResponse.json(
-      { success: false, message: 'Subscription failed. Please try again.' },
-      { status: 500 }
-    );
+    const db = await getDB();
+    const limited = await isRateLimited(db, [
+      { name: 'newsletter:ip', id: clientIp(request), limit: 10, windowMs: HOUR },
+      { name: 'newsletter:email', id: email, limit: 3, windowMs: HOUR }
+    ]);
+    if (limited) return apiError(429, 'rate_limited');
+    const result = await startSubscription(db, email, lang);
+    return apiOk(result);
+  } catch (err) {
+    console.error('newsletter subscribe error', err instanceof Error ? err.message : 'unknown');
+    return apiError(500, 'server_error');
   }
 }

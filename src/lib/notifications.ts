@@ -1,5 +1,4 @@
 'use client';
-import { formsConfigured, sendForm } from '@/lib/forms';
 
 import { PROJECTS_DATA, type ProjectItem } from '@/data/projectsData';
 import { blogArticlesData, type BlogArticle } from '@/data/blogArticlesData';
@@ -241,40 +240,49 @@ export async function subscribeUser(email: string, isEn = false): Promise<{
     };
   }
 
-  // 1. Save locally
+  // 1. Server: double opt-in. Stores a pending subscription and emails a confirmation
+  //    link; the address only receives newsletters after clicking it.
+  let apiStatus: 'pending' | 'already' | null = null;
+  let mailSent = true;
+  try {
+    const res = await fetch('/api/newsletter/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ email: cleanEmail, lang: isEn ? 'en' : 'ar' })
+    });
+    const data = (await res.json().catch(() => null)) as { ok?: boolean; status?: 'pending' | 'already'; sent?: boolean; error?: string } | null;
+    if (!res.ok || !data?.ok) {
+      const code = data?.error || 'server_error';
+      return {
+        success: false,
+        message:
+          code === 'rate_limited'
+            ? isEn ? 'Too many attempts. Please try again later.' : 'محاولات كثيرة، يرجى المحاولة لاحقاً.'
+            : code === 'invalid_email'
+              ? isEn ? 'Please enter a valid email address.' : 'يرجى إدخال بريد إلكتروني صحيح.'
+              : isEn ? 'Subscription failed. Please try again.' : 'تعذّر الاشتراك، يرجى المحاولة مرة أخرى.',
+        pushGranted: false
+      };
+    }
+    apiStatus = data.status ?? 'pending';
+    mailSent = data.sent !== false;
+  } catch {
+    return {
+      success: false,
+      message: isEn ? 'Could not reach the server. Check your connection and try again.' : 'تعذّر الاتصال بالخادم، تحقق من الإنترنت وحاول مجدداً.',
+      pushGranted: false
+    };
+  }
+
+  // 2. Remember locally (drives the footer / bell state on this device).
   try {
     localStorage.setItem(STORAGE_KEY_SUBSCRIBED, 'true');
     localStorage.setItem(STORAGE_KEY_EMAIL, cleanEmail);
     localStorage.setItem(STORAGE_KEY_SUBSCRIBED_AT, new Date().toISOString());
     localStorage.setItem(STORAGE_KEY_LAST_CHECK, Date.now().toString());
-
-    // Also track in list of subscribers
-    const rawList = localStorage.getItem('techno_subscribers_list');
-    const list = rawList ? JSON.parse(rawList) : [];
-    if (!list.includes(cleanEmail)) {
-      list.push(cleanEmail);
-      localStorage.setItem('techno_subscribers_list', JSON.stringify(list));
-    }
   } catch (err) {
     console.error('Error writing subscription to localStorage:', err);
-  }
-
-  // 2. Deliver the subscription to the team inbox (Web3Forms) so it is really kept;
-  //    the local API ping stays as a fallback when the service is not configured.
-  if (formsConfigured()) {
-    void sendForm('اشتراك جديد في نشرة تكنو إنجاز', {
-      'البريد الإلكتروني': cleanEmail,
-      'اللغة': isEn ? 'English' : 'العربية',
-      'التاريخ': new Date().toISOString()
-    }, cleanEmail);
-  } else try {
-    fetch('/api/newsletter/subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: cleanEmail })
-    }).catch(e => console.warn('API subscription ping:', e));
-  } catch (err) {
-    // Non-blocking
   }
 
   // 3. Request native browser notification permission
@@ -312,9 +320,18 @@ export async function subscribeUser(email: string, isEn = false): Promise<{
 
   return {
     success: true,
-    message: isEn
-      ? `Subscription activated for (${cleanEmail})! You will always receive notifications for any new releases.`
-      : `تم اشتراكك وتفعيل التنبيهات بنجاح للبريد (${cleanEmail})! ستصلك إشعارات فورية بكل جديد يُنشر على المنصة.`,
+    message:
+      apiStatus === 'already'
+        ? isEn
+          ? `(${cleanEmail}) is already subscribed to the newsletter.`
+          : `البريد (${cleanEmail}) مشترك مسبقاً في النشرة.`
+        : mailSent
+          ? isEn
+            ? `Almost done! We sent a confirmation link to (${cleanEmail}) — click it to start receiving our newsletter.`
+            : `خطوة أخيرة! أرسلنا رابط تأكيد إلى (${cleanEmail})، اضغطه لتبدأ النشرة بالوصول إليك.`
+          : isEn
+            ? `Saved (${cleanEmail}). The confirmation email could not be sent right now; we will retry later.`
+            : `تم حفظ (${cleanEmail})، لكن تعذّر إرسال رسالة التأكيد الآن.`,
     pushGranted
   };
 }

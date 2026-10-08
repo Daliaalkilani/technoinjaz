@@ -1,29 +1,14 @@
-import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { getDB, apiError, apiOk } from '@/lib/server/db';
-import { getSessionUser } from '@/lib/server/auth';
+import { requireAdmin } from '@/lib/server/admin';
 
 export const dynamic = 'force-dynamic';
-
-// Owner inboxes allowed to read the contact archive. Override with the ADMIN_EMAILS
-// Worker variable (comma-separated). The account must also have a verified email, so
-// registering one of these addresses without owning the mailbox grants nothing.
-const DEFAULT_ADMINS = ['abdalganih1@gmail.com', 'info@abdalgani.com', 'info@technoenjaz.com'];
-
-function adminEmails(): string[] {
-  try {
-    const raw = (getCloudflareContext().env as { ADMIN_EMAILS?: string }).ADMIN_EMAILS;
-    if (raw) return raw.split(',').map((s) => s.trim().toLowerCase()).filter(Boolean);
-  } catch {}
-  return DEFAULT_ADMINS;
-}
 
 /** GET ?before=<id> → latest 50 contact messages (newest first), admins only. */
 export async function GET(request: Request) {
   try {
     const db = await getDB();
-    const user = await getSessionUser(request, db);
-    if (!user) return apiError(401, 'unauthorized');
-    if (!user.email_verified || !adminEmails().includes(user.email.toLowerCase())) return apiError(403, 'forbidden');
+    const admin = await requireAdmin(request, db);
+    if ('error' in admin) return apiError(admin.error === 'unauthorized' ? 401 : 403, admin.error);
 
     const before = Number(new URL(request.url).searchParams.get('before')) || Number.MAX_SAFE_INTEGER;
     const { results = [] } = await db

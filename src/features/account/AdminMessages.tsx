@@ -68,7 +68,10 @@ export default function AdminMessages() {
     <div className="admin-msgs" dir={isEn ? 'ltr' : 'rtl'}>
       <header className="admin-msgs-header">
         <h1>{isEn ? 'Contact Messages' : 'رسائل نموذج التواصل'}</h1>
-        <span className="admin-msgs-count">{isEn ? `${total} total` : `المجموع: ${total}`}</span>
+        <span className="admin-msgs-count">
+          {isEn ? `${total} total` : `المجموع: ${total}`} ·{' '}
+          <Link href="/admin/subscribers">{isEn ? 'Newsletter →' : 'النشرة البريدية ←'}</Link>
+        </span>
       </header>
 
       {state === 'loading' ? (

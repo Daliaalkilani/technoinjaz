@@ -25,13 +25,15 @@ const encodeHeader = (s: string) => (/^[\x20-\x7e]*$/.test(s) ? s : `=?UTF-8?B?$
 const wrap76 = (s: string) => s.replace(/(.{76})/g, '$1\r\n');
 
 /** multipart/alternative (text + HTML), both parts base64 UTF-8. */
-export function buildMime(opts: { to: string; subject: string; text: string; html: string; replyTo?: string }): string {
+export function buildMime(opts: { to: string; subject: string; text: string; html: string; replyTo?: string; headers?: Record<string, string> }): string {
   const boundary = '----=_te_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
   const domain = MAIL_FROM_ADDR.split('@')[1];
   const headers = [
     `From: ${MAIL_FROM}`,
     `To: ${opts.to}`,
     ...(opts.replyTo ? [`Reply-To: ${opts.replyTo}`] : []),
+    // Extra headers (e.g. List-Unsubscribe); CR/LF stripped so values cannot inject headers.
+    ...Object.entries(opts.headers ?? {}).map(([k, v]) => `${k}: ${String(v).replace(/[\r\n]+/g, ' ')}`),
     `Subject: ${encodeHeader(opts.subject)}`,
     `Date: ${new Date().toUTCString()}`,
     `Message-ID: <${crypto.randomUUID()}@${domain}>`,
@@ -48,7 +50,7 @@ export function buildMime(opts: { to: string; subject: string; text: string; htm
  * is missing or Cloudflare refuses the message — e.g. a recipient that is not a
  * verified destination while the zone only has Email Routing (not Email Sending).
  */
-export async function sendMail(opts: { to: string; subject: string; text: string; html: string; replyTo?: string; tag: string }): Promise<boolean> {
+export async function sendMail(opts: { to: string; subject: string; text: string; html: string; replyTo?: string; headers?: Record<string, string>; tag: string }): Promise<boolean> {
   try {
     const { env } = await getCloudflareContext({ async: true });
     const binding = (env as { SEND_EMAIL?: SendEmailBinding }).SEND_EMAIL;

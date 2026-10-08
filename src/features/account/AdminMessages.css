@@ -162,3 +162,155 @@
     transform: rotate(360deg);
   }
 }
+
+/* ---------- Newsletter admin (/admin/subscribers) ---------- */
+.admin-nl-stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.admin-nl-stats > div {
+  flex: 1 1 140px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-nl-stats strong {
+  font-size: 1.6rem;
+}
+
+.admin-nl-stats span {
+  font-size: 13px;
+  color: var(--text-muted, #94a3b8);
+}
+
+.admin-nl-export {
+  margin: 0;
+  align-self: center;
+  text-decoration: none;
+}
+
+.admin-nl-send h2,
+.admin-nl-history h2 {
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-nl-history {
+  margin-top: 26px;
+}
+
+.admin-nl-select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.25);
+  color: inherit;
+  font: inherit;
+}
+
+.admin-nl-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.admin-nl-actions .admin-msgs-more {
+  margin: 0;
+}
+
+.admin-nl-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-nl-primary {
+  background: #0369a1 !important;
+  color: #ffffff !important;
+  border-color: #0369a1 !important;
+}
+
+.admin-nl-progress {
+  width: 100%;
+  margin-top: 14px;
+  accent-color: #0369a1;
+}
+
+.admin-nl-note {
+  margin: 12px 0 0;
+  font-size: 14px;
+}
+
+.admin-nl-note.ok {
+  color: #34d399;
+}
+
+.admin-nl-note.err {
+  color: #f87171;
+}
+
+.admin-nl-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.admin-nl-table th,
+.admin-nl-table td {
+  padding: 10px 12px;
+  text-align: start;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.admin-nl-status.active {
+  color: #34d399;
+}
+
+.admin-nl-status.pending {
+  color: #fbbf24;
+}
+
+.admin-nl-status.unsubscribed {
+  color: var(--text-muted, #94a3b8);
+}
+
+[data-theme='light'] .admin-nl-stats > div {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='light'] .admin-nl-select {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+[data-theme='light'] .admin-nl-table th,
+[data-theme='light'] .admin-nl-table td {
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='light'] .admin-nl-note.ok,
+[data-theme='light'] .admin-nl-status.active {
+  color: #047857;
+}
+
+[data-theme='light'] .admin-nl-note.err {
+  color: #b91c1c;
+}
+
+[data-theme='light'] .admin-nl-status.pending {
+  color: #b45309;
+}
