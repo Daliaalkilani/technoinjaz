@@ -1,57 +1,90 @@
 # Weapon Detection System Using Artificial Intelligence Technologies
 
-## Project Summary
+A project to develop **a computer vision system for real-time detection of weapons** such as knives and pistols from the built-in camera of a laptop or phone, using the Ultralytics **YOLOv8** object detection algorithm. The project was carried out academically with technical assistance from **Techno Enjaz** and aims at a low-cost tool that does not require specialized surveillance equipment and could be useful in schools, public buildings, and shops.
 
-The Techno Enjaz office participated in supporting the development of the **Weapon Detection System Using Artificial Intelligence Technologies** project, an engineering project developed by a technical team, with the support focused on the technical side, guiding the development of the software model and the solution architecture.
+The system runs in **Python** with **OpenCV** for reading video and passes each frame to two trained models, one for knives (knife_model.pt) and one for pistols (gun_model.pt), drawing a yellow box labeled "Target Zone" around a detected weapon. The project documented successful knife and pistol detections in a live stream, with no published quantitative performance metrics.
 
-The project aims to develop a computer vision model capable of detecting weapons from a camera feed using artificial intelligence technologies and the YOLO object detection algorithms. The system relies on analyzing images and video in real time to identify the presence of weapons such as knives and pistols and to display the location of the detected object within the frame.
-
-## Project Information
+## Project Facts
 
 | Item | Details |
 |---|---|
-| Project type | Object detection system using artificial intelligence and computer vision |
-| Domain | Intelligent security systems / Computer Vision |
-| Project status | Prototype |
-| Year | 2024 - 2025 |
-| Techno Enjaz role | Technical support and guidance during project development |
-| Technologies | Python, OpenCV, Ultralytics YOLO, YOLOv8 |
+| Project type | Real-time AI object detection system |
+| Field | Computer vision, deep learning, smart security systems |
+| Year | 2024–2025 |
+| Project status | Prototype tested with a live stream from a laptop camera |
+| Techno Enjaz role | Technical support and assistance during project development |
+| Core technologies | Python, OpenCV, Ultralytics YOLOv8, Anaconda, Jupyter Notebook, Visual Studio Code |
+| Outputs | Real-time localization of a knife or pistol in the frame with a "Target Zone" box |
 
-## Techno Enjaz's Scope of Contribution
+## The Problem
 
-Techno Enjaz's contribution consisted of supporting the student team during the project's development stages, and included:
+The project starts from the growing threats associated with carrying weapons in public and private places, and from the reliance of many surveillance systems on continuous human monitoring that can be delayed or mistaken. It proposes using a camera that already exists in a laptop or phone together with an object detection model, giving a flexible way to spot a weapon the moment it appears in front of the camera without expensive equipment or complex infrastructure.
 
-- Technical guidance in building the detection model using computer vision technologies.
-- Assistance in organizing the software solution's structure and integrating the system's components.
-- Methodical review of the model's operation and camera feed processing.
-- Supporting model testing and the analysis of detection results.
+## Project Objectives
+
+- Develop an intelligent system for real-time weapon detection using AI.
+- Rely on the cameras of mobile devices or those built into computers.
+- Make the system applicable in multiple environments without costly equipment.
+- Reduce reliance on human monitoring and speed up response.
+- Design a flexible model that can be developed further.
+
+## Techno Enjaz's Role
+
+The project was carried out academically, with **technical assistance and support from Techno Enjaz during development**. It is presented among the office's work as an example of its support for YOLO-based object detection projects and real-time camera stream processing.
 
 ## How the System Works
 
-The system relies on a workflow that starts with capturing frames from the camera, then passing them to the detection model to analyze the image and identify the detected objects, and finally displaying the result on the screen with the object's location marked within the frame.
+1. **Camera initialization:** The program starts the camera and checks that it is ready.
+2. **Model loading:** The YOLO model trained on weapons is activated.
+3. **Processing loop:** The program enters a loop that runs as long as the camera is active.
+4. **Frame capture:** OpenCV reads the current frame and prepares it in the format the model expects.
+5. **Detection:** The model analyzes the frame and identifies the type and position of the detected object.
+6. **Display:** The result is shown on screen immediately with a box marking the weapon's location.
+7. **Exit:** The loop stops when the user presses the "q" key, closing the camera and ending the program.
 
 ## Tools and Technologies Used
 
-- Python.
-- OpenCV for image and video processing and handling the camera feed.
-- Ultralytics YOLO for object detection.
-- Custom detection models for knives and pistols, according to the project files.
-- Development environments used in the project, such as Anaconda, Jupyter Notebook, and Visual Studio Code.
+| Tool | Role in the project |
+|---|---|
+| Python | Main programming language, chosen for its integration with YOLOv8 and OpenCV |
+| OpenCV | Reading video from the camera and processing frames in real time |
+| Ultralytics YOLOv8 | Object detection model, with the option to use pre-trained models or retrain them on new data |
+| Custom models | knife_model.pt for detecting knives and gun_model.pt for detecting pistols |
+| Anaconda | Managing an isolated environment for the OpenCV and Ultralytics libraries |
+| Jupyter Notebook | Trying code step by step and viewing detection results |
+| Visual Studio Code | Writing code and organizing project files |
 
-## Results and Testing
+The project summary states that the model was trained on a dataset containing various types of weapons under different lighting conditions and angles, without specifying the dataset's size, source, or split.
 
-The model was tested through a live camera feed, with documented detection cases for knives and pistols and the detection area displayed within the frame.
+## Testing and Results
 
-The currently available material does not include quantitative performance indicators such as mAP, Precision, Recall, or FPS, so no accuracy or numeric performance figures are presented.
+The system was tested with a live stream from the laptop camera:
 
-## Technical Challenges
+| Case | What the report documents |
+|---|---|
+| Knife detection | A person holding a knife in a live stream was detected automatically and marked with a yellow "Target Zone" box using knife_model.pt |
+| Pistol detection | The pistol held by the person was detected automatically and surrounded by a yellow box with the same label using gun_model.pt |
 
-The challenges associated with the project included:
+The report describes detection accuracy as "good" or "acceptable" and notes that the model may need further training to improve accuracy in different environments or changing lighting. The material includes no quantitative performance indicators such as mAP, Precision, Recall, or FPS, so no numerical accuracy or performance figures are shown. Figures such as 85%, 87%, or 93% mentioned in the report come from previously published studies and are not results of this system.
 
-- Variation in lighting conditions and its effect on detection quality.
-- The need to optimize the model when operating in different environments.
-- Achieving a balance between processing speed and detection accuracy.
-- Handling variation in the angles at which objects appear.
+## Challenges and Limitations of the Current Version
+
+- Varying lighting conditions affect detection quality, and further training is needed to work in different environments.
+- Handling different viewing angles of objects, and balancing processing speed against detection accuracy.
+- Detection is limited to two documented classes (knife and pistol) using two separate models.
+- The report does not document an audible alarm, alerts sent to an external party, or timestamped log storage, even though these appear among the requirements; what the results show is the visual display of detections.
+- The system was tested with a single laptop camera in a test setting, not on surveillance cameras at a real site.
+
+## Possible Future Development
+
+According to the directions set out in the project:
+
+- Covering more types and sizes of weapons, and improving accuracy in low light and bad weather.
+- Connecting to live-stream surveillance cameras to analyze video without storing large amounts of data.
+- Strengthening system security with encryption and protection protocols against cyberattacks.
+- Tracking the detected target through multi-angle cameras or GPS.
+- Control interfaces for security teams with the ability to browse and analyze alert logs.
+- Linking to security databases, and extending detection to hazardous materials or suspicious activities.
 
 To see how object detection differs from classifying a whole image, read our article [How Does AI Image Classification Work? From CNN to Vision Transformers](/articles/ai-image-classification).
 

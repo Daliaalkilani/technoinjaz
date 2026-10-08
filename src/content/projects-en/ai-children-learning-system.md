@@ -1,106 +1,103 @@
 # AI-Powered Children's Learning System
 
-## Project Summary
+An academic project carried out by a team of students with technical assistance from **Techno Enjaz** to develop **an interactive learning system for children based on artificial intelligence and image processing**. A child points the camera at an everyday object, such as a cup, a ball, or a book, and the system recognizes it, displays its name on screen, and speaks the name aloud. It also identifies the color of an object held in front of the camera and recognizes the objects in an image the user uploads from the device.
 
-The project team developed an interactive educational system based on artificial intelligence and computer vision to help children recognize objects and colors in a visual and auditory way. The system relies on analyzing images captured by the camera and using object detection techniques to display the name of the detected item, with color recognition support and audio output of the results.
+The working prototype was built in **Python** and uses **YOLOv8** (through the ultralytics library) for object recognition, the **HSV color model** with **OpenCV** for color detection, and **Tkinter** for a three-button graphical interface. The prototype carried out all three of its tasks in the documented practical tests. The project reports no quantitative accuracy measurements, so its results are presented as a functional proof of a prototype.
 
-Techno Enjaz contributed to supporting the project's development in collaboration with the students, providing technical assistance and guidance during the model-building phases and the preparation of the system's software components.
-
-The project was submitted as an Information Technology project for the 2024–2025 academic year.
-
----
-
-## Project Information
+## Project Facts
 
 | Item | Details |
 |---|---|
-| Project type | Interactive educational system based on AI and computer vision |
-| Sector | Educational technology / Artificial intelligence |
-| Project status | Working prototype developed and tested within the academic project |
-| Techno Enjaz scope | Technical support and guidance for the project in collaboration with the students |
-| Technologies | Python, OpenCV, YOLO, HSV, Tkinter |
+| Project type | Interactive learning system based on computer vision |
+| Field | Educational technology, artificial intelligence, image processing |
 | Year | 2024–2025 |
+| Project status | Working desktop prototype, tested on a variety of objects, colors, and images |
+| Techno Enjaz role | Technical support and assistance to the students during project development |
+| Core technologies | Python, YOLOv8 (ultralytics), OpenCV, HSV, Tkinter, Anaconda |
+| Outputs | Object recognition with spoken names, color detection, recognition of uploaded image content |
 
----
+## The Problem
 
-## Project Idea
+The project starts from the view that a child's early years have the greatest influence on intellectual and language development, and that traditional education often relies on rote learning, makes the teacher the only source of information, and offers few interactive methods that encourage children to explore and learn by doing.
 
-The system aims to make learning more interactive by using the camera to recognize objects around the child and speak the name of the detected item aloud. It also includes color analysis using the HSV model to help the child identify colors in a direct, hands-on way.
+Children naturally learn by observing and handling the things around them. The project therefore aimed at a tool that links the child directly to their surroundings: when a child points the camera at a ball or a flower and hears its name immediately, the word is tied to the real object, and color recognition adds a further dimension to visual learning.
 
-The project combines computer vision techniques with a simple user interface to deliver a learning experience that engages both sight and sound.
+## Project Objectives
 
----
+- Promote interactive learning by connecting the child to nearby objects through the camera.
+- Expand children's vocabulary and improve their ability to recognize and name objects.
+- Encourage children's curiosity to explore their environment in an enjoyable way.
+- Strengthen the link between names and objects, supporting visual and verbal memory.
+- Provide an extensible learning tool that keeps pace with AI technologies.
 
-## Techno Enjaz Scope of Work
+## Techno Enjaz's Role
 
-Techno Enjaz supported the project in collaboration with the students through:
-
-- Providing technical guidance throughout system development.
-- Assisting in selecting and coordinating the software components used.
-- Reviewing the solution-building methodology and linking the computer vision components to the interface.
-- Supporting the development of the prototype and the testing of its functions.
-
----
+The project was carried out academically by the students, with **technical assistance and support from Techno Enjaz during development**. It is presented among the office's work as an example of its support for educational projects that apply computer vision and AI in tools designed for children.
 
 ## How the System Works
 
-The system goes through the following stages:
+The system runs through a graphical interface with three buttons, each with its own task:
 
-1. Capturing an image or video from the camera.
-2. Processing the image using computer vision libraries.
-3. Analyzing the image to recognize the objects present.
-4. Determining the color when needed using HSV analysis.
-5. Displaying the result to the user and speaking the name aloud.
+1. **Start the camera:** the system captures the live feed from the computer's camera and passes the frames to the **YOLOv8** model, which identifies the object in front of the camera.
+2. **Display and speak the name:** the system writes the detected object's name on screen and plays audio that pronounces it clearly, so the child sees the object and hears its name at the same moment.
+3. **Detect the color:** in color mode the child holds an object in front of the camera; the system converts the frame from BGR to **HSV**, identifies the color, and shows it on screen.
+4. **Upload an image:** the user selects an image from the device, and the system recognizes the objects in it and writes their names on the image.
 
----
+## Color Recognition with the HSV Model
 
-## Technologies Used
+The HSV model separates **hue**, **saturation**, and **value (brightness)**, which makes defining a range for each color less sensitive to lighting changes than the RGB model. The book explains the OpenCV-based HSV thresholding method in these steps:
 
-### Object Detection
+- Convert each frame from BGR to HSV with `cvtColor`; hue runs from 0 to 179, and saturation and value from 0 to 255.
+- Define lower and upper bounds for each color as NumPy arrays, with two separate ranges for red because it sits at both ends of the hue range.
+- Create a binary mask with `inRange`, then clean it with erosion and dilation.
+- Extract object outlines with `findContours`, ignore small areas, and write the color name over the detected object.
 
-YOLO-based object detection algorithms were used to recognize the items present in images.
+## Software and Tools
 
-### Color Analysis
+| Tool | Role in the project |
+|---|---|
+| Python | Main development language |
+| Anaconda | Isolated environment with a specific Python version to avoid package conflicts |
+| OpenCV | Video capture, image processing, and color analysis |
+| YOLOv8 (ultralytics) | Object recognition in the live feed and uploaded images |
+| Tkinter | The three-button graphical interface |
+| Jupyter Notebook and VS Code | Environments for writing and testing code |
 
-The HSV model was used for color analysis; separating hue from lighting helps the system cope better with changes in the image.
+## Documented Results
 
-### Software and Libraries
+The three tasks were tested in practice, with the results described by the project as follows:
 
-- Python.
-- OpenCV.
-- YOLO.
-- Tkinter for building the user interface.
-- Development and testing environments such as Anaconda and Jupyter Notebook.
+| Task | What was tested | Documented result |
+|---|---|---|
+| Recognizing objects and speaking their names | Various objects in front of the camera, such as a ball, a book, and a pen, under different lighting | Recognized objects well, especially in good lighting; the documented example shows "cup" displayed and spoken |
+| Color detection | Basic colors such as red, green, and blue under different lighting | Identified the object's color and displayed it on screen |
+| Recognizing uploaded image content | Images containing animals and household items | Recognized the objects and wrote their names, including a cat in the documented example |
 
----
+The project concluded that the system performed all three tasks well and consistently and met its intended goals. However, the book **reports no project-specific quantitative values** such as precision, recall, mAP, or processing speed, nor the number of test samples, and while its conclusion mentions positive interaction from children, it gives no method or data for that evaluation. The accuracy figures in the theoretical chapter belong to other studies and are not results of this system.
 
-## System Functions
+## Challenges and Limitations of the Current Version
 
-### Object Recognition
+- Confusion when classifying some objects that look alike in shape or color, and weaker recognition of objects that are partly hidden or overlap others.
+- Color detection is affected by ambient lighting; colors with close shades are sometimes misclassified, and the system can identify the right object but the wrong color because of reflections or shadows.
+- Slight delay when running the model on low-spec computers, and difficulty running it on weak phones.
+- Speech output had to be synchronized with on-screen results without delay.
+- Lower recognition accuracy on low-quality or blurry images, and more errors in cluttered scenes.
+- Some objects were poorly represented in the data, calling for retraining on larger datasets.
+- The Tkinter interface needs visual restructuring to be more appealing to children.
+- The documented version is a desktop application using the computer's camera; a mobile app remains part of the development plans.
 
-The system analyzes the camera feed, recognizes the objects present, and displays the name of each item.
+## Possible Future Development
 
-### Color Recognition
+According to the proposals set out in the project, the system could be developed by:
 
-The system recognizes basic colors using HSV analysis.
-
-### Audio Output
-
-Recognition results are converted into audible output to support the child's learning experience.
-
----
-
-## Technical Challenges
-
-The project faced several technical challenges, including:
-
-- Variations in lighting and their effect on recognition quality.
-- Visual similarity between some objects.
-- Partial occlusion of objects.
-- Differences in the performance of the devices used.
-- The need to design a child-friendly interface.
-
----
+- Adopting newer YOLO versions and improving color processing to reduce the effect of lighting.
+- Expanding the database with more objects and colors, using images from different angles and settings.
+- Building a complete mobile app.
+- A more child-friendly interface with learning games such as matching colors to objects, encouraging audio feedback, and age-specific customization.
+- Pronouncing names in more than one language and dialect.
+- Integrating augmented reality to show the detected object in 3D.
+- Adapting the system for children with special needs and connecting it to e-learning platforms.
+- A dashboard for parents and teachers with periodic reports on the objects and colors the child has learned.
 
 ## Have a Similar Project?
 

@@ -1,82 +1,118 @@
 # System for Measuring the Water Level Inside a Tank Using an Ultrasonic Sensor
 
-This project was developed as an academic prototype for measuring **the water level percentage inside a tank** using an ultrasonic sensor, displaying the reading directly on an LCD screen and transmitting it wirelessly to a mobile application over Bluetooth. The student carried out the project with the assistance of the **Techno Enjaz office** during the prototype development path.
+This project was developed as an academic prototype for measuring **the water level percentage inside a tank** using an **HC-SR04** ultrasonic sensor and an **Arduino Nano** board, displaying the reading directly on a **16×2 LCD** and sending it wirelessly through an **HC-05 Bluetooth** module to an Android phone app built with **MIT App Inventor**. The student carried out the project with the assistance of the **Techno Enjaz office** during the prototype development path.
 
-The project reflects hands-on experience in integrating sensors, microcontrollers, and a mobile interface within a single system — starting from measuring the distance to the water surface, through processing the reading on an Arduino Nano, to displaying the level percentage on the screen and sending it to the phone.
+The project reflects hands-on experience in integrating sensors, microcontrollers, and a mobile interface within a single system — from contactless measurement of the distance to the water surface, through processing the reading on the Arduino Nano, to displaying the level percentage on the screen and the phone. In the documented tests the system showed **0%** for an empty tank, about **58%** at a level close to the middle, and **100%** when full.
 
 ## Project Facts
 
 | Item | Details |
 | --- | --- |
 | Project type | Academic prototype for a water-level measurement system |
-| Sector | Embedded systems and sensor-based monitoring |
-| Techno Enjaz role | Assisting the student during the development of the project and the prototype |
-| Project status | Tested prototype |
+| Field | Embedded systems and sensor-based monitoring |
 | Year | 2024–2025 |
-| Controller unit | Arduino Nano |
-| Sensor | HC-SR04 Ultrasonic Sensor |
-| Display screen | LCD 16×2 |
-| Wireless communication | HC-05 Bluetooth |
-| Mobile application | MIT App Inventor |
+| Project status | Prototype tested in three tank states |
+| Techno Enjaz role | Technical support and assistance to the student during project development |
+| Core technologies | Arduino Nano, HC-SR04, 16×2 LCD, HC-05 Bluetooth, Arduino IDE, MIT App Inventor |
+| Outputs | Water-level percentage on the LCD and on the phone app via Bluetooth |
 
-## About the Project
+## The Problem
 
-The system relies on an HC-SR04 sensor mounted at the top of the tank to measure the distance between the sensor and the water surface. The reading is sent to an Arduino Nano, where it is processed and converted into **a percentage representing the water level inside the tank** according to the lower and upper height limits defined in the prototype. The percentage is then shown on the LCD screen and is also sent via the HC-05 module to a mobile application built using MIT App Inventor.
+Many homes and facilities rely on manual estimates or simple tools to know how much water is in their tanks, and these methods do not give accurate or up-to-date readings. This can lead to a tank running dry unnoticed and water being cut off suddenly at home, or to disruption of production processes that depend on a steady water supply in industrial settings, as well as water waste due to a lack of clear visibility of consumption.
 
-The documented version of the project relies on Bluetooth for communication with the phone, so wireless monitoring takes place within Bluetooth range — it is not internet-based monitoring or a cloud platform.
+The project proposes a simple solution that measures the level without contact with the water and displays it at the tank and on a phone, so the user knows the water level without opening or manually checking the tank.
+
+## Project Objectives
+
+- Measure the distance between the water surface and the device with an ultrasonic sensor and convert it into a water level using mathematical equations.
+- Provide an immediate visual readout on an LCD connected to the system.
+- Build a phone app for following the water level without direct access to the tank.
+- Integrate wireless communication via the HC-05 module to transfer data without cables.
+- Offer a solution that can be adapted to residential and industrial settings.
 
 ## The Role of the Techno Enjaz Office
 
-The project was implemented by the student in an academic context **with the assistance of the Techno Enjaz office**. The office's contribution consisted of supporting the development path of the project's prototype, while the detailed work of each party — such as designing the circuit, writing the firmware, or building the mobile application — is not itemized in the available materials; these tasks are therefore not attributed to the office alone on this page.
-
-## System Components
-
-The prototype consists of a set of elements that work together within a single measurement-and-display path:
-
-- **Arduino Nano:** receives the sensor reading, processes it, and converts it into a level percentage.
-- **HC-SR04:** measures the distance between the top of the tank and the water surface using ultrasonic waves.
-- **LCD 16×2:** displays the water level percentage locally.
-- **HC-05 Bluetooth:** transmits the reading wirelessly to the phone.
-- **MIT App Inventor:** used to build the application interface that receives the data and displays it to the user.
+The student carried out the project in an academic context **with the assistance of the Techno Enjaz office**. The office's contribution consisted of supporting the prototype development path, while the detailed work of each party — such as circuit design, firmware writing, or building the mobile app — is not detailed in the available materials, so these tasks are not individually attributed to the office on this page.
 
 ## How the System Works
 
-Measurement begins with the HC-SR04 sensor sending ultrasonic waves toward the water surface and measuring the time it takes for the echo to return. This information is used to calculate the distance between the sensor and the water surface. The Arduino Nano then processes the distance value and converts it into a percentage representing the water level within the tank's defined height.
+1. The HC-SR04 sensor is mounted at the top of the tank, facing the water surface.
+2. The Arduino Nano sends a pulse of at least 10 microseconds to the **Trigger** pin, and the sensor emits ultrasonic waves toward the water surface.
+3. The echo return time is measured on the **Echo** pin using the `pulseIn()` function.
+4. Distance is calculated as **Distance = (Time × Speed of sound) ÷ 2**, where the speed of sound in air is about 343 m/s at room temperature, and the result is divided by 2 because the wave travels the distance there and back.
+5. A software algorithm on the Arduino Nano converts the distance into a **water-level percentage** based on the tank's minimum and maximum height limits.
+6. The percentage is shown on the 16×2 LCD, which refreshes periodically with the latest reading.
+7. The same percentage is sent through the HC-05 module (UART interface) to the phone app, which displays it to the user.
 
-The result is sent to two paths at the same time: the LCD screen, to display the reading directly next to the tank, and the HC-05 module, which transmits the percentage to the mobile application over Bluetooth. In this way, users can check the water level without needing to open or manually inspect the tank.
+The documented version of the project relies on Bluetooth to communicate with the phone, so wireless monitoring works within Bluetooth range; it is not internet-based or cloud-platform monitoring.
+
+## System Components
+
+| Component | Role in the system | Documented specifications |
+| --- | --- | --- |
+| Arduino Nano | Receives the sensor reading, processes it, and converts it to a percentage | 5V operation, 7–12V input, 16 MHz oscillator, 14 digital pins and 8 analog inputs |
+| HC-SR04 | Measures the distance to the water surface using ultrasonic waves | 5V, 2–400 cm range, 15-degree effective measuring angle, about 15 mA while operating |
+| 16×2 LCD | Displays the water-level percentage locally | 16 characters on two lines, HD44780 controller, 4-bit wiring (D4–D7) with a potentiometer for contrast |
+| HC-05 Bluetooth | Sends the reading wirelessly to the phone | 3.3–5V, Bluetooth V2.0, UART serial link over TX/RX |
+| MIT App Inventor app | Receives and displays the data on an Android phone | Visual block-based environment (Designer and Blocks Editor) |
+
+The controller program was written in the **Arduino IDE**, and the power, ground, and signal pins of each element were wired according to the final circuit diagram.
 
 ## Technical Challenges
 
-Developing the prototype surfaced a number of practical challenges directly related to integrating electronic and software systems:
+Developing the prototype revealed several practical challenges directly related to integrating electronic and software systems:
 
-- **Component integration:** connecting the sensor, the LCD screen, and the Bluetooth module to the Arduino required tuning the wiring and coordinating the data exchange between the components.
-- **Measurement sensitivity to the environment:** the project noted that factors such as temperature and humidity can affect the ultrasonic sensor's reading, which made it necessary to account for correcting readings during development.
-- **Wireless link stability:** temporary Bluetooth dropouts appeared when the distance increased or interference was present.
-- **Reading processing:** converting the raw distance into an easily understood percentage required tuning the algorithm and the measurement limits specific to the tank.
+- **Component integration:** Connecting the sensor, LCD, and Bluetooth module to the Arduino required repeated wiring and code changes to solve data-transfer issues between the parts.
+- **Environmental sensitivity:** The project noted that temperature and humidity slightly affected the ultrasonic sensor's readings, which called for additional mathematical equations to correct them.
+- **Wireless link stability:** Temporary Bluetooth dropouts occurred with greater distance or interference and were addressed by improving the connection settings.
+- **Reading processing and timing:** Turning the raw distance into an easy-to-understand percentage required tuning the algorithm and the tank's measurement limits, with a careful balance between responsiveness and accuracy.
 
 ## Testing and Results
 
 The prototype was tested in three main tank states:
 
-### The Empty Tank
+| Tank state | Displayed reading |
+| --- | --- |
+| Completely empty | 0% |
+| Filled to roughly half its height | about 58% |
+| Filled to the upper limit used in the test | 100% |
 
-When the tank was tested empty, the system displayed a reading of **0%**, confirming the operation of the minimum reference point in the prototype.
+### Empty Tank
 
-### A Mid-Level Amount
+When tested with an empty tank, the system displayed a reading of **0%**, confirming that the lower limit point of the prototype works.
 
-When the tank was filled to a level described in the report as close to the middle of the height, the system displayed a reading of approximately **58%**. This test shows that the system converts the measured distance into a relative reading between the empty and full points. This case alone is not used to compute an accuracy figure, because the reference level itself was described as approximate.
+### Medium Level
 
-### The Full Tank
+When the tank was filled to a level described in the report as close to mid-height, the system displayed a reading of roughly **58%**. This test shows that the system converts the measured distance into a relative reading between the empty and full points. This case alone is not used to calculate an accuracy percentage, because the reference level itself was described as approximate.
 
-When the tank was filled to the upper limit used in the experiment, the system displayed a reading of **100%**, demonstrating the operation of the upper reference point in the prototype.
+### Full Tank
+
+When the tank was filled up to the upper limit used in the test, the system displayed a reading of **100%**, showing that the upper limit point of the prototype works.
 
 ## What Does the Prototype Prove?
 
-The tests show that the prototype was able to carry out the basic measurement-and-display cycle across three different tank states, with the sensor, controller, screen, and phone communication all integrated. The available materials do not include an extended calibration test or a documented error rate across the full measurement range, so the results are presented here as functional tests of the prototype rather than as a certified measurement accuracy.
+The tests show that the prototype was able to carry out the basic measurement and display cycle across three different tank states, integrating the sensor, the controller, the screen, and the phone connection. The available materials do not include extended calibration testing or a documented error rate across the full measurement range, so the results here are presented as functional tests of the prototype rather than a standard certification of measurement accuracy.
+
+## Limitations of the Current Version
+
+- The system shows a **percentage** of the water level; it does not show water volume in liters in the documented app.
+- The phone connection is local via Bluetooth, with no internet-based monitoring.
+- The current version has no low-level alerts or consumption reports; these are proposed as future work.
+- Testing was done on a single test tank in three states, without systematic measurement of the error rate.
 
 ## Future Development Opportunities
 
-The prototype can be extended in the future by improving calibration, adding auxiliary sensors to compensate for the effect of temperature and humidity, or replacing Bluetooth with a networked communication medium such as Wi‑Fi when monitoring from outside the local range is needed. Level-limit alerts could also be added, or the system could be developed to integrate with the control of a pump or valve — these functions are treated as future developments and are not part of the currently documented version.
+According to the recommendations in the project, the prototype could be extended by:
+
+- Improving accuracy with several sensors working in parallel or more advanced sensors to handle the effect of temperature and humidity.
+- Developing processing algorithms that reduce delay and interference errors, and using AI to analyze data and forecast water consumption.
+- Adding more information and alerts on the LCD when the level drops below a set point.
+- Adding weekly or monthly reports and instant notifications in the app for leaks or lost connection.
+- Replacing Bluetooth with a longer-range, more stable technology such as Wi-Fi or Zigbee.
+- Customizable settings for different tank types and sizes, and better resistance to dust and humidity.
+- Integrating the system with IoT technologies as part of a smart home or wider water management systems.
+
+These remain future developments and are not part of the current documented version.
 
 For the bigger picture of how such a prototype grows into a connected system, read our article [What Is the Internet of Things (IoT)? Architecture, Protocols, Applications, and Security](/articles/internet-of-things-iot).
 

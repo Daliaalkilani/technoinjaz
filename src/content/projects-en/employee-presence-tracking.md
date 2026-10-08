@@ -14,7 +14,11 @@ For implementation, the prototype relied on **YOLOv8** for person detection and 
 | Project status | Prototype tested on a video simulating an office environment |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | YOLOv8, DeepSORT, OpenCV, pandas, datetime |
-| Outputs | Person tracking, defined work areas, presence-time calculation, structured data, export to Excel |
+| Outputs | Person tracking, defined work areas, presence-time calculation, a database (ID, office number, duration, date), export to Excel |
+
+## The Problem
+
+Many companies rely on fingerprint readers or smart cards to record arrival and departure. These methods capture only the moments of entering and leaving; they do not show whether an employee is actually present in their work area during the shift, or has left it for long periods without permission. The project starts from this gap: instead of recording two timestamps, it tries to measure **actual time spent inside the work area** throughout the recording, using a camera and video analysis.
 
 ## About the Project
 
@@ -28,6 +32,16 @@ The project was carried out academically by the students, **with technical assis
 
 This page does not attribute full project execution or independent training of all models to Techno Enjaz; the office's role in this project was **technical assistance to the students during development**.
 
+## Development Stages
+
+According to the project documentation, implementation went through the following stages:
+
+1. **Requirements analysis:** identifying the need to distinguish actual presence from absence or leaving the work area, and to compute real working time to the second.
+2. **Data collection and preparation:** obtaining video recordings from a work environment and manually annotating images in YOLO format for preparing the detection model.
+3. **Model design:** choosing YOLOv8 for person detection and combining it with DeepSORT for tracking, and assigning a defined work area to each worker to check their presence inside it.
+4. **Software integration:** writing custom code to compute presence duration with the datetime and pandas libraries, and linking the results to a dedicated database.
+5. **Testing and refinement:** trying the system in a semi-realistic environment and addressing people overlapping and temporary loss of tracking.
+
 ## How the System Works
 
 The prototype goes through several interconnected stages:
@@ -37,8 +51,21 @@ The prototype goes through several interconnected stages:
 3. Passing the detection results to **DeepSORT** to maintain a tracking ID for each person across frames.
 4. Comparing each tracked person's position against the predefined work areas.
 5. Calculating the tracked person's presence duration inside the area using software timing logic.
-6. Recording the data associated with the ID, area, duration, and date.
-7. Producing the data in a reviewable form, including exporting it to Excel in the documented version.
+6. Recording the data associated with the ID, office (area) number, duration, and date in a dedicated database.
+7. Producing the data in a reviewable form, including exporting it to an Excel file at the end of the shift, as designed in the documented version.
+
+## What the Running System Shows
+
+The project presents screenshots of the system running on the office-scene video, showing the following elements:
+
+| Visual element | Meaning |
+|---|---|
+| Red boxes around people | People detected by the model in the scene |
+| Green work-area borders | Predefined work areas, each with an office number |
+| Seconds counter | Time each person has spent in their area |
+| Area border turning red | The associated person has left the work area, as in the example of the employee who left area 5 |
+
+The results are saved in a table containing the employee ID, office number, working duration, and date, and then exported to an Excel file.
 
 ## Technical Challenges
 
@@ -55,7 +82,7 @@ The experiment demonstrated that the following core functions can be implemented
 - Determining when a tracked person is inside a predefined work area.
 - Computing the time a tracked person spends inside the area and displaying it in seconds.
 - Visually changing the area's status when the tracked person leaves it.
-- Storing data associated with the ID, area, duration, and date.
+- Storing data associated with the ID, office number, duration, and date.
 - Exporting the data to an Excel file for review.
 
 These results represent **functional success of the prototype** and are not a measurement of a production system's accuracy. The source did not report project-specific quantitative values such as Precision, Recall, mAP, FPS, IDF1, or ID-switch rate, so no undocumented accuracy or speed figures are attributed to the current version.
@@ -87,6 +114,7 @@ The project was designed as an academic prototype, so its results should be read
 - A tracking ID does not automatically equal a confirmed employee identity.
 - The report lacks sufficient quantitative metrics to judge detection or tracking accuracy under wide operating conditions.
 - Face recognition and integration with human resources systems are mentioned as future development directions, not as proven functions of the current version.
+- The report mentions sending alerts to managers when someone leaves the work area, but what the screenshots document is the visual alert of the area changing color, with no separate notification mechanism shown.
 
 ## Practical Value of the Project
 
@@ -99,10 +127,12 @@ For Techno Enjaz, the project reflects part of the office's experience in **supp
 According to the development directions stated in the project, the prototype could be extended in the future through:
 
 - Adding a reliable mechanism for verifying employee identity, such as face recognition where the appropriate legal and privacy requirements are in place.
-- Improving performance under different lighting conditions and heavier crowding.
-- Connecting the data to human resources management systems.
-- Developing an administrative interface for viewing records and reports.
-- Expanding the alerting system and the work-area rules.
+- Improving performance under different lighting conditions and heavier crowding, through advanced image processing or cameras that perform better in low light.
+- Connecting the data to human resources management systems to simplify attendance records, reporting, and payroll calculation.
+- Developing an interface for managers to view records and reports, and one that lets employees view their attendance records and request corrections.
+- Analyzing arrival and departure patterns and identifying peak times to support workforce planning.
+- A customizable alerting system with criteria set by the manager, such as exceeding a set number of minutes of absence.
+- Exploring reinforcement learning to improve the distinction between work-related and non-work activities over time.
 
 These items remain **future developments** and are not functions attributed to the current version.
 

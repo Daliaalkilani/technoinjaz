@@ -1,101 +1,126 @@
 # Smart Access Control Security System Using Face Recognition
 
-## Project Summary
+An academic project carried out by a team of students with technical assistance from **Techno Enjaz** to develop **a prototype face-recognition access control system** for a sensitive area, within an applied bank-vault scenario. The system relies on the **laptop's built-in camera** with no extra hardware, uses the **OpenCV** library to capture and process frames and the **face-recognition** library to extract facial features and compare them with photos of authorized people, all built in **Python**.
 
-An academic project aiming to develop a prototype access control system for a sensitive area, within an applied scenario of a bank vault, based on computer vision and face recognition technologies. The project was prepared by students at the Syrian Virtual University during the 2024–2025 academic year, **with assistance and support from Techno Enjaz during the project's preparation and development**.
+When an authorized person is recognized, their face is framed in green, their name is shown, and their entry time is logged automatically. A non-matching face is marked with a red frame and the word "Unknown", its image is saved to a dedicated folder, and an **audible alarm** is triggered through the `playsound` library. The project is an experimental academic prototype; its materials do not indicate deployment inside a real bank or any published accuracy measurements.
 
-The prototype uses the laptop camera to capture images, then applies the OpenCV library to process the frames and the `face-recognition` library to extract facial features and compare them against reference images. When an authorized person is recognized, their entry time is recorded; when a face is unrecognized, its image is saved and an audible alert is triggered using the `playsound` library.
-
-## Project Information
+## Project Facts
 
 | Item | Details |
 | --- | --- |
-| Project type | Access control system prototype |
-| Field | Computer vision and face recognition |
-| Usage context | Access control to a sensitive area within a bank vault scenario |
-| Academic institution | Syrian Virtual University |
-| Academic year | 2024–2025 |
-| Project status | Completed academic prototype |
-| Techno Enjaz role | Supporting the engineering team in preparing and developing the project |
-| Programming language | Python |
-| Key technologies | OpenCV, `face-recognition`, `playsound` |
+| Project type | Prototype access control system |
+| Field | Computer vision, face recognition, physical security |
+| Use context | Controlling entry to a sensitive area within a bank-vault scenario |
+| Year | 2024–2025 |
+| Project status | Completed academic prototype, tested with images and a laptop camera |
+| Techno Enjaz role | Technical support and assistance to the students during project development |
+| Core technologies | Python, OpenCV, `face-recognition` (built on dlib), `playsound`, Anaconda, Jupyter Notebook |
+| Outputs | Distinguishing authorized from unauthorized people, entry-time logging, saving images of unknown faces, instant audible alarm |
 
-## About the Project
+## The Problem the Project Addresses
 
-The project focuses on building a model that can distinguish between known and unknown people in front of the camera and then take a different action depending on the match result. The bank vault environment was chosen as the project's applied scenario in order to study the use of face recognition for controlling access to sensitive areas.
+Many systems that secure sensitive areas, such as vaults and data storage rooms, rely on ID cards or passwords. These can be stolen, cloned, or shared, which may let an unauthorized person in without being detected. Electronic locks and surveillance cameras without analytical capabilities still depend on human monitoring: a guard may miss someone moving quickly or in a crowd, and such systems often cannot respond immediately when a breach occurs.
 
-The project is academic and experimental; the available materials do not indicate that it was deployed as an operational system inside an actual bank. The project therefore demonstrates experience in developing a technical prototype and integrating its software components — not the implementation of a complete commercial banking security system.
+The project also observed that most research on AI in banking has focused on electronic threats, such as fraud and money laundering, without practical solutions for **physical security** that monitor people at the entrance to a sensitive area. Hence the idea of a system that automatically distinguishes authorized from unauthorized people, documents every entry attempt, and alerts immediately when an unknown face appears.
 
 ## Techno Enjaz's Role
 
-Techno Enjaz contributed by **supporting the engineering team throughout the preparation and development of the project**. The project is presented among the office's previous work as an academic experience the office helped support, while the project itself remains the students' own work within their university framework.
+The project was carried out academically by the students, with **technical assistance and support from Techno Enjaz during development**. It is presented among the office's previous work as an academic experiment the office helped support, while the project itself remains the students' work.
 
-This page does not attribute to Techno Enjaz the implementation of a security system inside a bank or its operation in an actual financial facility.
+This page does not attribute to Techno Enjaz the implementation of a security system inside a bank or its operation in a real banking facility.
 
-## How the Prototype Works
+## Project Objectives
 
-The system starts by loading the authorized persons' images and extracting the distinctive features of each face. The laptop camera is then activated to capture video, and every frame is processed to detect the faces that appear in it.
+- Develop a system that automatically and instantly distinguishes authorized from unauthorized people.
+- Create a documented record of authorized people's entry dates and times for later review or investigation.
+- Store images of unauthorized people in an organized way in dedicated folders for later use.
+- Trigger an early alarm when an unauthorized entry is attempted.
+- Reduce the burden on security staff by automating identity verification.
 
-When a face is detected, the system extracts its representation and compares it against the pre-stored reference faces:
+## How the System Works
 
-- If the face matches an authorized person, the person is identified and their entry time is recorded.
-- If the system finds no match, the face is treated as unknown, its image is stored in a dedicated folder, and an audible alert is triggered.
-- The system keeps reading frames and processing faces for as long as the program is running.
+The project's flowchart describes the following sequence:
 
-## Components and Technologies Used
+1. Load the photos of authorized people from a dedicated folder, each named after its owner.
+2. Extract facial features from each photo with the `face-recognition` library and store them as reference templates.
+3. Start the laptop camera through OpenCV to capture real-time video.
+4. Split the video into frames and downscale each frame to speed up processing.
+5. Detect the face in the frame, then extract its features and compare them with the reference features.
+6. On a match: the name appears above a green frame and the entry time is logged automatically.
+7. With no match: a red frame labelled "Unknown" appears, an audible alarm is triggered, and the person's image is saved to the unauthorized folder.
+8. After each cycle, the system checks whether it is still running, continuing the monitoring loop or ending the process when stopped.
 
-### Python
+## System Design and Component Integration
 
-The Python language was used to build the prototype and link the image-processing, face-recognition, and audible-alert components within a single pipeline.
+The system was designed to be simple and economical, relying on the laptop's built-in camera, which works directly through the operating system without extra connections. The laptop is placed where its camera can capture clear images of anyone approaching the restricted area, such as the vault door, with an angle chosen to cover the field of view in front of it and with attention to ambient lighting, since poor lighting degrades image quality and recognition accuracy.
 
-### OpenCV
+| Component | Role in the system |
+| --- | --- |
+| Python | Language used to build the prototype and link processing, recognition, and alerting in one flow |
+| OpenCV | Camera access, frame reading, and converting and downscaling frames before processing |
+| face-recognition | Detecting faces, extracting their distinctive features, and comparing them with reference photos; built on the dlib library |
+| playsound | Playing a sound file as an alarm when an unknown face is detected |
+| Anaconda and Jupyter Notebook | Managing the programming environment and running code interactively |
 
-OpenCV is used to access the laptop camera, read the video frames, and prepare the images for processing within the system.
+## System Requirements
 
-### face-recognition
+The project defined functional requirements including: face recognition to distinguish permitted people from others, logging the entry time of permitted people, capturing images of unauthorized people, sending an instant alert, and the ability to add people to the list while the system is running.
 
-The `face-recognition` library is used to detect faces, extract their features, and then compare the captured face against the reference images of authorized persons.
-
-### playsound
-
-The `playsound` library is used to trigger an audible alert when the prototype detects a face that does not match the authorized persons.
+It also set non-functional requirements as **design targets**: a response time of no more than 2–3 seconds, an error rate below 5%, secure database storage, support for several cameras at once, and role-based access restrictions. The project presents no measurements showing that these values were achieved, so they remain targets rather than results.
 
 ## Data Organization
 
-The project's conceptual design includes a set of tables serving the system's core functions, among them:
+The project's conceptual schema includes four related tables:
 
-- `authorized_persons` to store the data of authorized persons.
-- `entry_logs` to record entry events and their times.
-- `unauthorized_persons` to document the cases the system could not recognize.
-- `alerts` to record alerts associated with unknown entry attempts.
-
-This organization reflects an attempt to separate personal data, event logs, and alerts within the academic prototype.
+| Table | Contents |
+| --- | --- |
+| `authorized_persons` | Data on people authorized to enter, such as their names and details |
+| `entry_logs` | Every entry event, authorized or not, with its date and time |
+| `unauthorized_persons` | Images of unauthorized people and details of their detection for investigation purposes |
+| `alerts` | Audible alerts issued when an unauthorized person is detected |
 
 ## Results Presented in the Project
 
-The project's practical materials demonstrate the experimental prototype's ability to perform a number of core functions:
+The implementation chapter presents four illustrated tests showing the prototype's behavior:
 
-- Using reference images for authorized persons.
-- Capturing a face from the camera and comparing it against the stored images.
-- Displaying the person's name upon recognition within the presented test.
-- Recording the entry time when a match is verified.
-- Classifying a non-matching face as unknown.
-- Saving the unknown face's image in a dedicated folder.
-- Triggering an audible alarm for the unknown case.
+| Test | What it shows |
+| --- | --- |
+| Authorized photos folder | Reference photos, each named after its owner, from which facial features are extracted |
+| Recognizing an authorized person | A green frame around the face with the name above it, and the entry time logged |
+| Unauthorized folder | Images of unknown faces saved automatically under the name "unknown" |
+| Detecting an unauthorized person | A red frame labelled "Unknown" and an instant audible alarm |
 
-The available materials do not include documented test measurements that would allow publishing a final accuracy rate or a fixed response time for the system; no performance figures are therefore presented on this page.
+These tests show that **the functional pipeline works** within the presented scenario. However, the project includes no documented test measurements, such as correct-recognition rate, false-acceptance rate, actual response time, or number of people tested, so no performance figures are presented on this page.
 
-## Considerations That Emerged During Development
+## Limitations of the Current Version
 
-The project material shows that face capture quality is tied to image clarity, lighting, and camera angle. For this reason, the laptop camera's position and field of view were taken into account in the prototype's operating concept.
+- The prototype is built on a single laptop camera, and recognition quality depends on image clarity, lighting, and camera angle.
+- The presented tests are illustrative on a limited number of images, not an evaluation in a real banking environment.
+- The system includes no documented spoofing-detection mechanism, for example against a printed photo or a screen held up to the camera.
+- Features such as simultaneous multi-camera operation, phone notifications, database encryption, and behavior analysis are listed as future developments, not proven functions of the presented version.
 
-The project is also built as a prototype using the laptop camera, while functions such as running multiple cameras simultaneously, phone notifications, database encryption, and behavior analysis remained among the proposed future developments — not proven functions of the presented version.
+## Possible Future Development
+
+According to the project, the system could be developed through:
+
+- Detecting suspicious activity inside the vault using motion detection and behavior analysis, and predicting risks from past behavior patterns.
+- Combining voice recognition with face recognition as an additional security layer.
+- Instant notifications to officials by phone, text message, or email.
+- A more advanced user interface for managing the system and reviewing logs, with periodic statistical analysis of security events.
+- Encrypting the database of authorized and unauthorized people.
+- Working with several cameras to monitor multiple areas, and improving storage to hold more images.
+- Recognizing tools a person may carry before entering, and adding continuous learning from new data.
+- Improving response speed with optimized algorithms, and using the system in other settings such as schools, hospitals, and airports.
 
 ## Experience the Project Demonstrates
 
 The project demonstrates hands-on experience in linking the camera with image processing, face recognition, event logging, and audible alerting within a single prototype, alongside Techno Enjaz's experience in **helping students develop applied technical projects** and connecting theory to a testable model.
 
 To understand how recognizing a person's identity differs from reading their facial expression, see our article [How Does AI Recognize Facial Expressions? FER, FACS, and CNN Explained](/articles/facial-expression-recognition-ai).
+
+## A Note on Privacy
+
+The system stores images of people's faces, including unauthorized people, which are sensitive biometric data. Any real deployment therefore needs a clear policy for informing people, defining access rights to the images and logs, setting how long they are kept, and protecting them with encryption.
 
 ## A Similar Project?
 

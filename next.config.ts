@@ -37,7 +37,9 @@ const nextConfig: NextConfig = {
       // collides with it at export time and fails the build. Same view lives here.
       { source: '/500', destination: '/server-error', permanent: false },
       { source: '/403', destination: '/access-denied', permanent: false },
-      { source: '/access-error', destination: '/access-denied', permanent: false }
+      { source: '/access-error', destination: '/access-denied', permanent: false },
+      // Duplicate of the ground-robot project (same report); merged into the original page.
+      { source: '/projects/military-war-robot-ai', destination: '/projects/remote-controlled-ground-robot', permanent: true }
     ];
   },
 };
