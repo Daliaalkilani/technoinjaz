@@ -227,9 +227,13 @@
   .sk-text { animation: none; }
 }
 
-/* SkText placeholder words come from data-sk (not text content) */
+/* SkText placeholder words come from data-sk (not text content). They only size the
+   shimmer bar, so their glyphs are hidden outright: a transparent colour is not enough
+   inside headings that paint a gradient through their text (background-clip: text),
+   where the "mmmm" letters showed up for a moment while the page loaded. */
 .sk-text::before {
   content: attr(data-sk);
   color: transparent;
+  visibility: hidden;
 }
 
