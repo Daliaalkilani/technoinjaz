@@ -1,6 +1,6 @@
 # System for Measuring the Water Level Inside a Tank Using an Ultrasonic Sensor
 
-This project was developed as an academic prototype for measuring **the water level percentage inside a tank** using an **HC-SR04** ultrasonic sensor and an **Arduino Nano** board, displaying the reading directly on a **16×2 LCD** and sending it wirelessly through an **HC-05 Bluetooth** module to an Android phone app built with **MIT App Inventor**. The student carried out the project with the assistance of the **Techno Enjaz office** during the prototype development path.
+This project was developed as an academic prototype for measuring **the water level percentage inside a tank** using an **HC-SR04** ultrasonic sensor and an **Arduino Nano** board, displaying the reading directly on a **16×2 LCD** and sending it wirelessly through an **HC-05 Bluetooth** module to an Android phone app built with **MIT App Inventor**. A team of students carried out the project with the assistance of the **Techno Enjaz office** during the prototype development path.
 
 The project reflects hands-on experience in integrating sensors, microcontrollers, and a mobile interface within a single system — from contactless measurement of the distance to the water surface, through processing the reading on the Arduino Nano, to displaying the level percentage on the screen and the phone. In the documented tests the system showed **0%** for an empty tank, about **58%** at a level close to the middle, and **100%** when full.
 
@@ -12,7 +12,7 @@ The project reflects hands-on experience in integrating sensors, microcontroller
 | Field | Embedded systems and sensor-based monitoring |
 | Year | 2024–2025 |
 | Project status | Prototype tested in three tank states |
-| Techno Enjaz role | Technical support and assistance to the student during project development |
+| Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Arduino Nano, HC-SR04, 16×2 LCD, HC-05 Bluetooth, Arduino IDE, MIT App Inventor |
 | Outputs | Water-level percentage on the LCD and on the phone app via Bluetooth |
 
@@ -32,7 +32,7 @@ The project proposes a simple solution that measures the level without contact w
 
 ## The Role of the Techno Enjaz Office
 
-The student carried out the project in an academic context **with the assistance of the Techno Enjaz office**. The office's contribution consisted of supporting the prototype development path, while the detailed work of each party — such as circuit design, firmware writing, or building the mobile app — is not detailed in the available materials, so these tasks are not individually attributed to the office on this page.
+A team of students carried out the project in an academic context **with the assistance of the Techno Enjaz office**. The office's contribution consisted of supporting the prototype development path, while the detailed work of each party — such as circuit design, firmware writing, or building the mobile app — is not detailed in the available materials, so these tasks are not individually attributed to the office on this page.
 
 ## How the System Works
 

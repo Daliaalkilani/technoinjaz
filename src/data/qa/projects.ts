@@ -6,9 +6,9 @@ export const PROJECT_QA: Record<string, QAItem[]> = {
   "virtual-board-hand-tracking": [
     {
       q: "ما الذي يقدمه اللوح الافتراضي بتتبع حركة اليد؟",
-      a: "يتيح اللوح الكتابة والرسم والمسح واختيار الألوان بحركة اليد أمام الكاميرا، دون لمس شاشة أو استخدام قلم إلكتروني. صُمم أساسًا ليكتب المعلم ويتحكم بالمحتوى وهو مواجه للطلاب، ونفذه الطالب بمساعدة تقنية من مكتب تكنو إنجاز.",
+      a: "يتيح اللوح الكتابة والرسم والمسح واختيار الألوان بحركة اليد أمام الكاميرا، دون لمس شاشة أو استخدام قلم إلكتروني. صُمم أساسًا ليكتب المعلم ويتحكم بالمحتوى وهو مواجه للطلاب، ونفذه فريق من الطلاب بمساعدة تقنية من مكتب تكنو إنجاز.",
       qEn: "What does the virtual board with hand tracking offer?",
-      aEn: "The board lets you write, draw, erase, and pick colors with hand movements in front of the camera, without touching a screen or using a stylus. It was designed mainly so a teacher can write and control content while facing the students, and was built by the student with technical assistance from Techno Enjaz.",
+      aEn: "The board lets you write, draw, erase, and pick colors with hand movements in front of the camera, without touching a screen or using a stylus. It was designed mainly so a teacher can write and control content while facing the students, and was built by a team of students with technical assistance from Techno Enjaz.",
     },
     {
       q: "ما التقنيات المستخدمة في بناء اللوح الافتراضي؟",
@@ -360,7 +360,7 @@ export const PROJECT_QA: Record<string, QAItem[]> = {
     },
     {
       q: "ما التحديات التي ظهرت أثناء تطوير النموذج؟",
-      a: "احتاج ربط المستشعر وشاشة LCD ووحدة Bluetooth مع Arduino إلى تعديلات متكررة في التوصيلات والبرمجة. كما أثرت الحرارة والرطوبة بشكل طفيف على قراءة المستشعر فاستُخدمت معادلات تصحيح، وظهرت انقطاعات مؤقتة في Bluetooth عند زيادة المسافة أو وجود تداخل. أنجز الطالب المشروع بمساعدة مكتب تكنو إنجاز.",
+      a: "احتاج ربط المستشعر وشاشة LCD ووحدة Bluetooth مع Arduino إلى تعديلات متكررة في التوصيلات والبرمجة. كما أثرت الحرارة والرطوبة بشكل طفيف على قراءة المستشعر فاستُخدمت معادلات تصحيح، وظهرت انقطاعات مؤقتة في Bluetooth عند زيادة المسافة أو وجود تداخل. أنجز فريق من الطلاب المشروع بمساعدة مكتب تكنو إنجاز.",
       qEn: "What challenges emerged during the prototype's development?",
       aEn: "Connecting the sensor, LCD, and Bluetooth module to the Arduino required repeated wiring and code changes. Temperature and humidity slightly affected the sensor reading, so correction equations were used, and temporary Bluetooth dropouts appeared with greater distance or interference. The student completed the project with assistance from the Techno Enjaz office.",
     },
@@ -997,9 +997,9 @@ export const PROJECT_QA: Record<string, QAItem[]> = {
   "markdown-pdf-api-mcp-tool": [
     {
       q: "ما هي أداة API وMCP لتحويل Markdown إلى PDF؟",
-      a: "خدمة سحابية تعمل بالكامل على بنية Serverless في Cloudflare، نُفذت كمشروع أكاديمي طلابي بمساعدة تقنية من مكتب تكنو إنجاز. تحوّل مستندات Markdown إلى PDF مع دعم العربية RTL ومخططات PlantUML بصيغة SVG ومعادلات LaTeX، وتُتاح عبر واجهة ويب وREST API وخادم MCP.",
+      a: "خدمة سحابية تعمل بالكامل على بنية Serverless في Cloudflare، نُفذت كمشروع أكاديمي نفذه فريق من الطلاب بمساعدة تقنية من مكتب تكنو إنجاز. تحوّل مستندات Markdown إلى PDF مع دعم العربية RTL ومخططات PlantUML بصيغة SVG ومعادلات LaTeX، وتُتاح عبر واجهة ويب وREST API وخادم MCP.",
       qEn: "What is the API & MCP tool for converting Markdown to PDF?",
-      aEn: "A cloud service running entirely on Cloudflare's serverless platform, built as a student academic project with technical assistance from Techno Enjaz. It converts Markdown documents to PDF with Arabic RTL support, PlantUML diagrams as SVG, and LaTeX equations, and is available through a web interface, a REST API, and an MCP server.",
+      aEn: "A cloud service running entirely on Cloudflare's serverless platform, built as an academic project by a team of students with technical assistance from Techno Enjaz. It converts Markdown documents to PDF with Arabic RTL support, PlantUML diagrams as SVG, and LaTeX equations, and is available through a web interface, a REST API, and an MCP server.",
     },
     {
       q: "كيف تعمل عملية التحويل من Markdown إلى PDF؟",
@@ -1096,9 +1096,9 @@ export const PROJECT_QA: Record<string, QAItem[]> = {
   "nabd-child-psychological-assessment": [
     {
       q: "ما هو نظام نبض للتقييم النفسي للأطفال؟",
-      a: "نبض نظام ويب يدعم التقييم النفسي الأولي للأطفال المتضررين من الحروب عبر تحليل السلوك غير اللفظي والمؤشرات الصوتية بنموذج Google Gemini، طُوّر كمشروع أكاديمي طلابي بمساعدة تقنية من مكتب تكنو إنجاز. وهو أداة داعمة لاتخاذ القرار وليس بديلًا عن التشخيص السريري.",
+      a: "نبض نظام ويب يدعم التقييم النفسي الأولي للأطفال المتضررين من الحروب عبر تحليل السلوك غير اللفظي والمؤشرات الصوتية بنموذج Google Gemini، طُوّر كمشروع أكاديمي نفذه فريق من الطلاب بمساعدة تقنية من مكتب تكنو إنجاز. وهو أداة داعمة لاتخاذ القرار وليس بديلًا عن التشخيص السريري.",
       qEn: "What is the Nabd psychological assessment system for children?",
-      aEn: "Nabd is a web system that supports the preliminary psychological assessment of war-affected children by analyzing non-verbal behavior and vocal cues with Google Gemini, developed as a student academic project with technical assistance from Techno Enjaz. It is a decision-support tool, not a substitute for clinical diagnosis.",
+      aEn: "Nabd is a web system that supports the preliminary psychological assessment of war-affected children by analyzing non-verbal behavior and vocal cues with Google Gemini, developed as an academic project by a team of students with technical assistance from Techno Enjaz. It is a decision-support tool, not a substitute for clinical diagnosis.",
     },
     {
       q: "كيف يعمل التحليل في نظام نبض؟",

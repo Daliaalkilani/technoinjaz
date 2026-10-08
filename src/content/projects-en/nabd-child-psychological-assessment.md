@@ -1,6 +1,6 @@
 # Nabd — AI Psychological Assessment Support for Children
 
-**Nabd** is an intelligent web system that supports **the preliminary psychological assessment of war-affected children** by analyzing non-verbal behavior and vocal cues with artificial intelligence, developed as a student academic project with technical assistance from **Techno Enjaz**. It lets a therapist run **a live analysis session using the camera and microphone** or **analyze a recorded video**; the data is sent to the **Google Gemini 3 Flash Preview** model, and the system displays numeric indicators from 0 to 100 and behavioral labels in Arabic, then helps prepare a preliminary report that the therapist reviews and approves.
+**Nabd** is an intelligent web system that supports **the preliminary psychological assessment of war-affected children** by analyzing non-verbal behavior and vocal cues with artificial intelligence, developed as an academic project by a team of students with technical assistance from **Techno Enjaz**. It lets a therapist run **a live analysis session using the camera and microphone** or **analyze a recorded video**; the data is sent to the **Google Gemini 3 Flash Preview** model, and the system displays numeric indicators from 0 to 100 and behavioral labels in Arabic, then helps prepare a preliminary report that the therapist reviews and approves.
 
 The system is built with a **React 19 and TypeScript** front end, a **Laravel 12** server, and a **MySQL** database. In testing within a simulated environment, it recorded a response time of **1.5 to 4 seconds per analysis frame**, with one frame captured every 3 seconds. The project stresses that Nabd is **a decision-support tool, not a replacement for clinical diagnosis**; the decision remains with the psychologist.
 
@@ -24,7 +24,7 @@ The project describes the limits of traditional assessment tools in unstable set
 
 ## Techno Enjaz's Role
 
-The project was carried out academically by the student, with **technical assistance and support from Techno Enjaz during development**. It is presented among the office's work as an example of its support for projects that apply multimodal models to sensitive health applications while keeping a qualified human as the decision-maker.
+The project was carried out academically by a team of students, with **technical assistance and support from Techno Enjaz during development**. It is presented among the office's work as an example of its support for projects that apply multimodal models to sensitive health applications while keeping a qualified human as the decision-maker.
 
 ## Theoretical Basis of the Analysis
 

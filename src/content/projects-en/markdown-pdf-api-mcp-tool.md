@@ -1,6 +1,6 @@
 # API & MCP Tool for Converting Markdown to PDF
 
-A student academic project carried out with technical assistance from **Techno Enjaz** to design and build **a cloud service that converts Markdown documents to PDF files**, running entirely on a **Serverless** architecture on the **Cloudflare** platform. The service tackles three areas where many conversion tools struggle: **Arabic and right-to-left (RTL) text support**, **embedding PlantUML diagrams as SVG vector graphics** instead of raster images, and **rendering LaTeX equations** with KaTeX.
+An academic project carried out by a team of students with technical assistance from **Techno Enjaz** to design and build **a cloud service that converts Markdown documents to PDF files**, running entirely on a **Serverless** architecture on the **Cloudflare** platform. The service tackles three areas where many conversion tools struggle: **Arabic and right-to-left (RTL) text support**, **embedding PlantUML diagrams as SVG vector graphics** instead of raster images, and **rendering LaTeX equations** with KaTeX.
 
 The service is available in three ways: a **web interface** with an editor and live preview, a documented **REST API** for developers, and an **MCP server** (Model Context Protocol) that lets AI agents call the conversion directly. The final PDF is generated inside a headless Chromium browser via **Cloudflare Browser Rendering (Puppeteer)**. The project's functional tests successfully converted basic formatting, Arabic text, equations, code highlighting, and three types of PlantUML diagrams.
 
@@ -26,7 +26,7 @@ Markdown has become a common standard for writing technical documentation under 
 
 ## Techno Enjaz's Role
 
-The project was carried out academically by the student, with **technical assistance and support from Techno Enjaz during development**. It is presented among the office's work as an example of its support for serverless cloud services, APIs, and MCP integrations with AI tools.
+The project was carried out academically by a team of students, with **technical assistance and support from Techno Enjaz during development**. It is presented among the office's work as an example of its support for serverless cloud services, APIs, and MCP integrations with AI tools.
 
 ## How the System Converts Markdown to PDF
 

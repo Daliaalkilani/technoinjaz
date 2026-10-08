@@ -1,6 +1,6 @@
 # Interactive Virtual Board with Hand Motion Tracking
 
-A project to develop an **interactive virtual board** that lets you write, draw, erase, and pick colors with hand movements in front of a camera, without touching a screen or using a stylus, relying on computer vision and hand tracking to turn gestures into commands that appear directly on the virtual board. The student carried out the project with technical assistance from **Techno Enjaz**.
+A project to develop an **interactive virtual board** that lets you write, draw, erase, and pick colors with hand movements in front of a camera, without touching a screen or using a stylus, relying on computer vision and hand tracking to turn gestures into commands that appear directly on the virtual board. A team of students carried out the project with technical assistance from **Techno Enjaz**.
 
 The prototype was built in **Python** using **MediaPipe** to track finger positions, **OpenCV** for video processing, and **NumPy** for data processing, within an **Anaconda** environment. Real use cases were tried, such as drawing, changing color, pausing interaction, and partial or full erasing, and drawing updates on screen were close to real time in the test environment, with no published numerical measurements of accuracy or response time.
 
@@ -12,7 +12,7 @@ The prototype was built in **Python** using **MediaPipe** to track finger positi
 | Field | Educational technology and computer vision |
 | Year | 2024–2025 |
 | Project status | Prototype developed and functionally tested |
-| Techno Enjaz role | Technical support and assistance to the student during project development |
+| Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Python, MediaPipe, OpenCV, NumPy, Anaconda, VS Code |
 | Outputs | Digital board for gesture-based writing and drawing, color palette, partial and full erase, pause state |
 
@@ -24,7 +24,7 @@ The project suggests the idea could extend beyond classrooms to training centers
 
 ## Techno Enjaz's Role
 
-The project was carried out academically by the student, with **technical assistance and support from Techno Enjaz during development**. It is presented among the office's work as an example of its support for prototypes that combine hand tracking, video processing, and interactive interfaces.
+The project was carried out academically by a team of students, with **technical assistance and support from Techno Enjaz during development**. It is presented among the office's work as an example of its support for prototypes that combine hand tracking, video processing, and interactive interfaces.
 
 ## How Does the Virtual Board Work?
 

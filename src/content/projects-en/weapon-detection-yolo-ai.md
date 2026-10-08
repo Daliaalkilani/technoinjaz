@@ -1,6 +1,6 @@
 # Weapon Detection System Using Artificial Intelligence Technologies
 
-A project to develop **a computer vision system for real-time detection of weapons** such as knives and pistols from the built-in camera of a laptop or phone, using the Ultralytics **YOLOv8** object detection algorithm. The project was carried out academically with technical assistance from **Techno Enjaz** and aims at a low-cost tool that does not require specialized surveillance equipment and could be useful in schools, public buildings, and shops.
+A project to develop **a computer vision system for real-time detection of weapons** such as knives and pistols from the built-in camera of a laptop or phone, using the Ultralytics **YOLOv8** object detection algorithm. The project was carried out academically by a team of students with technical assistance from **Techno Enjaz** and aims at a low-cost tool that does not require specialized surveillance equipment and could be useful in schools, public buildings, and shops.
 
 The system runs in **Python** with **OpenCV** for reading video and passes each frame to two trained models, one for knives (knife_model.pt) and one for pistols (gun_model.pt), drawing a yellow box labeled "Target Zone" around a detected weapon. The project documented successful knife and pistol detections in a live stream, with no published quantitative performance metrics.
 
@@ -30,7 +30,7 @@ The project starts from the growing threats associated with carrying weapons in 
 
 ## Techno Enjaz's Role
 
-The project was carried out academically, with **technical assistance and support from Techno Enjaz during development**. It is presented among the office's work as an example of its support for YOLO-based object detection projects and real-time camera stream processing.
+The project was carried out academically by a team of students, with **technical assistance and support from Techno Enjaz during development**. It is presented among the office's work as an example of its support for YOLO-based object detection projects and real-time camera stream processing.
 
 ## How the System Works
 
