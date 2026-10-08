@@ -10,7 +10,6 @@ The system is built with a **React 19 and TypeScript** front end, a **Laravel 12
 |---|---|
 | Project type | AI-supported web platform for psychological assessment |
 | Field | Multimodal AI, child mental health, medical informatics |
-| Year | 2025–2026 |
 | Project status | Working system tested in a simulated environment for live-analysis and video-analysis sessions |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Google Gemini 3 Flash Preview, React 19, TypeScript 5.8, Vite 6, Tailwind CSS 4, Laravel 12, PHP 8.2, Axios, MySQL |

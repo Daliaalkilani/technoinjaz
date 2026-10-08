@@ -10,7 +10,6 @@ The book frames the project as a field robot that reduces people's exposure to d
 |---|---|
 | Project type | Prototype of a remotely controlled ground robot |
 | Field | Embedded systems, robotics, wireless communications, computer vision |
-| Year | 2024–2025 |
 | Project status | Prototype tested in a simulated environment, not a field system |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Arduino UNO and Arduino Nano, L298N, HC-05, RF433MHz, MG995 and SG90, MP3-TF-16P, Python, YOLO, CST |

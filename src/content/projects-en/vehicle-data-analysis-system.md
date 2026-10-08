@@ -10,7 +10,6 @@ The system combines a **Python** program that uses the **YOLO** algorithm to loc
 |---|---|
 | Project type | Miniature access-control model based on license plate recognition |
 | Field | Computer vision, automatic license plate recognition (ALPR), embedded systems |
-| Year | 2024–2025 |
 | Project status | Working miniature entry-station model |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Python, YOLO, OCR, NodeMCU ESP8266, MG995 servo, IR sensor, HC-05 Bluetooth |

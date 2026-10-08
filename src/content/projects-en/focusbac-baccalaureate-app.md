@@ -10,7 +10,6 @@ The app is built with **Flutter** for Android in its first phase, with a **Larav
 |---|---|
 | Project type | Educational mobile app with an admin panel and an API |
 | Field | E-learning, mobile learning, Flutter and Laravel development |
-| Year | 2025–2026 |
 | Project status | First version implemented: admin panel, API backend, and core app screens |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Flutter and Dart, Laravel and PHP, Filament, MySQL, RESTful API, Laravel Sanctum, YouTube API |

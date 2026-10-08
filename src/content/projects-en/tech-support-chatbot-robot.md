@@ -10,7 +10,6 @@ The project brings three fields together in one system: **generative AI and natu
 |---|---|
 | Project type | Educational voice chatbot robot with physical interaction |
 | Field | AI in education, natural language processing, Internet of Things |
-| Year | 2025–2026 |
 | Project status | Working physical prototype tested in live voice conversations |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Gemini-live-2.5-flash (Gemini Live API), JavaScript, Node.js, WebSocket, NodeMCU ESP8266, MG995 servo |

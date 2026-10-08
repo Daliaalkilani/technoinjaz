@@ -10,7 +10,6 @@ The working prototype was built in **Python** and uses **YOLOv8** (through the u
 |---|---|
 | Project type | Interactive learning system based on computer vision |
 | Field | Educational technology, artificial intelligence, image processing |
-| Year | 2024–2025 |
 | Project status | Working desktop prototype, tested on a variety of objects, colors, and images |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Python, YOLOv8 (ultralytics), OpenCV, HSV, Tkinter, Anaconda |

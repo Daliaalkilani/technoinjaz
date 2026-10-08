@@ -10,7 +10,6 @@ The service is available in three ways: a **web interface** with an editor and l
 |---|---|
 | Project type | Web service, API, and MCP server for document conversion |
 | Field | Serverless and edge computing, document processing, AI tool integration |
-| Year | 2025–2026 |
 | Project status | System deployed on Cloudflare and functionally tested on sample documents |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Cloudflare Pages Functions, Cloudflare Browser Rendering (Puppeteer), Cloudflare D1, Hono, Zod, JWT, bcryptjs, Marked, Gray-matter, Highlight.js, KaTeX, PlantUML |

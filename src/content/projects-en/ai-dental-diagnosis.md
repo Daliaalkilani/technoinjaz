@@ -10,7 +10,6 @@ The system combines two complementary capabilities: a **vision-language model (V
 |---|---|
 | Project type | AI-assisted diagnostic web platform |
 | Field | Computer vision, vision-language models, medical informatics |
-| Year | 2025–2026 |
 | Project status | Working prototype tested on a development machine and varied test images |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Gemini 3.1 Pro, Kimi k2.6, SAM (ViT-B), React 19, TypeScript, Flask, SQLite |

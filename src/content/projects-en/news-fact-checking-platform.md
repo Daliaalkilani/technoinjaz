@@ -10,7 +10,6 @@ The platform is built with the **Laravel** framework, PHP, and a relational **My
 |---|---|
 | Project type | Web platform for publishing official news, managing reports, and editorial verification |
 | Field | Fact-checking, digital content management, web development |
-| Year | 2024–2025 |
 | Project status | Academic working prototype documented with implemented interfaces and dashboards |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Laravel (MVC), PHP, MySQL, XAMPP and Apache, HTML, CSS, Bootstrap, JavaScript |

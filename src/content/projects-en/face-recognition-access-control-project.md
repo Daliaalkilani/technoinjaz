@@ -11,7 +11,6 @@ When an authorized person is recognized, their face is framed in green, their na
 | Project type | Prototype access control system |
 | Field | Computer vision, face recognition, physical security |
 | Use context | Controlling entry to a sensitive area within a bank-vault scenario |
-| Year | 2024–2025 |
 | Project status | Completed academic prototype, tested with images and a laptop camera |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Python, OpenCV, `face-recognition` (built on dlib), `playsound`, Anaconda, Jupyter Notebook |

@@ -10,7 +10,6 @@ The mobile app is built with **Flutter** for Android and iOS, with a **Laravel (
 |---|---|
 | Project type | Mobile app and recommendation-and-planning platform for academic projects |
 | Field | Recommender systems, educational technology (EdTech), generative AI, project management |
-| Year | 2025–2026 |
 | Project status | Implemented app with student, advisor, and admin screens, tested with mock data |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Flutter, Dart, Dio, Laravel, Sanctum, MySQL, Gemini 3.5 Flash, MCP |

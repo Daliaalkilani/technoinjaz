@@ -10,7 +10,6 @@ The system was built in Python with the Ultralytics, TensorFlow, and scikit-lear
 |---|---|
 | Project type | AI-assisted breast cancer diagnosis system |
 | Field | Computer vision, machine learning, medical informatics |
-| Year | 2024–2025 |
 | Project status | Prototype with a working desktop graphical interface |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Python, YOLO (Ultralytics), Random Forest, scikit-learn, TensorFlow, Tkinter |

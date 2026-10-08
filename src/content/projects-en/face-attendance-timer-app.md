@@ -10,7 +10,6 @@ When the lecture ends, the application exports an **Excel file** listing the stu
 |---|---|
 | Project type | Prototype attendance application based on computer vision |
 | Field | Artificial intelligence, computer vision, face recognition, educational administration |
-| Year | 2024–2025 |
 | Project status | Prototype implemented with a live recognition interface and Excel export |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Python, YOLO (Ultralytics library), OpenCV, Anaconda, Jupyter Notebook, Visual Studio Code |

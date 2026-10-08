@@ -10,7 +10,6 @@ The system covers three common exercises: **the squat**, **the bicep curl**, and
 |---|---|
 | Project type | Desktop application for movement-quality analysis using computer vision and deep learning |
 | Field | Computer vision, human pose estimation, temporal modeling, sports safety |
-| Year | 2025–2026 |
 | Project status | Working prototype named Gym AI, tested on examples from the camera and video files |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Python, MediaPipe Pose (BlazePose), LSTM / LSTM Autoencoder, TensorFlow/Keras, OpenCV, NumPy, Tkinter |

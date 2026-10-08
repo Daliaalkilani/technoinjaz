@@ -10,7 +10,6 @@ For implementation, the prototype relied on **YOLOv8** for person detection and 
 |---|---|
 | Project type | Computer vision and video analytics prototype |
 | Field | Artificial intelligence, computer vision, person tracking |
-| Year | 2024–2025 |
 | Project status | Prototype tested on a video simulating an office environment |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | YOLOv8, DeepSORT, OpenCV, pandas, datetime |

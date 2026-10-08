@@ -10,7 +10,6 @@ Processed results are shown in a **web platform and dashboard** with an interact
 |---|---|
 | Project type | Decision-support system for damage documentation: mobile app, web platform, and dashboard |
 | Field | Multimodal AI, geographic information systems, humanitarian work and reconstruction |
-| Year | 2025–2026 |
 | Project status | Implemented system with documented screens, tested with input scenarios simulating field work |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Flutter (Android), Laravel, MySQL, Queues, Gemini 3.5 Flash (text and vision), AI Agent, interactive maps |

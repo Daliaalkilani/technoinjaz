@@ -10,7 +10,6 @@ The mobile app was built with **Flutter** and Dart, and the back end, APIs, and 
 |---|---|
 | Project type | Digital tourism platform: mobile app and administration dashboard |
 | Field | Smart tourism, mobile apps, e-commerce for handicrafts |
-| Year | 2024–2025 |
 | Project status | Implemented prototype with preliminary functional testing |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Flutter / Dart, Laravel / PHP, MySQL, Eloquent ORM, REST API, Bootstrap, JavaScript, Apache server |

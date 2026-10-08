@@ -10,7 +10,6 @@ The system runs in **Python** with **OpenCV** for reading video and passes each 
 |---|---|
 | Project type | Real-time AI object detection system |
 | Field | Computer vision, deep learning, smart security systems |
-| Year | 2024–2025 |
 | Project status | Prototype tested with a live stream from a laptop camera |
 | Techno Enjaz role | Technical support and assistance during project development |
 | Core technologies | Python, OpenCV, Ultralytics YOLOv8, Anaconda, Jupyter Notebook, Visual Studio Code |

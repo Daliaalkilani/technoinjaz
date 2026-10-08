@@ -10,7 +10,6 @@ In the implemented version, turning the head to the right or left, whether sligh
 |---|---|
 | Project type | Computer vision prototype for analyzing behavior during exams |
 | Field | Education, artificial intelligence, computer vision, pose estimation |
-| Year | 2024–2025 |
 | Project status | Prototype tested in a controlled environment with an ordinary camera |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Python, OpenCV, YOLO, MediaPipe, Visual Studio Code on Windows |

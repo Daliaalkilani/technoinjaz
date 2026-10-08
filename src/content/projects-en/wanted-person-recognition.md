@@ -10,7 +10,6 @@ The prototype was built in **Python** within **Anaconda** and **Jupyter Notebook
 |---|---|
 | Project type | Prototype surveillance system based on face recognition |
 | Field | Computer vision, deep learning, smart surveillance systems |
-| Year | 2024–2025 |
 | Project status | Prototype functionally tested through a "Combined Cameras" interface |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Python, face-recognition, OpenCV, MediaPipe, NumPy, PIL, Pandas, SQLite3, Jupyter Notebook, Anaconda |

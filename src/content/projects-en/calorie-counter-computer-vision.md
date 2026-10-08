@@ -10,7 +10,6 @@ The system focuses on **single, unmixed foods** such as an apple, a potato, or a
 |---|---|
 | Project type | Computer vision system for recognizing foods and displaying their nutritional values |
 | Field | Computer vision, deep learning, smart health and nutrition |
-| Year | 2024–2025 |
 | Project status | Working desktop prototype on Windows |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Python, YOLO (Ultralytics), OpenCV, Tkinter, Roboflow, Google Colab |

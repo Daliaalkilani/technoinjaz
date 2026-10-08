@@ -10,7 +10,6 @@ The robot stops automatically when an obstacle comes closer than **30 cm**, and 
 |---|---|
 | Project type | Prototype of a remotely controlled indoor delivery robot |
 | Field | Mobile robotics, embedded systems, wireless communication |
-| Year | 2025–2026 |
 | Project status | Assembled prototype tested in practice indoors |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Arduino Uno (ATmega328P), Arduino IDE and C++, L293D, TT motors, servo motor, HC-05, HC-SR04, 18650 batteries with BMS |

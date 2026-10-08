@@ -10,7 +10,6 @@ The prototype was built in **Python** using **MediaPipe** to track finger positi
 | --- | --- |
 | Project type | Interactive gesture-control prototype |
 | Field | Educational technology and computer vision |
-| Year | 2024–2025 |
 | Project status | Prototype developed and functionally tested |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Python, MediaPipe, OpenCV, NumPy, Anaconda, VS Code |

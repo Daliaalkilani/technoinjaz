@@ -10,7 +10,6 @@ The system covers the kindergarten's daily operations: attendance, child profile
 |---|---|
 | Project type | Management system: mobile app for parents and web dashboard for administration |
 | Field | Mobile apps, web development, educational institution management, early childhood education |
-| Year | 2024–2025 |
 | Project status | Working system tested in a local test environment |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Flutter and Dart, Laravel and PHP, MySQL, RESTful API, OpenAPI (YAML), Bootstrap |

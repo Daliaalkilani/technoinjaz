@@ -10,7 +10,6 @@ Before matching, each face passes through a liveness layer based on **MediaPipe 
 |---|---|
 | Project type | Automated face-recognition attendance system with liveness verification and IoT feedback |
 | Field | Computer vision, deep learning, Internet of Things, smart educational systems |
-| Year | 2025–2026 |
 | Project status | Working system with an implemented GUI, without published accuracy evaluation |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Python, OpenCV (Haar Cascade), DeepFace + FaceNet512, MediaPipe Face Mesh, SQLite, multithreading, CustomTkinter, Pandas, OpenPyXL, NodeMCU ESP8266 |

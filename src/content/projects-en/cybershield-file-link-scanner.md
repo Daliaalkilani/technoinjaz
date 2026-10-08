@@ -10,7 +10,6 @@ The app was built with **Flutter** for Android, with a serverless backend on **C
 |---|---|
 | Project type | AI-assisted cybersecurity mobile app |
 | Field | Cybersecurity, URL and file scanning, generative AI |
-| Year | 2025–2026 |
 | Project status | Working prototype on Android with a cloud backend |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Flutter, Riverpod, GoRouter, Dio, Cloudflare Workers, Hono, Cloudflare D1, Cloudflare KV, VirusTotal API, Google Gemini API, JWT |

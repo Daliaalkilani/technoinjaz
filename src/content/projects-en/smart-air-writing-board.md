@@ -10,7 +10,6 @@ The system recognizes gestures from the number of raised fingers and the geometr
 |---|---|
 | Project type | Interactive system for writing and drawing in the air with hand gestures |
 | Field | Computer vision, human–computer interaction, hand tracking, educational technology |
-| Year | 2025–2026 |
 | Project status | Working system tested in practice with a webcam on a mid-range computer |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Python, MediaPipe Hands, OpenCV, NumPy, PIL, threading, Google Gemini API |

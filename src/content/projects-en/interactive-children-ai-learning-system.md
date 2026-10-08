@@ -10,7 +10,6 @@ The project documents detailed technical results for each function: the animal d
 |---|---|
 | Project type | Interactive learning system / prototype |
 | Field | Artificial intelligence, computer vision, early-learning technology |
-| Year | 2024–2025 |
 | Project status | Academic prototype implemented and tested on a laptop |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Python, OpenCV, NumPy, YOLO11, OCR (EasyOCR), HSV, Tkinter, Playsound |

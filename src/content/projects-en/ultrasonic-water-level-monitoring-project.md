@@ -10,7 +10,6 @@ The project reflects hands-on experience in integrating sensors, microcontroller
 | --- | --- |
 | Project type | Academic prototype for a water-level measurement system |
 | Field | Embedded systems and sensor-based monitoring |
-| Year | 2024–2025 |
 | Project status | Prototype tested in three tank states |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Arduino Nano, HC-SR04, 16×2 LCD, HC-05 Bluetooth, Arduino IDE, MIT App Inventor |

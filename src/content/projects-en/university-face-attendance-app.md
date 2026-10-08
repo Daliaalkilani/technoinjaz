@@ -10,7 +10,6 @@ The system was built as a **Python** desktop application using **OpenCV**, **Dee
 |---|---|
 | Project type | Desktop application for face-recognition attendance and access control |
 | Field | Computer vision, biometrics, academic administration |
-| Year | 2025–2026 |
 | Project status | Working system tested on a laptop's built-in camera |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Python 3.11, OpenCV, YOLOv8, DeepFace (FaceNet512/ArcFace), MediaPipe, SQLite, Pandas, OpenPyXL, CustomTkinter |

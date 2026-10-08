@@ -10,7 +10,6 @@ The project is an applied example of **Human–Robot Interaction** and gesture c
 |---|---|
 | Project type | Prototype of a robotic hand controlled by hand gestures |
 | Field | Robotics, computer vision, pose estimation, embedded systems |
-| Year | 2024–2025 |
 | Project status | Implemented prototype tested in practice |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Computer-vision hand tracking and pose estimation, Arduino UNO, servo motors, HC-05, DC-DC step-down regulator |

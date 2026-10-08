@@ -10,7 +10,6 @@ The system relies on **an AI agent** built on a **Gemini**-family language model
 |---|---|
 | Project type | Service robot with a touchscreen and AI assistant for student services and documents |
 | Field | Artificial intelligence, natural language processing, voice interaction, document automation |
-| Year | 2025–2026 |
 | Project status | Working physical prototype, tested on the robot in its operating environment |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Python, Gemini, AI agent with function calling and MCP, FastAPI and Uvicorn, SQLite, DocxTpl, Tkinter and HTML5/CSS3/JavaScript, WebSocket |

@@ -10,7 +10,6 @@
 |---|---|
 | نوع المشروع | خدمة ويب وواجهة API وخادم MCP لتحويل المستندات |
 | المجال | الحوسبة بدون خوادم والحوسبة الطرفية، معالجة المستندات، تكامل أدوات الذكاء الاصطناعي |
-| السنة | 2025–2026 |
 | حالة المشروع | نظام منفذ على Cloudflare ومختبر وظيفيًا على مستندات تجريبية |
 | دور تكنو إنجاز | دعم ومساعدة تقنية للطلاب أثناء تطوير المشروع |
 | تقنيات أساسية | Cloudflare Pages Functions، Cloudflare Browser Rendering (Puppeteer)، Cloudflare D1، Hono، Zod، JWT، bcryptjs، Marked، Gray-matter، Highlight.js، KaTeX، PlantUML |

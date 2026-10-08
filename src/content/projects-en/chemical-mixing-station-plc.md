@@ -10,7 +10,6 @@ The project was implemented **in a simulation environment**: Ladder Diagram prog
 |---|---|
 | Project type | Automated control system for an industrial process (liquid mixing automation) |
 | Field | Industrial automation, PLC programming, HMI monitoring |
-| Year | 2025–2026 |
 | Project status | Programmed system tested in a software simulation environment |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Delta DVP-ES2, Ladder Diagram, ISPSoft, Delta WPLSoft, DOPSoft, Delta Emulator, COM Manager |

@@ -10,7 +10,6 @@ Alongside the camera, a **PIR** motion sensor and a **flame** sensor monitor abn
 |---|---|
 | Project type | Intelligent surveillance system combining AI video analysis with physical sensors |
 | Field | Computer vision, deep learning, IoT, security systems |
-| Year | 2024–2025 |
 | Project status | Working prototype with practical tests documented by screenshots |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Python, YOLO (pre-trained Ultralytics models), RNN, MediaPipe, OpenCV, NodeMCU ESP8266, HC-SR501 PIR sensor, flame sensor, Telegram Bot |

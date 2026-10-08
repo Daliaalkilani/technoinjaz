@@ -10,7 +10,6 @@ The app's interface is built with **Flutter** and Dart, with a back end on **Clo
 |---|---|
 | Project type | Mobile fitness-training app powered by generative AI |
 | Field | Generative AI, natural language processing, digital health and home training |
-| Year | 2025–2026 |
 | Project status | Implemented app with documented screens, without a field trial with users |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Flutter, Dart, Gemini API, Cloudflare Workers, Cloudflare R2, Cloudflare D1 (SQLite) |

@@ -10,7 +10,6 @@ The project documents the implementation of **screen brightness control** using 
 |---|---|
 | Project type | Computer-vision system for controlling a computer with hand gestures |
 | Field | Human–computer interaction (HCI), computer vision, hand tracking |
-| Year | 2025–2026 |
 | Project status | Working prototype on a personal computer with a webcam, tested with different hand poses |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Python, MediaPipe Hands, OpenCV, NumPy, PyAutoGUI, Anaconda, VS Code |

@@ -10,7 +10,6 @@ The robot's body was made with 3D printing and houses an Arduino Nano board, an 
 |---|---|
 | Project type | Interactive educational robot (embedded hardware + computer-vision software) |
 | Field | Educational robotics, computer vision, embedded systems, early learning |
-| Year | 2025–2026 |
 | Project status | Assembled final prototype, tested in practice with cards and objects in front of the camera |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Python, EasyOCR, YOLO, HSV with OpenCV, ElevenLabs, Arduino Nano, HC-05, MG995 servos |

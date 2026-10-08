@@ -10,7 +10,6 @@ The platform is built with **Laravel 12**, the **Filament** admin panel, and a *
 |---|---|
 | Project type | Integrated web platform for animal care and adoption management |
 | Field | Web development, generative AI, veterinary informatics |
-| Year | 2025–2026 |
 | Project status | Working system whose main components were tested in a simulated operating environment |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Laravel 12, Filament, MySQL, Google Gemini API, Spatie Permission, Tailwind CSS, Alpine.js, Simple QRCode |

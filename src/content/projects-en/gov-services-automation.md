@@ -10,7 +10,6 @@ The system was built as a bilingual (Arabic and English) web application using *
 |---|---|
 | Project type | Web application for government e-services (simulation prototype) |
 | Field | Digital transformation, e-government, management information systems |
-| Year | 2025–2026 |
 | Project status | Implemented system with citizen, employee, and admin interfaces, not connected to real government records |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Laravel, Blade, Tailwind CSS, Alpine.js, Livewire, Filament, MySQL, Eloquent ORM, Gemini API |

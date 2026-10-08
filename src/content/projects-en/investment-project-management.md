@@ -10,7 +10,6 @@ The platform is built with **Laravel 12** and the **TALL Stack** (Tailwind CSS, 
 |---|---|
 | Project type | Web platform for engineering project and human-resources management |
 | Field | Project management, foreign investment, web application development |
-| Year | 2025–2026 |
 | Project status | Implemented web system with documented interfaces for every role, designed for a single company on a local server |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Laravel 12, Filament, Livewire, Tailwind CSS, Alpine.js, MySQL, XAMPP, HTML5, CSS3, Bootstrap |

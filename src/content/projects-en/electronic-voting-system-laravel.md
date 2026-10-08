@@ -10,7 +10,6 @@ The system is built around three roles: the **voter** (regular user), the **cand
 |---|---|
 | Project type | Multi-role web platform for electronic voting management |
 | Field | Web applications, information systems |
-| Year | 2024–2025 |
 | Project status | Academic application prototype |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Laravel (MVC architecture), Bootstrap, relational database |

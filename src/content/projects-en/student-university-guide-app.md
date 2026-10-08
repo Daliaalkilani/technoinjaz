@@ -10,7 +10,6 @@ The mobile app was built with **Flutter**, and the back end and web administrati
 |---|---|
 | Project type | Academic guide mobile app with a web administration dashboard |
 | Field | Mobile apps, web development, digital university services |
-| Year | 2024–2025 |
 | Project status | Working academic prototype with mobile (Android) interfaces and an admin dashboard |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Flutter / Dart, Laravel / PHP, Eloquent ORM, Laravel Sanctum, relational database, Google Gemini |

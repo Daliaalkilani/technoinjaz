@@ -10,7 +10,6 @@ The system is written in Python around a unified processing core that serves thr
 |---|---|
 | Project type | Software and hardware BCI system controlling a model car |
 | Field | Brain-computer interfaces, biosignal processing, machine learning, embedded systems |
-| Year | 2025–2026 |
 | Project status | Working educational research prototype; not a medical device |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | OpenBCI Cyton, BrainFlow, Python 3.11, SciPy, MNE, scikit-learn, PyTorch (EEGNet, ShallowConvNet), Shrinkage LDA, FastAPI, Tkinter, Arduino Uno, HC-05 |

@@ -10,7 +10,6 @@ The platform's server was built with **Node.js** using only its built-in modules
 |---|---|
 | Project type | Code-generation model evaluation platform with an intelligent coding assistant |
 | Field | Software engineering, large language models (LLMs), developer tools |
-| Year | 2025–2026 |
 | Project status | Platform running locally on Windows, tested on 60 generated projects |
 | Techno Enjaz role | Technical support and assistance to the students during project development |
 | Core technologies | Node.js (built-in modules), HTML5, CSS3, Vanilla JS, opencode, MCP, Playwright, Batch Scripts |
