@@ -433,7 +433,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "seoTitle": "نظام إدارة رياض الأطفال بتطبيق Flutter وLaravel | تكنو إنجاز",
     "metaDesc": "نظام إدارة روضة: تطبيق Android بـ Flutter لأولياء الأمور، ولوحة ويب بـ Laravel وMySQL للإدارة، وAPI موثقة بـ OpenAPI لمتابعة الحضور والصحة والوجبات والفعاليات.",
     "altText": "واجهة نظام إدارة رياض الأطفال على الهاتف المحمول",
-    "image": "/images/platforms/kindergarten-management-system.jpg",
+    "image": "/images/projects/kindergarten-management-system.png",
     "tags": [
       "Flutter",
       "Laravel",
@@ -573,7 +573,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "seoTitle": "محطة خلط السوائل الكيميائية بالتحكم الآلي PLC | تكنو إنجاز",
     "metaDesc": "أتمتة محطة خلط كيميائية بوحدة Delta DVP-ES2 وبرمجة Ladder على ISPSoft وواجهة HMI على DOPSoft: تعبئة متتابعة بالحساسات وخلط ومراقبة حرارة ضمن محاكاة.",
     "altText": "محطة خلط سوائل كيميائية بنظام تحكم PLC آلي",
-    "image": "/images/platforms/chemical-mixing-station-plc.jpg",
+    "image": "/images/projects/chemical-mixing-station-plc.png",
     "tags": ["أتمتة صناعية", "PLC", "Delta WPLSoft", "حساسات", "تحكم تتابعي"],
     "pdfUrl": "/docs/projects/chemical-mixing-station-plc.pdf"
   },
@@ -760,7 +760,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "seoTitle": "تشخيص أمراض الأسنان بالذكاء الاصطناعي Gemini وSAM | تكنو إنجاز",
     "metaDesc": "منصة ويب تشخّص أمراض الفم والأسنان من الصور السريرية والشعاعية بنموذج Gemini الرؤيوي وتجزئة SAM، مع تقرير عربي بترقيم FDI ودقة تجزئة IoU نحو 0.89.",
     "altText": "منصة تشخيص أمراض الأسنان بالرؤية الحاسوبية",
-    "image": "/images/platforms/ai-dental-diagnosis.jpg",
+    "image": "/images/projects/ai-dental-diagnosis.png",
     "tags": ["رؤية حاسوبية", "VLM", "SAM", "React", "Flask"],
     "pdfUrl": "/docs/projects/ai-dental-diagnosis.pdf",
     "presentationUrl": "/presentations/ai-dental-diagnosis.pptx"
@@ -808,7 +808,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "seoTitle": "منصة تقييم نماذج توليد الكود ومساعد برمجي ذكي | تكنو إنجاز",
     "metaDesc": "EHCode Hub: منصة Node.js بلا اعتماديات تقارن ثلاثة نماذج توليد كود عبر 20 مهمة و60 مشروعًا، تصدّرها GLM-5.1 بمجموع 8.78/10، مع مساعد opencode مدمج.",
     "altText": "منصة تقييم نماذج توليد الشيفرات البرمجية",
-    "image": "/images/platforms/code-analysis-assistant.jpg",
+    "image": "/images/projects/code-analysis-assistant.png",
     "tags": ["هندسة برمجيات", "Node.js", "Benchmark", "نماذج توليد الكود", "Playwright"],
     "pdfUrl": "/docs/projects/code-analysis-assistant.pdf",
     "presentationUrl": "/presentations/code-analysis-assistant.pptx"
@@ -832,7 +832,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "seoTitle": "أداة تحويل Markdown إلى PDF بدعم العربية وMCP | تكنو إنجاز",
     "metaDesc": "تحويل Markdown إلى PDF على Cloudflare Serverless بدعم العربية RTL وPlantUML كـ SVG ومعادلات KaTeX، عبر واجهة ويب وREST API وخادم MCP لوكلاء الذكاء الاصطناعي.",
     "altText": "أداة تحويل Markdown إلى PDF على بنية Serverless",
-    "image": "/images/platforms/markdown-pdf-api-mcp-tool.jpg",
+    "image": "/images/projects/markdown-pdf-api-mcp-tool.png",
     "tags": ["Serverless", "Cloudflare", "PDF", "REST API", "MCP", "RTL"],
     "pdfUrl": "/docs/projects/markdown-pdf-api-mcp-tool.pdf",
     "presentationUrl": "/presentations/markdown-pdf-api-mcp-tool.pptx"
@@ -928,7 +928,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "seoTitle": "منصة رِفق لرعاية الحيوانات والتبني بالذكاء الاصطناعي | تكنو إنجاز",
     "metaDesc": "منصة رِفق لرعاية الحيوانات الأليفة والشاردة: رموز QR لملفات الحيوانات، تبنٍّ إلكتروني، عيادة Gemini لتحليل الصور والفيديو، ومتجر، مبنية بـ Laravel 12 وFilament.",
     "altText": "منصة رِفق الذكية لرعاية الحيوانات",
-    "image": "/images/platforms/rifq-pet-care-platform.jpg",
+    "image": "/images/projects/rifq-pet-care-platform.png",
     "tags": ["منصات ويب", "Laravel", "Filament", "Gemini", "رموز QR"],
     "pdfUrl": "/docs/projects/rifq-pet-care-platform.pdf",
     "presentationUrl": "/presentations/rifq-pet-care-platform.pptx"
@@ -952,7 +952,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "seoTitle": "واجهة دماغ-حاسوب EEG للتحكم بسيارة عبر Arduino | تكنو إنجاز",
     "metaDesc": "منظومة BCI بلوحة OpenBCI وPython تصنف إشارات EEG وتقود سيارة نموذجية عبر Arduino؛ دقة 86.22% لفتح وإغلاق العينين وزمن استجابة أقل من 500 مللي ثانية.",
     "altText": "منظومة التحكم بإشارات الدماغ EEG",
-    "image": "/images/platforms/eeg-brain-device-control.jpg",
+    "image": "/images/projects/eeg-brain-device-control.png",
     "tags": ["واجهات دماغ-حاسوب", "EEG", "OpenBCI", "EEGNet", "Arduino"],
     "pdfUrl": "/docs/projects/eeg-brain-device-control.pdf"
   },
@@ -1046,7 +1046,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "seoTitle": "منصة إدارة المشاريع الهندسية الاستثمارية بـ Laravel | تكنو إنجاز",
     "metaDesc": "منصة Laravel 12 وFilament وLivewire لإدارة مشاريع هندسية ممولة باستثمار أجنبي: ورش فنية، مهام وتكاليف، توظيف، وبوابة مستثمر للعرض فقط تنهي الصندوق الأسود.",
     "altText": "منصة إدارة المشاريع للشركات الاستثمارية",
-    "image": "/images/platforms/investment-project-management.jpg",
+    "image": "/images/projects/investment-project-management.png",
     "tags": ["إدارة مشاريع", "Laravel", "Filament", "Livewire", "MySQL"],
     "pdfUrl": "/docs/projects/investment-project-management.pdf",
     "presentationUrl": "/presentations/investment-project-management.pptx"
