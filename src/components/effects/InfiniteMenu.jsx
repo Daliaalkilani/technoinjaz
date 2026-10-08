@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { mat4, quat, vec2, vec3 } from 'gl-matrix';
 import SocialButtons from '@/components/ui/SocialButtons';
-import { buildNeighbors, focusView, loadSeating } from './sphereSeating';
+import { buildNeighbors, loadSeating } from './sphereSeating';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import './InfiniteMenu.css';
 
@@ -1047,7 +1047,7 @@ class InfiniteGridMenu {
             ? members[(pos + 1) % members.length]
             : (members.find(i => i > this.targetMemberIndex) ?? members[0]);
           this.targetMemberIndex = nextIndex;
-          this.targetVertexIndex = this.#findBestVertexForMember(nextIndex);
+          this.targetVertexIndex = this.#findBestVertexForMember(nextIndex, this.targetVertexIndex);
           this.#beginTourMove();
           // Announce at settle, not at hop start.
         }
@@ -1091,30 +1091,59 @@ class InfiniteGridMenu {
     return vec3.normalize(p, p);
   }
 
-  /** Seating shown this frame: the plan, adjusted so the centred member's ring is unique. */
+  /** Seating shown on the discs. It never changes while the sphere runs: the plan already
+   *  keeps every disc's ring free of repeats, so the people around the centred member
+   *  are the same before, during and after the sphere settles. */
   #currentItemMap() {
-    const focus = this.focusActive ? this.focusInstance : -1;
-    const key = `${focus}`;
-    if (key !== this.itemMapKey) {
-      const view = focus >= 0 ? focusView(this.seat, this.neighbors, focus, this.items.length, this.imageKeys) : this.seat;
+    if (this.itemMapKey !== 'static') {
       this.itemMap.fill(0);
-      this.itemMap.set(view.slice(0, 64));
-      this.itemMapKey = key;
+      this.itemMap.set(this.seat.slice(0, 64));
+      this.itemMapKey = 'static';
     }
     return this.itemMap;
   }
 
-  #findBestVertexForMember(memberIndex) {
+  /** Hop distances (in discs) from `from` to every disc, breadth-first over the rings. */
+  #discDistances(from) {
+    const dist = new Array(this.neighbors.length).fill(-1);
+    dist[from] = 0;
+    const queue = [from];
+    while (queue.length) {
+      const v = queue.shift();
+      for (const u of this.neighbors[v]) {
+        if (dist[u] < 0) {
+          dist[u] = dist[v] + 1;
+          queue.push(u);
+        }
+      }
+    }
+    return dist;
+  }
+
+  // Preferred travel between two members during the tour: about three discs, so a
+  // couple of colleagues pass by on the way (a hop to the next-door copy looked twitchy).
+  static TOUR_HOP = 3;
+
+  /**
+   * The disc to show `memberIndex` on. With `fromVertex`, picks the member's copy whose
+   * distance from the current disc is closest to TOUR_HOP (ties: the one already most
+   * in front); without it, simply the copy most in front.
+   */
+  #findBestVertexForMember(memberIndex, fromVertex = -1) {
     const n = this.control.snapDirection;
     const inversOrientation = quat.conjugate(quat.create(), this.control.orientation);
     const nt = vec3.transformQuat(vec3.create(), n, inversOrientation);
 
     let maxD = -Infinity;
     let bestVertex = 0;
+    const hops = fromVertex >= 0 ? this.#discDistances(fromVertex) : null;
+    let bestGap = Infinity;
     for (let i = 0; i < this.instancePositions.length; ++i) {
       if (this.seat[i] === memberIndex) {
+        const gap = hops ? Math.abs(hops[i] - InfiniteGridMenu.TOUR_HOP) : 0;
         const d = vec3.dot(nt, this.instancePositions[i]);
-        if (d > maxD) {
+        if (gap < bestGap || (gap === bestGap && d > maxD)) {
+          bestGap = gap;
           maxD = d;
           bestVertex = i;
         }

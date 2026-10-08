@@ -1,11 +1,12 @@
 // Seating plan for the team sphere (InfiniteMenu): which member's photo sits on each of
 // the sphere's discs. A plain `disc % memberCount` repeats members next to each other,
-// so the plan is optimised up-front and adjusted while a member is centred.
+// so the plan is optimised up-front.
 //
 // Rules, in priority order:
 //   1. Every member keeps at least one seat (so the tour can reach everyone).
 //   2. Around any disc, nobody repeats: the disc and its ring of neighbours are all
 //      different members (hard goal; minimised when the counts make it impossible).
+//      The plan is shown as-is, so the ring around a member never changes on screen.
 //   3. Members sharing the same photo (placeholder / temporary photos) are kept apart.
 //   4. Seats are spread evenly between members.
 
@@ -109,53 +110,6 @@ export function assignSeats(neighbors, itemCount, imageKeys) {
     if (bestCost < 1000 && restart >= 1) break;
   }
   return best;
-}
-
-/**
- * What each disc shows while `focus` (a disc index) is centred: the centred member
- * appears on that disc only, and the ring around the centre shows distinct members
- * (none of them the centred one). Other repeats are swapped for members that clash
- * least with their own neighbours.
- */
-export function focusView(base, neighbors, focus, itemCount, imageKeys) {
-  const view = base.slice();
-  if (focus < 0 || focus >= view.length || itemCount <= 1) return view;
-  const centre = base[focus];
-
-  const pick = (v, forbidden, avoidKeys) => {
-    let bestItem = -1;
-    let bestScore = Infinity;
-    for (let it = 0; it < itemCount; it++) {
-      if (forbidden.has(it)) continue;
-      let score = it === base[v] ? -1 : 0; // keep the planned member when it is valid
-      // Members sharing one photo would look like the same person twice in the ring.
-      if (avoidKeys && imageKeys && imageKeys[it] && avoidKeys.has(imageKeys[it])) score += 100;
-      for (const u of neighbors[v]) {
-        if (view[u] === it) score += 10;
-        else if (imageKeys && imageKeys[it] && imageKeys[it] === imageKeys[view[u]]) score += 1;
-      }
-      if (score < bestScore) {
-        bestScore = score;
-        bestItem = it;
-      }
-    }
-    return bestItem < 0 ? view[v] : bestItem;
-  };
-
-  // 1. The ring around the centre: all different, none equal to the centre.
-  const used = new Set([centre]);
-  const usedKeys = new Set(imageKeys && imageKeys[centre] ? [imageKeys[centre]] : []);
-  for (const u of neighbors[focus]) {
-    view[u] = pick(u, used, usedKeys);
-    used.add(view[u]);
-    if (imageKeys && imageKeys[view[u]]) usedKeys.add(imageKeys[view[u]]);
-  }
-  // 2. The centred member's face nowhere else.
-  const ring = new Set([focus, ...neighbors[focus]]);
-  for (let v = 0; v < view.length; v++) {
-    if (v !== focus && !ring.has(v) && view[v] === centre) view[v] = pick(v, new Set([centre]));
-  }
-  return view;
 }
 
 /** assignSeats with a per-browser cache: the plan only depends on the sphere and the
