@@ -244,7 +244,7 @@ export function blogPosting(article: BlogArticle) {
   };
 }
 
-export function projectWork(project: ProjectItem) {
+export function projectWork(project: ProjectItem, opts: { dateModified?: Date } = {}) {
   const url = absoluteUrl(`/projects/${project.slug}`);
   const cleanTags = projectTags(project.tags);
 
@@ -270,6 +270,7 @@ export function projectWork(project: ProjectItem) {
         }
       : {}),
     genre: project.categoryNameAr,
+    ...(opts.dateModified ? { dateModified: opts.dateModified.toISOString() } : {}),
     contributor: {
       '@id': ORG_ID
     },

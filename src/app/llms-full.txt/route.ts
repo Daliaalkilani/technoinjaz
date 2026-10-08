@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { getAllArticles } from '@/lib/content/articles';
 import { getAllProjects } from '@/lib/content/projects';
 import { projectReelsData } from '@/data/projectReelsData';
@@ -58,7 +60,13 @@ export async function GET() {
 
   text += `## Engineering Projects & Prototypes\n`;
   for (const p of projects) {
-    text += `### ${p.title}\n- URL: ${absoluteUrl('/projects/' + p.slug)}\n- Category: ${p.categoryNameAr}\n- Overview: ${p.excerpt}\n\n`;
+    const report = fs.existsSync(path.join(process.cwd(), 'public', 'docs', 'projects', `${p.slug}.pdf`)) ? `/docs/projects/${p.slug}.pdf` : p.pdfUrl;
+    text += `### ${p.title}${p.titleEn ? ` (${p.titleEn})` : ''}\n- URL: ${absoluteUrl('/projects/' + p.slug)}\n- Category: ${p.categoryNameAr}${p.categoryNameEn ? ` / ${p.categoryNameEn}` : ''}\n`;
+    if (p.tags?.length) text += `- Technologies & topics: ${[...new Set([...p.tags, ...(p.tagsEn ?? [])])].join(', ')}\n`;
+    text += `- Overview: ${p.excerpt}\n`;
+    if (p.excerptEn) text += `- Overview (EN): ${p.excerptEn}\n`;
+    if (report) text += `- Project report (PDF): ${absoluteUrl(report)}\n`;
+    text += `- Delivered by a team of students with technical assistance from Techno Enjaz.\n\n`;
     for (const qa of PROJECT_QA[p.slug] ?? []) text += `Q: ${qa.q}\nA: ${qa.a}\n\n`;
   }
 

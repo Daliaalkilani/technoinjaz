@@ -1,7 +1,22 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { getAllArticles } from '@/lib/content/articles';
 import { SITE_URL } from '@/config/site';
 
 export const dynamic = 'force-static';
+
+const MIME: Record<string, string> = { '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp', '.avif': 'image/avif' };
+
+/** RSS <enclosure> needs the real MIME type and byte length of the file. */
+function enclosure(src: string | undefined): string {
+  const rel = src && !src.startsWith('http') ? src : '/og-image.png';
+  const type = MIME[path.extname(rel).toLowerCase()] ?? 'image/jpeg';
+  let length = 0;
+  try {
+    length = fs.statSync(path.join(process.cwd(), 'public', rel)).size;
+  } catch {}
+  return `<enclosure url="${SITE_URL}${rel}" type="${type}" length="${length}"/>`;
+}
 
 function escapeXml(s: string): string {
   return s
@@ -21,14 +36,13 @@ export async function GET(): Promise<Response> {
   const items = articles
     .map((a) => {
       const url = `${SITE_URL}/articles/${a.slug}`;
-      const img = a.image ? `${SITE_URL}${a.image}` : `${SITE_URL}/og-image.png`;
       return `    <item>
       <title>${escapeXml(a.title)}</title>
       <link>${url}</link>
       <guid isPermaLink="true">${url}</guid>
       <pubDate>${new Date(`${a.publishedAt}T00:00:00+03:00`).toUTCString()}</pubDate>
       <description>${escapeXml(a.metaDescription || a.excerpt)}</description>
-      <enclosure url="${img}" type="image/avif" length="40000"/>
+      ${enclosure(a.image)}
       ${a.category ? `<category>${escapeXml(a.category)}</category>` : ''}
     </item>`;
     })

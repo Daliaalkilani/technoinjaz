@@ -12,6 +12,7 @@ import ContentQA from '@/components/content/ContentQA';
 import { PROJECT_QA } from '@/data/qa/projects';
 import { JsonLd } from '@/seo/JsonLd';
 import { projectWork, breadcrumb, qaSchema } from '@/seo/schemas';
+import { projectLastModified } from '@/lib/content/lastModified';
 
 export const dynamic = 'force-static';
 export const dynamicParams = false;
@@ -75,7 +76,7 @@ export default async function ProjectPage({
 
   return (
     <>
-      <JsonLd data={[projectWork(project), breadcrumb(breadcrumbItems), ...(qaItems.length ? [qaSchema(qaItems)] : [])]} />
+      <JsonLd data={[projectWork(project, { dateModified: projectLastModified(project.slug) }), breadcrumb(breadcrumbItems), ...(qaItems.length ? [qaSchema(qaItems)] : [])]} />
       <div className="tab-page-container" style={{ padding: 0, maxWidth: '100%' }}>
         <ProjectDetailView
           project={projectWithFiles}

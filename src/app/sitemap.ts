@@ -3,22 +3,7 @@ import { getAllProjects } from '@/lib/content/projects';
 import { getAllArticles } from '@/lib/content/articles';
 import { teamMembers } from '@/data/teamData';
 import { absoluteUrl } from '@/config/site';
-import { execFileSync } from 'node:child_process';
-
-// Last commit touching a project's AR/EN content, so crawlers re-fetch pages that changed.
-// Falls back to no <lastmod> when git history is unavailable (e.g. shallow CI checkouts).
-function projectLastModified(slug: string): Date | undefined {
-  try {
-    const out = execFileSync(
-      'git',
-      ['log', '-1', '--format=%cI', '--', `src/content/projects/${slug}.md`, `src/content/projects-en/${slug}.md`],
-      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }
-    ).trim();
-    return out ? new Date(out) : undefined;
-  } catch {
-    return undefined;
-  }
-}
+import { gitLastModified, projectLastModified, latest } from '@/lib/content/lastModified';
 
 export const dynamic = 'force-static';
 
@@ -30,33 +15,38 @@ export default function sitemap(): MetadataRoute.Sitemap {
       languages: { ar: absoluteUrl(p), en: absoluteUrl(p), 'x-default': absoluteUrl(p) }
     }
   });
-  const s = (p: string) => ({ url: absoluteUrl(p), ...alt(p) });
+  const s = (p: string, lastModified?: Date) => ({ url: absoluteUrl(p), ...alt(p), ...(lastModified ? { lastModified } : {}) });
   // Image sitemap entries help image search and AI answer engines attach the cover.
   const img = (src?: string) => (src ? { images: [absoluteUrl(src)] } : {});
 
+  // <lastmod> = last commit touching the page's content (falls back to the article's
+  // own dates); listing pages take the newest of their items.
+  const projects = getAllProjects().map((p) => ({ p, lastModified: projectLastModified(p.slug) }));
+  const articles = getAllArticles().map((a) => {
+    const fromData = new Date(a.modifiedAt || a.publishedAt);
+    const fromGit = gitLastModified([`src/content/articles/${a.slug}.md`, `src/content/articles-en/${a.slug}.md`]);
+    return { a, lastModified: latest([Number.isNaN(fromData.getTime()) ? undefined : fromData, fromGit]) };
+  });
+  const projectsUpdated = latest(projects.map((x) => x.lastModified));
+  const articlesUpdated = latest(articles.map((x) => x.lastModified));
+  const teamUpdated = gitLastModified(['src/data/teamData.js']);
+
   return [
-    s('/'),
-    s('/projects'),
-    ...getAllProjects().map((p) => {
-      const lastModified = projectLastModified(p.slug);
-      return { ...s(`/projects/${p.slug}`), ...(lastModified ? { lastModified } : {}), ...img(p.image) };
-    }),
-    s('/articles'),
-    ...getAllArticles().map((a) => ({
-      url: absoluteUrl(`/articles/${a.slug}`),
-      lastModified: a.modifiedAt ? new Date(a.modifiedAt) : new Date(a.publishedAt),
-      ...img(a.image)
-    })),
+    s('/', latest([projectsUpdated, articlesUpdated])),
+    s('/projects', projectsUpdated),
+    ...projects.map(({ p, lastModified }) => ({ ...s(`/projects/${p.slug}`, lastModified), ...img(p.image) })),
+    s('/articles', articlesUpdated),
+    ...articles.map(({ a, lastModified }) => ({ ...s(`/articles/${a.slug}`, lastModified), ...img(a.image) })),
     s('/videos'),
     s('/library'),
-    s('/faq'),
-    s('/about'),
+    s('/faq', gitLastModified(['src/data/faqData.ts'])),
+    s('/about', teamUpdated),
     s('/contact'),
     s('/privacy-policy'),
     // Real team member profiles (placeholders like "team-slot-5" are excluded —
     // they're unfilled seats, not searchable content).
     ...teamMembers
       .filter((m) => !m.isPlaceholder)
-      .map((m) => ({ ...s(`/team/${m.id}`), ...(m.avatar ? img(m.avatar) : {}) }))
+      .map((m) => ({ ...s(`/team/${m.id}`, teamUpdated), ...img(m.image) }))
   ];
 }

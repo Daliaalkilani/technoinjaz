@@ -43,9 +43,9 @@
 
 ```mermaid
 graph TD
-    Home["الرئيسية (/)<br/>بوابة الاستكشاف ثلاثية الأبعاد"] --> Projects["المشاريع الهندسية (/projects)<br/>14 مشروعاً مع الفلاتر"]
+    Home["الرئيسية (/)<br/>بوابة الاستكشاف ثلاثية الأبعاد"] --> Projects["المشاريع الهندسية (/projects)<br/>44 مشروعاً مع الفلاتر"]
     Home --> Videos["الفيديوهات والريلز (/videos)<br/>عروض المنصات الحية والتطبيقات"]
-    Home --> Articles["المقالات العلمية (/articles)<br/>12 مقالاً في الذكاء الاصطناعي والـ IoT"]
+    Home --> Articles["المقالات العلمية (/articles)<br/>13 مقالاً في الذكاء الاصطناعي والـ IoT"]
     Home --> About["من نحن والفريق (/about)<br/>الرؤية وحلقة لحظات الفريق"]
     Home --> Contact["تواصل معنا (/contact)<br/>نموذج الطلبات والاستشارات والخريطة"]
     Projects --> ProjectDetail["تفاصيل المشروع (/projects/[slug])<br/>توثيق تقني، مخططات، وفهرس ذكي"]
@@ -64,7 +64,7 @@ graph TD
 ---
 
 ### 2. كتالوج المشاريع الهندسية (`/projects` و `/projects/[slug]`)
-معرض متخصص يوثق **14 مشروعاً هندسياً وتقنياً متقدماً** تم إنجازها بإشراف ودعم المكتب:
+معرض متخصص يوثق **44 مشروعاً هندسياً وتقنياً** (كل مشروع مكتوب من تقريره الأصلي، مع ملف PDF وعرض تقديمي عند توفرهما) تم إنجازها بإشراف ودعم المكتب:
 - **نظام الفلاتر الفوري:** إمكانية تصفية المشاريع حسب الاختصاص (ذكاء اصطناعي، إنترنت أشياء، روبوتات وأنظمة تحكم، منصات برمجية وسحابية).
 - **صفحات التفاصيل الفردية (`[slug]`):** 
   - توثيق علمي يشرح المشكلة الهندسية، الحل المبتكر، العتاد والبرمجيات المستخدمة.
@@ -82,7 +82,7 @@ graph TD
 ---
 
 ### 4. المكتبة والمقالات العلمية (`/articles` و `/articles/[slug]`)
-مرجع معرفي وتقني مجاني يضم **12 مقالاً تخصصياً عميقاً** باللغة العربية:
+مرجع معرفي وتقني مجاني يضم **13 مقالاً تخصصياً عميقاً** باللغة العربية:
 - تغطية شاملة لأحدث مفاهيم التقنية العالمية: *بروتوكول سياق النموذج (MCP)*، *التنبؤ بالرمز التالي في النماذج اللغوية (Next Token Prediction)*، *الحوسبة العاطفية (Affective Computing)*، *التوأم الرقمي (Digital Twin)*، *بنية راديو 5G NR*، و*أنظمة الركوب التشاركي الذكي*.
 - تجربة قراءة فائقة الراحة (Distraction-Free Reader) مع تقدير زمن القراءة، وتنسيق أنيق للأكواد والمصطلحات الإنجليزية دون كسر التخطيط العربي، وقسم تفاعلي للمناقشة وإبداء الآراء.
 
@@ -106,8 +106,11 @@ graph TD
 
 ---
 
-### 8. الحساب والمكتبة الشخصية (`/account`, `/login`, `/register`)
-- نظام ملف شخصي محلي تجريبي فائق الخفة (بدون تعقيدات قواعد البيانات الخارجية)، يتيح للزائر إنشاء حسابه، واختيار صورته، وإدارة مكتبته الشخصية من المشاريع والمقالات والفيديوهات المحفوظة في مكان واحد.
+### 8. الحساب والمكتبة الشخصية (`/account`, `/login`, `/register`, `/reset-password`)
+- حسابات حقيقية على **Cloudflare D1**: تسجيل ودخول بجلسات آمنة (كلمات مرور PBKDF2، ورموز جلسات مخزنة مشفرة بـ SHA-256، وكوكيز httpOnly)، وتوثيق البريد الإلكتروني، واستعادة كلمة المرور برابط صالح لساعة ولمرة واحدة.
+- حفظ المشاريع والمقالات والفيديوهات، والتعليقات والردود والإعجابات على المقالات.
+- حماية من التخمين والسبام: حدود لعدد المحاولات على الدخول والتسجيل والاستعادة والتعليقات ونموذج التواصل.
+- صفحة إدارة `/admin/messages` لأصحاب الموقع لعرض رسائل نموذج التواصل.
 
 ---
 
@@ -159,7 +162,7 @@ graph TD
 Build Time:
   src/content/*.md (Markdown مقالات ومشاريع) + src/data/*.ts (بيانات وصفية)
         ↓ Next.js App Router (Server Components & SSG Generation)
-  49 صفحة ثابتة HTML فائقة السرعة مع بيانات منظمة JSON-LD كاملة
+  أكثر من 100 صفحة ثابتة HTML فائقة السرعة مع بيانات منظمة JSON-LD كاملة
         ↓
 Runtime:
   تحميل فوري للصفحات كـ Static HTML (لا حاجة لانتظار جافاسكريبت لقراءة المحتوى)
@@ -169,10 +172,13 @@ Client Hydration:
 ```
 
 - **توليد ثابت كامل (100% SSG):** كافة صفحات الموقع العامة جاهزة ومبنية مسبقاً، مما يمنح سرعة تحميل خارقة وتجربة مستخدم خالية من أي وميض أو تأخير.
-- **جاهزية النشر السحابي:** توافق كامل مع بيئة **Cloudflare Workers** عبر حزمة `@opennextjs/cloudflare`، واستعداد لتخزين الـ Cache عبر R2 و D1.
+- **جاهزية النشر السحابي:** توافق كامل مع بيئة **Cloudflare Workers** عبر حزمة `@opennextjs/cloudflare`.
+- **الواجهات الخلفية (API Routes على الـ Worker):** الحسابات والجلسات (`/api/auth/*`)، والتعليقات والإعجابات (`/api/articles/*`, `/api/comments/*`)، والمحفوظات (`/api/saved`)، ونموذج التواصل (`/api/contact`: بريد عبر ربط `SEND_EMAIL` + أرشفة في D1 + تنبيه واتساب)، وصندوق الإدارة (`/api/admin/messages`).
+- **قاعدة البيانات (D1 `technoenjaz-db`):** ملفات `migrations/001…003` (قابلة لإعادة التشغيل بأمان):
+  `npx wrangler d1 execute technoenjaz-db --remote --file migrations/<file>.sql`
 - **أرشفة ذكية ومتوافقة مع الذكاء الاصطناعي (SEO & AI Optimization):**
-  - بيانات منظمة JSON-LD تغطي كيان المنظمة، المقالات (`BlogPosting`)، والمشاريع (`CreativeWork`).
-  - خرائط موقع محدثة (`sitemap.xml`)، وملف توجيه العناكب (`robots.txt`).
+  - بيانات منظمة JSON-LD تغطي كيان المنظمة، المقالات (`BlogPosting`)، والمشاريع (`CreativeWork` مع `dateModified`)، والأسئلة الشائعة (`FAQPage`)، وفريق العمل (`Person` مع حساباتهم).
+  - خريطة موقع (`sitemap.xml`) بتواريخ آخر تعديل مأخوذة من git وصور الأغلفة ولغتي العرض، وملف توجيه العناكب (`robots.txt`)، وخلاصة RSS للمقالات (`feed.xml`).
   - ملفات استدلال متخصصة لنماذج الذكاء الاصطناعي ومحركات الإجابة الحديثة (`llms.txt` و `llms-full.txt`).
   - حماية الروابط القديمة من الكسر عبر نظام إعادة توجيه ذكي للمسارات السابقة (`#article/...`).
 
@@ -239,10 +245,11 @@ This repository hosts the **official platform of Techno Enjaz**, crafted with a 
 
 ### Core Highlights
 1. **Interactive Experience:** 3D Infinite Spiral project showcase, interactive 3D CardSwap cinema feed, and MagicBento spotlight grids.
-2. **Comprehensive Knowledge Base:** 12 in-depth original technical articles and 14 detailed engineering projects with full architectural documentation.
+2. **Comprehensive Knowledge Base:** 13 in-depth original technical articles and 44 engineering projects, each written from its original project report (AR + EN, FAQ, PDF report).
 3. **Adaptive Across All Devices:** Fully tailored for mobile screens (Apple iPhones with Dynamic Island, Android/Xiaomi/Redmi devices, Foldables), tablets, laptops, and ultra-wide / Smart TV displays.
 4. **Bilingual & Dual Theme:** Seamless Arabic (RTL) and English (LTR) support with meticulously calibrated Dark and Light modes.
-5. **Next.js 15 & Static Generation:** High-performance static site generation (SSG) with full JSON-LD structured data and AI-ready endpoints (`llms.txt`).
+5. **Next.js 15 & Static Generation:** High-performance static site generation (SSG) with full JSON-LD structured data and AI-ready endpoints (`llms.txt`, `llms-full.txt`).
+6. **Cloudflare Workers backend:** D1-backed accounts (email verification, password reset), comments, likes, saved items, rate limiting, contact form with email delivery and an owner inbox (`/admin/messages`).
 
 ---
 
