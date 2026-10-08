@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useId, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { ChevronDown, ListOrdered } from 'lucide-react';
 import './TableOfContents.css';
 
@@ -45,6 +45,20 @@ export default function TableOfContents({ items, title, variant }: TableOfConten
   const [activeId, setActiveId] = useActiveHeading(items);
   const [isOpen, setIsOpen] = useState(false);
   const panelId = useId();
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Card variant: keep the heading being read visible inside the (scrollable) TOC box.
+  // Only the box scrolls — never the page.
+  useEffect(() => {
+    const box = scrollRef.current;
+    if (!box || !activeId) return;
+    const link = box.querySelector<HTMLElement>(`a[href="#${CSS.escape(activeId)}"]`);
+    if (!link) return;
+    const top = link.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop;
+    if (top < box.scrollTop || top + link.offsetHeight > box.scrollTop + box.clientHeight) {
+      box.scrollTo({ top: Math.max(0, top - box.clientHeight / 3), behavior: 'smooth' });
+    }
+  }, [activeId]);
 
   if (items.length === 0) return null;
 
@@ -120,7 +134,7 @@ export default function TableOfContents({ items, title, variant }: TableOfConten
           <span className="te-toc__title">{title}</span>
         </span>
       </div>
-      <div className="te-toc__scroll">{list}</div>
+      <div className="te-toc__scroll" ref={scrollRef}>{list}</div>
     </nav>
   );
 }

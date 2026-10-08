@@ -1294,3 +1294,22 @@
 .light .project-cta-btn:hover {
   color: #ffffff;
 }
+
+/* Sidebar = TOC + related cards in one viewport-tall sticky column. The TOC used to
+   claim up to ~500px, pushing the related cards below the fold of the (scrollbar-less)
+   sidebar so only the first one showed. Now the related card keeps its full height and
+   the TOC takes whatever is left, scrolling inside itself. */
+.project-sidebar > .te-toc--card {
+  flex: 1 1 auto;
+  min-height: 160px;
+}
+
+.project-sidebar > .te-toc--card .te-toc__scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+}
+
+.project-sidebar > .sidebar-related-card {
+  flex-shrink: 0;
+}
