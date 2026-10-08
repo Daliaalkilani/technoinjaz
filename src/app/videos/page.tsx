@@ -4,8 +4,8 @@ import { ProjectReelsFeed } from '@/features/videos/ProjectReelsFeed';
 import { pageMetadata } from '@/seo/metadata';
 import { JsonLd } from '@/seo/JsonLd';
 import { webPage } from '@/seo/schemas';
-import { videosList } from '@/data/videosData';
-import { SITE_URL } from '@/config/site';
+import { videosList, isoDuration, searchThumbnail, localVideoPath } from '@/data/videosData';
+import { SITE_URL, ORG_ID } from '@/config/site';
 
 export const dynamic = 'force-static';
 
@@ -23,14 +23,22 @@ export default function VideosPage() {
         // VideoObject per video — enables rich video results in Google Search
         ...videosList.map((v) => ({
           '@type': 'VideoObject',
+          '@id': `${SITE_URL}/videos#${v.id}`,
           name: v.title,
+          alternateName: v.titleEn,
           description: v.description,
-          thumbnailUrl: [`${SITE_URL}${v.cover}`],
-          uploadDate: '2025-01-01T00:00:00+03:00',
+          thumbnailUrl: [`${SITE_URL}${searchThumbnail(v)}`],
+          uploadDate: `${v.uploadDate}T12:00:00+03:00`,
+          duration: isoDuration(v.duration),
+          contentUrl: `${SITE_URL}${localVideoPath(v)}`,
           embedUrl: v.youtubeUrl.replace('watch?v=', 'embed/'),
-          contentUrl: v.youtubeUrl,
+          url: `${SITE_URL}/videos`,
+          sameAs: v.youtubeUrl,
+          genre: v.tag,
+          keywords: [v.tag, v.tagEn].join(', '),
           inLanguage: ['ar', 'en'],
-          publisher: { '@type': 'Organization', name: 'تكنو إنجاز', url: SITE_URL }
+          isFamilyFriendly: true,
+          publisher: { '@id': ORG_ID }
         }))
       ]} />
       <div className="tab-page-container tab-page-videos" style={{ padding: 0, maxWidth: '100%' }}>

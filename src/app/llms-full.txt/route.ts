@@ -3,6 +3,7 @@ import path from 'node:path';
 import { getAllArticles } from '@/lib/content/articles';
 import { getAllProjects } from '@/lib/content/projects';
 import { projectReelsData } from '@/data/projectReelsData';
+import { videosList } from '@/data/videosData';
 import { teamMembers as team } from '@/data/teamData';
 import { faqData } from '@/data/faqData';
 import { ARTICLE_QA } from '@/data/qa/articles';
@@ -96,6 +97,11 @@ export async function GET() {
 ## Live Platforms\n`;
   for (const r of projectReelsData) {
     text += `### ${r.title}\n- Demo URL: ${r.liveUrl}\n- Category: ${r.category}\n- Description: ${r.description}\n\n`;
+  }
+
+  text += `## Engineering Videos\n`;
+  for (const v of videosList) {
+    text += `### ${v.title} (${v.titleEn})\n- Watch: ${v.youtubeUrl} · On site: ${absoluteUrl('/videos')} · Video file: ${absoluteUrl(`/videos/${v.id}.mp4`)}\n- Duration: ${v.duration} · Published: ${v.uploadDate} · Topic: ${v.tag} / ${v.tagEn}\n- Description: ${v.description}\n- Description (EN): ${v.descriptionEn}\n\n`;
   }
 
   text += `## Frequently Asked Questions (FAQ)\n`;

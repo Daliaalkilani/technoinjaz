@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
@@ -140,35 +141,51 @@ export function CinematicFooter() {
     return () => window.removeEventListener('techno_subscription_updated', handleSubSync);
   }, []);
 
+  // The footer lives in the app shell and survives client-side navigation, so its
+  // ScrollTriggers must be rebuilt per page (different page height) and refreshed when
+  // the page grows later (images, lazy lists). Visibility (opacity) is a play-once
+  // reveal that always completes; only the decorative parallax is scroll-scrubbed —
+  // scrubbing opacity against stale trigger positions left the footer stuck half-faded.
+  const pathname = usePathname();
+
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (!wrapperRef.current) return;
 
     gsap.registerPlugin(ScrollTrigger);
-    ScrollTrigger.refresh();
 
     const ctx = gsap.context(() => {
-      // Background Parallax for Giant Text
       if (giantTextRef.current) {
+        // Parallax only (no opacity): purely decorative, fine to follow the scroll.
         gsap.fromTo(
           giantTextRef.current,
-          { y: 50, scale: 0.94, opacity: 0.3 },
+          { y: 50, scale: 0.94 },
           {
             y: 0,
             scale: 1,
-            opacity: 1,
             ease: "power1.out",
             scrollTrigger: {
               trigger: wrapperRef.current,
               start: "top 95%",
               end: "bottom bottom",
               scrub: 1,
+              invalidateOnRefresh: true,
             },
+          }
+        );
+        gsap.fromTo(
+          giantTextRef.current,
+          { opacity: 0.3 },
+          {
+            opacity: 1,
+            duration: 0.9,
+            ease: "power1.out",
+            scrollTrigger: { trigger: wrapperRef.current, start: "top 95%", once: true },
           }
         );
       }
 
-      // Staggered Content Reveal
+      // Staggered content reveal: plays once when the footer comes into view.
       const elementsToAnimate = [headingRef.current, inputRef.current, linksRef.current].filter(Boolean);
       if (elementsToAnimate.length) {
         gsap.fromTo(
@@ -180,19 +197,27 @@ export function CinematicFooter() {
             stagger: 0.12,
             duration: 0.6,
             ease: "power2.out",
-            scrollTrigger: {
-              trigger: wrapperRef.current,
-              start: "top 92%",
-              end: "top 55%",
-              scrub: 1,
-            },
+            scrollTrigger: { trigger: wrapperRef.current, start: "top 92%", once: true },
           }
         );
       }
     }, wrapperRef);
 
-    return () => ctx.revert();
-  }, [lang]);
+    // Re-measure trigger positions whenever the page height changes.
+    let timer = 0;
+    const ro = new ResizeObserver(() => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => ScrollTrigger.refresh(), 200);
+    });
+    ro.observe(document.body);
+    ScrollTrigger.refresh();
+
+    return () => {
+      ro.disconnect();
+      window.clearTimeout(timer);
+      ctx.revert();
+    };
+  }, [lang, pathname]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });

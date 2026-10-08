@@ -1,6 +1,7 @@
 import { getAllArticles } from '@/lib/content/articles';
 import { getAllProjects } from '@/lib/content/projects';
 import { projectReelsData } from '@/data/projectReelsData';
+import { videosList } from '@/data/videosData';
 import { teamMembers as team } from '@/data/teamData';
 import { ORG, absoluteUrl } from '@/config/site';
 
@@ -68,6 +69,11 @@ export async function GET() {
   text += `\n## Live Platforms\n`;
   for (const r of projectReelsData) {
     text += `- [${r.title}](${r.liveUrl}): ${r.description}\n`;
+  }
+
+  text += `\n## Engineering Videos\n`;
+  for (const v of videosList) {
+    text += `- [${v.title} — ${v.titleEn}](${v.youtubeUrl}) (${v.duration}): ${v.description}\n`;
   }
 
   text += `

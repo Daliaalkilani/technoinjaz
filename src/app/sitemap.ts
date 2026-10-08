@@ -4,6 +4,7 @@ import { getAllArticles } from '@/lib/content/articles';
 import { teamMembers } from '@/data/teamData';
 import { absoluteUrl } from '@/config/site';
 import { gitLastModified, projectLastModified, latest } from '@/lib/content/lastModified';
+import { videosList, durationSeconds, searchThumbnail, localVideoPath } from '@/data/videosData';
 
 export const dynamic = 'force-static';
 
@@ -37,7 +38,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...projects.map(({ p, lastModified }) => ({ ...s(`/projects/${p.slug}`, lastModified), ...img(p.image) })),
     s('/articles', articlesUpdated),
     ...articles.map(({ a, lastModified }) => ({ ...s(`/articles/${a.slug}`, lastModified), ...img(a.image) })),
-    s('/videos'),
+    {
+      ...s('/videos', gitLastModified(['src/data/videosData.ts', 'src/data/projectReelsData.ts'])),
+      // Video sitemap entries: lets Google index the engineering demo videos themselves.
+      videos: videosList.map((v) => ({
+        title: v.title,
+        thumbnail_loc: absoluteUrl(searchThumbnail(v)),
+        description: v.description,
+        content_loc: absoluteUrl(localVideoPath(v)),
+        player_loc: v.youtubeUrl.replace('watch?v=', 'embed/'),
+        duration: durationSeconds(v.duration),
+        publication_date: `${v.uploadDate}T12:00:00+03:00`,
+        family_friendly: 'yes' as const
+      }))
+    },
     s('/library'),
     s('/faq', gitLastModified(['src/data/faqData.ts'])),
     s('/about', teamUpdated),

@@ -13,7 +13,24 @@ export interface VideoItem {
   youtubeUrl: string;
   description: string;
   descriptionEn: string;
+  /** YouTube publish date (ISO), used by VideoObject / the video sitemap. */
+  uploadDate: string;
 }
+
+/** "mm:ss" → seconds. */
+export const durationSeconds = (d: string) => d.split(':').reduce((acc, part) => acc * 60 + Number(part), 0);
+
+/** ISO 8601 duration for schema.org (e.g. 01:07 → PT1M7S). */
+export const isoDuration = (d: string) => {
+  const s = durationSeconds(d);
+  return `PT${Math.floor(s / 60) ? `${Math.floor(s / 60)}M` : ''}${s % 60}S`;
+};
+
+/** Search engines do not accept AVIF video thumbnails: point them at the original PNG. */
+export const searchThumbnail = (v: VideoItem) => `/images/videos/${v.id}.png`;
+
+/** The same video hosted on this site (served by the reels feed). */
+export const localVideoPath = (v: VideoItem) => `/videos/${v.id}.mp4`;
 
 export const videosList: VideoItem[] = [
   {
@@ -26,7 +43,8 @@ export const videosList: VideoItem[] = [
     cover: (droneNanoImg as any)?.src || droneNanoImg,
     youtubeUrl: 'https://www.youtube.com/watch?v=4Sew-i8sB2s',
     description: 'استعراض هندسي متكامل لطائرة درون تعتمد على معالجة استقرار الجايروسكوب، والاتصال اللاسلكي RF433، والبث المرئي الحي عبر ESP-CAM بدقة واحترافية.',
-    descriptionEn: 'An integrated quadcopter engineering design combining gyro flight stabilization, RF433 wireless control, and real-time ESP-CAM video streaming.'
+    descriptionEn: 'An integrated quadcopter engineering design combining gyro flight stabilization, RF433 wireless control, and real-time ESP-CAM video streaming.',
+    uploadDate: '2024-06-21'
   },
   {
     id: 'video-arm-welding',
@@ -38,7 +56,8 @@ export const videosList: VideoItem[] = [
     cover: (armWeldingImg as any)?.src || armWeldingImg,
     youtubeUrl: 'https://www.youtube.com/watch?v=L2ya6z4tZhg',
     description: 'تطوير ذراع روبوتية متعددة المحاور مبرمجة للأتمتة الصناعية ولحام المعادن فائق الدقة باستخدام غاز الأرجون مع تحكم ميكاترونيكي سلس وموثوق.',
-    descriptionEn: 'Development of a multi-axis robotic arm engineered for industrial automation and high-precision argon welding with seamless mechatronic control.'
+    descriptionEn: 'Development of a multi-axis robotic arm engineered for industrial automation and high-precision argon welding with seamless mechatronic control.',
+    uploadDate: '2024-06-21'
   },
   {
     id: 'video-arm-vision',
@@ -50,6 +69,7 @@ export const videosList: VideoItem[] = [
     cover: (armVisionImg as any)?.src || armVisionImg,
     youtubeUrl: 'https://www.youtube.com/watch?v=poKdf5HdaAM',
     description: 'ربط خوارزميات الرؤية الحاسوبية في بايثون مع متحكمات الأردوينو لتتبع الأجسام بالزمن الحقيقي وتوجيه الذراع الروبوتية لمناولتها ذاتياً بدقة فائقة.',
-    descriptionEn: 'Real-time integration of computer vision algorithms in Python with Arduino microcontrollers for autonomous object tracking and manipulation.'
+    descriptionEn: 'Real-time integration of computer vision algorithms in Python with Arduino microcontrollers for autonomous object tracking and manipulation.',
+    uploadDate: '2024-06-20'
   }
 ];
