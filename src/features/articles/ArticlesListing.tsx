@@ -362,10 +362,12 @@ export function ArticlesListing({
                 style={{ cursor: 'pointer' }}
               >
                 {/* 1. Image Media Container */}
+                {article.image && (
                 <Link href={`/articles/${article.slug}`} prefetch={true} className="card-media-banner block" tabIndex={-1}>
                   <ResponsiveImage src={article.image} alt={title} className="card-media-img" sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 45vw" />
                   <div className="card-media-gradient-overlay" />
                 </Link>
+                )}
 
                 {/* 2. Card Content Body */}
                 <div className="card-body-content">

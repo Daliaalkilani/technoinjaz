@@ -178,8 +178,11 @@
   color: #128c7e;
 }
 
+/* كل الأيقونات تصبح بيضاء على التدرج الملون عند التمرير في الوضع الفاتح.
+   تُعرَّف بعد قواعد الألوان أعلاه لتتغلب عليها (نفس الـspecificity، ترتيب لاحق)،
+   وتضمن ظهور الأيقونة على كامل المنصات بما فيها X ذات الخلفية الداكنة. */
 [data-theme="light"] .social-btn:hover svg {
-  color: #ffffff;
+  color: #ffffff !important;
 }
 
 [data-theme="light"] .social-btn.linkedin:hover {

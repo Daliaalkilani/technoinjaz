@@ -55,7 +55,10 @@ export default function TableOfContents({ items, title, variant }: TableOfConten
     // iOS Safari cancels an in-flight smooth scroll when replaceState fires — delaying it
     // fixes the "first TOC click scrolls to top" bug.
     window.setTimeout(() => window.history.replaceState(null, '', `#${id}`), 900);
-    if (variant === 'accordion') setIsOpen(false);
+    // On phones the accordion sits ABOVE the article: collapsing it mid-scroll shrinks
+    // the page and shifts the target up ~300px, landing past the heading. Close only
+    // after the smooth scroll has settled (duration matches the replaceState delay).
+    if (variant === 'accordion') window.setTimeout(() => setIsOpen(false), 900);
   };
 
   const list = (
