@@ -1,6 +1,7 @@
 import { getDB, apiError, apiOk, isSameOrigin, readJson } from '@/lib/server/db';
 import { getSessionUser } from '@/lib/server/auth';
 import { blogArticlesData } from '@/data/blogArticlesData';
+import { isRateLimited, MIN } from '@/lib/server/rateLimit';
 
 export const dynamic = 'force-dynamic';
 
@@ -69,6 +70,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ slu
     const db = await getDB();
     const user = await getSessionUser(request, db);
     if (!user) return apiError(401, 'unauthorized');
+    if (await isRateLimited(db, [{ name: 'comment:user', id: user.id, limit: 20, windowMs: 10 * MIN }])) {
+      return apiError(429, 'rate_limited');
+    }
 
     // Replies nest one level only: replying to a reply attaches to its top-level parent.
     let parentId: number | null = null;

@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
+import { sendMail } from '@/lib/server/mail';
+import { isRateLimited, HOUR } from '@/lib/server/rateLimit';
+import type { D1 } from '@/lib/server/db';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,24 +16,16 @@ export const dynamic = 'force-dynamic';
 // email / WhatsApp legs fail — the message is stored and flagged.
 // ─────────────────────────────────────────────────────────────────────────────
 
-type SendEmail = (message: unknown) => Promise<void>;
-
-type CloudflareEmailModule = { EmailMessage: new (from: string, to: string, raw: string) => unknown };
-
 type Env = {
   DB?: {
     prepare(q: string): { bind(...v: unknown[]): { run(): Promise<{ meta?: { changes?: number } }> } };
   };
-  SEND_EMAIL?: SendEmail;
   WA_BRIDGE_URL?: string;
   WA_BRIDGE_KEY?: string;
 };
 
 const OWNER_JID = '164286894714983@lid';
-const FROM_ADDR = 'info@technoenjaz.com';
-const FROM = `Techno Enjaz <${FROM_ADDR}>`;
 const TO_ADDR = 'abdalganih1@gmail.com';
-const TO = TO_ADDR;
 
 const esc = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -38,31 +33,6 @@ const esc = (s: string) =>
 function pick(formData: Record<string, unknown>, key: string, max = 600): string {
   const v = typeof formData[key] === 'string' ? (formData[key] as string).trim() : '';
   return v.slice(0, max);
-}
-
-// Raw MIME message built by hand (base64 UTF-8 for both parts — no QP
-// line-length pitfalls). mimetext is not installable in this environment.
-function buildMime(subject: string, textBody: string, htmlBody: string): string {
-  const boundary = '----=_te_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
-  const b64 = (s: string) => {
-    const bytes = new TextEncoder().encode(s);
-    let bin = '';
-    for (let i = 0; i < bytes.length; i += 0x8000) {
-      bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
-    }
-    // wrap at 76 chars per MIME convention
-    const raw = btoa(bin);
-    return raw.replace(/(.{76})/g, '$1\r\n');
-  };
-  const headers =
-    `From: ${FROM}\r\n` +
-    `To: ${TO}\r\n` +
-    `Subject: ${subject}\r\n` +
-    `MIME-Version: 1.0\r\n` +
-    `Content-Type: multipart/alternative; boundary="${boundary}"\r\n`;
-  const part = (type: string, body: string) =>
-    `--${boundary}\r\nContent-Type: ${type}; charset=utf-8\r\nContent-Transfer-Encoding: base64\r\n\r\n${b64(body)}\r\n`;
-  return headers + '\r\n' + part('text/plain', textBody) + part('text/html', htmlBody) + `--${boundary}--\r\n`;
 }
 
 function contactEmail(name: string, data: { specialization: string; university: string; email: string; phone: string; inquiry: string }, lang: string) {
@@ -139,22 +109,12 @@ export async function POST(request: Request) {
     const ip = request.headers.get('cf-connecting-ip') || null;
     const ua = (request.headers.get('user-agent') || '').slice(0, 300) || null;
 
-    let emailSent = 0;
-    try {
-      const send = (env as unknown as Env).SEND_EMAIL;
-      if (send) {
-        // EmailMessage lives in the workerd-provided "cloudflare:email" module.
-        // webpackIgnore keeps Next from trying to bundle the cloudflare: scheme;
-        // OpenNext leaves it native in the final worker bundle.
-        const emailMod = (await import(/* webpackIgnore: true */ 'cloudflare:email' as string)) as unknown as CloudflareEmailModule;
-        const { subject, textBody, htmlBody } = contactEmail(name, data, lang);
-        const raw = buildMime(subject, textBody, htmlBody);
-        await send(new emailMod.EmailMessage(FROM_ADDR, TO_ADDR, raw));
-        emailSent = 1;
-      }
-    } catch (err) {
-      console.error('contact email leg failed:', err instanceof Error ? err.message : err);
+    if (db && await isRateLimited(db as unknown as D1, [{ name: 'contact:ip', id: ip, limit: 5, windowMs: HOUR }])) {
+      return NextResponse.json({ success: false, message: 'Too many messages, please try again later.' }, { status: 429 });
     }
+
+    const { subject, textBody, htmlBody } = contactEmail(name, data, lang);
+    const emailSent = (await sendMail({ to: TO_ADDR, subject, text: textBody, html: htmlBody, replyTo: email || undefined, tag: 'contact' })) ? 1 : 0;
 
     let waSent = 0;
     const waUrl = (env as unknown as Env).WA_BRIDGE_URL;

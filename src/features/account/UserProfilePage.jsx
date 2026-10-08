@@ -89,9 +89,11 @@ export default function UserProfilePage({ user, verifyNotice = null, onUserChang
       return;
     }
     setNotice(
-      res.ok
-        ? { type: 'success', message: isEn ? 'A new verification link has been issued.' : 'تم إصدار رابط تأكيد جديد.' }
-        : { type: 'error', message: apiErrorMessage(res.error, isEn) }
+      !res.ok
+        ? { type: 'error', message: apiErrorMessage(res.error, isEn) }
+        : res.sent
+          ? { type: 'success', message: isEn ? 'A new verification link has been sent to your email.' : 'أرسلنا رابط تأكيد جديداً إلى بريدك الإلكتروني.' }
+          : { type: 'error', message: isEn ? 'We could not send the email right now. Please try again later or contact us.' : 'تعذّر إرسال الرسالة الآن، يرجى المحاولة لاحقاً أو التواصل معنا.' }
     );
   };
 

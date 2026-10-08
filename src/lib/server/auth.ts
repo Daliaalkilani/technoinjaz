@@ -1,6 +1,8 @@
 import 'server-only';
 import type { NextResponse } from 'next/server';
 import { getDB, type D1 } from './db';
+import { actionEmail, sendMail } from './mail';
+import { SITE_URL } from '@/config/site';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Password hashing: PBKDF2-SHA256 via WebCrypto (native in Workers, no deps).
@@ -140,55 +142,55 @@ export const publicUser = (u: SessionUser) => ({
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Email verification
+// Email verification + password reset (links always point at the canonical site, never
+// at the request's Host header, so a forged Host cannot poison an emailed link)
 // ─────────────────────────────────────────────────────────────────────────────
 const VERIFY_TTL_MS = 48 * 60 * 60 * 1000;
+const RESET_TTL_MS = 60 * 60 * 1000;
 
-type SendEmail = (message: unknown) => Promise<void>;
-
-export async function issueVerificationToken(
-  db: D1,
-  userId: number,
-  origin: string,
-  email: string,
-  sendEmail?: SendEmail
-) {
+/** Issues a fresh verification token and emails the link. Returns whether it was sent. */
+export async function issueVerificationToken(db: D1, userId: number, email: string): Promise<boolean> {
   const token = randomToken();
   await db.prepare('DELETE FROM email_verification_tokens WHERE user_id = ?1').bind(userId).run();
   await db
     .prepare('INSERT INTO email_verification_tokens (token, user_id, expires_at) VALUES (?1, ?2, ?3)')
     .bind(await sha256Hex(token), userId, Date.now() + VERIFY_TTL_MS)
     .run();
-  const link = `${origin}/account?verify=${token}`;
-  // Deliver via the same SEND_EMAIL binding the contact route uses (Cloudflare Email
-  // Routing: info@technoenjaz.com is routed, no mailbox password exists). Best effort —
-  // failure falls back to Worker logs so registration never breaks.
-  try {
-    if (sendEmail) {
-      const emailMod = (await import(/* webpackIgnore: true */ 'cloudflare:email' as string)) as unknown as { EmailMessage: new (from: string, to: string, raw: string) => unknown };
-      const { EmailMessage } = emailMod;
-      const raw = [
-        'From: Techno Enjaz <info@technoenjaz.com>',
-        `To: ${email}`,
-        'Subject: =?UTF-8?B?' + Buffer.from('توثيق بريدك — تكنو إنجاز').toString('base64') + '?=',
-        'MIME-Version: 1.0',
-        'Content-Type: text/html; charset=UTF-8',
-        '',
-        `<div dir="rtl" style="font-family:Tahoma,Arial,sans-serif;padding:24px">`,
-        `<h2 style="color:#0369a1">أهلاً بك في تكنو إنجاز 👋</h2>`,
-        `<p>اضغط الزر التالي لتوثيق بريدك الإلكتروني (الرابط صالح 48 ساعة):</p>`,
-        `<p><a href="${link}" style="background:#0284c7;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:bold">توثيق البريد</a></p>`,
-        `<p style="font-size:12px;color:#64748b">إذا لم تطلب هذا الحساب تجاهل الرسالة.</p>`,
-        `</div>`
-      ].join('\r\n');
-      await sendEmail(new EmailMessage('info@technoenjaz.com', email, raw) as unknown as object);
-      console.log(`[verify-email] sent via SEND_EMAIL user=${userId} email=${email}`);
-      return;
-    }
-  } catch (e) {
-    console.error('[verify-email] send failed, falling back to logs', e instanceof Error ? e.message : e);
-  }
-  console.log(`[verify-email] user=${userId} email=${email} link=${link}`);
+  const link = `${SITE_URL}/account?verify=${token}`;
+  const { html, text } = actionEmail({
+    title: 'توثيق بريدك الإلكتروني',
+    intro: 'أهلاً بك في تكنو إنجاز. اضغط الزر التالي لتوثيق بريدك الإلكتروني (الرابط صالح 48 ساعة).',
+    button: 'توثيق البريد',
+    link,
+    note: 'إذا لم تُنشئ حساباً في technoenjaz.com فتجاهل هذه الرسالة.'
+  });
+  const sent = await sendMail({ to: email, subject: 'توثيق بريدك — تكنو إنجاز', text, html, tag: 'verify-email' });
+  // Fallback the owner can act on (Worker logs) when delivery is refused.
+  if (!sent) console.log(`[verify-email] not delivered user=${userId} link=${link}`);
+  return sent;
+}
+
+/**
+ * Password reset request. Only the SHA-256 of the token is stored; any older reset
+ * token of the user is replaced. Returns whether the email was handed to Cloudflare.
+ */
+export async function issuePasswordResetToken(db: D1, userId: number, email: string): Promise<boolean> {
+  const token = randomToken();
+  await db.prepare('DELETE FROM password_reset_tokens WHERE user_id = ?1').bind(userId).run();
+  await db
+    .prepare('INSERT INTO password_reset_tokens (token, user_id, expires_at) VALUES (?1, ?2, ?3)')
+    .bind(await sha256Hex(token), userId, Date.now() + RESET_TTL_MS)
+    .run();
+  const link = `${SITE_URL}/reset-password?token=${token}`;
+  const { html, text } = actionEmail({
+    title: 'إعادة تعيين كلمة المرور',
+    intro: 'وصلنا طلب لإعادة تعيين كلمة مرور حسابك في تكنو إنجاز. اضغط الزر التالي لاختيار كلمة مرور جديدة (الرابط صالح ساعة واحدة ويُستخدم مرة واحدة).',
+    button: 'تعيين كلمة مرور جديدة',
+    link,
+    note: 'إذا لم تطلب ذلك فتجاهل الرسالة؛ كلمة مرورك الحالية تبقى كما هي.'
+  });
+  // Never log reset links: they grant account access.
+  return sendMail({ to: email, subject: 'إعادة تعيين كلمة المرور — تكنو إنجاز', text, html, tag: 'password-reset' });
 }
 
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;

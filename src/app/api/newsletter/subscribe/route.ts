@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
+import { isSameOrigin, type D1 } from '@/lib/server/db';
+import { isRateLimited, clientIp, HOUR } from '@/lib/server/rateLimit';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
+  if (!isSameOrigin(request)) return NextResponse.json({ success: false, message: 'Forbidden.' }, { status: 403 });
   try {
     const body = await request.json();
     const email = body?.email ? String(body.email).trim().toLowerCase() : '';
@@ -23,6 +26,10 @@ export async function POST(request: Request) {
         { success: false, message: 'Storage not configured.' },
         { status: 500 }
       );
+    }
+
+    if (await isRateLimited(db as unknown as D1, [{ name: 'newsletter:ip', id: clientIp(request), limit: 10, windowMs: HOUR }])) {
+      return NextResponse.json({ success: false, message: 'Too many requests, please try again later.' }, { status: 429 });
     }
 
     const result = await db

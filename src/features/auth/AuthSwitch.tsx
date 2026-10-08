@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Mail,
@@ -290,16 +291,9 @@ export function AuthSwitch({
                   />
                   <span>{isEn ? "Remember me" : "تذكرني"}</span>
                 </label>
-                <button
-                  type="button"
-                  onClick={() => {
-                    alert(isEn ? "You can reset your password by contacting our support team." : "يمكنك استعادة كلمة المرور عبر التواصل معنا.");
-                  }}
-                  className="auth-switch-forgot"
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
-                >
+                <Link href="/reset-password" className="auth-switch-forgot">
                   {isEn ? "Forgot password?" : "نسيت كلمة المرور؟"}
-                </button>
+                </Link>
               </div>
 
               <button type="submit" className="auth-switch-submit-btn" disabled={pending !== null} aria-busy={pending === "signIn"}>

@@ -1,5 +1,6 @@
 import { getDB, apiError, apiOk, isSameOrigin, readJson } from '@/lib/server/db';
 import { createSession, setSessionCookie, verifyPassword, verifyDummy, publicUser, type SessionUser } from '@/lib/server/auth';
+import { isRateLimited, clientIp, MIN } from '@/lib/server/rateLimit';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,6 +15,12 @@ export async function POST(request: Request) {
 
   try {
     const db = await getDB();
+    // Brute-force guard: per IP and per targeted account.
+    const limited = await isRateLimited(db, [
+      { name: 'login:ip', id: clientIp(request), limit: 20, windowMs: 10 * MIN },
+      { name: 'login:email', id: email, limit: 10, windowMs: 15 * MIN }
+    ]);
+    if (limited) return apiError(429, 'rate_limited');
     const row = await db
       .prepare('SELECT id, email, name, email_verified, created_at, password_hash FROM users WHERE email = ?1')
       .bind(email)

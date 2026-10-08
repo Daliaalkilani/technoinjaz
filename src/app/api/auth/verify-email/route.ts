@@ -1,16 +1,12 @@
-import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { getDB, apiError, apiOk, isSameOrigin, readJson } from '@/lib/server/db';
 import { getSessionUser, issueVerificationToken, sha256Hex } from '@/lib/server/auth';
+import { isRateLimited, HOUR } from '@/lib/server/rateLimit';
 
 export const dynamic = 'force-dynamic';
 
 /**
  * POST { token }  → confirms the address the token was issued for.
  * POST { resend: true } (signed in) → issues a fresh token.
- *
- * TODO(owner): verification links are currently only written to the Worker logs
- * (see issueVerificationToken). Wire up real email delivery from info@technoenjaz.com
- * once that mailbox is ready.
  */
 export async function POST(request: Request) {
   if (!isSameOrigin(request)) return apiError(403, 'forbidden');
@@ -24,9 +20,11 @@ export async function POST(request: Request) {
       const user = await getSessionUser(request, db);
       if (!user) return apiError(401, 'unauthorized');
       if (user.email_verified) return apiOk({ alreadyVerified: true });
-      const env = (getCloudflareContext().env as { SEND_EMAIL?: (m: unknown) => Promise<void> }) || {};
-      await issueVerificationToken(db, user.id, new URL(request.url).origin, user.email, env.SEND_EMAIL);
-      return apiOk({ sent: true });
+      if (await isRateLimited(db, [{ name: 'verify:user', id: user.id, limit: 3, windowMs: HOUR }])) {
+        return apiError(429, 'rate_limited');
+      }
+      const sent = await issueVerificationToken(db, user.id, user.email);
+      return apiOk({ sent });
     }
 
     const token = typeof body.token === 'string' ? body.token : '';

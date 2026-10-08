@@ -156,6 +156,8 @@ export function apiErrorMessage(code: string, isEn: boolean): string {
     empty_comment: ['لا يمكن نشر تعليق فارغ.', "Comment can't be empty."],
     comment_too_long: ['التعليق طويل جداً (الحد 2000 حرف).', 'Comment is too long (2000 characters max).'],
     invalid_token: ['رابط التفعيل غير صالح أو منتهي الصلاحية.', 'This verification link is invalid or has expired.'],
+    rate_limited: ['محاولات كثيرة خلال وقت قصير، يرجى الانتظار قليلاً ثم المحاولة مجدداً.', 'Too many attempts in a short time. Please wait a little and try again.'],
+    forbidden: ['لا تملك صلاحية لهذا الإجراء.', 'You do not have permission for this action.'],
     network: ['تعذّر الاتصال بالخادم، تحقق من الإنترنت وحاول مجدداً.', 'Could not reach the server. Check your connection and try again.']
   };
   const pair = m[code] ?? ['حدث خطأ غير متوقع، حاول مرة أخرى.', 'Something went wrong. Please try again.'];

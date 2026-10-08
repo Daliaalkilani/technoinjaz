@@ -1,6 +1,6 @@
 import { getDB, apiError, apiOk, isSameOrigin, readJson } from '@/lib/server/db';
-import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { EMAIL_RE, hashPassword, createSession, setSessionCookie, issueVerificationToken, publicUser, type SessionUser } from '@/lib/server/auth';
+import { isRateLimited, clientIp, HOUR } from '@/lib/server/rateLimit';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,6 +20,9 @@ export async function POST(request: Request) {
 
   try {
     const db = await getDB();
+    if (await isRateLimited(db, [{ name: 'register:ip', id: clientIp(request), limit: 5, windowMs: HOUR }])) {
+      return apiError(429, 'rate_limited');
+    }
     const existing = await db.prepare('SELECT id FROM users WHERE email = ?1').bind(email).first();
     if (existing) return apiError(409, 'email_taken');
 
@@ -34,8 +37,7 @@ export async function POST(request: Request) {
     const userId = Number(inserted.meta.last_row_id);
     const user: SessionUser = { id: userId, email, name, email_verified: 0, created_at: now };
 
-    const env = (getCloudflareContext().env as { SEND_EMAIL?: (m: unknown) => Promise<void> }) || {};
-    await issueVerificationToken(db, userId, new URL(request.url).origin, email, env.SEND_EMAIL);
+    await issueVerificationToken(db, userId, email);
     const { token, expiresAt } = await createSession(db, userId);
 
     const res = apiOk({ user: publicUser(user) }, { status: 201 });
