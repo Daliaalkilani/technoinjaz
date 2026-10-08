@@ -116,10 +116,6 @@ These remain future developments and are not part of the current documented vers
 
 For the bigger picture of how such a prototype grows into a connected system, read our article [What Is the Internet of Things (IoT)? Architecture, Protocols, Applications, and Security](/articles/internet-of-things-iot).
 
-## Have a Similar Project?
-
-If you are working on a prototype or a monitoring system based on sensors and microcontrollers, you can contact **Techno Enjaz** to discuss the project's requirements and the appropriate scope of technical support.
-
 ## Planning a Similar System?
 
 If you are working on a sensor and electronics monitoring system and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

@@ -79,10 +79,6 @@ According to the proposals set out in the project:
 
 This kind of system processes images of students' faces and movements, so any real-world use requires informing students about the monitoring, defining its purpose, controlling access to recordings and how long they are kept, and keeping the final decision with a human invigilator.
 
-## Get in Touch
-
-If you are planning to develop solutions based on artificial intelligence and computer vision, the Techno Enjaz team can discuss your project's requirements and the suitable technical solutions.
-
 ## Planning a Similar System?
 
 If you are working on a computer-vision-based monitoring system and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

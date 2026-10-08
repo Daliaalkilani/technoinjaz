@@ -86,10 +86,6 @@ According to the future outlook in the project:
 - Integrating the hand into IoT systems, developing it into a full robotic arm, and exploring GSM to improve range instead of the HC-05.
 - Building a flexible software framework with path planning and simulation tools to test algorithms virtually before applying them to the physical hand.
 
-## Have a Similar Project?
-
-If you are developing a project based on robotics or computer vision and need engineering support in prototype design, you can contact Techno Enjaz to discuss the project's requirements.
-
 ## Planning a Similar System?
 
 If you are working on a motion-tracking robotic hand and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

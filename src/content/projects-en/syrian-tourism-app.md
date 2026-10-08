@@ -107,12 +107,6 @@ According to the project's proposals:
 - Expanding coverage to remote villages and less-known areas.
 - Cooperation with tourism and cultural bodies to enrich content with 3D images and interactive maps.
 
-## Related Services
+## Planning a Similar System?
 
-- Mobile application development.
-- Digital platform development.
-- Back-end systems and API development.
-
-## Do You Have a Similar Project?
-
-Are you planning a digital platform that combines multiple services and a complete user experience? The Techno Enjaz team can discuss the project's requirements and build the appropriate solution according to the scope of work.
+If you are working on a tourism app or a digital platform that brings several services together and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

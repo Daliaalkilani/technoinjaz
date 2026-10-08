@@ -130,10 +130,6 @@ According to the book's future-outlook chapter, the idea could be developed thro
 
 The book devotes a section to the ethical dimensions of using robots in conflict, noting that automated systems do not grasp the ethical complexity of life-and-death decisions and that any such use must be subject to strict legal frameworks that ensure respect for human rights. The prototype shown here is an educational experiment in control, communications, and computer vision, with no real destructive capability.
 
-## Contact Us
-
-If you are working on a project that needs a prototype combining electronics, software, and communications, you can contact Techno Enjaz to discuss the technical requirements.
-
 ## Planning a Similar System?
 
 If you are working on a remote-controlled ground robot and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

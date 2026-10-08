@@ -88,10 +88,6 @@ According to the directions set out in the project:
 
 To see how object detection differs from classifying a whole image, read our article [How Does AI Image Classification Work? From CNN to Vision Transformers](/articles/ai-image-classification).
 
-## Do You Have a Similar Project?
-
-If you are working on a project that needs image or video analysis using artificial intelligence and computer vision technologies, you can contact Techno Enjaz to discuss the technical requirements and the appropriate scope of the solution.
-
 ## Planning a Similar System?
 
 If you are working on a YOLO-based deep-learning detection system and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.

@@ -101,10 +101,6 @@ According to the directions set out in the project:
 
 The system collects sensitive personal data such as national ID and phone numbers, and stores vote records linked to users. Any real-world use therefore requires encrypting this data, separating voter identity from the vote, controlling access rights, and an independent security review.
 
-## Have a Similar Project?
-
-Do you need to develop a multi-role web system for managing digital operations and data? The Techno Enjaz team can help you analyze the requirements and develop the right solution.
-
 ## Planning a Similar System?
 
 If you are working on a web platform for voting or institutional operations and need technical help developing the idea or building a prototype, you can contact the **Techno Enjaz office** to discuss your project's requirements and the appropriate scope of support.
