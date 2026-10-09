@@ -376,6 +376,39 @@ export const teamMembers = [
     locationEn: 'Homs / Hama, Syria'
   },
   {
+    // Photo pending: the neutral team placeholder is used until her photo arrives.
+    id: 'dujana-shanno',
+    name: 'م. دجانه ميسر شنو',
+    nameEn: 'Eng. Dujana Muyassar Shanno',
+    title: 'م. دجانه ميسر شنو',
+    titleEn: 'Eng. Dujana Muyassar Shanno',
+    role: 'مسؤولة الإخراج الميكانيكي',
+    roleEn: 'Mechanical Output Lead',
+    badge: 'مسؤولة الإخراج الميكانيكي',
+    badgeEn: 'Mechanical Output Lead',
+    description: 'مسؤولة الإخراج الميكانيكي في فريق تكنو إنجاز',
+    descriptionEn: 'Mechanical output lead at Techno Enjaz',
+    department: 'فريق تكنو إنجاز',
+    departmentEn: 'Techno Enjaz Team',
+    specialization: 'هندسة الشبكات الحاسوبية',
+    specializationEn: 'Computer Network Engineering',
+    image: '/images/team/team-placeholder.480.avif',
+    link: '#team-showcase',
+    bio: 'مهندسة شبكات حاسوبية، مسؤولة الإخراج الميكانيكي في فريق تكنو إنجاز.',
+    bioEn: 'Computer network engineer and mechanical output lead at Techno Enjaz.',
+    shortBio: 'مسؤولة الإخراج الميكانيكي في الفريق.',
+    shortBioEn: 'Mechanical output lead on the team.',
+    skills: ['هندسة الشبكات الحاسوبية', 'الإخراج الميكانيكي'],
+    skillsEn: ['Computer Network Engineering', 'Mechanical Output'],
+    socials: {
+      email: 'dojysh4@gmail.com'
+    },
+    projects: [],
+    projectsEn: [],
+    location: 'حماة، سوريا',
+    locationEn: 'Hama, Syria'
+  },
+  {
     // Profile details and photo pending; Dunia's photo is used temporarily (owner's request).
     id: 'shifaa-kataa',
     name: 'م. شفاء قطاع',
