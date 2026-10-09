@@ -225,16 +225,12 @@
 }
 
 .project-featured-image {
+  /* Same as the article cover: the whole image at full width, never cropped
+     (height follows the image's own ratio). */
   width: 100%;
-  /* Follow the image's own 16:9 ratio; without height:auto the HTML height attribute
-     (941) won, so phones showed a 348×520 portrait crop of a landscape cover. */
   height: auto;
-  aspect-ratio: 16 / 9;
-  max-height: 520px;
-  object-fit: cover;
-  /* Covers keep their subject in the upper two thirds and leave a dark empty band
-     at the bottom, so when the height cap crops (wide desktop), crop from the bottom. */
-  object-position: center top;
+  max-height: none;
+  object-fit: contain;
   display: block;
 }
 
