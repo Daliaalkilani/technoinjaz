@@ -689,3 +689,10 @@
   border-color: #0284c7;
   box-shadow: 0 0 15px rgba(2, 132, 199, 0.3);
 }
+
+/* Footer far off-screen: freeze its endless CSS loops (resumed before it scrolls in). */
+.footer-curtain-wrapper.is-idle .animate-footer-breathe,
+.footer-curtain-wrapper.is-idle .animate-footer-scroll-marquee,
+.footer-curtain-wrapper.is-idle .animate-footer-heartbeat {
+  animation-play-state: paused;
+}

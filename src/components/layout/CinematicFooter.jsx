@@ -148,11 +148,34 @@ export function CinematicFooter() {
   // scrubbing opacity against stale trigger positions left the footer stuck half-faded.
   const pathname = usePathname();
 
+  // The footer is only worth animating when the visitor is close to it. Until then
+  // ScrollTrigger is not started at all (it keeps an endless requestAnimationFrame loop
+  // alive while enabled) and the footer's own CSS loops are paused — nothing visible
+  // changes, but the page above loads and scrolls without that background work.
+  const [near, setNear] = useState(false);
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setNear(true);
+      return;
+    }
+    setNear(false);
+    const io = new IntersectionObserver(([entry]) => setNear(entry.isIntersecting), { rootMargin: "150% 0px 150% 0px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [pathname]);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (!wrapperRef.current) return;
+    if (!near) {
+      // Far from the footer: stop ScrollTrigger's frame loop (restarted on approach).
+      if (ScrollTrigger.isTouch !== undefined) ScrollTrigger.disable(false);
+      return;
+    }
 
     gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.enable();
 
     const ctx = gsap.context(() => {
       if (giantTextRef.current) {
@@ -217,7 +240,7 @@ export function CinematicFooter() {
       window.clearTimeout(timer);
       ctx.revert();
     };
-  }, [lang, pathname]);
+  }, [lang, pathname, near]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -236,7 +259,7 @@ export function CinematicFooter() {
   return (
     <div
       ref={wrapperRef}
-      className="footer-curtain-wrapper"
+      className={cn("footer-curtain-wrapper", !near && "is-idle")}
       dir={lang === 'ar' ? 'rtl' : 'ltr'}
     >
       <footer className="cinematic-footer-wrapper">
