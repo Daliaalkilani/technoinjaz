@@ -353,7 +353,7 @@ export const teamMembers = [
     departmentEn: 'Mechatronics & Academic Coordination Department',
     specialization: '',
     specializationEn: '',
-    image: '/images/team/dunia.640.avif',
+    image: '/images/team/dunia-real.640.avif',
     link: '#team-showcase',
     bio: 'مهندسة ميكاترونيكس تجمع بين هندسة الميكاترونيكس والنمذجة ثلاثية الأبعاد، وتنسيق الأطروحات الهندسية وتطوير العروض الهندسية التقديمية.',
     bioEn: 'Mechatronics Engineer (Homs University), combining mechatronics and 3D CAD modeling with graduation thesis coordination and engineering presentations.',
