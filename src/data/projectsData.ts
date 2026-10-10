@@ -872,7 +872,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     "altTextEn": "Online AI fitness coach app",
     "tagsEn": ["Generative AI", "Gemini", "Flutter", "Cloudflare", "Fitness"],
     "folderName": "مدرب أونلاين ذكي",
-    "title": "مدرب أونلاين ذكي Online Fitness Coach",
+    "title": "Online Fitness Coach",
     "excerpt": "تطبيق Flutter للتدريب المنزلي يولّد خططًا أسبوعية ونصائح وتقارير مخصصة عبر Gemini API، مع حجز مدربين بشريين وبنية Cloudflare Workers وR2 وD1.",
     "category": "mobile",
     "categoryNameAr": "تطبيقات الجوال",
