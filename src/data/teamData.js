@@ -376,7 +376,6 @@ export const teamMembers = [
     locationEn: 'Homs / Hama, Syria'
   },
   {
-    // Photo pending: the neutral team placeholder is used until her photo arrives.
     id: 'dujana-shanno',
     name: 'م. دجانه ميسر شنو',
     nameEn: 'Eng. Dujana Muyassar Shanno',
@@ -392,7 +391,7 @@ export const teamMembers = [
     departmentEn: 'Techno Enjaz Team',
     specialization: 'هندسة الشبكات الحاسوبية',
     specializationEn: 'Computer Network Engineering',
-    image: '/images/team/team-placeholder.480.avif',
+    image: '/images/team/dujana.640.avif',
     link: '#team-showcase',
     bio: 'مهندسة شبكات حاسوبية، مسؤولة الإخراج الميكانيكي في فريق تكنو إنجاز.',
     bioEn: 'Computer network engineer and mechanical output lead at Techno Enjaz.',
