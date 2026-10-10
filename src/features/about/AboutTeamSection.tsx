@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { useLoader } from '@/context/LoaderContext';
+import { useMemo } from 'react';
 import { teamMembers, teamCircleSlots } from '@/data/teamData';
 import { Skiper19 } from '@/components/effects/SvgFollowScroll';
 import SafeErrorBoundary from '@/components/effects/SafeErrorBoundary';
@@ -31,7 +32,9 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
   const momentsNear = useInView(momentsRef, { rootMargin: '800px 0px' });
   const showcaseNear = useInView(showcaseRef, { rootMargin: '800px 0px' });
 
-  const localizedCircleSlots = teamCircleSlots.map((m: any) => ({
+  // Stable identity per language: a new array every render (e.g. on theme toggle) would
+  // re-trigger InfiniteMenu's [items] effect and rebuild the WebGL sketch, resetting rotation.
+  const localizedCircleSlots = useMemo(() => teamCircleSlots.map((m: any) => ({
     ...m,
     name: lang === 'en' ? (m.nameEn || m.name) : m.name,
     title: lang === 'en' ? (m.titleEn || m.title || m.nameEn || m.name) : (m.title || m.name),
@@ -45,7 +48,7 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
     skills: lang === 'en' ? (m.skillsEn || m.skills) : m.skills,
     location: lang === 'en' ? (m.locationEn || m.location) : m.location,
     projects: lang === 'en' ? (m.projectsEn || m.projects) : m.projects,
-  }));
+  })), [lang]);
 
   const HeadingTag = headingLevel;
 

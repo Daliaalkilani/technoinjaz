@@ -6,6 +6,10 @@ import { mat4, quat, vec2, vec3 } from 'gl-matrix';
 import SocialButtons from '@/components/ui/SocialButtons';
 import { buildNeighbors, loadSeating } from './sphereSeating';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
+
+// Preserve the sphere's orientation + tour position across rebuilds (theme toggle / language change
+// re-runs the [items] effect). Without this the ring snaps back to its start position.
+let _preservedOrbit = null;
 import './InfiniteMenu.css';
 
 
@@ -633,6 +637,11 @@ class InfiniteGridMenu {
     this.items = items || [];
     const real = this.items.map((it, i) => (it && !it.isPlaceholder ? i : -1)).filter(i => i >= 0);
     this.tourMembers = real.length ? real : this.items.map((_, i) => i);
+    if (_preservedOrbit) {
+      if (_preservedOrbit.orientation) quat.copy(this.orientation, _preservedOrbit.orientation);
+      if (_preservedOrbit.pointerRotation) quat.copy(this.pointerRotation, _preservedOrbit.pointerRotation);
+      this.targetMemberIndex = _preservedOrbit.targetMemberIndex || 0;
+    }
     this.onActiveItemChange = onActiveItemChange || (() => {});
     this.focusActive = false;
     this.focusInstance = -1;
@@ -1286,6 +1295,13 @@ export default function InfiniteMenu({
       observer?.disconnect();
       window.removeEventListener('resize', handleResize);
       try {
+        if (sketch && sketch.orientation) {
+          _preservedOrbit = {
+            orientation: sketch.orientation,
+            pointerRotation: sketch.pointerRotation,
+            targetMemberIndex: sketch.targetMemberIndex,
+          };
+        }
         sketch?.destroy();
       } catch (e) {}
       sketchRef.current = null;
