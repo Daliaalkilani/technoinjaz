@@ -162,7 +162,8 @@ export async function issueVerificationToken(db: D1, userId: number, email: stri
     intro: 'أهلاً بك في تكنو إنجاز. اضغط الزر التالي لتوثيق بريدك الإلكتروني (الرابط صالح 48 ساعة).',
     button: 'توثيق البريد',
     link,
-    note: 'إذا لم تُنشئ حساباً في technoenjaz.com فتجاهل هذه الرسالة.'
+    note: 'إذا لم تُنشئ حساباً في technoenjaz.com فتجاهل هذه الرسالة.',
+    icon: '✅'
   });
   const sent = await sendMail({ to: email, subject: 'توثيق بريدك — تكنو إنجاز', text, html, tag: 'verify-email' });
   // Fallback the owner can act on (Worker logs) when delivery is refused.
@@ -187,7 +188,8 @@ export async function issuePasswordResetToken(db: D1, userId: number, email: str
     intro: 'وصلنا طلب لإعادة تعيين كلمة مرور حسابك في تكنو إنجاز. اضغط الزر التالي لاختيار كلمة مرور جديدة (الرابط صالح ساعة واحدة ويُستخدم مرة واحدة).',
     button: 'تعيين كلمة مرور جديدة',
     link,
-    note: 'إذا لم تطلب ذلك فتجاهل الرسالة؛ كلمة مرورك الحالية تبقى كما هي.'
+    note: 'إذا لم تطلب ذلك فتجاهل الرسالة؛ كلمة مرورك الحالية تبقى كما هي.',
+    icon: '🔐'
   });
   // Never log reset links: they grant account access.
   return sendMail({ to: email, subject: 'إعادة تعيين كلمة المرور — تكنو إنجاز', text, html, tag: 'password-reset' });

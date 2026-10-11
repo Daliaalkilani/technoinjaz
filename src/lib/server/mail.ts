@@ -70,16 +70,61 @@ export async function sendMail(opts: { to: string; subject: string; text: string
 
 const escapeHtml = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-/** Branded single-action email (verification, password reset). */
-export function actionEmail(opts: { title: string; intro: string; button: string; link: string; note: string }) {
-  const html =
-    `<!doctype html><html lang="ar" dir="rtl"><body style="margin:0;background:#f1f5f9;padding:24px;font-family:Tahoma,Arial,sans-serif">` +
-    `<table role="presentation" width="100%" style="max-width:520px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;border:1px solid #e2e8f0">` +
-    `<tr><td style="background:linear-gradient(135deg,#0f172a,#1e3a5f);padding:20px 24px"><div style="color:#38bdf8;font-size:12px;font-weight:700;letter-spacing:1px">TECHNO ENJAZ</div>` +
-    `<div style="color:#fff;font-size:19px;font-weight:800;margin-top:4px">${escapeHtml(opts.title)}</div></td></tr>` +
-    `<tr><td style="padding:22px 24px;color:#0f172a;font-size:15px;line-height:1.8">${escapeHtml(opts.intro)}` +
-    `<p style="margin:22px 0"><a href="${escapeHtml(opts.link)}" style="background:#0369a1;color:#fff;padding:11px 20px;border-radius:8px;text-decoration:none;font-weight:bold">${escapeHtml(opts.button)}</a></p>` +
-    `<p style="font-size:12px;color:#64748b;margin:0">${escapeHtml(opts.note)}</p></td></tr></table></body></html>`;
-  const text = `${opts.title}\r\n\r\n${opts.intro}\r\n\r\n${opts.link}\r\n\r\n${opts.note}`;
+const SITE = 'https://technoenjaz.com';
+
+/**
+ * Shared email frame: solid-colour header with logo, white card, footer.
+ * Only table layout, inline styles and solid colours (bgcolor + background-color):
+ * Gmail / Outlook drop CSS gradients, which left the old header white-on-white.
+ */
+export function emailShell(opts: { lang?: 'ar' | 'en'; preheader?: string; body: string }) {
+  const isEn = opts.lang === 'en';
+  const dir = isEn ? 'ltr' : 'rtl';
+  const font = isEn ? "'Segoe UI',Arial,sans-serif" : "Tahoma,'Segoe UI',Arial,sans-serif";
+  return (
+    `<!doctype html><html lang="${isEn ? 'en' : 'ar'}" dir="${dir}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"></head>` +
+    `<body style="margin:0;padding:0;background-color:#eef2f7;font-family:${font}">` +
+    (opts.preheader ? `<div style="display:none;max-height:0;overflow:hidden;opacity:0">${escapeHtml(opts.preheader)}</div>` : '') +
+    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#eef2f7" style="background-color:#eef2f7"><tr><td align="center" style="padding:28px 12px">` +
+    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" dir="${dir}" style="max-width:560px;background-color:#ffffff;border-radius:18px;overflow:hidden;border:1px solid #e2e8f0">` +
+    // Header
+    `<tr><td bgcolor="#0b1426" align="center" style="background-color:#0b1426;padding:22px 24px">` +
+    `<img src="${SITE}/images/brand/techno-logo.png" width="38" height="41" alt="Techno Enjaz" style="display:inline-block;vertical-align:middle;border:0">` +
+    `<span style="display:inline-block;vertical-align:middle;color:#ffffff;font-size:19px;font-weight:bold;margin:0 10px">${isEn ? 'Techno Enjaz' : 'تكنو إنجاز'}</span>` +
+    `</td></tr>` +
+    `<tr><td bgcolor="#0369a1" style="background-color:#0369a1;height:4px;line-height:4px;font-size:0">&nbsp;</td></tr>` +
+    opts.body +
+    // Footer
+    `<tr><td bgcolor="#f8fafc" align="center" style="background-color:#f8fafc;border-top:1px solid #e2e8f0;padding:20px 24px;font-size:12px;line-height:1.9;color:#64748b">` +
+    `<div style="font-weight:bold;color:#0f172a;font-size:13px">${isEn ? 'Techno Enjaz — Engineering office, Hama, Syria' : 'تكنو إنجاز — مكتب هندسي، حماة، سوريا'}</div>` +
+    `<a href="${SITE}" style="color:#0369a1;text-decoration:none">technoenjaz.com</a> &nbsp;·&nbsp; ` +
+    `<a href="https://instagram.com/TECHNO_ENJAZ" style="color:#0369a1;text-decoration:none">Instagram</a> &nbsp;·&nbsp; ` +
+    `<a href="https://wa.me/963958794195" style="color:#0369a1;text-decoration:none">WhatsApp</a>` +
+    `</td></tr></table></td></tr></table></body></html>`
+  );
+}
+
+/** Branded single-action email (newsletter confirmation, verification, password reset). */
+export function actionEmail(opts: { title: string; intro: string; button: string; link: string; note: string; icon?: string; lang?: 'ar' | 'en' }) {
+  const isEn = opts.lang === 'en';
+  const body =
+    `<tr><td align="center" style="padding:34px 32px 8px">` +
+    // Icon badge
+    `<table role="presentation" cellpadding="0" cellspacing="0"><tr><td align="center" width="72" height="72" bgcolor="#e0f2fe" style="background-color:#e0f2fe;border-radius:36px;width:72px;height:72px;font-size:34px;line-height:72px;text-align:center">${opts.icon ?? '✉️'}</td></tr></table>` +
+    `<h1 style="margin:20px 0 10px;font-size:22px;line-height:1.5;color:#0f172a">${escapeHtml(opts.title)}</h1>` +
+    `<p style="margin:0 0 26px;font-size:15px;line-height:1.9;color:#334155">${escapeHtml(opts.intro)}</p>` +
+    // Bulletproof button (table cell with background colour)
+    `<table role="presentation" cellpadding="0" cellspacing="0"><tr><td bgcolor="#0369a1" style="background-color:#0369a1;border-radius:12px">` +
+    `<a href="${escapeHtml(opts.link)}" style="display:inline-block;padding:15px 38px;color:#ffffff;font-size:16px;font-weight:bold;text-decoration:none;border-radius:12px">${escapeHtml(opts.button)}</a>` +
+    `</td></tr></table>` +
+    `</td></tr>` +
+    // Link fallback + note
+    `<tr><td style="padding:22px 32px 28px">` +
+    `<p style="margin:0 0 6px;font-size:12px;color:#64748b;text-align:center">${isEn ? "If the button doesn't work, copy this link into your browser:" : 'إذا لم يعمل الزر، انسخ هذا الرابط إلى المتصفح:'}</p>` +
+    `<p style="margin:0 0 18px;font-size:12px;line-height:1.6;color:#0369a1;text-align:center;word-break:break-all" dir="ltr">${escapeHtml(opts.link)}</p>` +
+    `<p style="margin:0;padding:12px 14px;border-radius:10px;background-color:#f1f5f9;font-size:12px;line-height:1.8;color:#64748b;text-align:center">${escapeHtml(opts.note)}</p>` +
+    `</td></tr>`;
+  const html = emailShell({ lang: opts.lang, preheader: opts.intro, body });
+  const text = `${opts.title}\r\n\r\n${opts.intro}\r\n\r\n${opts.link}\r\n\r\n${opts.note}\r\n\r\n— ${isEn ? 'Techno Enjaz' : 'تكنو إنجاز'} · technoenjaz.com`;
   return { html, text };
 }

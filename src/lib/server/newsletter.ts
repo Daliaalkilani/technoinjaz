@@ -114,7 +114,9 @@ export async function startSubscription(db: D1, email: string, lang: 'ar' | 'en'
       : 'شكراً لاشتراكك في نشرة تكنو إنجاز. أكّد بريدك لتصلك مقالاتنا ومشاريعنا الجديدة (الرابط صالح 72 ساعة).',
     button: isEn ? 'Confirm subscription' : 'تأكيد الاشتراك',
     link: `${SITE_URL}/newsletter?confirm=${token}`,
-    note: isEn ? 'If you did not subscribe, ignore this email — you will not be added.' : 'إذا لم تشترك أنت فتجاهل الرسالة، ولن تتم إضافتك.'
+    note: isEn ? 'If you did not subscribe, ignore this email — you will not be added.' : 'إذا لم تشترك أنت فتجاهل الرسالة، ولن تتم إضافتك.',
+    icon: '📬',
+    lang
   });
   const sent = await sendMail({
     to: email,

@@ -53,7 +53,7 @@ function contactEmail(name: string, data: { specialization: string; university: 
   const htmlBody =
     `<!doctype html><html lang="${lang}" dir="${dir}"><body style="margin:0;background:#f1f5f9;padding:24px;font-family:Segoe UI,Tahoma,Arial,sans-serif">` +
     `<table role="presentation" width="100%" style="max-width:560px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;border:1px solid #e2e8f0">` +
-    `<tr><td style="background:linear-gradient(135deg,#0f172a,#1e3a5f);padding:22px 24px">` +
+    `<tr><td bgcolor="#0b1426" style="background-color:#0b1426;padding:22px 24px">` +
     `<div style="color:#38bdf8;font-size:12px;font-weight:700;letter-spacing:1px">TECHNO ENJAZ</div>` +
     `<div style="color:#fff;font-size:19px;font-weight:800;margin-top:4px">${esc(L.title)}</div></td></tr>` +
     `<tr><td style="padding:8px 12px 0"><table role="presentation" width="100%" style="border-collapse:collapse">` +
