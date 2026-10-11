@@ -637,11 +637,6 @@ class InfiniteGridMenu {
     this.items = items || [];
     const real = this.items.map((it, i) => (it && !it.isPlaceholder ? i : -1)).filter(i => i >= 0);
     this.tourMembers = real.length ? real : this.items.map((_, i) => i);
-    if (_preservedOrbit) {
-      if (_preservedOrbit.orientation) quat.copy(this.orientation, _preservedOrbit.orientation);
-      if (_preservedOrbit.pointerRotation) quat.copy(this.pointerRotation, _preservedOrbit.pointerRotation);
-      this.targetMemberIndex = _preservedOrbit.targetMemberIndex || 0;
-    }
     this.onActiveItemChange = onActiveItemChange || (() => {});
     this.focusActive = false;
     this.focusInstance = -1;
@@ -771,6 +766,20 @@ class InfiniteGridMenu {
     this.#initTexture();
 
     this.control = new ArcballControl(this.canvas, deltaTime => this.#onControlUpdate(deltaTime));
+    // Rebuilt by a theme / language switch: continue from the same orientation and the
+    // same centred member instead of snapping back to the start of the tour.
+    if (_preservedOrbit && _preservedOrbit.seatCount === this.instancePositions.length) {
+      quat.copy(this.control.orientation, _preservedOrbit.orientation);
+      quat.copy(this.control.pointerRotation, _preservedOrbit.pointerRotation);
+      const v = _preservedOrbit.targetVertexIndex;
+      if (v >= 0 && v < this.instancePositions.length) {
+        this.targetVertexIndex = v;
+        this.targetMemberIndex = this.seat[v] ?? 0;
+        // Refresh the card in the new language / theme for the member already centred.
+        this.onActiveItemChange(this.targetMemberIndex);
+      }
+    }
+    _preservedOrbit = null;
 
     this.#updateCameraMatrix();
     this.#updateProjectionMatrix(gl);
@@ -1295,11 +1304,13 @@ export default function InfiniteMenu({
       observer?.disconnect();
       window.removeEventListener('resize', handleResize);
       try {
-        if (sketch && sketch.orientation) {
+        // The rotation lives on the arcball controller (sketch.control), not on the sketch.
+        if (sketch && sketch.control) {
           _preservedOrbit = {
-            orientation: sketch.orientation,
-            pointerRotation: sketch.pointerRotation,
-            targetMemberIndex: sketch.targetMemberIndex,
+            orientation: quat.clone(sketch.control.orientation),
+            pointerRotation: quat.clone(sketch.control.pointerRotation),
+            targetVertexIndex: sketch.targetVertexIndex,
+            seatCount: sketch.instancePositions?.length ?? 0,
           };
         }
         sketch?.destroy();
