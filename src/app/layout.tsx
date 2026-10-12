@@ -54,7 +54,7 @@ export default function RootLayout({
         />
         <script
           dangerouslySetInnerHTML={{
-            __html: `if (window.trustedTypes && window.trustedTypes.createPolicy) { window.trustedTypes.createPolicy('default', { createHTML: (s) => s }); }`,
+            __html: `if (window.trustedTypes && window.trustedTypes.createPolicy) { window.trustedTypes.createPolicy('default', { createHTML: (s) => s, createScriptURL: (s) => { const u = new URL(s, window.location.href); if (u.origin !== window.location.origin) { throw new TypeError('Untrusted script URL: ' + s); } return u.href; }, createScript: (s) => s }); }`,
           }}
         />
         <link rel="stylesheet" href="/fonts/readex-pro.css" />

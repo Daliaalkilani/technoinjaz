@@ -288,7 +288,7 @@ export const teamMembers = [
     departmentEn: 'Techno Enjaz Team',
     specialization: 'تطوير الواجهات الأمامية وصناعة المحتوى الرقمي',
     specializationEn: 'Front-end development & digital content',
-    image: '/images/team/dunia.jpg',
+    image: '/images/team/rama.jpg',
     link: '#team-showcase',
     bio: 'مطوّرة واجهات أمامية ومتخصصة بسوشال ميديا، تعمل على بناء واجهات ويب حديثة وسهلة الاستخدام وإدارة الحضور الرقمي للعلامة.',
     bioEn: 'Front-end developer and social media specialist, building modern, user-friendly web interfaces and managing digital presence.',
