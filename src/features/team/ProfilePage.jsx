@@ -213,16 +213,6 @@ export default function ProfilePage({ member, onBack }) {
               ✉️ {isEn ? 'Contact via Email' : 'تواصل عبر البريد'}: {member.email}
             </a>
           )}
-          {member.github && (
-            <a href={member.github} target="_blank" rel="noopener noreferrer" className="contact-btn">
-              🐙 {isEn ? 'GitHub' : 'غيت هاب'}: {member.github.replace('https://github.com/', '@')}
-            </a>
-          )}
-          {member.facebook && (
-            <a href={member.facebook} target="_blank" rel="noopener noreferrer" className="contact-btn">
-              📘 {isEn ? 'Facebook' : 'فيسبوك'}
-            </a>
-          )}
           <button onClick={onBack} className="secondary-back-btn">
             {isEn ? 'Back to Team Carousel' : 'الرجوع إلى القائمة الدائرية'}
           </button>

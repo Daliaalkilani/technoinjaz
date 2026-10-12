@@ -296,8 +296,11 @@ export const teamMembers = [
     shortBioEn: 'Front-end developer & social media specialist.',
     skills: ['HTML', 'CSS', 'JavaScript', 'React', 'Social Media'],
     skillsEn: ['HTML', 'CSS', 'JavaScript', 'React', 'Social Media'],
-    github: 'https://github.com/ramaturkmeni',
-    facebook: 'https://www.facebook.com/share/1EqYrMyYz3/',
+    socials: {
+      github: 'https://github.com/ramaturkmeni',
+      facebook: 'https://www.facebook.com/share/1EqYrMyYz3/',
+      email: 'rturkmeni960@gmail.com'
+    },
     email: 'rturkmeni960@gmail.com'
   },
   {
