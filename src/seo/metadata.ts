@@ -75,9 +75,9 @@ export function pageMetadata(o: {
   const images = o.image
     ? [
         {
+          // No width/height: covers come in many sizes (e.g. 1280×720) and a wrong
+          // declared size makes Facebook / LinkedIn crop the preview badly.
           url: o.image.startsWith('http') ? o.image : absoluteUrl(o.image),
-          width: 640,
-          height: 640,
           alt: o.title
         }
       ]

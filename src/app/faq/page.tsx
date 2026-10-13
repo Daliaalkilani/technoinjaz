@@ -18,8 +18,9 @@ export default function FaqPage() {
     <>
       <JsonLd
         data={[
-          webPage({ path: '/faq', name: 'الأسئلة الشائعة', type: 'FAQPage' }),
-          faqPageSchema(faqData)
+          // One FAQPage node: the page entity carries the questions. Two FAQPage nodes
+          // (an empty page-level one + the list) is a "Duplicate field FAQPage" error.
+          { ...webPage({ path: '/faq', name: 'الأسئلة الشائعة', type: 'FAQPage' }), mainEntity: faqPageSchema(faqData).mainEntity }
         ]}
       />
       <FaqSection />
