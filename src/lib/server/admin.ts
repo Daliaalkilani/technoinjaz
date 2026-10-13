@@ -23,3 +23,8 @@ export async function requireAdmin(request: Request, db: D1): Promise<{ user: Se
   if (!user.email_verified || !adminEmails().includes(user.email.toLowerCase())) return { error: 'forbidden' };
   return { user };
 }
+
+/** True when the signed-in user is a site owner (same rule as requireAdmin). */
+export function isAdminUser(user: SessionUser | null | undefined): boolean {
+  return Boolean(user && user.email_verified && adminEmails().includes(user.email.toLowerCase()));
+}

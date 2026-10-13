@@ -86,11 +86,12 @@ export const teamMembers = [
       'Technical Mentorship'
     ],
     socials: {
-      // shown on his profile: X, GitHub, Facebook, Telegram, email (Instagram /
-      // WhatsApp stay in the structured data: abdulghaniPersonSchema sameAs + llms.txt)
+      // shown on his profile: X, GitHub, Facebook, Instagram, Telegram, email
+      // (WhatsApp stays in the structured data: abdulghaniPersonSchema sameAs + llms.txt)
       x: 'https://x.com/Abdalganih2',
       github: 'https://github.com/abdalganih1',
       facebook: 'https://www.facebook.com/share/19ZeJgTRzk/',
+      instagram: 'https://www.instagram.com/abdalgani_h1/',
       telegram: 'https://t.me/abdalganih',
       email: 'info@abdalgani.com'
     },
@@ -167,6 +168,7 @@ export const teamMembers = [
     socials: {
       linkedin: 'https://www.linkedin.com/in/dalia-al-kilani/',
       github: 'https://github.com/Daliaalkilani',
+      instagram: 'https://www.instagram.com/dalia.alkilani/',
       email: 'daliaalkelani@gmail.com'
     },
     projects: [
@@ -261,6 +263,7 @@ export const teamMembers = [
       github: 'https://github.com/Abdulhady-Alkilani',
       facebook: 'https://www.facebook.com/abdulhady.alkilani?mibextid=ZbWKwL',
       x: 'https://x.com/abdulhadyki',
+      instagram: 'https://www.instagram.com/abdulhady_alkilani/',
       email: 'abdulhadyki@gmail.com'
     },
     projects: [

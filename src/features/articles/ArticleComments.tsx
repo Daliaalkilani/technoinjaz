@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Heart, MessageSquare, Reply, Send, User, LogIn, Loader2 } from 'lucide-react';
+import { Heart, MessageSquare, Reply, Send, User, LogIn, Loader2, Trash2 } from 'lucide-react';
 import { apiRequest, apiErrorMessage, getLoggedInUser, requireAuth, AUTH_EVENT } from '@/lib/auth';
 import { formatRelative, formatFullDate } from '@/lib/relativeTime';
 import './ArticleComments.css';
@@ -15,6 +15,8 @@ export interface ArticleComment {
   likeCount: number;
   liked: boolean;
   mine: boolean;
+  /** Own comment, or viewer is a site owner (moderation). */
+  canDelete?: boolean;
 }
 
 interface Props {
@@ -164,6 +166,20 @@ export default function ArticleComments({ slug, isEn, onCountChange }: Props) {
     }
   };
 
+  const deleteComment = async (c: ArticleComment) => {
+    const ask = c.mine
+      ? isEn ? 'Delete your comment? Replies to it are removed too.' : 'حذف تعليقك؟ ستُحذف الردود عليه أيضاً.'
+      : isEn ? 'Delete this comment as a moderator? Replies to it are removed too.' : 'حذف هذا التعليق (إشراف)؟ ستُحذف الردود عليه أيضاً.';
+    if (!window.confirm(ask)) return;
+    const res = await apiRequest(`/api/comments/${c.id}`, { method: 'DELETE', body: {} });
+    if (res.ok) {
+      // Drop the comment and, for a top-level one, its replies.
+      setComments((list) => list && list.filter((x) => x.id !== c.id && x.parentId !== c.id));
+    } else {
+      window.alert(apiErrorMessage(res.error, isEn));
+    }
+  };
+
   const renderComment = (c: ArticleComment, threadId: number, isReply: boolean) => (
     <div key={c.id} id={`comment-${c.id}`} className={`ac-comment ${isReply ? 'is-reply' : ''}`}>
       <div className="ac-avatar" aria-hidden="true">
@@ -199,6 +215,17 @@ export default function ArticleComments({ slug, isEn, onCountChange }: Props) {
             <Reply size={15} />
             <span>{isEn ? 'Reply' : 'رد'}</span>
           </button>
+          {c.canDelete && (
+            <button
+              type="button"
+              className="ac-action ac-delete"
+              onClick={() => deleteComment(c)}
+              aria-label={isEn ? 'Delete comment' : 'حذف التعليق'}
+            >
+              <Trash2 size={15} />
+              <span>{isEn ? 'Delete' : 'حذف'}</span>
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -284,3 +284,11 @@
     height: 34px;
   }
 }
+
+.ac-delete:hover {
+  color: #f87171;
+}
+
+[data-theme='light'] .ac-delete:hover {
+  color: #b91c1c;
+}

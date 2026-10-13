@@ -1,0 +1,158 @@
+.acct-settings {
+  margin-top: 28px;
+  padding: 20px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.acct-settings-title {
+  margin: 0 0 14px;
+  font-size: 1.05rem;
+}
+
+.acct-admin-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  border-radius: 10px;
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  font-size: 14px;
+}
+
+.acct-admin-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #38bdf8;
+  text-decoration: none;
+}
+
+.acct-row + .acct-row {
+  margin-top: 10px;
+}
+
+.acct-row-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.acct-row-btn:hover {
+  border-color: rgba(56, 189, 248, 0.5);
+}
+
+.acct-danger {
+  color: #f87171;
+}
+
+.acct-form {
+  display: grid;
+  gap: 10px;
+  max-width: 420px;
+  margin-top: 12px;
+}
+
+.acct-form input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.2);
+  color: inherit;
+  font: inherit;
+}
+
+.acct-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 16px;
+  border-radius: 10px;
+  border: 0;
+  background: #0369a1;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.acct-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.acct-danger-btn {
+  background: #b91c1c;
+}
+
+.acct-warn {
+  margin: 0;
+  font-size: 13px;
+  color: #fca5a5;
+}
+
+.acct-msg {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 14px 0 0;
+  font-size: 14px;
+}
+
+.acct-msg.ok {
+  color: #34d399;
+}
+
+.acct-msg.err {
+  color: #f87171;
+}
+
+.acct-spin {
+  animation: acct-spin 1s linear infinite;
+}
+
+@keyframes acct-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+[data-theme='light'] .acct-settings {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme='light'] .acct-row-btn,
+[data-theme='light'] .acct-form input {
+  border-color: rgba(0, 0, 0, 0.15);
+  background: #ffffff;
+}
+
+[data-theme='light'] .acct-admin-links a {
+  color: #0369a1;
+}
+
+[data-theme='light'] .acct-danger,
+[data-theme='light'] .acct-msg.err {
+  color: #b91c1c;
+}
+
+[data-theme='light'] .acct-warn {
+  color: #991b1b;
+}
+
+[data-theme='light'] .acct-msg.ok {
+  color: #047857;
+}

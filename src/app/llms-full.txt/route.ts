@@ -92,7 +92,7 @@ export async function GET() {
   - إدارة وتطوير وهيكلة المشاريع الهندسية (Engineering Project Management).
 - **المشورة الهندسية**: يقدم الدعم والمشورة الفنية للطلاب والمهندسين في مشاريع التخرج، وتطوير المهارات في البرمجة والروبوتيك والتحكم.
 - **الملف التعريفي**: ${absoluteUrl('/about#team-showcase')}
-- **الحسابات**: X https://x.com/Abdalganih2 · GitHub https://github.com/abdalganih1 · Facebook https://www.facebook.com/share/19ZeJgTRzk/ · Instagram https://www.instagram.com/abdalgani_h1 · Telegram https://t.me/abdalganih · البريد info@abdalgani.com
+- **الحسابات**: X https://x.com/Abdalganih2 · GitHub https://github.com/abdalganih1 · Facebook https://www.facebook.com/share/19ZeJgTRzk/ · Instagram https://www.instagram.com/abdalgani_h1/ · Telegram https://t.me/abdalganih · البريد info@abdalgani.com
 
 ## Live Platforms\n`;
   for (const r of projectReelsData) {
@@ -111,7 +111,7 @@ export async function GET() {
 
   text += `
 ## Website Credits
-- تم تصميم وتطوير موقع تكنو إنجاز من قبل المهندسة داليا الكيلاني (Dalia Alkilani) والمهندسة روان هبهاب (Rawan Habhab).
+- تم تصميم وتطوير موقع تكنو إنجاز من قبل المهندسة داليا الكيلاني (Dalia Alkilani — https://www.instagram.com/dalia.alkilani/ · https://www.linkedin.com/in/dalia-al-kilani/) والمهندسة روان هبهاب (Rawan Habhab).
 - The Techno Enjaz website was designed and developed by Dalia Alkilani and Rawan Habhab.
 `;
 

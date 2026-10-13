@@ -123,7 +123,7 @@ export const WEBSITE_DESIGNERS = [
     alternateName: 'Dalia Alkilani',
     jobTitle: 'مصممة ومطوّرة موقع تكنو إنجاز',
     url: 'https://www.linkedin.com/in/dalia-al-kilani/',
-    sameAs: ['https://github.com/Daliaalkilani', 'https://www.linkedin.com/in/dalia-al-kilani/']
+    sameAs: ['https://github.com/Daliaalkilani', 'https://www.linkedin.com/in/dalia-al-kilani/', 'https://www.instagram.com/dalia.alkilani/']
   },
   {
     '@type': 'Person',

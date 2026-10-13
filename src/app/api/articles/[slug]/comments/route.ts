@@ -1,5 +1,6 @@
 import { getDB, apiError, apiOk, isSameOrigin, readJson } from '@/lib/server/db';
 import { getSessionUser } from '@/lib/server/auth';
+import { isAdminUser } from '@/lib/server/admin';
 import { blogArticlesData } from '@/data/blogArticlesData';
 import { isRateLimited, MIN } from '@/lib/server/rateLimit';
 
@@ -19,7 +20,7 @@ interface CommentRow {
   liked: number;
 }
 
-const toClient = (r: CommentRow, viewerId: number | null) => ({
+const toClient = (r: CommentRow, viewerId: number | null, viewerIsAdmin = false) => ({
   id: r.id,
   parentId: r.parent_id,
   body: r.body,
@@ -27,7 +28,9 @@ const toClient = (r: CommentRow, viewerId: number | null) => ({
   author: { name: r.author_name },
   likeCount: r.like_count,
   liked: Boolean(r.liked),
-  mine: viewerId !== null && r.user_id === viewerId
+  mine: viewerId !== null && r.user_id === viewerId,
+  // Authors can delete their own comments; site owners can delete any (moderation).
+  canDelete: (viewerId !== null && r.user_id === viewerId) || viewerIsAdmin
 });
 
 export async function GET(request: Request, { params }: { params: Promise<{ slug: string }> }) {
@@ -49,7 +52,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
       )
       .bind(slug, viewerId ?? -1)
       .all<CommentRow>();
-    return apiOk({ comments: results.map((r) => toClient(r, viewerId)) });
+    const admin = isAdminUser(viewer);
+    return apiOk({ comments: results.map((r) => toClient(r, viewerId, admin)) });
   } catch (err) {
     console.error('comments list error', err instanceof Error ? err.message : 'unknown');
     return apiError(500, 'server_error');
@@ -70,6 +74,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ slu
     const db = await getDB();
     const user = await getSessionUser(request, db);
     if (!user) return apiError(401, 'unauthorized');
+    // Only verified addresses may post: keeps throwaway sign-ups from spamming threads.
+    if (!user.email_verified) return apiError(403, 'email_not_verified');
     if (await isRateLimited(db, [{ name: 'comment:user', id: user.id, limit: 20, windowMs: 10 * MIN }])) {
       return apiError(429, 'rate_limited');
     }
@@ -97,7 +103,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ slu
       {
         comment: toClient(
           { id: Number(res.meta?.last_row_id), parent_id: parentId, body: text, created_at: now, user_id: user.id, author_name: user.name, like_count: 0, liked: 0 },
-          user.id
+          user.id,
+          isAdminUser(user)
         )
       },
       { status: 201 }

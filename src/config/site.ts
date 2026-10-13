@@ -26,7 +26,7 @@ export const ORG = {
 export const ABDULGHANI_SOCIALS = {
   email: 'info@abdalgani.com',
   facebook: 'https://www.facebook.com/share/19ZeJgTRzk/',
-  instagram: 'https://www.instagram.com/abdalgani_h1',
+  instagram: 'https://www.instagram.com/abdalgani_h1/',
   x: 'https://x.com/Abdalganih2',
   github: 'https://github.com/abdalganih1',
   telegram: 'https://t.me/abdalganih',

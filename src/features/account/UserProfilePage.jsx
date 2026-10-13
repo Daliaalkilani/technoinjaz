@@ -27,6 +27,7 @@ import { apiRequest, apiErrorMessage, logout } from '@/lib/auth';
 import { formatRelative, formatFullDate } from '@/lib/relativeTime';
 import { Button } from '@/components/ui/Button';
 import VideoPlayerModal from '@/features/videos/VideoPlayerModal';
+import AccountSettings from './AccountSettings';
 import './UserProfilePage.css';
 
 /**
@@ -524,6 +525,8 @@ export default function UserProfilePage({ user, verifyNotice = null, onUserChang
             )}
           </>
         )}
+
+        <AccountSettings user={user} isEn={isEn} onDeleted={() => router.push('/')} />
 
         {/* Bottom Actions Bar - Sign Out */}
         <div className="user-profile-bottom-actions">
