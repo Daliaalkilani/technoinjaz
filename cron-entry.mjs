@@ -1,7 +1,9 @@
 /**
  * Worker entry that adds a `scheduled` handler (cron triggers) on top of the
  * OpenNext fetch handler. Cron ticks invoke the auto-newsletter route in-process
- * (no public HTTP round-trip); normal fetch traffic is untouched.
+ * (no public HTTP round-trip); normal fetch traffic is untouched. The request uses the
+ * canonical host (URL and an explicit Host header — a worker-built Request has none)
+ * because src/middleware.ts 301-redirects any other host.
  *
  * wrangler.jsonc points `main` at this file; it imports the OpenNext output that
  * the build command (wrangler.jsonc → build.command) regenerates before every deploy.
@@ -18,11 +20,11 @@ export default {
     ctx.waitUntil(
       (async () => {
         try {
-          const req = new Request('https://cron.internal/api/cron/newsletter', {
-            headers: { authorization: `Bearer ${env.CRON_SECRET ?? ''}` }
+          const req = new Request('https://technoenjaz.com/api/cron/newsletter', {
+            headers: { host: 'technoenjaz.com', authorization: `Bearer ${env.CRON_SECRET ?? ''}` }
           });
           const res = await handler.fetch(req, env, ctx);
-          console.log('newsletter cron:', await res.text());
+          console.log('newsletter cron:', res.status, res.headers.get('location') ?? '', await res.text());
         } catch (err) {
           console.error('newsletter cron tick failed', err instanceof Error ? err.message : err);
         }
