@@ -148,8 +148,11 @@ export async function sendNextBatch(db: D1, sendId: number): Promise<BatchResult
   return { done, busy: false, nextAfterId, sent, failed };
 }
 
-/** Pins (hold) or releases an item for the auto newsletter. Releasing deletes the hold
- *  row, so the cron sees the item as new: it waits out the grace window, then announces. */
+/** Pins (hold) or releases an item for the auto newsletter. Releasing turns the hold
+ *  back into a fresh 'seen' row (first_seen_at = now), so the cron waits out the grace
+ *  window, then announces. The row is updated, never deleted: the cron treats an empty
+ *  newsletter_auto table as its first run and would re-hold everything, so releasing
+ *  the last held items must not empty it. */
 export async function setAutoHold(db: D1, type: string, slug: string, hold: boolean) {
   const now = Date.now();
   if (hold) {
@@ -159,7 +162,10 @@ export async function setAutoHold(db: D1, type: string, slug: string, hold: bool
       .bind(type, slug, now)
       .run();
   } else {
-    await db.prepare(`DELETE FROM newsletter_auto WHERE item_type = ?1 AND item_slug = ?2 AND state = 'hold'`).bind(type, slug).run();
+    await db
+      .prepare(`UPDATE newsletter_auto SET state = 'seen', first_seen_at = ?3, updated_at = ?3 WHERE item_type = ?1 AND item_slug = ?2 AND state = 'hold'`)
+      .bind(type, slug, now)
+      .run();
   }
 }
 

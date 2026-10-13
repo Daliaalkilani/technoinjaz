@@ -9,11 +9,14 @@ import '@/features/auth/AuthPage.css';
 import '@/features/auth/AuthSwitch.css';
 import '@/features/auth/ResetPasswordPage.css';
 
-type State = 'working' | 'confirmed' | 'unsubscribed' | 'invalid' | 'error' | 'idle';
+type State = 'working' | 'ask' | 'confirmed' | 'unsubscribed' | 'invalid' | 'error' | 'idle';
 
 /**
  * /newsletter?confirm=<token>      → confirms a subscription (double opt-in)
- * /newsletter?unsubscribe=<token>  → unsubscribes (one click from any newsletter)
+ * /newsletter?unsubscribe=<token>  → asks, then unsubscribes on a button click. Never on
+ *   page load: mail security scanners (e.g. Microsoft Safe Links) open links in a real
+ *   browser and run their JS, which used to unsubscribe readers who never clicked.
+ *   Mail clients' one-click button uses the RFC 8058 POST, not this page.
  */
 export default function NewsletterActionPage() {
   const { lang } = useThemeLanguage();
@@ -21,17 +24,10 @@ export default function NewsletterActionPage() {
   const [state, setState] = useState<State>('working');
   const [email, setEmail] = useState('');
   const [kind, setKind] = useState<'confirm' | 'unsubscribe' | null>(null);
+  const [unsubToken, setUnsubToken] = useState('');
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const confirm = params.get('confirm');
-    const unsubscribe = params.get('unsubscribe');
-    const token = confirm || unsubscribe;
-    if (!token) return setState('idle');
-    const action = confirm ? 'confirm' : 'unsubscribe';
-    setKind(action);
-    // Keep the token out of history / referrers.
-    window.history.replaceState(null, '', '/newsletter');
+  const run = (action: 'confirm' | 'unsubscribe', token: string) => {
+    setState('working');
     apiRequest<{ email: string }>(`/api/newsletter/${action}`, { method: 'POST', body: { token } }).then((res) => {
       if (res.ok) {
         setEmail(res.email);
@@ -43,10 +39,27 @@ export default function NewsletterActionPage() {
         }
       } else setState(res.error === 'invalid_token' ? 'invalid' : 'error');
     });
+  };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const confirm = params.get('confirm');
+    const unsubscribe = params.get('unsubscribe');
+    const token = confirm || unsubscribe;
+    if (!token) return setState('idle');
+    const action = confirm ? 'confirm' : 'unsubscribe';
+    setKind(action);
+    // Keep the token out of history / referrers.
+    window.history.replaceState(null, '', '/newsletter');
+    if (action === 'unsubscribe') {
+      setUnsubToken(token);
+      setState('ask');
+    } else run(action, token);
   }, []);
 
   const text: Record<State, { title: string; body: string }> = {
     working: { title: isEn ? 'One moment…' : 'لحظة من فضلك…', body: '' },
+    ask: { title: isEn ? 'Unsubscribe from the newsletter?' : 'إلغاء الاشتراك في النشرة؟', body: '' },
     confirmed: {
       title: isEn ? 'Subscription confirmed' : 'تم تأكيد اشتراكك',
       body: isEn ? `New Techno Enjaz articles and projects will reach ${email}. Every email has an unsubscribe link.` : `ستصل مقالات تكنو إنجاز ومشاريعها الجديدة إلى ${email}، وفي كل رسالة رابط لإلغاء الاشتراك.`
@@ -65,7 +78,7 @@ export default function NewsletterActionPage() {
     error: { title: isEn ? 'Something went wrong' : 'حدث خطأ', body: isEn ? 'Please try again in a moment.' : 'يرجى المحاولة بعد قليل.' },
     idle: { title: isEn ? 'Techno Enjaz Newsletter' : 'نشرة تكنو إنجاز', body: isEn ? 'Subscribe from the site footer to receive new articles and projects.' : 'اشترك من أسفل الموقع لتصلك المقالات والمشاريع الجديدة.' }
   };
-  const Icon = state === 'working' ? Loader2 : state === 'confirmed' ? MailCheck : state === 'unsubscribed' ? MailX : state === 'idle' ? MailCheck : AlertCircle;
+  const Icon = state === 'working' ? Loader2 : state === 'confirmed' ? MailCheck : state === 'unsubscribed' || state === 'ask' ? MailX : state === 'idle' ? MailCheck : AlertCircle;
 
   return (
     <div className="auth-page-wrapper" dir={isEn ? 'ltr' : 'rtl'}>
@@ -82,6 +95,11 @@ export default function NewsletterActionPage() {
               {state === 'invalid' || state === 'error' ? <AlertCircle size={18} /> : <CheckCircle2 size={18} />}
               <span>{text[state].body}</span>
             </div>
+          )}
+          {state === 'ask' && (
+            <button type="button" className="auth-switch-submit-btn" onClick={() => run('unsubscribe', unsubToken)}>
+              {isEn ? 'Yes, unsubscribe me' : 'نعم، ألغِ اشتراكي'}
+            </button>
           )}
           <div className="reset-card-footer">
             <Link href="/">{isEn ? 'Back to the home page' : 'العودة إلى الرئيسية'}</Link>

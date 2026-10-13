@@ -16,7 +16,8 @@ export const dynamic = 'force-dynamic';
  *      first sighting it is recorded with a timestamp and left to age GRACE_MS
  *      (60 min, the admin's window to hold / fix it), then announced.
  *
- * Auth: `Authorization: Bearer <CRON_SECRET>` (wrangler secret) or ?secret=.
+ * Auth: `Authorization: Bearer <CRON_SECRET>` (wrangler secret) only. A ?secret= query
+ * parameter is not accepted: URLs end up in Workers observability logs and proxies.
  */
 /** Grace window between first sight of a new item and its announcement. */
 const GRACE_MS = 60 * 60 * 1000;
@@ -32,13 +33,7 @@ function safeEqual(a: string, b: string): boolean {
 
 function authorize(request: Request, secret: string | undefined): boolean {
   if (!secret) return false;
-  const header = request.headers.get('authorization') || '';
-  if (safeEqual(header, `Bearer ${secret}`)) return true;
-  try {
-    return safeEqual(new URL(request.url).searchParams.get('secret') || '', secret);
-  } catch {
-    return false;
-  }
+  return safeEqual(request.headers.get('authorization') || '', `Bearer ${secret}`);
 }
 
 /** Next not-yet-announced, not-held item; records first sight and enforces the grace window.
@@ -125,8 +120,9 @@ export async function POST(request: Request) {
     const type = String(body?.type || '');
     const slug = String(body?.slug || '');
     if (!getNewsletterItem(type, slug)) return apiError(400, 'invalid_item');
-    await setAutoHold(db, type, slug, Boolean(body?.hold));
-    return apiOk({ held: Boolean(body?.hold) });
+    // Strict boolean (same as the admin route): a stray "false" string must not hold.
+    await setAutoHold(db, type, slug, body?.hold === true);
+    return apiOk({ held: body?.hold === true });
   } catch (err) {
     console.error('cron newsletter hold error', err instanceof Error ? err.message : 'unknown');
     return apiError(500, 'server_error');
