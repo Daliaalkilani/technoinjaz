@@ -5,10 +5,9 @@ import { PROJECTS_DATA } from '@/data/projectsData';
 import { ARTICLE_QA } from '@/data/qa/articles';
 import { PROJECT_QA } from '@/data/qa/projects';
 import { actionEmail, sendMail } from './mail';
-import { randomToken, sha256Hex } from './auth';
+import { randomToken } from './auth';
 import type { D1 } from './db';
 
-export const CONFIRM_TTL_MS = 72 * 60 * 60 * 1000;
 
 export type NewsletterItemType = 'article' | 'project';
 
@@ -81,7 +80,11 @@ export function listNewsletterItems() {
 export const unsubscribeLink = (unsubToken: string) => `${SITE_URL}/newsletter?unsubscribe=${unsubToken}`;
 const oneClickUrl = (unsubToken: string) => `${SITE_URL}/api/newsletter/unsubscribe?token=${unsubToken}`;
 
-/** Creates (or refreshes) a pending subscription and emails the confirmation link. */
+/**
+ * Subscribes immediately (single opt-in, owner's choice) and sends a welcome email that
+ * carries a one-click unsubscribe link. Re-subscribing a pending / unsubscribed address
+ * re-activates it; an active one answers 'already' without mailing again.
+ */
 export async function startSubscription(db: D1, email: string, lang: 'ar' | 'en') {
   const existing = await db
     .prepare('SELECT id, status, unsub_token FROM newsletter_subscribers WHERE email = ?1')
@@ -89,41 +92,50 @@ export async function startSubscription(db: D1, email: string, lang: 'ar' | 'en'
     .first<{ id: number; status: string; unsub_token: string }>();
   if (existing?.status === 'active') return { status: 'already' as const, sent: false };
 
-  const token = randomToken();
   const now = Date.now();
+  let unsubToken = existing?.unsub_token;
   if (existing) {
     await db
-      .prepare(`UPDATE newsletter_subscribers SET status = 'pending', lang = ?1, confirm_token = ?2, confirm_expires_at = ?3, unsubscribed_at = NULL WHERE id = ?4`)
-      .bind(lang, await sha256Hex(token), now + CONFIRM_TTL_MS, existing.id)
+      .prepare(`UPDATE newsletter_subscribers SET status = 'active', lang = ?1, confirmed_at = ?2, confirm_token = NULL, confirm_expires_at = NULL, unsubscribed_at = NULL WHERE id = ?3`)
+      .bind(lang, now, existing.id)
       .run();
   } else {
+    unsubToken = randomToken();
     await db
       .prepare(
-        `INSERT INTO newsletter_subscribers (email, lang, status, confirm_token, confirm_expires_at, unsub_token, created_at)
-         VALUES (?1, ?2, 'pending', ?3, ?4, ?5, ?6)`
+        `INSERT INTO newsletter_subscribers (email, lang, status, unsub_token, created_at, confirmed_at)
+         VALUES (?1, ?2, 'active', ?3, ?4, ?4)`
       )
-      .bind(email, lang, await sha256Hex(token), now + CONFIRM_TTL_MS, randomToken(), now)
+      .bind(email, lang, unsubToken, now)
       .run();
   }
 
   const isEn = lang === 'en';
+  const unsub = unsubscribeLink(unsubToken as string);
   const { html, text } = actionEmail({
-    title: isEn ? 'Confirm your subscription' : 'تأكيد الاشتراك في النشرة',
+    title: isEn ? 'Welcome to the Techno Enjaz newsletter' : 'أهلاً بك في نشرة تكنو إنجاز',
     intro: isEn
-      ? 'Thanks for subscribing to the Techno Enjaz newsletter. Confirm your email to start receiving our new articles and projects (the link is valid for 72 hours).'
-      : 'شكراً لاشتراكك في نشرة تكنو إنجاز. أكّد بريدك لتصلك مقالاتنا ومشاريعنا الجديدة (الرابط صالح 72 ساعة).',
-    button: isEn ? 'Confirm subscription' : 'تأكيد الاشتراك',
-    link: `${SITE_URL}/newsletter?confirm=${token}`,
-    note: isEn ? 'If you did not subscribe, ignore this email — you will not be added.' : 'إذا لم تشترك أنت فتجاهل الرسالة، ولن تتم إضافتك.',
-    icon: '📬',
+      ? 'You are subscribed. From now on our new engineering articles and projects — AI, IoT, robotics and software — will reach your inbox as soon as they are published.'
+      : 'تم اشتراكك بنجاح. من الآن ستصلك مقالاتنا ومشاريعنا الهندسية الجديدة في الذكاء الاصطناعي وإنترنت الأشياء والروبوتات والبرمجيات فور نشرها.',
+    button: isEn ? 'Browse the latest articles' : 'تصفّح أحدث المقالات',
+    link: `${SITE_URL}/articles`,
+    note: isEn ? 'Subscribed by mistake? You can leave with one click:' : 'اشتركت بالخطأ؟ يمكنك إلغاء الاشتراك بضغطة واحدة:',
+    secondary: { label: isEn ? 'Unsubscribe' : 'إلغاء الاشتراك', href: unsub },
+    icon: '🎉',
     lang
   });
   const sent = await sendMail({
     to: email,
-    subject: isEn ? 'Confirm your subscription — Techno Enjaz' : 'تأكيد الاشتراك — تكنو إنجاز',
-    text, html, tag: 'newsletter-confirm'
+    subject: isEn ? 'Welcome to the Techno Enjaz newsletter' : 'أهلاً بك في نشرة تكنو إنجاز',
+    text: `${text}\r\n${isEn ? 'Unsubscribe' : 'إلغاء الاشتراك'}: ${unsub}`,
+    html,
+    headers: {
+      'List-Unsubscribe': `<${oneClickUrl(unsubToken as string)}>, <mailto:info@technoenjaz.com?subject=unsubscribe>`,
+      'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click'
+    },
+    tag: 'newsletter-welcome'
   });
-  return { status: 'pending' as const, sent };
+  return { status: 'active' as const, sent };
 }
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');

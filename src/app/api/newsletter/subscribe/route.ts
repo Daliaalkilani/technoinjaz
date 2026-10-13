@@ -6,8 +6,8 @@ import { startSubscription } from '@/lib/server/newsletter';
 export const dynamic = 'force-dynamic';
 
 /**
- * POST { email, lang } → double opt-in: stores a pending subscription and emails a
- * confirmation link. Answers { status: 'pending' | 'already', sent }.
+ * POST { email, lang } → subscribes immediately and sends a welcome email (with a
+ * one-click unsubscribe link). Answers { status: 'active' | 'already', sent }.
  */
 export async function POST(request: Request) {
   if (!isSameOrigin(request)) return apiError(403, 'forbidden');

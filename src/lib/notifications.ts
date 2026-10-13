@@ -240,9 +240,8 @@ export async function subscribeUser(email: string, isEn = false): Promise<{
     };
   }
 
-  // 1. Server: double opt-in. Stores a pending subscription and emails a confirmation
-  //    link; the address only receives newsletters after clicking it.
-  let apiStatus: 'pending' | 'already' | null = null;
+  // 1. Server: subscribes immediately and sends a welcome email.
+  let apiStatus: 'active' | 'already' | null = null;
   let mailSent = true;
   try {
     const res = await fetch('/api/newsletter/subscribe', {
@@ -251,7 +250,7 @@ export async function subscribeUser(email: string, isEn = false): Promise<{
       credentials: 'same-origin',
       body: JSON.stringify({ email: cleanEmail, lang: isEn ? 'en' : 'ar' })
     });
-    const data = (await res.json().catch(() => null)) as { ok?: boolean; status?: 'pending' | 'already'; sent?: boolean; error?: string } | null;
+    const data = (await res.json().catch(() => null)) as { ok?: boolean; status?: 'active' | 'already'; sent?: boolean; error?: string } | null;
     if (!res.ok || !data?.ok) {
       const code = data?.error || 'server_error';
       return {
@@ -265,7 +264,7 @@ export async function subscribeUser(email: string, isEn = false): Promise<{
         pushGranted: false
       };
     }
-    apiStatus = data.status ?? 'pending';
+    apiStatus = data.status ?? 'active';
     mailSent = data.sent !== false;
   } catch {
     return {
@@ -325,13 +324,9 @@ export async function subscribeUser(email: string, isEn = false): Promise<{
         ? isEn
           ? `(${cleanEmail}) is already subscribed to the newsletter.`
           : `البريد (${cleanEmail}) مشترك مسبقاً في النشرة.`
-        : mailSent
-          ? isEn
-            ? `Almost done! We sent a confirmation link to (${cleanEmail}) — click it to start receiving our newsletter.`
-            : `خطوة أخيرة! أرسلنا رابط تأكيد إلى (${cleanEmail})، اضغطه لتبدأ النشرة بالوصول إليك.`
-          : isEn
-            ? `Saved (${cleanEmail}). The confirmation email could not be sent right now; we will retry later.`
-            : `تم حفظ (${cleanEmail})، لكن تعذّر إرسال رسالة التأكيد الآن.`,
+        : isEn
+          ? `You're subscribed with (${cleanEmail})! ${mailSent ? 'A welcome email is on its way — ' : ''}new articles and projects will reach your inbox.`
+          : `تم اشتراكك بنجاح بالبريد (${cleanEmail})! ${mailSent ? 'أرسلنا لك رسالة ترحيب، و' : ''}ستصلك المقالات والمشاريع الجديدة فور نشرها.`,
     pushGranted
   };
 }

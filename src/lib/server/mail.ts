@@ -105,7 +105,7 @@ export function emailShell(opts: { lang?: 'ar' | 'en'; preheader?: string; body:
 }
 
 /** Branded single-action email (newsletter confirmation, verification, password reset). */
-export function actionEmail(opts: { title: string; intro: string; button: string; link: string; note: string; icon?: string; lang?: 'ar' | 'en' }) {
+export function actionEmail(opts: { title: string; intro: string; button: string; link: string; note: string; icon?: string; lang?: 'ar' | 'en'; secondary?: { label: string; href: string } }) {
   const isEn = opts.lang === 'en';
   const body =
     `<tr><td align="center" style="padding:34px 32px 8px">` +
@@ -122,7 +122,9 @@ export function actionEmail(opts: { title: string; intro: string; button: string
     `<tr><td style="padding:22px 32px 28px">` +
     `<p style="margin:0 0 6px;font-size:12px;color:#64748b;text-align:center">${isEn ? "If the button doesn't work, copy this link into your browser:" : 'إذا لم يعمل الزر، انسخ هذا الرابط إلى المتصفح:'}</p>` +
     `<p style="margin:0 0 18px;font-size:12px;line-height:1.6;color:#0369a1;text-align:center;word-break:break-all" dir="ltr">${escapeHtml(opts.link)}</p>` +
-    `<p style="margin:0;padding:12px 14px;border-radius:10px;background-color:#f1f5f9;font-size:12px;line-height:1.8;color:#64748b;text-align:center">${escapeHtml(opts.note)}</p>` +
+    `<p style="margin:0;padding:12px 14px;border-radius:10px;background-color:#f1f5f9;font-size:12px;line-height:1.8;color:#64748b;text-align:center">${escapeHtml(opts.note)}` +
+    (opts.secondary ? ` <a href="${escapeHtml(opts.secondary.href)}" style="color:#0369a1;font-weight:bold">${escapeHtml(opts.secondary.label)}</a>` : '') +
+    `</p>` +
     `</td></tr>`;
   const html = emailShell({ lang: opts.lang, preheader: opts.intro, body });
   const text = `${opts.title}\r\n\r\n${opts.intro}\r\n\r\n${opts.link}\r\n\r\n${opts.note}\r\n\r\n— ${isEn ? 'Techno Enjaz' : 'تكنو إنجاز'} · technoenjaz.com`;
