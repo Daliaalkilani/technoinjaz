@@ -6,6 +6,11 @@
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
   "observability": { "enabled": true },
+  // Every page is prerendered into .open-next/cache; it only reaches the uploaded assets
+  // (cdn-cgi/_next_cache) via populateCache. `npm run deploy` does that, but a direct
+  // `wrangler deploy` skipped it and every /articles, /projects and /team page 404'd.
+  // Running it here makes any wrangler deploy safe (a fast local copy, no rebuild).
+  "build": { "command": "npx opennextjs-cloudflare populateCache local" },
   "send_email": [
     { "name": "SEND_EMAIL" }
   ],
