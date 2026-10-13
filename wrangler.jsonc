@@ -1,7 +1,8 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "technoenjaz",
-  "main": ".open-next/worker.js",
+  "main": "./cron-entry.mjs",
+  "triggers": { "crons": ["*/15 * * * *"] },
   "compatibility_date": "2026-09-28",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
