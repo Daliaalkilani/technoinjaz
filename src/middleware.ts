@@ -10,15 +10,20 @@ import { NextResponse, type NextRequest } from 'next/server';
  */
 const CANONICAL_HOST = 'technoenjaz.com';
 
+// Local `next dev` / `wrangler dev` (and the Playwright suite on :4173) must stay local
+// instead of being bounced to production.
+const LOCAL_HOST_RE = /^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/;
+
 export function middleware(request: NextRequest) {
   const host = request.headers.get('host') || '';
   const url = request.nextUrl.clone();
 
-  if (host === CANONICAL_HOST || host === `www.${CANONICAL_HOST}`) {
+  if (host === CANONICAL_HOST || LOCAL_HOST_RE.test(host)) {
     return NextResponse.next();
   }
 
-  // workers.dev (or any other host): permanent redirect to the canonical domain
+  // www, workers.dev or any other host: permanent redirect to the canonical domain
+  // (www used to answer 200 as well — a second indexable copy of every page).
   url.host = CANONICAL_HOST;
   url.protocol = 'https:';
   return NextResponse.redirect(url, 301);
