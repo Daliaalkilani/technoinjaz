@@ -77,7 +77,7 @@ const SITE = 'https://technoenjaz.com';
  * Only table layout, inline styles and solid colours (bgcolor + background-color):
  * Gmail / Outlook drop CSS gradients, which left the old header white-on-white.
  */
-export function emailShell(opts: { lang?: 'ar' | 'en'; preheader?: string; body: string }) {
+export function emailShell(opts: { lang?: 'ar' | 'en'; preheader?: string; body: string; hero?: { src: string; alt: string } }) {
   const isEn = opts.lang === 'en';
   const dir = isEn ? 'ltr' : 'rtl';
   const font = isEn ? "'Segoe UI',Arial,sans-serif" : "Tahoma,'Segoe UI',Arial,sans-serif";
@@ -87,12 +87,17 @@ export function emailShell(opts: { lang?: 'ar' | 'en'; preheader?: string; body:
     (opts.preheader ? `<div style="display:none;max-height:0;overflow:hidden;opacity:0">${escapeHtml(opts.preheader)}</div>` : '') +
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#eef2f7" style="background-color:#eef2f7"><tr><td align="center" style="padding:28px 12px">` +
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" dir="${dir}" style="max-width:560px;background-color:#ffffff;border-radius:18px;overflow:hidden;border:1px solid #e2e8f0">` +
-    // Header
-    `<tr><td bgcolor="#0b1426" align="center" style="background-color:#0b1426;padding:22px 24px">` +
-    `<img src="${SITE}/images/brand/techno-logo.png" width="38" height="41" alt="Techno Enjaz" style="display:inline-block;vertical-align:middle;border:0">` +
-    `<span style="display:inline-block;vertical-align:middle;color:#ffffff;font-size:19px;font-weight:bold;margin:0 10px">${isEn ? 'Techno Enjaz' : 'تكنو إنجاز'}</span>` +
-    `</td></tr>` +
-    `<tr><td bgcolor="#0369a1" style="background-color:#0369a1;height:4px;line-height:4px;font-size:0">&nbsp;</td></tr>` +
+    // Header: a designed hero banner (logo + title baked in) when given, else a text
+    // wordmark — no small standalone logo image that mail apps may block or drop.
+    (opts.hero
+      ? `<tr><td bgcolor="#050b18" style="background-color:#050b18;line-height:0;font-size:0">` +
+        `<img src="${SITE}${opts.hero.src}" width="560" alt="${escapeHtml(opts.hero.alt)}" style="display:block;width:100%;max-width:560px;height:auto;border:0;color:#ffffff;font-size:20px;line-height:1.4;background-color:#050b18">` +
+        `</td></tr>`
+      : `<tr><td bgcolor="#0b1426" align="center" style="background-color:#0b1426;padding:22px 24px">` +
+        `<span style="color:#38bdf8;font-size:24px;font-weight:bold;vertical-align:middle">▲</span>` +
+        `<span style="display:inline-block;vertical-align:middle;color:#ffffff;font-size:20px;font-weight:bold;margin:0 10px;letter-spacing:.3px">${isEn ? 'Techno Enjaz' : 'تكنو إنجاز'}</span>` +
+        `</td></tr>` +
+        `<tr><td bgcolor="#0369a1" style="background-color:#0369a1;height:4px;line-height:4px;font-size:0">&nbsp;</td></tr>`) +
     opts.body +
     // Footer
     `<tr><td bgcolor="#f8fafc" align="center" style="background-color:#f8fafc;border-top:1px solid #e2e8f0;padding:20px 24px;font-size:12px;line-height:1.9;color:#64748b">` +
@@ -105,14 +110,29 @@ export function emailShell(opts: { lang?: 'ar' | 'en'; preheader?: string; body:
 }
 
 /** Branded single-action email (newsletter confirmation, verification, password reset). */
-export function actionEmail(opts: { title: string; intro: string; button: string; link: string; note: string; icon?: string; lang?: 'ar' | 'en'; secondary?: { label: string; href: string } }) {
+export function actionEmail(opts: { title: string; intro: string; button: string; link: string; note: string; icon?: string; lang?: 'ar' | 'en'; secondary?: { label: string; href: string }; hero?: { src: string; alt: string }; features?: { icon: string; label: string }[] }) {
   const isEn = opts.lang === 'en';
   const body =
-    `<tr><td align="center" style="padding:34px 32px 8px">` +
-    // Icon badge
-    `<table role="presentation" cellpadding="0" cellspacing="0"><tr><td align="center" width="72" height="72" bgcolor="#e0f2fe" style="background-color:#e0f2fe;border-radius:36px;width:72px;height:72px;font-size:34px;line-height:72px;text-align:center">${opts.icon ?? '✉️'}</td></tr></table>` +
-    `<h1 style="margin:20px 0 10px;font-size:22px;line-height:1.5;color:#0f172a">${escapeHtml(opts.title)}</h1>` +
-    `<p style="margin:0 0 26px;font-size:15px;line-height:1.9;color:#334155">${escapeHtml(opts.intro)}</p>` +
+    `<tr><td align="center" style="padding:${opts.hero ? '30px' : '34px'} 32px 8px">` +
+    // With a hero banner the title is already in the artwork; otherwise icon badge + title.
+    (opts.hero
+      ? ''
+      : `<table role="presentation" cellpadding="0" cellspacing="0"><tr><td align="center" width="72" height="72" bgcolor="#e0f2fe" style="background-color:#e0f2fe;border-radius:36px;width:72px;height:72px;font-size:34px;line-height:72px;text-align:center">${opts.icon ?? '✉️'}</td></tr></table>` +
+        `<h1 style="margin:20px 0 10px;font-size:22px;line-height:1.5;color:#0f172a">${escapeHtml(opts.title)}</h1>`) +
+    `<p style="margin:0 0 ${opts.features?.length ? '22px' : '26px'};font-size:16px;line-height:1.9;color:#334155">${escapeHtml(opts.intro)}</p>` +
+    (opts.features?.length
+      ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 26px"><tr>` +
+        opts.features
+          .map(
+            (f) =>
+              `<td align="center" valign="top" width="${Math.floor(100 / opts.features!.length)}%" style="padding:0 5px">` +
+              `<div style="background-color:#f0f7fc;border:1px solid #dbeafe;border-radius:14px;padding:16px 8px">` +
+              `<div style="font-size:28px;line-height:1">${f.icon}</div>` +
+              `<div style="margin-top:8px;font-size:13px;font-weight:bold;color:#0f172a;line-height:1.5">${escapeHtml(f.label)}</div></div></td>`
+          )
+          .join('') +
+        `</tr></table>`
+      : '') +
     // Bulletproof button (table cell with background colour)
     `<table role="presentation" cellpadding="0" cellspacing="0"><tr><td bgcolor="#0369a1" style="background-color:#0369a1;border-radius:12px">` +
     `<a href="${escapeHtml(opts.link)}" style="display:inline-block;padding:15px 38px;color:#ffffff;font-size:16px;font-weight:bold;text-decoration:none;border-radius:12px">${escapeHtml(opts.button)}</a>` +
@@ -126,7 +146,7 @@ export function actionEmail(opts: { title: string; intro: string; button: string
     (opts.secondary ? ` <a href="${escapeHtml(opts.secondary.href)}" style="color:#0369a1;font-weight:bold">${escapeHtml(opts.secondary.label)}</a>` : '') +
     `</p>` +
     `</td></tr>`;
-  const html = emailShell({ lang: opts.lang, preheader: opts.intro, body });
+  const html = emailShell({ lang: opts.lang, preheader: opts.intro, body, hero: opts.hero });
   const text = `${opts.title}\r\n\r\n${opts.intro}\r\n\r\n${opts.link}\r\n\r\n${opts.note}\r\n\r\n— ${isEn ? 'Techno Enjaz' : 'تكنو إنجاز'} · technoenjaz.com`;
   return { html, text };
 }

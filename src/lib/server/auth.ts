@@ -163,7 +163,8 @@ export async function issueVerificationToken(db: D1, userId: number, email: stri
     button: 'توثيق البريد',
     link,
     note: 'إذا لم تُنشئ حساباً في technoenjaz.com فتجاهل هذه الرسالة.',
-    icon: '✅'
+    icon: '✅',
+    hero: { src: '/images/email/verify-ar.jpg', alt: 'خطوة أخيرة لتفعيل حسابك — تكنو إنجاز' }
   });
   const sent = await sendMail({ to: email, subject: 'توثيق بريدك — تكنو إنجاز', text, html, tag: 'verify-email' });
   // Fallback the owner can act on (Worker logs) when delivery is refused.
@@ -189,7 +190,8 @@ export async function issuePasswordResetToken(db: D1, userId: number, email: str
     button: 'تعيين كلمة مرور جديدة',
     link,
     note: 'إذا لم تطلب ذلك فتجاهل الرسالة؛ كلمة مرورك الحالية تبقى كما هي.',
-    icon: '🔐'
+    icon: '🔐',
+    hero: { src: '/images/email/reset-ar.jpg', alt: 'إعادة تعيين كلمة المرور — تكنو إنجاز' }
   });
   // Never log reset links: they grant account access.
   return sendMail({ to: email, subject: 'إعادة تعيين كلمة المرور — تكنو إنجاز', text, html, tag: 'password-reset' });

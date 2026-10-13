@@ -122,7 +122,13 @@ export async function startSubscription(db: D1, email: string, lang: 'ar' | 'en'
     note: isEn ? 'Subscribed by mistake? You can leave with one click:' : 'اشتركت بالخطأ؟ يمكنك إلغاء الاشتراك بضغطة واحدة:',
     secondary: { label: isEn ? 'Unsubscribe' : 'إلغاء الاشتراك', href: unsub },
     icon: '🎉',
-    lang
+    lang,
+    hero: isEn
+      ? { src: '/images/email/welcome-en.jpg', alt: 'Welcome to Techno Enjaz' }
+      : { src: '/images/email/welcome-ar.jpg', alt: 'أهلاً بك في عائلة تكنو إنجاز' },
+    features: isEn
+      ? [{ icon: '🤖', label: 'Artificial intelligence' }, { icon: '📡', label: 'IoT & 5G' }, { icon: '🦾', label: 'Robotics & automation' }]
+      : [{ icon: '🤖', label: 'الذكاء الاصطناعي' }, { icon: '📡', label: 'إنترنت الأشياء' }, { icon: '🦾', label: 'الروبوتات والأتمتة' }]
   });
   const sent = await sendMail({
     to: email,
@@ -187,8 +193,8 @@ export function newsletterEmail(item: NewsletterItem, sub: { lang: string; unsub
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border-radius:18px;overflow:hidden;border:1px solid #e2e8f0" dir="${dir}">` +
     // Header
     `<tr><td style="background:#0b1426;padding:18px 28px"><table role="presentation" width="100%"><tr>` +
-    `<td style="text-align:${align}"><img src="${SITE_URL}/images/brand/techno-logo.png" width="34" height="36" alt="Techno Enjaz" style="vertical-align:middle;border:0">` +
-    `<span style="vertical-align:middle;color:#ffffff;font-size:17px;font-weight:bold;margin:0 10px">${isEn ? 'Techno Enjaz' : 'تكنو إنجاز'}</span></td>` +
+    `<td style="text-align:${align}"><span style="color:#38bdf8;font-size:20px;font-weight:bold;vertical-align:middle">▲</span>` +
+    `<span style="vertical-align:middle;color:#ffffff;font-size:18px;font-weight:bold;margin:0 8px">${isEn ? 'Techno Enjaz' : 'تكنو إنجاز'}</span></td>` +
     `<td style="text-align:${isEn ? 'right' : 'left'};color:#38bdf8;font-size:12px;font-weight:bold;letter-spacing:.5px">${esc(kind)}</td>` +
     `</tr></table></td></tr>` +
     // Cover
