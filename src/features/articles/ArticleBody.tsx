@@ -2,6 +2,8 @@
 
 import React from 'react';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
+// Math in bodies is pre-rendered by KaTeX; its stylesheet only ships with the pages that use it.
+import 'katex/dist/katex-swap.min.css';
 
 interface ArticleBodyProps {
   /** Arabic body HTML (server-rendered from markdown) — the default/fallback. */

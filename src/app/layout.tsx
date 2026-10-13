@@ -1,7 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Readex_Pro } from 'next/font/google';
 import '@/styles/globals.css';
-import 'katex/dist/katex-swap.min.css';
 import '@/styles/article-content.css';
 import { ThemeLanguageProvider } from '@/context/ThemeLanguageContext';
 import { LoaderProvider } from '@/context/LoaderContext';
@@ -13,13 +11,9 @@ import { organization, website } from '@/seo/schemas';
 
 import { TeLoader } from '@/components/layout/TeLoader';
 
-const readex = Readex_Pro({
-  subsets: ['arabic', 'latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  display: 'swap',
-  variable: '--font-readex'
-});
-
+// Readex Pro is self-hosted (public/fonts/readex-pro.css, linked below). A next/font
+// copy used to be loaded as well: its two preloaded woff2 files were downloaded on
+// every page but never used, since globals.css names the self-hosted family first.
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -39,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning className={readex.variable}>
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: LEGACY_HASH_REDIRECT }} />
         <script dangerouslySetInnerHTML={{ __html: THEME_LANG_BOOT }} />
@@ -69,7 +63,7 @@ export default function RootLayout({
         <link rel="preload" as="image" href="/loader/assets/launch-button.webp" fetchPriority="high" />
         <script src="/loader/loader.js" defer />
       </head>
-      <body className={readex.className} suppressHydrationWarning>
+      <body suppressHydrationWarning>
         <TeLoader />
         <ThemeLanguageProvider>
           <LoaderProvider>

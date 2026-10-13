@@ -1,9 +1,29 @@
-# HTML pages must revalidate after each deploy, otherwise visitors keep a cached page
-# whose chunk hashes no longer exist -> "Application error: a client-side exception".
+# Static assets only (Workers Static Assets). HTML pages are served through the Worker
+# and get their headers from next.config.ts (max-age=0, must-revalidate after a deploy).
+#
+# No Cache-Control on /*: Cloudflare joins the values of every matching rule, so a
+# catch-all Cache-Control was merged into /_next/static/* as
+# "public, max-age=0, must-revalidate, public, max-age=31536000, immutable" and the
+# hashed chunks were revalidated on every visit. Unmatched assets keep the platform
+# default (public, max-age=0, must-revalidate).
 /*
-  Cache-Control: public, max-age=0, must-revalidate
   X-Content-Type-Options: nosniff
 
 # Immutable build assets keep long caching (hash in filename)
 /_next/static/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Fonts never change under the same name.
+/fonts/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+
+# Images / media are not content-hashed (a regenerated cover keeps its name), so a few
+# hours of freshness plus background revalidation instead of a round trip per image.
+/_img/*
+  Cache-Control: public, max-age=14400, stale-while-revalidate=86400
+/images/*
+  Cache-Control: public, max-age=14400, stale-while-revalidate=86400
+/loader/assets/*
+  Cache-Control: public, max-age=14400, stale-while-revalidate=86400
+/videos/*
+  Cache-Control: public, max-age=14400, stale-while-revalidate=86400
