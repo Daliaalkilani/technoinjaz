@@ -16,6 +16,8 @@ const nextConfig: NextConfig = {
           { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          // No page uses these device APIs; deny them to the page and to embedded frames.
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=()' },
           { key: 'Content-Security-Policy', value: "require-trusted-types-for 'script'" },
           // HTML must revalidate after each deploy: a cached page referencing purged
           // chunk hashes crashes with "Application error: client-side exception".

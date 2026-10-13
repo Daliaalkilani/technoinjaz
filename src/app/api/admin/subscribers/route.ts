@@ -6,7 +6,13 @@ export const dynamic = 'force-dynamic';
 type Row = { id: number; email: string; lang: string; status: string; created_at: number; confirmed_at: number | null; unsubscribed_at: number | null };
 
 const iso = (ms: number | null) => (ms ? new Date(ms).toISOString() : '');
-const csvCell = (v: string) => (/[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v);
+// Anyone can subscribe any string the email regex accepts (e.g. `=HYPERLINK(...)@x.co`):
+// a leading = + - @ (or tab/CR) is neutralised with a quote so Excel / Sheets never
+// evaluate an exported cell as a formula.
+const csvCell = (raw: string) => {
+  const v = /^[=+\-@\t\r]/.test(raw) ? `'${raw}` : raw;
+  return /[",\r\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
+};
 
 /** GET → counts + latest 1000 subscribers; GET ?format=csv → CSV download (all rows). */
 export async function GET(request: Request) {

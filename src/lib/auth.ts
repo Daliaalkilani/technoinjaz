@@ -163,6 +163,9 @@ export function apiErrorMessage(code: string, isEn: boolean): string {
     not_found: ['العنصر غير موجود أو حُذف مسبقاً.', 'This item no longer exists.'],
     rate_limited: ['محاولات كثيرة خلال وقت قصير، يرجى الانتظار قليلاً ثم المحاولة مجدداً.', 'Too many attempts in a short time. Please wait a little and try again.'],
     forbidden: ['لا تملك صلاحية لهذا الإجراء.', 'You do not have permission for this action.'],
+    already_sent: ['أُرسلت هذه النشرة سابقاً.', 'This newsletter was already sent.'],
+    invalid_item: ['المقالة أو المشروع غير موجود.', 'That article or project does not exist.'],
+    invalid_send: ['عملية الإرسال هذه غير موجودة.', 'That send does not exist.'],
     network: ['تعذّر الاتصال بالخادم، تحقق من الإنترنت وحاول مجدداً.', 'Could not reach the server. Check your connection and try again.']
   };
   const pair = m[code] ?? ['حدث خطأ غير متوقع، حاول مرة أخرى.', 'Something went wrong. Please try again.'];

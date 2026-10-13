@@ -3,12 +3,10 @@ import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  return NextResponse.json({
-    status: 'ok',
-    uptime: process.uptime(),
-    timestamp: Date.now(),
-    service: 'Techno Enjaz Core Gateway'
-  });
+  return NextResponse.json(
+    { status: 'ok', timestamp: Date.now() },
+    { headers: { 'Cache-Control': 'no-store' } }
+  );
 }
 
 export async function HEAD() {

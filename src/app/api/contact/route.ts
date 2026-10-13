@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { sendMail } from '@/lib/server/mail';
 import { isRateLimited, HOUR } from '@/lib/server/rateLimit';
-import type { D1 } from '@/lib/server/db';
+import { isSameOrigin, type D1 } from '@/lib/server/db';
 
 export const dynamic = 'force-dynamic';
 
@@ -84,6 +84,9 @@ async function sendWa(url: string, key: string, name: string, data: { email: str
 }
 
 export async function POST(request: Request) {
+  // Same CSRF rule as the other POST routes: request.json() parses any content type, so
+  // a cross-site text/plain form could otherwise submit (and burn the rate limit).
+  if (!isSameOrigin(request)) return NextResponse.json({ success: false, message: 'Forbidden.' }, { status: 403 });
   try {
     const body = (await request.json().catch(() => null)) as Record<string, unknown> | null;
     if (!body) return NextResponse.json({ success: false, message: 'Invalid JSON.' }, { status: 400 });
