@@ -262,7 +262,7 @@ export default function ContactPage({ onBack } = {}) {
                 {/* Major and University */}
                 <div className="form-row">
                   <div className="form-group">
-                    <label className="form-label">
+                    <label htmlFor="contact-specialization" className="form-label">
                       <GraduationCap size={15} />
                       <span>{t.contact.major}</span>
                     </label>
@@ -277,7 +277,7 @@ export default function ContactPage({ onBack } = {}) {
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">
+                    <label htmlFor="contact-university" className="form-label">
                       <Building size={15} />
                       <span>{t.contact.university}</span>
                     </label>
@@ -295,7 +295,7 @@ export default function ContactPage({ onBack } = {}) {
                 {/* Email and Phone */}
                 <div className="form-row">
                   <div className="form-group">
-                    <label className="form-label">
+                    <label htmlFor="contact-email" className="form-label">
                       <Mail size={15} />
                       <span>{t.contact.email} <span style={{ color: '#ef4444' }}>*</span></span>
                     </label>
@@ -311,7 +311,7 @@ export default function ContactPage({ onBack } = {}) {
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">
+                    <label htmlFor="contact-phone" className="form-label">
                       <Phone size={15} />
                       <span>{t.contact.phone} <span style={{ color: '#ef4444' }}>*</span></span>
                     </label>
@@ -329,7 +329,7 @@ export default function ContactPage({ onBack } = {}) {
 
                 {/* Inquiry text */}
                 <div className="form-group">
-                  <label className="form-label">
+                  <label htmlFor="contact-inquiry" className="form-label">
                     <HelpCircle size={15} />
                     <span>{t.contact.inquiry} <span style={{ color: '#ef4444' }}>*</span></span>
                   </label>
