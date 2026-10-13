@@ -24,6 +24,9 @@ export function middleware(request: NextRequest) {
   return NextResponse.redirect(url, 301);
 }
 
+// api/cron is excluded: the Worker's scheduled() handler calls it in-process with a
+// synthetic request whose host is not the canonical one — a 301 here meant the cron
+// route never ran. It is guarded by CRON_SECRET, not by host.
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml).*)']
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|api/cron).*)']
 };

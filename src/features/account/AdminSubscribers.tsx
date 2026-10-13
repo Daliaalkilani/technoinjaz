@@ -2,13 +2,14 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { Loader2, AlertCircle, Download, Send, FlaskConical, Users } from 'lucide-react';
+import { Loader2, AlertCircle, Download, Send, FlaskConical, Users, PauseCircle, PlayCircle } from 'lucide-react';
 import { apiRequest, apiErrorMessage } from '@/lib/auth';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import './AdminMessages.css';
 
 type Sub = { id: number; email: string; lang: string; status: 'active' | 'pending' | 'unsubscribed'; created_at: number; confirmed_at: number | null };
 type Item = { type: 'article' | 'project'; slug: string; title: string; date: string };
+type AutoRow = { item_type: string; item_slug: string; state: 'seen' | 'hold'; first_seen_at: number };
 type SendRow = { id: number; item_type: string; item_slug: string; subject: string; sent_count: number; fail_count: number; total: number; created_at: number; finished_at: number | null };
 
 /** Newsletter admin: subscribers, CSV export, announce an article / project. */
@@ -19,17 +20,18 @@ export default function AdminSubscribers() {
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [items, setItems] = useState<Item[]>([]);
   const [sends, setSends] = useState<SendRow[]>([]);
+  const [auto, setAuto] = useState<AutoRow[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [choice, setChoice] = useState('');
-  const [busy, setBusy] = useState<null | 'test' | 'send'>(null);
+  const [busy, setBusy] = useState<null | 'test' | 'send' | 'hold'>(null);
   const [progress, setProgress] = useState<{ sent: number; failed: number; total: number } | null>(null);
   const [note, setNote] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
 
   const load = useCallback(async () => {
     const [a, b] = await Promise.all([
       apiRequest<{ counts: Record<string, number>; subscribers: Sub[] }>('/api/admin/subscribers'),
-      apiRequest<{ items: Item[]; sends: SendRow[] }>('/api/admin/newsletter')
+      apiRequest<{ items: Item[]; sends: SendRow[]; auto: AutoRow[] }>('/api/admin/newsletter')
     ]);
     if (!a.ok) return setError(a.error);
     if (!b.ok) return setError(b.error);
@@ -37,6 +39,7 @@ export default function AdminSubscribers() {
     setCounts(a.counts);
     setItems(b.items);
     setSends(b.sends);
+    setAuto(b.auto ?? []);
     setLoading(false);
   }, []);
 
@@ -46,6 +49,7 @@ export default function AdminSubscribers() {
 
   const [type, slug] = choice.split(':') as ['article' | 'project', string];
   const sentBefore = useMemo(() => sends.find((s) => s.item_type === type && s.item_slug === slug), [sends, type, slug]);
+  const autoState = useMemo(() => auto.find((a) => a.item_type === type && a.item_slug === slug), [auto, type, slug]);
   const fmt = (ms: number) => new Date(ms).toLocaleString(isEn ? 'en-GB' : 'ar-SY', { dateStyle: 'medium', timeStyle: 'short' });
 
   const sendTest = async () => {
@@ -58,6 +62,16 @@ export default function AdminSubscribers() {
         ? { type: 'ok', text: isEn ? `Test sent to ${res.to}.` : `أُرسلت نسخة تجريبية إلى ${res.to}.` }
         : { type: 'err', text: res.ok ? (isEn ? 'Cloudflare refused the email (check Email Sending).' : 'رفضت Cloudflare إرسال الرسالة (تحقق من تفعيل Email Sending).') : apiErrorMessage(res.error, isEn) }
     );
+  };
+
+  const toggleHold = async () => {
+    const hold = autoState?.state !== 'hold';
+    setBusy('hold');
+    setNote(null);
+    const res = await apiRequest<{ held: boolean }>('/api/admin/newsletter', { method: 'POST', body: { mode: 'hold', type, slug, hold } });
+    setBusy(null);
+    if (!res.ok) return setNote({ type: 'err', text: apiErrorMessage(res.error, isEn) });
+    load();
   };
 
   const sendAll = async () => {
@@ -75,22 +89,25 @@ export default function AdminSubscribers() {
       setBusy(null);
       return setNote({ type: 'err', text: start.error === 'no_subscribers' ? (isEn ? 'There are no confirmed subscribers yet.' : 'لا يوجد مشتركون مؤكدون بعد.') : apiErrorMessage(start.error, isEn) });
     }
-    let afterId = 0;
     let sent = 0;
     let failed = 0;
     setProgress({ sent, failed, total: start.total });
     for (let guard = 0; guard < 2000; guard++) {
-      const step = await apiRequest<{ done: boolean; nextAfterId: number; sent: number; failed: number }>('/api/admin/newsletter', {
+      const step = await apiRequest<{ done: boolean; busy: boolean; nextAfterId: number; sent: number; failed: number }>('/api/admin/newsletter', {
         method: 'POST',
-        body: { mode: 'continue', sendId: start.sendId, afterId }
+        body: { mode: 'continue', sendId: start.sendId }
       });
       if (!step.ok) {
         setNote({ type: 'err', text: apiErrorMessage(step.error, isEn) });
         break;
       }
+      // The cron is mailing a batch of this same send right now: wait, then go on.
+      if (step.busy) {
+        await new Promise((r) => setTimeout(r, 2000));
+        continue;
+      }
       sent += step.sent;
       failed += step.failed;
-      afterId = step.nextAfterId;
       setProgress({ sent, failed, total: start.total });
       if (step.done) {
         setNote({
@@ -161,11 +178,26 @@ export default function AdminSubscribers() {
                 {isEn ? `Already sent on ${fmt(sentBefore.created_at)} (${sentBefore.sent_count} delivered).` : `أُرسلت سابقاً بتاريخ ${fmt(sentBefore.created_at)} (${sentBefore.sent_count} رسالة).`}
               </p>
             )}
+            {choice && !sentBefore && (
+              <p className="admin-msg-meta">
+                {autoState?.state === 'hold'
+                  ? isEn ? 'Auto newsletter: on hold (never sent automatically).' : 'النشرة التلقائية: موقوفة (لن تُرسل تلقائياً).'
+                  : autoState
+                    ? isEn ? `Auto newsletter: will be sent automatically after ${fmt(autoState.first_seen_at + 60 * 60 * 1000)}.` : `النشرة التلقائية: ستُرسل تلقائياً بعد ${fmt(autoState.first_seen_at + 60 * 60 * 1000)}.`
+                    : isEn ? 'Auto newsletter: new item — sent automatically about an hour after the cron first sees it.' : 'النشرة التلقائية: عنصر جديد — يُرسل تلقائياً بعد نحو ساعة من رصده.'}
+              </p>
+            )}
             <div className="admin-nl-actions">
               <button type="button" className="admin-msgs-more" disabled={!choice || busy !== null} onClick={sendTest}>
                 {busy === 'test' ? <Loader2 className="admin-msgs-spin" size={16} /> : <FlaskConical size={16} />}
                 {isEn ? 'Send me a test' : 'أرسل لي نسخة تجريبية'}
               </button>
+              {!sentBefore && (
+                <button type="button" className="admin-msgs-more" disabled={!choice || busy !== null} onClick={toggleHold}>
+                  {busy === 'hold' ? <Loader2 className="admin-msgs-spin" size={16} /> : autoState?.state === 'hold' ? <PlayCircle size={16} /> : <PauseCircle size={16} />}
+                  {autoState?.state === 'hold' ? (isEn ? 'Allow auto-send' : 'السماح بالإرسال التلقائي') : isEn ? 'Hold auto-send' : 'إيقاف الإرسال التلقائي'}
+                </button>
+              )}
               <button type="button" className="admin-msgs-more admin-nl-primary" disabled={!choice || busy !== null || !counts.active} onClick={sendAll}>
                 {busy === 'send' ? <Loader2 className="admin-msgs-spin" size={16} /> : <Send size={16} />}
                 {isEn ? `Send to ${counts.active || 0} subscribers` : `إرسال إلى ${counts.active || 0} مشتركاً`}

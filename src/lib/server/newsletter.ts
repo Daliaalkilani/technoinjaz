@@ -77,6 +77,92 @@ export function listNewsletterItems() {
   ];
 }
 
+/** Subscribers mailed per batch: keeps each Worker invocation well under the
+ *  per-request subrequest limit (one send_email call + a few D1 queries each). */
+export const NEWSLETTER_BATCH = 25;
+
+export type BatchResult = { done: boolean; busy: boolean; nextAfterId: number; sent: number; failed: number };
+
+/**
+ * Mails the next batch of send `sendId`. The cursor (id of the last subscriber handed
+ * to a batch) lives in newsletter_auto_cursor — not in the caller — so the admin page,
+ * the cron and a resumed interrupted send all share it and never mail anyone twice.
+ * The batch is claimed (compare-and-set on the cursor) before any mail goes out: a
+ * concurrent caller gets `busy`, and a Worker killed mid-batch loses those mails
+ * rather than duplicating them. New subscribers (higher ids) join a send in flight.
+ * Returns null when the send does not exist.
+ */
+export async function sendNextBatch(db: D1, sendId: number): Promise<BatchResult | null> {
+  const send = await db
+    .prepare('SELECT id, item_type, item_slug, sent_count, fail_count, finished_at FROM newsletter_sends WHERE id = ?1')
+    .bind(sendId)
+    .first<{ id: number; item_type: string; item_slug: string; sent_count: number; fail_count: number; finished_at: number | null }>();
+  if (!send) return null;
+  await db.prepare('CREATE TABLE IF NOT EXISTS newsletter_auto_cursor (send_id INTEGER PRIMARY KEY, after_id INTEGER NOT NULL)').run();
+  let cur = await db.prepare('SELECT after_id FROM newsletter_auto_cursor WHERE send_id = ?1').bind(send.id).first<{ after_id: number }>();
+  if (send.finished_at) return { done: true, busy: false, nextAfterId: cur?.after_id ?? 0, sent: 0, failed: 0 };
+
+  const item = getNewsletterItem(send.item_type, send.item_slug);
+  if (!item) {
+    await db.prepare('UPDATE newsletter_sends SET finished_at = ?1 WHERE id = ?2').bind(Date.now(), send.id).run();
+    return { done: true, busy: false, nextAfterId: cur?.after_id ?? 0, sent: 0, failed: 0 };
+  }
+
+  if (!cur) {
+    // A send started before the cursor was server-side (admin page passed it around):
+    // skip the subscribers its counters say were already processed (they go in id order).
+    const processed = send.sent_count + send.fail_count;
+    const last = processed
+      ? await db.prepare(`SELECT id FROM newsletter_subscribers WHERE status = 'active' ORDER BY id LIMIT 1 OFFSET ?1`).bind(processed - 1).first<{ id: number }>()
+      : null;
+    await db.prepare('INSERT OR IGNORE INTO newsletter_auto_cursor (send_id, after_id) VALUES (?1, ?2)').bind(send.id, last?.id ?? 0).run();
+    cur = await db.prepare('SELECT after_id FROM newsletter_auto_cursor WHERE send_id = ?1').bind(send.id).first<{ after_id: number }>();
+  }
+  const afterId = cur?.after_id ?? 0;
+
+  const { results: batch = [] } = await db
+    .prepare(`SELECT id, email, lang, unsub_token FROM newsletter_subscribers WHERE status = 'active' AND id > ?1 ORDER BY id LIMIT ?2`)
+    .bind(afterId, NEWSLETTER_BATCH)
+    .all<{ id: number; email: string; lang: string; unsub_token: string }>();
+  const nextAfterId = batch.length ? batch[batch.length - 1].id : afterId;
+  if (batch.length) {
+    const claim = await db
+      .prepare('UPDATE newsletter_auto_cursor SET after_id = ?1 WHERE send_id = ?2 AND after_id = ?3')
+      .bind(nextAfterId, send.id, afterId)
+      .run();
+    if (!claim.meta?.changes) return { done: false, busy: true, nextAfterId: afterId, sent: 0, failed: 0 };
+  }
+
+  let sent = 0;
+  let failed = 0;
+  for (const sub of batch) {
+    // sendMail never throws: a refused address counts as failed and the batch goes on.
+    if (await sendMail({ to: sub.email, ...newsletterEmail(item, sub), tag: 'newsletter' })) sent++;
+    else failed++;
+  }
+  const done = batch.length < NEWSLETTER_BATCH;
+  await db
+    .prepare('UPDATE newsletter_sends SET sent_count = sent_count + ?1, fail_count = fail_count + ?2, finished_at = COALESCE(finished_at, ?3) WHERE id = ?4')
+    .bind(sent, failed, done ? Date.now() : null, send.id)
+    .run();
+  return { done, busy: false, nextAfterId, sent, failed };
+}
+
+/** Pins (hold) or releases an item for the auto newsletter. Releasing deletes the hold
+ *  row, so the cron sees the item as new: it waits out the grace window, then announces. */
+export async function setAutoHold(db: D1, type: string, slug: string, hold: boolean) {
+  const now = Date.now();
+  if (hold) {
+    await db
+      .prepare(`INSERT INTO newsletter_auto (item_type, item_slug, state, first_seen_at, updated_at) VALUES (?1, ?2, 'hold', ?3, ?3)
+                ON CONFLICT(item_type, item_slug) DO UPDATE SET state = 'hold', updated_at = ?3`)
+      .bind(type, slug, now)
+      .run();
+  } else {
+    await db.prepare(`DELETE FROM newsletter_auto WHERE item_type = ?1 AND item_slug = ?2 AND state = 'hold'`).bind(type, slug).run();
+  }
+}
+
 export const unsubscribeLink = (unsubToken: string) => `${SITE_URL}/newsletter?unsubscribe=${unsubToken}`;
 const oneClickUrl = (unsubToken: string) => `${SITE_URL}/api/newsletter/unsubscribe?token=${unsubToken}`;
 

@@ -1,15 +1,12 @@
 import { getDB, apiError, apiOk, isSameOrigin, readJson } from '@/lib/server/db';
 import { requireAdmin } from '@/lib/server/admin';
 import { sendMail } from '@/lib/server/mail';
-import { getNewsletterItem, listNewsletterItems, newsletterEmail } from '@/lib/server/newsletter';
+import { getNewsletterItem, listNewsletterItems, newsletterEmail, sendNextBatch, setAutoHold } from '@/lib/server/newsletter';
 
 export const dynamic = 'force-dynamic';
 
-// Subscribers mailed per request: keeps each Worker invocation well under the
-// per-request subrequest limit; the admin page calls again until `done`.
-const BATCH = 25;
-
-/** GET → items that can be announced + past sends. */
+/** GET → items that can be announced + past sends + auto-newsletter state per item
+ *  ('seen' = waiting out the cron's grace window, 'hold' = never auto-announced). */
 export async function GET(request: Request) {
   try {
     const db = await getDB();
@@ -18,7 +15,11 @@ export async function GET(request: Request) {
     const { results: sends = [] } = await db
       .prepare('SELECT id, item_type, item_slug, subject, sent_count, fail_count, total, created_by, created_at, finished_at FROM newsletter_sends ORDER BY id DESC LIMIT 50')
       .all();
-    return apiOk({ items: listNewsletterItems(), sends });
+    const { results: auto = [] } = await db
+      .prepare('SELECT item_type, item_slug, state, first_seen_at FROM newsletter_auto')
+      .all()
+      .catch(() => ({ results: [] }));
+    return apiOk({ items: listNewsletterItems(), sends, auto });
   } catch (err) {
     console.error('admin newsletter list error', err instanceof Error ? err.message : 'unknown');
     return apiError(500, 'server_error');
@@ -28,7 +29,8 @@ export async function GET(request: Request) {
 /**
  * POST { mode: 'test', type, slug }            → sends the newsletter to the admin only
  * POST { mode: 'start', type, slug, force? }   → creates a send (refuses a repeat unless force)
- * POST { mode: 'continue', sendId, afterId }   → mails the next batch of active subscribers
+ * POST { mode: 'continue', sendId }            → mails the next batch of active subscribers
+ * POST { mode: 'hold', type, slug, hold }      → pins / releases an item for the auto newsletter
  */
 export async function POST(request: Request) {
   if (!isSameOrigin(request)) return apiError(403, 'forbidden');
@@ -65,35 +67,18 @@ export async function POST(request: Request) {
     }
 
     if (mode === 'continue') {
-      const sendId = Number(body?.sendId);
-      const afterId = Number(body?.afterId) || 0;
-      const send = await db
-        .prepare('SELECT id, item_type, item_slug, finished_at FROM newsletter_sends WHERE id = ?1')
-        .bind(sendId)
-        .first<{ id: number; item_type: string; item_slug: string; finished_at: number | null }>();
-      if (!send) return apiError(400, 'invalid_send');
-      if (send.finished_at) return apiOk({ done: true, nextAfterId: afterId, sent: 0, failed: 0 });
-      const item = getNewsletterItem(send.item_type, send.item_slug);
-      if (!item) return apiError(400, 'invalid_item');
+      // The cursor is kept server-side (shared with the cron); body.afterId is ignored.
+      const res = await sendNextBatch(db, Number(body?.sendId));
+      if (!res) return apiError(400, 'invalid_send');
+      return apiOk(res);
+    }
 
-      const { results: batch = [] } = await db
-        .prepare(`SELECT id, email, lang, unsub_token FROM newsletter_subscribers WHERE status = 'active' AND id > ?1 ORDER BY id LIMIT ?2`)
-        .bind(afterId, BATCH)
-        .all<{ id: number; email: string; lang: string; unsub_token: string }>();
-
-      let sent = 0;
-      let failed = 0;
-      for (const sub of batch) {
-        const mail = newsletterEmail(item, sub);
-        if (await sendMail({ to: sub.email, ...mail, tag: 'newsletter' })) sent++;
-        else failed++;
-      }
-      const done = batch.length < BATCH;
-      await db
-        .prepare('UPDATE newsletter_sends SET sent_count = sent_count + ?1, fail_count = fail_count + ?2, finished_at = ?3 WHERE id = ?4')
-        .bind(sent, failed, done ? Date.now() : null, send.id)
-        .run();
-      return apiOk({ done, nextAfterId: batch.length ? batch[batch.length - 1].id : afterId, sent, failed });
+    if (mode === 'hold') {
+      const type = String(body?.type || '');
+      const slug = String(body?.slug || '');
+      if (!getNewsletterItem(type, slug)) return apiError(400, 'invalid_item');
+      await setAutoHold(db, type, slug, body?.hold === true);
+      return apiOk({ held: body?.hold === true });
     }
 
     return apiError(400, 'invalid_mode');

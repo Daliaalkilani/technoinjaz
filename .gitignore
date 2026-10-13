@@ -34,3 +34,6 @@ playwright-report/
 *.njsproj
 *.sln
 *.sw?
+
+# Local wrangler secrets (wrangler dev)
+.dev.vars*

@@ -1,7 +1,6 @@
 import 'server-only';
-import { getDB, apiError, apiOk, type D1 } from '@/lib/server/db';
-import { getNewsletterItem, listNewsletterItems, newsletterEmail, type NewsletterItem } from '@/lib/server/newsletter';
-import { sendMail } from '@/lib/server/mail';
+import { getDB, apiError, apiOk, type D1, type D1Stmt } from '@/lib/server/db';
+import { getNewsletterItem, listNewsletterItems, sendNextBatch, setAutoHold, type NewsletterItem } from '@/lib/server/newsletter';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 
 export const dynamic = 'force-dynamic';
@@ -9,102 +8,75 @@ export const dynamic = 'force-dynamic';
 /**
  * Auto newsletter driver, called by the cron trigger every 15 minutes (and manually
  * with the same secret). Advances the same newsletter_sends rows the admin page uses,
- * one BATCH per invocation, until a send is finished.
+ * one batch per invocation, until a send is finished.
  *
  * Flow per tick:
- *   1. an unfinished send exists → mail its next batch (done when batch < BATCH).
- *   2. otherwise → find the newest item that is neither announced nor on hold; on its
+ *   1. an unfinished send exists → mail its next batch (done when batch < NEWSLETTER_BATCH).
+ *   2. otherwise → find the next item that is neither announced nor on hold; on its
  *      first sighting it is recorded with a timestamp and left to age GRACE_MS
  *      (60 min, the admin's window to hold / fix it), then announced.
  *
  * Auth: `Authorization: Bearer <CRON_SECRET>` (wrangler secret) or ?secret=.
  */
-const BATCH = 25;
 /** Grace window between first sight of a new item and its announcement. */
 const GRACE_MS = 60 * 60 * 1000;
+
+/** Length-independent comparison, so response timing does not leak the secret. */
+function safeEqual(a: string, b: string): boolean {
+  const x = new TextEncoder().encode(a);
+  const y = new TextEncoder().encode(b);
+  let diff = x.length ^ y.length;
+  for (let i = 0; i < Math.max(x.length, y.length); i++) diff |= (x[i] ?? 0) ^ (y[i] ?? 0);
+  return diff === 0;
+}
 
 function authorize(request: Request, secret: string | undefined): boolean {
   if (!secret) return false;
   const header = request.headers.get('authorization') || '';
-  if (header === `Bearer ${secret}`) return true;
+  if (safeEqual(header, `Bearer ${secret}`)) return true;
   try {
-    return new URL(request.url).searchParams.get('secret') === secret;
+    return safeEqual(new URL(request.url).searchParams.get('secret') || '', secret);
   } catch {
     return false;
   }
 }
 
-interface SendRow {
-  id: number;
-  item_type: string;
-  item_slug: string;
-  finished_at: number | null;
-}
-
-/** Mails the next BATCH of `send` after active-subscriber id `afterId`. */
-async function sendBatch(db: D1, send: SendRow, afterId: number): Promise<{ done: boolean; nextAfterId: number; sent: number; failed: number }> {
-  const item = getNewsletterItem(send.item_type, send.item_slug);
-  if (!item) {
-    await db.prepare('UPDATE newsletter_sends SET finished_at = ?1 WHERE id = ?2').bind(Date.now(), send.id).run();
-    return { done: true, nextAfterId: afterId, sent: 0, failed: 0 };
-  }
-  const { results: batch = [] } = await db
-    .prepare(`SELECT id, email, lang, unsub_token FROM newsletter_subscribers WHERE status = 'active' AND id > ?1 ORDER BY id LIMIT ?2`)
-    .bind(afterId, BATCH)
-    .all<{ id: number; email: string; lang: string; unsub_token: string }>();
-  let sent = 0;
-  let failed = 0;
-  for (const sub of batch) {
-    const mail = newsletterEmail(item, sub);
-    if (await sendMail({ to: sub.email, ...mail, tag: 'newsletter' })) sent++;
-    else failed++;
-  }
-  const done = batch.length < BATCH;
-  await db
-    .prepare('UPDATE newsletter_sends SET sent_count = sent_count + ?1, fail_count = fail_count + ?2, finished_at = ?3 WHERE id = ?4')
-    .bind(sent, failed, done ? Date.now() : null, send.id)
-    .run();
-  return { done, nextAfterId: batch.length ? batch[batch.length - 1].id : afterId, sent, failed };
-}
-
-/** Newest not-yet-announced, not-held item; records first sight and enforces the grace window.
+/** Next not-yet-announced, not-held item; records first sight and enforces the grace window.
  *  On the very first tick (no seen/hold rows at all) every item already in the content data
  *  is marked 'hold' — pre-existing content is never auto-announced; only items first seen
- *  after the feature went live enter the normal grace → announce flow. */
+ *  after the feature went live enter the normal grace → announce flow.
+ *  Reads both tables once (not one query per item) to stay far below the subrequest limit. */
 async function pickItem(db: D1): Promise<NewsletterItem | null> {
   const { results: announced = [] } = await db.prepare('SELECT item_type, item_slug FROM newsletter_sends').all<{ item_type: string; item_slug: string }>();
   const sent = new Set(announced.map((r) => `${r.item_type}:${r.item_slug}`));
+  const { results: tracked = [] } = await db
+    .prepare('SELECT item_type, item_slug, state, first_seen_at FROM newsletter_auto')
+    .all<{ item_type: string; item_slug: string; state: string; first_seen_at: number }>();
+  const auto = new Map(tracked.map((r) => [`${r.item_type}:${r.item_slug}`, r]));
+  const firstTick = tracked.length === 0;
   const now = Date.now();
-  const { results: tracked = [] } = await db.prepare('SELECT COUNT(*) AS n FROM newsletter_auto').all<{ n: number }>();
-  const firstTick = (tracked[0]?.n ?? 0) === 0;
+  const firstSeen: D1Stmt[] = [];
+  let pick: NewsletterItem | null = null;
   for (const it of listNewsletterItems()) {
     const key = `${it.type}:${it.slug}`;
     if (sent.has(key)) continue;
-    const auto = await db
-      .prepare('SELECT state, first_seen_at FROM newsletter_auto WHERE item_type = ?1 AND item_slug = ?2')
-      .bind(it.type, it.slug)
-      .first<{ state: string; first_seen_at: number }>();
-    if (firstTick) {
-      // Backfill: everything already published is old → hold (never auto-announced).
-      await db
-        .prepare('INSERT OR IGNORE INTO newsletter_auto (item_type, item_slug, state, first_seen_at) VALUES (?1, ?2, ?3, ?4)')
-        .bind(it.type, it.slug, 'hold', now)
-        .run();
+    const row = auto.get(key);
+    if (firstTick || !row) {
+      // Backfill (everything already published is old → hold), or first sight → 'seen'
+      // and wait out the grace window.
+      firstSeen.push(
+        db
+          .prepare('INSERT OR IGNORE INTO newsletter_auto (item_type, item_slug, state, first_seen_at) VALUES (?1, ?2, ?3, ?4)')
+          .bind(it.type, it.slug, firstTick ? 'hold' : 'seen', now)
+      );
       continue;
     }
-    if (auto?.state === 'hold') continue;
-    if (!auto) {
-      await db
-        .prepare('INSERT OR IGNORE INTO newsletter_auto (item_type, item_slug, state, first_seen_at) VALUES (?1, ?2, ?3, ?4)')
-        .bind(it.type, it.slug, 'seen', now)
-        .run();
-      continue; // first sight → wait out the grace window
-    }
-    if (now - auto.first_seen_at < GRACE_MS) continue; // still inside the hold window
-    const item = getNewsletterItem(it.type, it.slug);
-    if (item) return item;
+    if (row.state === 'hold' || pick) continue;
+    if (now - row.first_seen_at < GRACE_MS) continue; // still inside the hold window
+    pick = getNewsletterItem(it.type, it.slug);
   }
-  return null;
+  if (firstSeen.length) await db.batch(firstSeen);
+  return pick;
 }
 
 export async function GET(request: Request) {
@@ -113,23 +85,13 @@ export async function GET(request: Request) {
   if (!authorize(request, secret)) return apiError(401, 'unauthorized');
   try {
     const db = await getDB();
-    // Batch cursor per send (id of the last mailed active subscriber).
-    await db
-      .prepare('CREATE TABLE IF NOT EXISTS newsletter_auto_cursor (send_id INTEGER PRIMARY KEY, after_id INTEGER NOT NULL)')
-      .run();
 
-    // 1) finish any send already in flight (cron-started or admin-started).
-    const active = await db
-      .prepare('SELECT id, item_type, item_slug, finished_at FROM newsletter_sends WHERE finished_at IS NULL ORDER BY id ASC LIMIT 1')
-      .first<SendRow>();
+    // 1) finish any send already in flight (cron-started or admin-started; the cursor is
+    //    shared, so an admin tab driving the same send is never duplicated).
+    const active = await db.prepare('SELECT id FROM newsletter_sends WHERE finished_at IS NULL ORDER BY id ASC LIMIT 1').first<{ id: number }>();
     if (active) {
-      const cur = await db.prepare('SELECT after_id FROM newsletter_auto_cursor WHERE send_id = ?1').bind(active.id).first<{ after_id: number }>();
-      const res = await sendBatch(db, active, cur?.after_id ?? 0);
-      await db
-        .prepare('INSERT INTO newsletter_auto_cursor (send_id, after_id) VALUES (?1, ?2) ON CONFLICT(send_id) DO UPDATE SET after_id = ?2')
-        .bind(active.id, res.nextAfterId)
-        .run();
-      return apiOk({ action: 'continue', sendId: active.id, done: res.done, sent: res.sent, failed: res.failed });
+      const res = await sendNextBatch(db, active.id);
+      return apiOk({ action: 'continue', sendId: active.id, ...res });
     }
 
     // 2) nothing in flight → announce the next eligible item.
@@ -142,20 +104,17 @@ export async function GET(request: Request) {
       .bind(item.type, item.slug, item.title, total.n, 'auto-cron', Date.now())
       .run();
     const sendId = Number(res.meta?.last_row_id);
-    const batchRes = await sendBatch(db, { id: sendId, item_type: item.type, item_slug: item.slug, finished_at: null }, 0);
-    await db
-      .prepare('INSERT INTO newsletter_auto_cursor (send_id, after_id) VALUES (?1, ?2) ON CONFLICT(send_id) DO UPDATE SET after_id = ?2')
-      .bind(sendId, batchRes.nextAfterId)
-      .run();
-    return apiOk({ action: 'start', sendId, item: item.slug, done: batchRes.done, sent: batchRes.sent, failed: batchRes.failed });
+    const batchRes = await sendNextBatch(db, sendId);
+    return apiOk({ action: 'start', sendId, item: item.slug, ...batchRes });
   } catch (err) {
     console.error('cron newsletter error', err instanceof Error ? err.message : 'unknown');
     return apiError(500, 'server_error');
   }
 }
 
-/** Admin hold/unhold: POST { type, slug, hold } with the cron secret — pins an item so
- *  the cron never announces it (manual admin send still works). */
+/** Hold/unhold: POST { type, slug, hold } with the cron secret — pins an item so the
+ *  cron never announces it (manual admin send still works). The admin page does the
+ *  same through /api/admin/newsletter { mode: 'hold' }. */
 export async function POST(request: Request) {
   const { env } = await getCloudflareContext({ async: true });
   const secret = (env as { CRON_SECRET?: string }).CRON_SECRET;
@@ -166,20 +125,8 @@ export async function POST(request: Request) {
     const type = String(body?.type || '');
     const slug = String(body?.slug || '');
     if (!getNewsletterItem(type, slug)) return apiError(400, 'invalid_item');
-    const now = Date.now();
-    if (body?.hold) {
-      await db
-        .prepare(`INSERT INTO newsletter_auto (item_type, item_slug, state, first_seen_at, updated_at) VALUES (?1, ?2, 'hold', ?3, ?3)
-                  ON CONFLICT(item_type, item_slug) DO UPDATE SET state = 'hold', updated_at = ?3`)
-        .bind(type, slug, now)
-        .run();
-      return apiOk({ held: true });
-    }
-    await db
-      .prepare('DELETE FROM newsletter_auto WHERE item_type = ?1 AND item_slug = ?2 AND state = \'hold\'')
-      .bind(type, slug)
-      .run();
-    return apiOk({ held: false });
+    await setAutoHold(db, type, slug, Boolean(body?.hold));
+    return apiOk({ held: Boolean(body?.hold) });
   } catch (err) {
     console.error('cron newsletter hold error', err instanceof Error ? err.message : 'unknown');
     return apiError(500, 'server_error');
