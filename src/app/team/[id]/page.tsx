@@ -5,6 +5,7 @@ import ProfilePage from '@/features/team/ProfilePage';
 import { JsonLd } from '@/seo/JsonLd';
 import { personSchema, breadcrumb, webPage } from '@/seo/schemas';
 import { SITE_URL, absoluteUrl } from '@/config/site';
+import { GOOGLE_BOT_PREVIEW } from '@/seo/metadata';
 
 export const dynamic = 'force-static';
 export const dynamicParams = false;
@@ -37,13 +38,16 @@ export async function generateMetadata({
     alternates: {
       canonical: pageUrl
     },
+    // Placeholder seats ("team-slot-N") are not in the sitemap and carry no real
+    // profile — keep them out of the index.
     robots: {
-      index: true,
+      index: !member.isPlaceholder,
       follow: true,
       googleBot: {
-        index: true,
+        index: !member.isPlaceholder,
         follow: true,
-        noimageindex: false
+        noimageindex: false,
+        ...GOOGLE_BOT_PREVIEW
       }
     },
     openGraph: {

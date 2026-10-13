@@ -1,6 +1,14 @@
 import type { Metadata } from 'next';
 import { SITE_URL, absoluteUrl } from '@/config/site';
 
+/** Snippet/preview directives. Next replaces `robots` wholesale when a page sets it,
+ *  so every robots object must repeat these or the page silently loses them. */
+export const GOOGLE_BOT_PREVIEW = {
+  'max-snippet': -1,
+  'max-image-preview': 'large',
+  'max-video-preview': -1
+} as const;
+
 const OG_IMAGE = {
   url: '/og-image.png',
   width: 1200,
@@ -39,9 +47,7 @@ export function buildRootMetadata(): Metadata {
       googleBot: {
         index: true,
         follow: true,
-        'max-snippet': -1,
-        'max-image-preview': 'large',
-        'max-video-preview': -1
+        ...GOOGLE_BOT_PREVIEW
       }
     },
     other: {
@@ -91,7 +97,7 @@ export function pageMetadata(o: {
     },
     robots: o.noindex
       ? { index: false, follow: true }
-      : { index: true, follow: true },
+      : { index: true, follow: true, googleBot: { index: true, follow: true, ...GOOGLE_BOT_PREVIEW } },
     openGraph: {
       url,
       title: o.title,
