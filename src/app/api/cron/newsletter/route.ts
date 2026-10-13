@@ -67,11 +67,16 @@ async function sendBatch(db: D1, send: SendRow, afterId: number): Promise<{ done
   return { done, nextAfterId: batch.length ? batch[batch.length - 1].id : afterId, sent, failed };
 }
 
-/** Newest not-yet-announced, not-held item; records first sight and enforces the grace window. */
+/** Newest not-yet-announced, not-held item; records first sight and enforces the grace window.
+ *  On the very first tick (no seen/hold rows at all) every item already in the content data
+ *  is marked 'hold' — pre-existing content is never auto-announced; only items first seen
+ *  after the feature went live enter the normal grace → announce flow. */
 async function pickItem(db: D1): Promise<NewsletterItem | null> {
   const { results: announced = [] } = await db.prepare('SELECT item_type, item_slug FROM newsletter_sends').all<{ item_type: string; item_slug: string }>();
   const sent = new Set(announced.map((r) => `${r.item_type}:${r.item_slug}`));
   const now = Date.now();
+  const { results: tracked = [] } = await db.prepare('SELECT COUNT(*) AS n FROM newsletter_auto').all<{ n: number }>();
+  const firstTick = (tracked[0]?.n ?? 0) === 0;
   for (const it of listNewsletterItems()) {
     const key = `${it.type}:${it.slug}`;
     if (sent.has(key)) continue;
@@ -79,6 +84,14 @@ async function pickItem(db: D1): Promise<NewsletterItem | null> {
       .prepare('SELECT state, first_seen_at FROM newsletter_auto WHERE item_type = ?1 AND item_slug = ?2')
       .bind(it.type, it.slug)
       .first<{ state: string; first_seen_at: number }>();
+    if (firstTick) {
+      // Backfill: everything already published is old → hold (never auto-announced).
+      await db
+        .prepare('INSERT OR IGNORE INTO newsletter_auto (item_type, item_slug, state, first_seen_at) VALUES (?1, ?2, ?3, ?4)')
+        .bind(it.type, it.slug, 'hold', now)
+        .run();
+      continue;
+    }
     if (auto?.state === 'hold') continue;
     if (!auto) {
       await db
