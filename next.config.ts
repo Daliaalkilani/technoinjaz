@@ -18,7 +18,8 @@ const nextConfig: NextConfig = {
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           // No page uses these device APIs; deny them to the page and to embedded frames.
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=()' },
-          { key: 'Content-Security-Policy', value: "require-trusted-types-for 'script'" },
+          // No plugins and no <base> anywhere; frame-ancestors mirrors X-Frame-Options.
+          { key: 'Content-Security-Policy', value: "require-trusted-types-for 'script'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'" },
           // HTML must revalidate after each deploy: a cached page referencing purged
           // chunk hashes crashes with "Application error: client-side exception".
           { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
