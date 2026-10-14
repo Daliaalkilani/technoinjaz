@@ -285,7 +285,7 @@ export function newsletterEmail(item: NewsletterItem, sub: { lang: string; unsub
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border-radius:18px;overflow:hidden;border:1px solid #e2e8f0" dir="${dir}">` +
     // Header
     `<tr><td style="background:#0b1426;padding:18px 28px"><table role="presentation" width="100%"><tr>` +
-    `<td style="text-align:${align}"><span style="color:#38bdf8;font-size:20px;font-weight:bold;vertical-align:middle">▲</span>` +
+    `<td style="text-align:${align}"><img src="https://technoenjaz.com/images/brand/techno-logo-small.png" width="28" height="28" alt="Techno Enjaz" style="display:inline-block;vertical-align:middle;border:0;border-radius:6px">` +
     `<span style="vertical-align:middle;color:#ffffff;font-size:18px;font-weight:bold;margin:0 8px">${isEn ? 'Techno Enjaz' : 'تكنو إنجاز'}</span></td>` +
     `<td style="text-align:${isEn ? 'right' : 'left'};color:#38bdf8;font-size:12px;font-weight:bold;letter-spacing:.5px">${esc(kind)}</td>` +
     `</tr></table></td></tr>` +
