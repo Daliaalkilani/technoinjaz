@@ -220,7 +220,7 @@ export const teamMembers = [
     departmentEn: 'Techno Enjaz Team',
     specialization: 'الروبوتيك والأنظمة المدمجة وإنترنت الأشياء',
     specializationEn: 'Robotics, Embedded Systems & IoT',
-    image: '/images/team/nada-abdo.640.avif',
+    image: '/images/team/nada-abdo-2.640.avif',
     link: '/team/nada-abdo-mohammad',
     bio: 'مهندسة متخصصة بالروبوتيك والأنظمة المدمجة وإنترنت الأشياء، تعمل على تطوير أنظمة ذكية تدمج العتاد بالبرمجيات، مع خبرة في تطوير المشاريع التقنية وتوثيقها.',
     bioEn: 'Engineer specializing in robotics, embedded systems and IoT, developing smart systems that integrate hardware with software, with experience in technical project development and documentation.',
