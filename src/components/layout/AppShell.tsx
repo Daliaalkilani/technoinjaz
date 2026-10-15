@@ -62,6 +62,8 @@ export function AppShell({ children }: AppShellProps) {
   const isDedicatedTabOrView = pathname !== '/';
   const isArticleDetailPage = /^\/articles\/[^\/]+/.test(pathname);
   const isProjectDetailPage = /^\/projects\/[^\/]+/.test(pathname);
+  // Individual team member pages skip the footer (owner request)
+  const isTeamMemberPage = /^\/team\/[^\/]+/.test(pathname);
   const isAuthPage = pathname === '/login' || pathname === '/register';
   const isPrivacyPage = pathname === '/privacy-policy';
   const isAccountPage = pathname === '/account' || pathname.startsWith('/account');
@@ -347,7 +349,7 @@ export function AppShell({ children }: AppShellProps) {
         </div>
       )}
 
-      {!isArticleDetailPage && !isProjectDetailPage && !isAuthPage && !isAccountPage && !isPrivacyPage && !isErrorPage && <CinematicFooter />}
+      {!isArticleDetailPage && !isProjectDetailPage && !isTeamMemberPage && !isAuthPage && !isAccountPage && !isPrivacyPage && !isErrorPage && <CinematicFooter />}
     </div>
   );
 }
