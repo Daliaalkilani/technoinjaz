@@ -502,9 +502,9 @@ export const teamMembers = [
   },
   {
     id: 'alhoda-kirwan',
-    name: 'م. الهدى كيوان',
+    name: 'م. الهدى كيروان',
     nameEn: 'Eng. Alhoda Kirwan',
-    title: 'م. الهدى كيوان',
+    title: 'م. الهدى كيروان',
     titleEn: 'Eng. Alhoda Kirwan',
     role: 'مهندسة في فريق تكنو إنجاز',
     roleEn: 'Engineer, Techno Enjaz Team',
