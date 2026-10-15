@@ -457,6 +457,84 @@ export const teamMembers = [
     location: 'حماة، سوريا',
     locationEn: 'Hama, Syria'
   },
+  {
+    id: 'aya-najma',
+    name: 'م. آية نجمة',
+    nameEn: 'Eng. Aya Najma',
+    title: 'م. آية نجمة',
+    titleEn: 'Eng. Aya Najma',
+    role: 'مهندسة برمجيات',
+    roleEn: 'Software Engineer',
+    badge: 'مهندسة في فريق تكنو إنجاز',
+    badgeEn: 'Engineer, Techno Enjaz Team',
+    description: 'مهندسة برمجيات في فريق تكنو إنجاز، تطوّر حلولاً برمجية متكاملة',
+    descriptionEn: 'Software engineer at Techno Enjaz building integrated software solutions',
+    department: 'فريق تكنو إنجاز',
+    departmentEn: 'Techno Enjaz Team',
+    specialization: 'هندسة البرمجيات',
+    specializationEn: 'Software Engineering',
+    image: '/images/team/aya-najma.640.avif',
+    link: '/team/aya-najma',
+    bio: 'مهندسة برمجيات في فريق تكنو إنجاز، تعمل على تطوير حلول برمجية متكاملة وذكية.',
+    bioEn: 'Software engineer at Techno Enjaz, developing integrated and intelligent software solutions.',
+    shortBio: 'مهندسة برمجيات في فريق تكنو إنجاز.',
+    shortBioEn: 'Software engineer at Techno Enjaz.',
+    skills: [
+      'تطوير البرمجيات',
+      'حل المشكلات البرمجية',
+      'العمل ضمن فريق تقني'
+    ],
+    skillsEn: [
+      'Software Development',
+      'Problem Solving',
+      'Technical Teamwork'
+    ],
+    socials: {
+      linkedin: 'https://sy.linkedin.com/in/aya-najma-912000444',
+      github: 'https://github.com/najmaaya88-hash',
+      email: 'shamihiba29@gmail.com'
+    },
+    email: 'shamihiba29@gmail.com',
+    projects: [],
+    projectsEn: [],
+    location: 'حماة، سوريا',
+    locationEn: 'Hama, Syria'
+  },
+  {
+    id: 'alhoda-kirwan',
+    name: 'م. الهدى كيوان',
+    nameEn: 'Eng. Alhoda Kirwan',
+    title: 'م. الهدى كيوان',
+    titleEn: 'Eng. Alhoda Kirwan',
+    role: 'مهندسة في فريق تكنو إنجاز',
+    roleEn: 'Engineer, Techno Enjaz Team',
+    badge: 'مهندسة في فريق تكنو إنجاز',
+    badgeEn: 'Engineer, Techno Enjaz Team',
+    description: 'مهندسة في فريق تكنو إنجاز، تساهم في تطوير المشاريع التقنية',
+    descriptionEn: 'Engineer at Techno Enjaz contributing to technical project development',
+    department: 'فريق تكنو إنجاز',
+    departmentEn: 'Techno Enjaz Team',
+    specialization: '',
+    specializationEn: '',
+    image: '/images/team/alhoda-kirwan.640.avif',
+    link: '/team/alhoda-kirwan',
+    bio: 'مهندسة في فريق تكنو إنجاز، تساهم في تطوير المشاريع التقنية.',
+    bioEn: 'Engineer at Techno Enjaz contributing to technical project development.',
+    shortBio: 'مهندسة في فريق تكنو إنجاز.',
+    shortBioEn: 'Engineer at Techno Enjaz.',
+    skills: [],
+    skillsEn: [],
+    socials: {
+      linkedin: 'https://www.linkedin.com/in/alhoda-kirwan-a980b6444',
+      github: 'https://github.com/kirwanalhoda93-crypto',
+      email: 'kirwanalhoda93@gmail.com'
+    },
+    email: 'kirwanalhoda93@gmail.com',
+    projects: [],
+    projectsEn: [],
+    location: 'حماة، سوريا',
+    locationEn: 'Hama, Syria'
+  },
 ];
 
 export const teamCircleSlots = [

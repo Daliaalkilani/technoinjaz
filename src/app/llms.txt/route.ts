@@ -36,7 +36,7 @@ export async function GET() {
 ## Team Profiles
 ` ;
 
-  for (const m of team.filter((t) => !t.isPlaceholder)) {
+  for (const m of team.filter((t) => t && !t.isPlaceholder) as NonNullable<(typeof team)[number]>[]) {
     text += `- [${m.name} — ${m.role}](${absoluteUrl('/team/' + m.id)})\n`;
   }
 

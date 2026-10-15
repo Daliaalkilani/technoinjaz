@@ -11,7 +11,7 @@ export const dynamic = 'force-static';
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return teamMembers.map((m) => ({
+  return teamMembers.filter((m) => m && m.id).map((m) => ({
     id: m.id
   }));
 }

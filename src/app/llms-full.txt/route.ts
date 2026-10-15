@@ -42,7 +42,7 @@ export async function GET() {
 ## Team Profiles
 ` ;
 
-  for (const m of team.filter((t) => !t.isPlaceholder)) {
+  for (const m of team.filter((t) => t && !t.isPlaceholder) as NonNullable<(typeof team)[number]>[]) {
     const profiles = memberProfileUrls(m);
     text += `### ${m.name} — ${m.role}\n- URL: ${absoluteUrl('/team/' + m.id)}\n- Bio: ${(m.shortBio || m.bio || '').slice(0, 200)}\n`;
     if (profiles.length) text += `- Profiles: ${profiles.join(', ')}\n`;

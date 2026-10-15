@@ -59,8 +59,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     s('/privacy-policy'),
     // Real team member profiles (placeholders like "team-slot-5" are excluded —
     // they're unfilled seats, not searchable content).
-    ...teamMembers
-      .filter((m) => !m.isPlaceholder)
+    ...(teamMembers.filter((m) => m && !m.isPlaceholder) as NonNullable<(typeof teamMembers)[number]>[])
       .map((m) => ({ ...s(`/team/${m.id}`, teamUpdated), ...img(m.image) }))
   ];
 }
