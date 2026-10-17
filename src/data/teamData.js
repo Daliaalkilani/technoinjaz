@@ -451,7 +451,9 @@ export const teamMembers = [
     shortBioEn: 'Member of the Techno Enjaz engineering team.',
     skills: [],
     skillsEn: [],
-    socials: {},
+    socials: {
+      linkedin: 'https://www.linkedin.com/in/shifaa-kattaa-8884783b6'
+    },
     projects: [],
     projectsEn: [],
     location: 'حماة، سوريا',
