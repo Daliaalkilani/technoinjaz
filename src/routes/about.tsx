@@ -24,7 +24,7 @@ export const aboutMetadata = (lang: Lang): Metadata =>
 const teamPhotoPreloads = [
   '/_img/images/team/abdulghani.640.avif',
   '/_img/images/team/abdulhady.640.avif',
-  '/_img/images/team/dalia-2.640.avif',
+  '/_img/images/team/dalia-3.640.avif',
   '/_img/images/team/dunia.640.avif',
   '/_img/images/moments/moment1.480.avif',
   '/_img/images/moments/moment2.480.avif',

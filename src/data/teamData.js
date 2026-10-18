@@ -143,7 +143,7 @@ export const teamMembers = [
     departmentEn: 'Artificial Intelligence & NLP Department',
     specialization: '',
     specializationEn: '',
-    image: '/images/team/dalia-2.640.avif',
+    image: '/images/team/dalia-3.640.avif',
     link: '/team/dalia-alkilani',
     bio: 'مهندسة ذكاء اصطناعي متخصصة في معالجة اللغات الطبيعية (NLP) والرؤية الحاسوبية، وتطوير الأنظمة الذكية وتكامل نماذج التعلّم العميق مع تطبيقات الويب والواجهات التفاعلية الحديثة.',
     bioEn: 'AI Engineer specialized in Arabic Natural Language Processing (NLP) and Computer Vision, building intelligent systems and integrating deep learning models with modern interactive web applications.',
