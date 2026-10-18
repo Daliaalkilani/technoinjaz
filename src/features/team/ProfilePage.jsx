@@ -48,15 +48,6 @@ export default function ProfilePage({ member, onBack }) {
       <div className="profile-ambient-glow" />
 
       <div className="profile-container">
-        {/* Top return bar */}
-        <header className="profile-top-bar">
-          <button onClick={handleBack} className="back-btn" title={isEn ? 'Back to Team' : 'العودة إلى الفريق'}>
-            <span className="back-arrow">{isEn ? '←' : '→'}</span>
-            <span>{isEn ? 'Back to Team' : 'العودة إلى الفريق'}</span>
-          </button>
-          <div className="profile-tag">{isEn ? 'Verified Engineering Profile' : 'ملف هندسي معتمد'}</div>
-        </header>
-
         {/* Hero Card: Avatar, Name, Role */}
         <section className="profile-hero-card">
           <div className="profile-avatar-wrapper">

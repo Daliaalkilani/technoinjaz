@@ -3,12 +3,11 @@ import '@/components/ui/Skeleton.css';
 import { SkLine, SkLines, SkFill, SkBox, SkText } from '@/components/ui/Sk';
 import '@/features/team/ProfilePage.css';
 
-// Mirrors ProfilePage: top bar, hero card (avatar + info), quote, triplet, cards.
+// Mirrors ProfilePage: hero card (avatar + info), quote, triplet, cards.
 export default function TeamMemberLoading() {
   return (
     <div className="profile-wrapper" aria-busy="true" aria-label="جاري تحميل ملف العضو...">
       <div className="profile-container">
-        <header className="profile-top-bar"><SkBox w={190} h={45} r={999} /><SkBox w={140} h={29} r={999} /></header>
         <section className="profile-hero-card">
           <div className="profile-avatar-wrapper"><SkBox w={140} h={140} r="50%" /></div>
           <div className="profile-hero-info">
