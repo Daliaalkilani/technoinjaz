@@ -100,7 +100,8 @@ export default function TeamMomentsRing({ onScrollDown = undefined } = {}) {
       '/images/moments/moment1.480.avif',
       '/images/moments/moment2.480.avif',
       '/images/moments/moment3.480.avif',
-      '/images/moments/moment4.480.avif'
+      '/images/moments/moment4.480.avif',
+      '/images/moments/moment5.480.avif'
     ];
 
     let textures = { front: [], back: [] };

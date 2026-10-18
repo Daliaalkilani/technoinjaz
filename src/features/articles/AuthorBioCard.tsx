@@ -14,7 +14,7 @@ export default function AuthorBioCard({ isEn }: { isEn: boolean }) {
     <aside className="author-bio-card" aria-label={isEn ? 'About the author' : 'عن الكاتب'}>
       <span className="author-bio-kicker">{isEn ? 'About the author' : 'عن الكاتب'}</span>
       <div className="author-bio-main">
-        <Link href="/about#team-showcase" rel="author" className="author-bio-photo-link" tabIndex={-1} aria-hidden="true">
+        <Link href="/team/abdulghani" rel="author" className="author-bio-photo-link" tabIndex={-1} aria-hidden="true">
           <img
             src="/images/team/abdulghani.320.avif"
             alt=""
@@ -26,7 +26,7 @@ export default function AuthorBioCard({ isEn }: { isEn: boolean }) {
           />
         </Link>
         <div className="author-bio-text">
-          <Link href="/about#team-showcase" rel="author" className="author-bio-name">
+          <Link href="/team/abdulghani" rel="author" className="author-bio-name">
             {name}
           </Link>
           <span className="author-bio-role">
@@ -39,7 +39,7 @@ export default function AuthorBioCard({ isEn }: { isEn: boolean }) {
           </p>
           <div className="author-bio-footer">
             <SocialButtons socials={AUTHOR_SOCIALS} />
-            <Link href="/about#team-showcase" rel="author" className="author-bio-more">
+            <Link href="/team/abdulghani" rel="author" className="author-bio-more">
               <span>{isEn ? 'Meet the team' : 'تعرّف على الفريق'}</span>
               {isEn ? <ArrowRight size={14} /> : <ArrowLeft size={14} />}
             </Link>

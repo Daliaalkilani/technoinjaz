@@ -6,7 +6,7 @@ import type { QAItem } from '@/data/qa/types';
 import { projectTags, plainExcerpt } from '@/lib/text';
 
 const ABDULGHANI_ID = `${SITE_URL}/#abdulghani-alhamdi`;
-const ABDULGHANI_URL = absoluteUrl('/about#team-showcase');
+const ABDULGHANI_URL = absoluteUrl('/team/abdulghani');
 // sameAs takes profile URLs only (the email is exposed separately as `email`).
 const ABDULGHANI_SAME_AS = Object.values(ABDULGHANI_SOCIALS).filter((v) => /^https?:\/\//.test(v));
 
@@ -50,6 +50,9 @@ export function abdulghaniPersonSchema() {
   };
 }
 
+/** Stable JSON-LD @id of a team member's Person node (the founder shares the Organization's). */
+export const personId = (member: any) => (member.id === 'abdulghani' ? ABDULGHANI_ID : `${SITE_URL}/#member-${member.id}`);
+
 /** Public profile URLs of a team member (top-level fields + `socials`), deduplicated; email excluded. */
 export function memberProfileUrls(member: any): string[] {
   const keys = ['linkedin', 'github', 'x', 'facebook', 'instagram', 'telegram'];
@@ -57,19 +60,22 @@ export function memberProfileUrls(member: any): string[] {
   return [...new Set(urls as string[])];
 }
 
-export function personSchema(member: any) {
+/** `image`: the share image (see seo/team.ts memberShareImage); null omits it (placeholder photo). */
+export function personSchema(member: any, opts: { image?: string | null } = {}) {
   if (member.id === 'abdulghani') {
     return abdulghaniPersonSchema();
   }
   const url = absoluteUrl(`/team/${member.id}`);
+  const image = opts.image === undefined ? member.image : opts.image;
   return {
     '@type': 'Person',
-    '@id': `${SITE_URL}/#member-${member.id}`,
+    '@id': personId(member),
     name: member.name,
     ...(member.nameEn ? { alternateName: [member.nameEn] } : {}),
     url,
-    ...(member.image ? { image: absoluteUrl(member.image) } : {}),
-    jobTitle: member.role,
+    ...(image ? { image: absoluteUrl(image) } : {}),
+    // Both languages: the same URL serves the AR and EN profile.
+    jobTitle: member.roleEn && member.roleEn !== member.role ? [member.role, member.roleEn] : member.role,
     description: member.shortBio || member.bio,
     knowsAbout: member.skills || undefined,
     sameAs: memberProfileUrls(member),
@@ -154,12 +160,15 @@ export function webPage({
   path,
   name,
   description,
-  type = 'WebPage'
+  type = 'WebPage',
+  mainEntityId
 }: {
   path: string;
   name: string;
   description?: string;
-  type?: 'WebPage' | 'CollectionPage' | 'AboutPage' | 'ContactPage' | 'FAQPage';
+  type?: 'WebPage' | 'CollectionPage' | 'AboutPage' | 'ContactPage' | 'FAQPage' | 'ProfilePage';
+  /** @id of the page's main entity (e.g. the Person of a ProfilePage). */
+  mainEntityId?: string;
 }) {
   const url = absoluteUrl(path);
   return {
@@ -172,8 +181,9 @@ export function webPage({
     isPartOf: {
       '@id': WEBSITE_ID
     },
+    ...(mainEntityId ? { mainEntity: { '@id': mainEntityId } } : {}),
     about: {
-      '@id': ORG_ID
+      '@id': mainEntityId ?? ORG_ID
     }
   };
 }

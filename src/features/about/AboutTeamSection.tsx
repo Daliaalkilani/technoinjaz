@@ -141,27 +141,20 @@ export function AboutTeamSection({ headingLevel = 'h2' }: AboutTeamSectionProps)
           )}
         </div>
 
-        {/* SEO & Accessibility: crawlable team list */}
-        <ul
-          className="sr-only"
-          style={{
-            position: 'absolute',
-            width: '1px',
-            height: '1px',
-            padding: 0,
-            margin: '-1px',
-            overflow: 'hidden',
-            clip: 'rect(0, 0, 0, 0)',
-            whiteSpace: 'nowrap',
-            border: 0
-          }}
-        >
-          {teamMembers.map(m => (
-            <li key={m.id}>
-              <span>{m.name} — {m.role}: {m.bio}</span>
-            </li>
-          ))}
-        </ul>
+        {/* SEO & Accessibility: crawlable, keyboard-reachable team directory. The WebGL
+            carousel is client-only, so without these links the /team/* profiles had no
+            internal link at all. Visually hidden until a link inside receives focus. */}
+        <nav className="team-directory" aria-label={lang === 'en' ? 'Team profiles' : 'ملفات أعضاء الفريق'}>
+          <ul>
+            {teamMembers.map(m => (
+              <li key={m.id}>
+                <Link href={`/team/${m.id}`}>
+                  {lang === 'en' ? (m.nameEn || m.name) : m.name} — {lang === 'en' ? (m.roleEn || m.role) : m.role}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
         {/* 3D Circular Team Carousel */}
         <div style={{ position: 'relative', width: '100%', height: '100%', flex: 1, zIndex: 10 }}>

@@ -578,6 +578,11 @@
   transform: translateY(0);
 }
 
+/* globals.css sets a:visited { color: inherit } (0,1,1), which beats .contact-btn. */
+.contact-btn:visited {
+  color: #ffffff;
+}
+
 .secondary-back-btn {
   display: inline-flex;
   align-items: center;

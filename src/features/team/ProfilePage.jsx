@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import SocialButtons from '@/components/ui/SocialButtons';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
@@ -53,15 +54,20 @@ export default function ProfilePage({ member, onBack }) {
             <span className="back-arrow">{isEn ? '←' : '→'}</span>
             <span>{isEn ? 'Back to Team' : 'العودة إلى الفريق'}</span>
           </button>
-          <div className="profile-tag">{isEn ? 'Engineering Leadership' : 'ملف هندسي معتمد'}</div>
+          <div className="profile-tag">{isEn ? 'Verified Engineering Profile' : 'ملف هندسي معتمد'}</div>
         </header>
 
         {/* Hero Card: Avatar, Name, Role */}
         <section className="profile-hero-card">
           <div className="profile-avatar-wrapper">
+            {/* Profile photos are square 640px; explicit size reserves the box (no CLS). */}
             <img
               src={member.image}
               alt={memberName}
+              width={640}
+              height={640}
+              decoding="async"
+              fetchPriority="high"
               className="profile-avatar"
             />
             <span className="status-dot" title={isEn ? 'Available' : 'متاح'} />
@@ -213,7 +219,12 @@ export default function ProfilePage({ member, onBack }) {
               ✉️ {isEn ? 'Contact via Email' : 'تواصل عبر البريد'}: {member.email}
             </a>
           )}
-          <button onClick={onBack} className="secondary-back-btn">
+          <Link href="/contact" className="contact-btn">
+            💬 {isEn ? 'Start your project with Techno Enjaz' : 'ابدأ مشروعك مع تكنو إنجاز'}
+          </Link>
+          {/* onBack is only passed when embedded; on /team/[id] it is undefined, so the
+              button used to do nothing — handleBack falls back to the team section. */}
+          <button onClick={handleBack} className="secondary-back-btn">
             {isEn ? 'Back to Team Carousel' : 'الرجوع إلى القائمة الدائرية'}
           </button>
         </footer>

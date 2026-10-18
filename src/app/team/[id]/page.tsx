@@ -3,9 +3,10 @@ import { notFound } from 'next/navigation';
 import { teamMembers } from '@/data/teamData';
 import ProfilePage from '@/features/team/ProfilePage';
 import { JsonLd } from '@/seo/JsonLd';
-import { personSchema, breadcrumb, webPage } from '@/seo/schemas';
-import { SITE_URL, absoluteUrl } from '@/config/site';
-import { GOOGLE_BOT_PREVIEW } from '@/seo/metadata';
+import { personSchema, personId, breadcrumb, webPage } from '@/seo/schemas';
+import { absoluteUrl } from '@/config/site';
+import { GOOGLE_BOT_PREVIEW, pageMetadata } from '@/seo/metadata';
+import { memberSeoTitle, memberSeoDescription, memberShareImage } from '@/seo/team';
 
 export const dynamic = 'force-static';
 export const dynamicParams = false;
@@ -25,19 +26,14 @@ export async function generateMetadata({
   const member = teamMembers.find((m) => m.id === id);
   if (!member) return { title: 'عضو الفريق غير موجود' };
 
-  const isAbdalgani = id === 'abdulghani';
-  const description = isAbdalgani
-    ? 'المهندس عبد الغني الحمدي، مستشار في المشاريع الهندسية ومشاريع التخرج التقنية، ومدرب في الأردوينو والروبوتيك والتحكم، وقائد ومؤسس تكنو إنجاز. أشرف على 500+ مشروع تقني.'
-    : (member.shortBio || member.bio || `${member.name} - ${member.role} في تكنو إنجاز`);
-
-  const pageUrl = absoluteUrl(`/team/${member.id}`);
+  const title = memberSeoTitle(member);
+  const description = memberSeoDescription(member);
+  const path = `/team/${member.id}`;
+  const shareImage = memberShareImage(member);
+  const base = pageMetadata({ title, description, path, image: shareImage ?? undefined });
 
   return {
-    title: `${member.name} - ${member.role}`,
-    description,
-    alternates: {
-      canonical: pageUrl
-    },
+    ...base,
     // Placeholder seats ("team-slot-N") are not in the sitemap and carry no real
     // profile — keep them out of the index.
     robots: {
@@ -51,24 +47,9 @@ export async function generateMetadata({
       }
     },
     openGraph: {
-      title: `${member.name} - ${member.role}`,
-      description,
-      url: pageUrl,
+      ...base.openGraph,
       type: 'profile',
-      images: [
-        {
-          url: member.image.startsWith('http') ? member.image : absoluteUrl(member.image),
-          width: 800,
-          height: 800,
-          alt: member.name
-        }
-      ]
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: `${member.name} - ${member.role}`,
-      description,
-      images: [member.image.startsWith('http') ? member.image : absoluteUrl(member.image)]
+      ...(shareImage ? { images: [{ url: absoluteUrl(shareImage), alt: member.nameEn ? `${member.name} | ${member.nameEn}` : member.name }] } : {})
     }
   };
 }
@@ -92,12 +73,16 @@ export default async function TeamMemberPage({
     <>
       <JsonLd
         data={[
-          personSchema(member),
+          personSchema(member, { image: memberShareImage(member) }),
           breadcrumb(breadcrumbItems),
+          // ProfilePage + mainEntity: the page is about this Person (Google profile-page
+          // structured data; answer engines resolve the person from the page).
           webPage({
             path: `/team/${member.id}`,
-            name: `${member.name} - ${member.role}`,
-            description: member.shortBio || member.bio
+            name: memberSeoTitle(member),
+            description: memberSeoDescription(member),
+            type: 'ProfilePage',
+            mainEntityId: personId(member)
           })
         ]}
       />

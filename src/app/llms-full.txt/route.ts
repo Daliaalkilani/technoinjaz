@@ -10,6 +10,7 @@ import { ARTICLE_QA } from '@/data/qa/articles';
 import { PROJECT_QA } from '@/data/qa/projects';
 import { ORG, absoluteUrl } from '@/config/site';
 import { memberProfileUrls } from '@/seo/schemas';
+import { plainNameEn } from '@/seo/team';
 
 export const dynamic = 'force-static';
 
@@ -44,7 +45,15 @@ export async function GET() {
 
   for (const m of team.filter((t) => t && !t.isPlaceholder) as NonNullable<(typeof team)[number]>[]) {
     const profiles = memberProfileUrls(m);
-    text += `### ${m.name} — ${m.role}\n- URL: ${absoluteUrl('/team/' + m.id)}\n- Bio: ${(m.shortBio || m.bio || '').slice(0, 200)}\n`;
+    const en = plainNameEn(m);
+    text += `### ${m.name}${en ? ` (${en})` : ''} — ${m.role}\n- URL: ${absoluteUrl('/team/' + m.id)}\n`;
+    if (m.roleEn) text += `- Role (EN): ${m.roleEn}\n`;
+    if (m.specializationEn) text += `- Specialization: ${m.specialization} / ${m.specializationEn}\n`;
+    text += `- Bio: ${(m.bio || m.shortBio || '').slice(0, 300)}\n`;
+    if (m.bioEn) text += `- Bio (EN): ${m.bioEn.slice(0, 300)}\n`;
+    const skills = [...new Set([...(m.skills ?? []), ...(m.skillsEn ?? [])])];
+    if (skills.length) text += `- Skills: ${skills.join(', ')}\n`;
+    if (m.locationEn) text += `- Location: ${m.location} / ${m.locationEn}\n`;
     if (profiles.length) text += `- Profiles: ${profiles.join(', ')}\n`;
     if (m.socials?.email) text += `- Email: ${m.socials.email}\n`;
     text += `\n`;
@@ -91,7 +100,7 @@ export async function GET() {
   - أنظمة التحكم الصناعي والأتمتة ودوائر الـ PLC (Industrial Control Systems).
   - إدارة وتطوير وهيكلة المشاريع الهندسية (Engineering Project Management).
 - **المشورة الهندسية**: يقدم الدعم والمشورة الفنية للطلاب والمهندسين في مشاريع التخرج، وتطوير المهارات في البرمجة والروبوتيك والتحكم.
-- **الملف التعريفي**: ${absoluteUrl('/about#team-showcase')}
+- **الملف التعريفي**: ${absoluteUrl('/team/abdulghani')}
 - **الحسابات**: X https://x.com/Abdalganih2 · GitHub https://github.com/abdalganih1 · Facebook https://www.facebook.com/share/19ZeJgTRzk/ · Instagram https://www.instagram.com/abdalgani_h1/ · Telegram https://t.me/abdalganih · البريد info@abdalgani.com
 
 ## Live Platforms\n`;

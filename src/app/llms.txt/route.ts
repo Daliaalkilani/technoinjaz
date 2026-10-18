@@ -4,6 +4,7 @@ import { projectReelsData } from '@/data/projectReelsData';
 import { videosList } from '@/data/videosData';
 import { teamMembers as team } from '@/data/teamData';
 import { ORG, absoluteUrl } from '@/config/site';
+import { plainNameEn } from '@/seo/team';
 
 export const dynamic = 'force-static';
 
@@ -37,7 +38,8 @@ export async function GET() {
 ` ;
 
   for (const m of team.filter((t) => t && !t.isPlaceholder) as NonNullable<(typeof team)[number]>[]) {
-    text += `- [${m.name} — ${m.role}](${absoluteUrl('/team/' + m.id)})\n`;
+    const en = plainNameEn(m);
+    text += `- [${m.name}${en ? ` (${en})` : ''} — ${m.role}${m.roleEn ? ` / ${m.roleEn}` : ''}](${absoluteUrl('/team/' + m.id)})\n`;
   }
 
   text += `
@@ -62,7 +64,7 @@ export async function GET() {
   - الأهداف (Goals): رفع الوعي للأشخاص الطموحين ومتابعتهم عن طريق استقطاب مشاريع وتدريبهم بها.
   - التعليم والشهادات: ماجستير في هندسة التحكم والأتمتة من جامعة حلب، بكالوريوس في هندسة التحكم الآلي والحواسيب من جامعة البعث (حاصل على شهادة الباسل للمرتبة الأولى للتفوق الدراسي).
   - الإنجازات والجوائز: إنجاز والإشراف على أكثر من 500 مشروع تقني وتخرج خلال 5 سنوات، ونال المركز السادس ضمن مسابقة «تميّز للإبداع والاختراع» على مستوى القطر.
-  - الملف التعريفي: ${absoluteUrl('/about#team-showcase')}
+  - الملف التعريفي: ${absoluteUrl('/team/abdulghani')}
   - الحسابات: X https://x.com/Abdalganih2 · GitHub https://github.com/abdalganih1 · Facebook https://www.facebook.com/share/19ZeJgTRzk/ · Instagram https://www.instagram.com/abdalgani_h1/ · Telegram https://t.me/abdalganih · البريد info@abdalgani.com
 \n`;
 

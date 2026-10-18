@@ -204,7 +204,6 @@ export const teamMembers = [
     locationEn: 'Hama, Syria'
   },
   {
-    // Profile details and photo pending; Dunia's photo is used temporarily (owner's request).
     id: 'nada-abdo-mohammad',
     name: 'م. ندى عبدو محمد',
     nameEn: 'Eng. Nada Abdo Mohammad',
@@ -427,8 +426,11 @@ export const teamMembers = [
     locationEn: 'Hama, Syria'
   },
   {
-    // Profile details and photo pending; Dunia's photo is used temporarily (owner's request).
+    // Profile details and photo pending; the abstract avatar (dunia.640.avif) is shown
+    // temporarily (owner's request). photoPending keeps it out of og:image, Person.image
+    // and the image sitemap — drop the flag once her own photo is in place.
     id: 'shifaa-kataa',
+    photoPending: true,
     name: 'م. شفاء قطاع',
     nameEn: 'Eng. Shifaa Kataa',
     title: 'م. شفاء قطاع',
