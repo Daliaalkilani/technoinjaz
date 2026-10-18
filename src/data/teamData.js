@@ -413,8 +413,8 @@ export const teamMembers = [
     link: '/team/dujana-shanno',
     bio: 'مهندسة شبكات حاسوبية، مسؤولة الإخراج الميكانيكي في فريق تكنو إنجاز.',
     bioEn: 'Computer network engineer and mechanical output lead at Techno Enjaz.',
-    shortBio: 'مسؤولة الإخراج الميكانيكي في الفريق.',
-    shortBioEn: 'Mechanical output lead on the team.',
+    shortBio: 'مهندسة شبكات حاسوبية ومسؤولة الإخراج الميكانيكي في الفريق.',
+    shortBioEn: 'Computer network engineer and mechanical output lead on the team.',
     skills: ['هندسة الشبكات الحاسوبية', 'الإخراج الميكانيكي'],
     skillsEn: ['Computer Network Engineering', 'Mechanical Output'],
     socials: {
