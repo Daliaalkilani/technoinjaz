@@ -440,3 +440,33 @@
   }
 }
 
+
+/* "View full profile" link → /team/[id] */
+.member-profile-link,
+.member-profile-link:visited {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 12px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(139, 92, 246, 0.55);
+  background: rgba(82, 39, 255, 0.18);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.member-profile-link:hover,
+.member-profile-link:focus-visible {
+  background: rgba(82, 39, 255, 0.35);
+  border-color: rgba(167, 139, 250, 0.9);
+}
+
+[data-theme="light"] .member-profile-link,
+[data-theme="light"] .member-profile-link:visited {
+  color: #1e1b4b;
+  background: rgba(124, 58, 237, 0.1);
+}

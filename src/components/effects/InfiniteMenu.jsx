@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { mat4, quat, vec2, vec3 } from 'gl-matrix';
 import SocialButtons from '@/components/ui/SocialButtons';
 import { buildNeighbors, loadSeating } from './sphereSeating';
@@ -1217,7 +1217,6 @@ export default function InfiniteMenu({
   backgroundColor = '#000000',
   onSelectMember = undefined
 }) {
-  const router = useRouter();
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
   const canvasRef = useRef(null);
@@ -1319,20 +1318,6 @@ export default function InfiniteMenu({
     };
   }, [items, scale]);
 
-  const handleButtonClick = () => {
-    if (!activeItem) return;
-    if (onSelectMember) {
-      onSelectMember(activeItem);
-      return;
-    }
-    if (!activeItem?.link) return;
-    if (activeItem.link.startsWith('http')) {
-      window.open(activeItem.link, '_blank');
-    } else {
-      router.push(activeItem.link);
-    }
-  };
-
   return (
     <div
       className="infinite-menu-wrapper"
@@ -1406,6 +1391,15 @@ export default function InfiniteMenu({
               <div className="member-socials-container">
                 <SocialButtons socials={activeItem.socials} size="medium" />
               </div>
+            )}
+
+            {/* The card had no way into /team/[id] (handleButtonClick was never wired), so
+                profile pages were unreachable by mouse. Placeholder seats have no page. */}
+            {!activeItem.isPlaceholder && activeItem.link && !activeItem.link.startsWith('http') && (
+              <Link href={activeItem.link} className="member-profile-link">
+                {isEn ? 'View full profile' : 'عرض الملف الكامل'}
+                <span aria-hidden="true">{isEn ? ' →' : ' ←'}</span>
+              </Link>
             )}
           </div>
         </div>
