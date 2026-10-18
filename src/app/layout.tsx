@@ -56,10 +56,9 @@ export default function RootLayout({
         <style dangerouslySetInnerHTML={{ __html: 'html[data-skip-loader] #te-loader{display:none!important;}' }} />
         {/* Rocket artwork: start downloading in parallel with the HTML itself. On slow
             connections the loader background would otherwise sit as a plain dark box
-            for seconds waiting for these two images to be discovered after CSS load. */}
+            for seconds waiting for these two images to be discovered after CSS load.
+            The home hero preload lives in app/page.tsx (it was fetched on every page). */}
         <link rel="preload" as="image" href="/loader/assets/rocket-body.webp" fetchPriority="high" />
-        <link rel="preload" as="image" href="/_img/images/home/hero-dark.640.avif" fetchPriority="high" media="(max-width: 768px)" />
-        <link rel="preload" as="image" href="/_img/images/home/hero-dark.1280.avif" fetchPriority="high" media="(min-width: 769px)" />
         <link rel="preload" as="image" href="/loader/assets/launch-button.webp" fetchPriority="high" />
         <script src="/loader/loader.js" defer />
       </head>

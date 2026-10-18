@@ -17,6 +17,10 @@ export const metadata: Metadata = pageMetadata({
 export default function HomePage() {
   return (
     <>
+      {/* Hero LCP image: home only (React hoists these <link>s into <head>). In the root
+          layout they made every article / project / team page download it as well. */}
+      <link rel="preload" as="image" href="/_img/images/home/hero-dark.640.avif" fetchPriority="high" media="(max-width: 768px)" />
+      <link rel="preload" as="image" href="/_img/images/home/hero-dark.1280.avif" fetchPriority="high" media="(min-width: 769px)" />
       <JsonLd data={[webPage({ path: '/', name: 'تكنو إنجاز | الرئيسية' })]} />
       <HomeHero />
       <AboutTeamSection headingLevel="h2" />
