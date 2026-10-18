@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import SocialButtons from '@/components/ui/SocialButtons';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import './ProfilePage.css';
@@ -12,17 +11,12 @@ import './ProfilePage.css';
  * Fully bilingual with dark/light theme integration
  */
 /**
- * @param {{
- *   member: any,
- *   onBack?: (() => void) | null
- * }} props
+ * @param {{ member: any }} props
  */
-export default function ProfilePage({ member, onBack }) {
-  const router = useRouter();
+export default function ProfilePage({ member }) {
   const { lang } = useThemeLanguage();
   if (!member) return null;
 
-  const handleBack = onBack || (() => router.push('/about#team-showcase'));
   const isEn = lang === 'en';
 
   const memberName = isEn ? (member.nameEn || member.name) : member.name;
@@ -213,11 +207,6 @@ export default function ProfilePage({ member, onBack }) {
           <Link href="/contact" className="contact-btn">
             💬 {isEn ? 'Start your project with Techno Enjaz' : 'ابدأ مشروعك مع تكنو إنجاز'}
           </Link>
-          {/* onBack is only passed when embedded; on /team/[id] it is undefined, so the
-              button used to do nothing — handleBack falls back to the team section. */}
-          <button onClick={handleBack} className="secondary-back-btn">
-            {isEn ? 'Back to Team Carousel' : 'الرجوع إلى القائمة الدائرية'}
-          </button>
         </footer>
       </div>
     </div>

@@ -532,36 +532,6 @@
   color: #ffffff;
 }
 
-.secondary-back-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 13px 22px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #94a3b8;
-  border-radius: 14px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-.secondary-back-btn:hover {
-  background: rgba(14, 165, 233, 0.1);
-  color: #38bdf8;
-  border-color: rgba(56, 189, 248, 0.45);
-  box-shadow: 0 4px 16px rgba(14, 165, 233, 0.18);
-  transform: translateY(-2px);
-}
-
-.secondary-back-btn:active {
-  transform: translateY(0);
-}
-
 /* التجاوب */
 @media (max-width: 768px) {
   .profile-hero-card {
@@ -583,8 +553,7 @@
     width: 100%;
   }
 
-  .contact-btn,
-  .secondary-back-btn {
+  .contact-btn {
     width: 100%;
     justify-content: center;
   }
@@ -768,21 +737,6 @@
   box-shadow: 0 8px 24px rgba(2, 132, 199, 0.35);
   border-color: #0369a1;
   color: #ffffff;
-}
-
-[data-theme="light"] .secondary-back-btn {
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  color: #475569;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-}
-
-[data-theme="light"] .secondary-back-btn:hover {
-  background: #f0f9ff;
-  color: #0284c7;
-  border-color: rgba(2, 132, 199, 0.4);
-  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.12);
-  transform: translateY(-2px);
 }
 
 /* =========================================================================
