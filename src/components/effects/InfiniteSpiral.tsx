@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 import type { StaticImageData } from 'next/image';
 import './InfiniteSpiral.css';
 import ResponsiveImage from '@/components/ui/ResponsiveImage';

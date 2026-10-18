@@ -1,7 +1,6 @@
 'use client';
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import Link, { useLocaleRouter } from '@/i18n/navigation';
 import ResponsiveImage from '@/components/ui/ResponsiveImage';
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { gsap } from 'gsap';
@@ -751,7 +750,7 @@ const MagicBento: React.FC<MagicBentoProps> = ({
   enableMagnetism = true,
   cards = defaultCardData
 }) => {
-  const router = useRouter();
+  const router = useLocaleRouter();
   const { lang, theme } = useThemeLanguage();
   const isLight = theme === 'light';
   const isEn = lang === 'en';

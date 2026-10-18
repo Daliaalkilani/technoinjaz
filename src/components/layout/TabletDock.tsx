@@ -1,8 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useRef, useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import Link, { useLocaleRouter } from '@/i18n/navigation';
 import {
   AnimatePresence,
   motion,
@@ -108,7 +107,7 @@ function DockItem({
 
 export function TabletDock({ items, activeIndex }: TabletDockProps) {
   const { lang } = useThemeLanguage();
-  const router = useRouter();
+  const router = useLocaleRouter();
   const isRtl = lang === 'ar';
 
   const pointerX = useMotionValue(Infinity);

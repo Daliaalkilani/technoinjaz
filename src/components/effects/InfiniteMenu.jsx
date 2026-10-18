@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 import { mat4, quat, vec2, vec3 } from 'gl-matrix';
 import SocialButtons from '@/components/ui/SocialButtons';
 import { buildNeighbors, loadSeating } from './sphereSeating';

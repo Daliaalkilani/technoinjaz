@@ -17,9 +17,15 @@ export const ORG = {
     addressRegion: 'حماة',
     addressCountry: 'SY',
   },
+  addressEn: {
+    streetAddress: 'Damascus–Hama Road',
+    addressLocality: 'Hama',
+    addressRegion: 'Hama Governorate'
+  },
   geo: { latitude: 35.128992, longitude: 36.754001 },
   hasMap: "https://www.google.com/maps/place/35%C2%B007'44.4%22N+36%C2%B045'14.4%22E/@35.1289918,36.7561901,17z",
   descriptionAr: 'مكتب هندسي متخصص في تطوير البرمجيات المعقدة، النظم السحابية، إنترنت الأشياء، وحلول الذكاء الاصطناعي في سوريا والوطن العربي.',
+  descriptionEn: 'Engineering office specializing in complex software development, cloud systems, the Internet of Things and AI solutions in Syria and the Arab world.',
 } as const;
 
 /** Founder's public profiles — Person.sameAs in JSON-LD and the article author card. */

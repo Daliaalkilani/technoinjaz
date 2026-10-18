@@ -446,7 +446,7 @@ export const ProjectReelsFeed: React.FC = () => {
         <button
           type="button"
           className="reels-topbar-btn"
-          onClick={() => (window.history.length > 1 ? window.history.back() : window.location.assign('/'))}
+          onClick={() => (window.history.length > 1 ? window.history.back() : window.location.assign(isEn ? '/en' : '/'))}
           aria-label={isEn ? 'Back' : 'رجوع'}
         >
           {isEn ? <ChevronLeft size={26} /> : <ChevronRight size={26} />}

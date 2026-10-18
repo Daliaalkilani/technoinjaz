@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 import { Loader2, Mail, Phone, MessageCircle, AlertCircle, Inbox } from 'lucide-react';
 import { apiRequest, apiErrorMessage } from '@/lib/auth';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';

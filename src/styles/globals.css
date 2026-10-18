@@ -1,11 +1,6 @@
 @import './tokens.css';
 /* Readex Pro self-hosted: see public/fonts/readex-pro.css, linked in layout head */
 
-/* Prevent flash of untranslated content when English is restored from localStorage */
-html[data-lang-pending] #app-root {
-  visibility: hidden;
-}
-
 :root {
   --font-readex: 'Readex Pro', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-arabic: 'Readex Pro', -apple-system, BlinkMacSystemFont, sans-serif;

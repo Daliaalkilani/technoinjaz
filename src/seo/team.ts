@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import type { Lang } from '@/i18n/locale';
 
 // Build-time SEO helpers for /team/* profiles (titles, descriptions, share image).
 // Uses node:fs, so import it only from server code (pages, metadata, route handlers).
@@ -13,7 +14,8 @@ const shortRoleAr = (member: any): string => String(member.role || '').replace(/
 const shortRoleEn = (member: any): string => String(member.roleEn || '').replace(/,?\s*Techno Enjaz Team\s*$/, '').trim();
 
 /** "م. آية نجمة (Aya Najma) — مهندسة برمجيات": both spellings, so the page ranks for either. */
-export function memberSeoTitle(member: any): string {
+export function memberSeoTitle(member: any, lang: Lang = 'ar'): string {
+  if (lang === 'en') return memberSeoTitleEn(member);
   const en = plainNameEn(member);
   const role = shortRoleAr(member);
   return `${member.title || member.name}${en ? ` (${en})` : ''}${role ? ` — ${role}` : ''}`;
@@ -22,10 +24,19 @@ export function memberSeoTitle(member: any): string {
 /** Full <title>: the English name already carries the Latin spelling, so the brand
  *  suffix is Arabic only (the default "| تكنو إنجاز | Techno Enjaz" template pushed
  *  profile titles past 90 characters). */
-export const memberDocumentTitle = (member: any): string => `${memberSeoTitle(member)} | تكنو إنجاز`;
+export const memberDocumentTitle = (member: any, lang: Lang = 'ar'): string =>
+  lang === 'en' ? `${memberSeoTitleEn(member)} | Techno Enjaz` : `${memberSeoTitle(member)} | تكنو إنجاز`;
+
+/** English page: "Eng. Aya Najma — Software Engineer" (falls back to the Arabic name). */
+function memberSeoTitleEn(member: any): string {
+  const name = String(member.titleEn || member.nameEn || '').trim() || member.title || member.name;
+  const role = shortRoleEn(member);
+  return `${name}${role ? ` — ${role}` : ''}`;
+}
 
 /** Arabic bio + an English line with name, role and location (~150–165 chars). */
-export function memberSeoDescription(member: any): string {
+export function memberSeoDescription(member: any, lang: Lang = 'ar'): string {
+  if (lang === 'en') return memberSeoDescriptionEn(member);
   if (member.id === 'abdulghani') {
     return 'المهندس عبد الغني الحمدي، مستشار في المشاريع الهندسية ومشاريع التخرج التقنية، ومدرب في الأردوينو والروبوتيك والتحكم، وقائد ومؤسس تكنو إنجاز. أشرف على 500+ مشروع تقني.';
   }
@@ -35,6 +46,19 @@ export function memberSeoDescription(member: any): string {
   const roleEn = shortRoleEn(member);
   const tail = en ? ` ${en}${roleEn ? ` — ${roleEn}` : ''} at Techno Enjaz, ${member.locationEn || 'Hama, Syria'}.` : '';
   const out = `${ar}${tail}`;
+  return out.length > 300 ? `${out.slice(0, 297)}…` : out;
+}
+
+function memberSeoDescriptionEn(member: any): string {
+  if (member.id === 'abdulghani') {
+    return 'Eng. Abdalgani Alhamdi — engineering projects and graduation-projects consultant, trainer in Arduino, robotics and control, and founder of Techno Enjaz. Supervised 500+ technical projects.';
+  }
+  const bio = String(member.bioEn || member.shortBioEn || '').trim();
+  const body = bio.length > 150 ? String(member.shortBioEn || bio).trim() : bio;
+  const name = plainNameEn(member);
+  const roleEn = shortRoleEn(member);
+  const tail = name ? ` ${name}${roleEn ? ` — ${roleEn}` : ''} at Techno Enjaz, ${member.locationEn || 'Hama, Syria'}.` : '';
+  const out = `${body}${tail}`.trim() || memberSeoDescription(member, 'ar');
   return out.length > 300 ? `${out.slice(0, 297)}…` : out;
 }
 

@@ -29,23 +29,23 @@ export const THEME_LANG_BOOT = `(function() {
       document.documentElement.style.colorScheme = theme;
     }
 
-    var savedLang = localStorage.getItem('techno_lang');
-    if (savedLang === 'en') {
-      document.documentElement.setAttribute('dir', 'ltr');
-      document.documentElement.setAttribute('lang', 'en');
-      document.documentElement.setAttribute('data-lang-pending', '');
-    } else {
-      document.documentElement.setAttribute('dir', 'rtl');
-      document.documentElement.setAttribute('lang', 'ar');
+    // lang/dir come from the server (the URL decides the language). A visitor who chose
+    // English earlier and lands on an Arabic URL is sent to its /en twin before paint.
+    var p = location.pathname;
+    var isEn = p === '/en' || p.indexOf('/en/') === 0;
+    if (!isEn && localStorage.getItem('techno_lang') === 'en') {
+      location.replace('/en' + (p === '/' ? '' : p) + location.search + location.hash);
+      return;
     }
+    var isHome = p === '/' || p === '/en';
 
     var skip = false;
     ${
       LOADER_MODE === 'off'
         ? 'skip = true;'
         : LOADER_MODE === 'always'
-        ? "skip = location.pathname !== '/';"
-        : "skip = location.pathname !== '/' || sessionStorage.getItem('te_loader_seen') === '1';"
+        ? 'skip = !isHome;'
+        : "skip = !isHome || sessionStorage.getItem('te_loader_seen') === '1';"
     }
     if (skip) {
       document.documentElement.setAttribute('data-skip-loader', '');

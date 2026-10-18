@@ -2,8 +2,7 @@
 import ResponsiveImage from '@/components/ui/ResponsiveImage';
 
 import React, { useMemo, useEffect } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import Link, { useLocaleRouter } from '@/i18n/navigation';
 import { 
   Search, 
   Layers, 
@@ -31,7 +30,7 @@ interface ProjectsCatalogSectionProps {
 }
 
 export const ProjectsCatalogSection: React.FC<ProjectsCatalogSectionProps> = ({ projects = PROJECTS_DATA }) => {
-  const router = useRouter();
+  const router = useLocaleRouter();
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
   const { isSaved, toggleSave } = useSavedProjects();

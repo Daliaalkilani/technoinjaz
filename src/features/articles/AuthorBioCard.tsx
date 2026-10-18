@@ -1,5 +1,5 @@
 'use client';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import SocialButtons from '@/components/ui/SocialButtons';
 import { ABDULGHANI_SOCIALS } from '@/config/site';

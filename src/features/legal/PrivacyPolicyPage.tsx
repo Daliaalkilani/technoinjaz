@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 import { ShieldCheck, Mail } from 'lucide-react';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { ORG } from '@/config/site';

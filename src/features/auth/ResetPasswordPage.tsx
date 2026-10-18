@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import Link, { useLocaleRouter } from '@/i18n/navigation';
 import { Mail, Lock, Eye, EyeOff, Loader2, CheckCircle2, AlertCircle, KeyRound } from 'lucide-react';
 import { apiRequest, apiErrorMessage, setSessionDisplay } from '@/lib/auth';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
@@ -15,7 +14,7 @@ import './ResetPasswordPage.css';
  * /reset-password?token=...  → choose a new password (signs the visitor in)
  */
 export default function ResetPasswordPage() {
-  const router = useRouter();
+  const router = useLocaleRouter();
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
   const [token, setToken] = useState<string | null>(null);

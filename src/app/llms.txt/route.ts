@@ -34,6 +34,10 @@ export async function GET() {
 - [اتصل بنا](${absoluteUrl('/contact')})
 - [سياسة الخصوصية](${absoluteUrl('/privacy-policy')})
 
+## Languages
+- Arabic (default, RTL): ${absoluteUrl('/')}
+- English (LTR): ${absoluteUrl('/en')} — every page has an English twin at the same path under /en (e.g. ${absoluteUrl('/en/articles')}), linked with hreflang ar ↔ en.
+
 ## Team Profiles
 ` ;
 
@@ -76,6 +80,33 @@ export async function GET() {
   text += `\n## Engineering Videos\n`;
   for (const v of videosList) {
     text += `- [${v.title} — ${v.titleEn}](${v.youtubeUrl}) (${v.duration}): ${v.description}\n`;
+  }
+
+  // English twins of every page (full English content: titles, bodies, metadata).
+  text += `
+## English Version
+- [Home](${absoluteUrl('/en')})
+- [Engineering Projects](${absoluteUrl('/en/projects')})
+- [Engineering Blog](${absoluteUrl('/en/articles')})
+- [Live Projects & Videos](${absoluteUrl('/en/videos')})
+- [Interactive Library](${absoluteUrl('/en/library')})
+- [FAQ](${absoluteUrl('/en/faq')})
+- [About Us & Team](${absoluteUrl('/en/about')})
+- [Contact](${absoluteUrl('/en/contact')})
+- [Privacy Policy](${absoluteUrl('/en/privacy-policy')})
+
+### Team Profiles (English)
+`;
+  for (const m of team.filter((t) => t && !t.isPlaceholder) as NonNullable<(typeof team)[number]>[]) {
+    text += `- [${plainNameEn(m) || m.name}${m.roleEn ? ` — ${m.roleEn}` : ''}](${absoluteUrl('/en/team/' + m.id)})\n`;
+  }
+  text += `\n### Articles (English)\n`;
+  for (const a of articles) {
+    text += `- [${a.titleEn || a.title}](${absoluteUrl('/en/articles/' + a.slug)}): ${a.excerptEn || a.excerpt}\n`;
+  }
+  text += `\n### Projects (English)\n`;
+  for (const p of projects) {
+    text += `- [${p.titleEn || p.title}](${absoluteUrl('/en/projects/' + p.slug)}): ${p.metaDescEn || p.excerptEn || p.metaDesc || p.excerpt}\n`;
   }
 
   text += `

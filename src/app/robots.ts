@@ -22,7 +22,18 @@ export default function robots(): MetadataRoute.Robots {
           '/offline',
           '/access-denied',
           '/connection-error',
-          '/server-error'
+          '/server-error',
+          '/en/account',
+          '/en/login',
+          '/en/register',
+          '/en/reset-password',
+          '/en/admin',
+          '/en/newsletter',
+          '/en/403',
+          '/en/offline',
+          '/en/access-denied',
+          '/en/connection-error',
+          '/en/server-error'
         ]
       }
     ],

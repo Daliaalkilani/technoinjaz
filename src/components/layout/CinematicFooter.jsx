@@ -2,8 +2,7 @@
 
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import Link, { useLocalePathname } from "@/i18n/navigation";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
@@ -146,7 +145,7 @@ export function CinematicFooter() {
   // the page grows later (images, lazy lists). Visibility (opacity) is a play-once
   // reveal that always completes; only the decorative parallax is scroll-scrubbed —
   // scrubbing opacity against stale trigger positions left the footer stuck half-faded.
-  const pathname = usePathname();
+  const pathname = useLocalePathname();
 
   // The footer is only worth animating when the visitor is close to it. Until then
   // ScrollTrigger is not started at all (it keeps an endless requestAnimationFrame loop

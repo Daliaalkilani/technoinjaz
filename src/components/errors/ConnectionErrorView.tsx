@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 import { RotateCcw, Home, Layers, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
+import { localePath } from '@/i18n/locale';
 import ErrorScene from './ErrorScene';
 import './ErrorPages.css';
 
@@ -26,7 +27,7 @@ export const ConnectionErrorView: React.FC<ConnectionErrorViewProps> = ({ onRetr
       onRetry();
       return;
     }
-    let target = '/';
+    let target = localePath(lang, '/');
     try {
       const ref = document.referrer ? new URL(document.referrer) : null;
       if (ref && ref.origin === window.location.origin && !/^\/(offline|connection-error)/.test(ref.pathname)) {

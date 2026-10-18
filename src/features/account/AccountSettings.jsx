@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 import { KeyRound, Trash2, Loader2, CheckCircle2, AlertCircle, ShieldCheck, Inbox, Mail } from 'lucide-react';
 import { apiRequest, apiErrorMessage, logout } from '@/lib/auth';
 import './AccountSettings.css';

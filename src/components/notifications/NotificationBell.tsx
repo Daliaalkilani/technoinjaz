@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import Link, { useLocaleRouter } from '@/i18n/navigation';
 import { 
   Bell, 
   Check, 
@@ -27,7 +26,7 @@ import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import './NotificationBell.css';
 
 export default function NotificationBell() {
-  const router = useRouter();
+  const router = useLocaleRouter();
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
 

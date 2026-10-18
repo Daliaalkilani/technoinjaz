@@ -3,7 +3,7 @@ import ResponsiveImage from '@/components/ui/ResponsiveImage';
 import TableOfContents from '@/components/ui/TableOfContents';
 
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 import { 
   ArrowRight, 
   ArrowLeft, 
@@ -23,6 +23,7 @@ import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { useSavedProjects } from '@/hooks/useSavedProjects';
 import { plainExcerpt, projectTags } from '@/lib/text';
 import { SITE_URL } from '@/config/site';
+import { localePath } from '@/i18n/locale';
 import FlipbookViewer, { preloadFlipbook } from '@/components/bookcase/FlipbookViewer';
 import './ProjectDetailView.css';
 
@@ -74,7 +75,7 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
   const warmPdf = () => preloadFlipbook(project.pdfUrl);
 
   const handleShare = () => {
-    const url = `${SITE_URL}/projects/${project.slug}`;
+    const url = `${SITE_URL}${localePath(lang, `/projects/${project.slug}`)}`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url).then(() => {
         setCopied(true);

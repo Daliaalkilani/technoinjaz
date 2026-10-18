@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useLocaleRouter } from '@/i18n/navigation';
 import { useHydrated } from '@/hooks/useHydrated';
 import { refreshSession, apiRequest, apiErrorMessage, type AccountUser } from '@/lib/auth';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
@@ -10,7 +10,7 @@ import UserProfilePage from './UserProfilePage';
 export type VerifyNotice = { type: 'success' | 'error'; message: string } | null;
 
 export function AccountClient() {
-  const router = useRouter();
+  const router = useLocaleRouter();
   const hydrated = useHydrated();
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';

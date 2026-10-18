@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import Link, { useLocaleRouter } from '@/i18n/navigation';
 import {
   ArrowLeft,
   ArrowRight,
@@ -20,7 +20,6 @@ import {
   MailCheck,
   CalendarDays
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { useSavedProjects } from '@/hooks/useSavedProjects';
 import { apiRequest, apiErrorMessage, logout } from '@/lib/auth';
@@ -45,7 +44,7 @@ import './UserProfilePage.css';
  * }} props
  */
 export default function UserProfilePage({ user, verifyNotice = null, onUserChange, onBack, onLogout, onOpenReader }) {
-  const router = useRouter();
+  const router = useLocaleRouter();
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
   const { savedProjects, removeSaved } = useSavedProjects();

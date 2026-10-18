@@ -3,7 +3,7 @@
 import React, { useRef } from 'react';
 import { useInView } from '@/hooks/useInView';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { useLoader } from '@/context/LoaderContext';
 import { useMemo } from 'react';

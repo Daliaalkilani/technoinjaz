@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 import SocialButtons from '@/components/ui/SocialButtons';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import './ProfilePage.css';

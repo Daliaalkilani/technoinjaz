@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 import { Home, BookOpen, Layers, PhoneCall } from 'lucide-react';
 import ErrorScene from '@/components/errors/ErrorScene';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';

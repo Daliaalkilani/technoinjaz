@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useLocaleRouter } from '@/i18n/navigation';
 import { 
   Bell, 
   X, 
@@ -32,7 +32,7 @@ interface ToastData {
 }
 
 export default function NotificationToaster() {
-  const router = useRouter();
+  const router = useLocaleRouter();
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
   const [activeToast, setActiveToast] = useState<ToastData | null>(null);

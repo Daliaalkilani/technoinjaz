@@ -3,6 +3,8 @@ import { getAllProjects } from '@/lib/content/projects';
 import { getAllArticles } from '@/lib/content/articles';
 import { teamMembers } from '@/data/teamData';
 import { absoluteUrl } from '@/config/site';
+import { localePath, type Lang } from '@/i18n/locale';
+import { languageAlternates } from '@/seo/metadata';
 import { memberShareImage } from '@/seo/team';
 import { gitLastModified, projectLastModified, latest } from '@/lib/content/lastModified';
 import { videosList, durationSeconds, searchThumbnail, localVideoPath } from '@/data/videosData';
@@ -10,14 +12,10 @@ import { videosList, durationSeconds, searchThumbnail, localVideoPath } from '@/
 export const dynamic = 'force-static';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  // Every URL serves both languages (client-side toggle) — declare ar/en alternates
-  // so Google indexes one URL per page with correct hreflang annotations.
-  const alt = (p: string) => ({
-    alternates: {
-      languages: { ar: absoluteUrl(p), en: absoluteUrl(p), 'x-default': absoluteUrl(p) }
-    }
-  });
-  const s = (p: string, lastModified?: Date) => ({ url: absoluteUrl(p), ...alt(p), ...(lastModified ? { lastModified } : {}) });
+  // Every page is listed twice — the Arabic URL and its /en twin — each carrying the
+  // same ar ↔ en (+ x-default → ar) hreflang alternates. Entries are built for the
+  // language-neutral path and duplicated per language at the end.
+  const s = (p: string, lastModified?: Date) => ({ url: p, ...(lastModified ? { lastModified } : {}) });
   // Image sitemap entries help image search and AI answer engines attach the cover.
   const img = (src?: string) => (src ? { images: [absoluteUrl(src)] } : {});
 
@@ -33,7 +31,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const articlesUpdated = latest(articles.map((x) => x.lastModified));
   const teamUpdated = gitLastModified(['src/data/teamData.js']);
 
-  return [
+  const entries = [
     s('/', latest([projectsUpdated, articlesUpdated])),
     s('/projects', projectsUpdated),
     ...projects.map(({ p, lastModified }) => ({ ...s(`/projects/${p.slug}`, lastModified), ...img(p.image) })),
@@ -44,8 +42,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       // Video sitemap entries: lets Google index the engineering demo videos themselves.
       videos: videosList.map((v) => ({
         title: v.title,
+        titleEn: v.titleEn,
         thumbnail_loc: absoluteUrl(searchThumbnail(v)),
         description: v.description,
+        descriptionEn: v.descriptionEn || v.description,
         content_loc: absoluteUrl(localVideoPath(v)),
         player_loc: v.youtubeUrl.replace('watch?v=', 'embed/'),
         duration: durationSeconds(v.duration),
@@ -63,4 +63,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...(teamMembers.filter((m) => m && !m.isPlaceholder) as NonNullable<(typeof teamMembers)[number]>[])
       .map((m) => ({ ...s(`/team/${m.id}`, teamUpdated), ...img(memberShareImage(m) ?? undefined) }))
   ];
+
+  const forLang = (lang: Lang) =>
+    entries.map(({ url: path, ...entry }) => ({
+      ...entry,
+      url: absoluteUrl(localePath(lang, path)),
+      alternates: { languages: languageAlternates(path) },
+      ...('videos' in entry && entry.videos
+        ? {
+            videos: entry.videos.map(({ titleEn, descriptionEn, ...v }) =>
+              lang === 'en' ? { ...v, title: titleEn, description: descriptionEn } : v
+            )
+          }
+        : {})
+    }));
+
+  return [...forLang('ar'), ...forLang('en')];
 }

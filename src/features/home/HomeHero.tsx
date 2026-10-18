@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import ScrollExpand from '@/components/effects/ScrollExpand';

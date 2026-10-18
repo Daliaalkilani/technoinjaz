@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 import { Loader2, CheckCircle2, AlertCircle, MailCheck, MailX } from 'lucide-react';
 import { apiRequest } from '@/lib/auth';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';

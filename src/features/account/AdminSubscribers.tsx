@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 import { Loader2, AlertCircle, Download, Send, FlaskConical, Users, PauseCircle, PlayCircle } from 'lucide-react';
 import { apiRequest, apiErrorMessage } from '@/lib/auth';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';

@@ -4,14 +4,49 @@ import type { ProjectItem } from '@/data/projectsData';
 import type { FaqItem } from '@/data/faqData';
 import type { QAItem } from '@/data/qa/types';
 import { projectTags, plainExcerpt } from '@/lib/text';
+import { localePath, type Lang } from '@/i18n/locale';
+
+// Every builder takes the page language: on /en pages names, descriptions, URLs and
+// inLanguage are the English ones. @ids stay language-neutral (one entity, two pages).
+const url = (lang: Lang, path: string) => absoluteUrl(localePath(lang, path));
 
 const ABDULGHANI_ID = `${SITE_URL}/#abdulghani-alhamdi`;
-const ABDULGHANI_URL = absoluteUrl('/team/abdulghani');
+const ABDULGHANI_PATH = '/team/abdulghani';
 // sameAs takes profile URLs only (the email is exposed separately as `email`).
 const ABDULGHANI_SAME_AS = Object.values(ABDULGHANI_SOCIALS).filter((v) => /^https?:\/\//.test(v));
 
-export function abdulghaniPersonSchema() {
-  const url = ABDULGHANI_URL;
+export function abdulghaniPersonSchema(lang: Lang = 'ar') {
+  if (lang === 'en') {
+    return {
+      '@type': 'Person',
+      '@id': ABDULGHANI_ID,
+      name: 'Eng. Abdalgani Alhamdi',
+      alternateName: ['Abdalgani Al-Hamdi', 'المهندس عبد الغني الحمدي', 'م. عبد الغني الحمدي', 'عبد الغني الحمدي'],
+      url: url('en', ABDULGHANI_PATH),
+      image: absoluteUrl('/images/team/abdulghani.jpg'),
+      jobTitle: 'Engineering Projects Consultant & Technical Trainer',
+      description: 'Eng. Abdalgani Alhamdi is an engineering consultant for technical projects and the founder and leader of the Techno Enjaz team. He holds a bachelor’s degree in Automatic Control & Computer Engineering, is studying for a master’s in Control Engineering & Automation, and received the Al-Bassel award for first rank in his fourth year. Over the last five years he has delivered or supervised 500+ technical projects, and placed sixth nationwide in the “Tamayuz for Innovation & Invention” competition.',
+      knowsAbout: [
+        'Engineering & technical projects',
+        'Arduino programming',
+        'Robotics & mobile robots',
+        'Control & automation engineering',
+        'Industrial control systems',
+        'Engineering project consultancy',
+        'Engineering project management'
+      ],
+      alumniOf: [],
+      award: [
+        '6th place nationwide in the “Tamayuz for Innovation & Invention” competition',
+        'Al-Bassel award for first rank academic excellence (4th year)',
+        'Delivery & supervision of 500+ technical projects'
+      ],
+      worksFor: { '@id': ORG_ID },
+      disambiguatingDescription: '“Change begins from within — start with yourself, then change the world.” Vision: an interconnected, independent and highly proficient community. Mission: scientific and practical progress to elevate every field. Goals: raising awareness among ambitious people and mentoring them through real projects and training.',
+      sameAs: ABDULGHANI_SAME_AS,
+      email: 'info@abdalgani.com'
+    };
+  }
   return {
     '@type': 'Person',
     '@id': ABDULGHANI_ID,
@@ -22,7 +57,7 @@ export function abdulghaniPersonSchema() {
       'Abdalgani Al-Hamdi',
       'عبد الغني الحمدي'
     ],
-    url,
+    url: url('ar', ABDULGHANI_PATH),
     image: absoluteUrl('/images/team/abdulghani.jpg'),
     jobTitle: 'مستشار في المشاريع الهندسية ومدرب في المجالات التقنية',
     description: 'المهندس عبد الغني الحمدي مهندس ومستشار هندسي متخصّص في المشاريع التقنية، وقائد ومؤسس فريق «تكنو إنجاز». حاصل على درجة البكالوريوس في هندسة التحكّم الآلي والحواسيب، ويدرس الماجستير في هندسة التحكّم والأتمتة، وحاصل على شهادة الباسل للمرتبة الأولى في السنة الرابعة. ساهم في إنجاز والإشراف على أكثر من 500 مشروع تقني خلال السنوات الخمس الماضية، وحصل على المركز السادس ضمن مسابقة «تميّز للإبداع والاختراع» على مستوى القطر.',
@@ -61,23 +96,26 @@ export function memberProfileUrls(member: any): string[] {
 }
 
 /** `image`: the share image (see seo/team.ts memberShareImage); null omits it (placeholder photo). */
-export function personSchema(member: any, opts: { image?: string | null } = {}) {
+export function personSchema(member: any, opts: { image?: string | null; lang?: Lang } = {}) {
+  const lang = opts.lang ?? 'ar';
   if (member.id === 'abdulghani') {
-    return abdulghaniPersonSchema();
+    return abdulghaniPersonSchema(lang);
   }
-  const url = absoluteUrl(`/team/${member.id}`);
+  const en = lang === 'en';
   const image = opts.image === undefined ? member.image : opts.image;
+  const nameEn = String(member.nameEn || '').trim();
   return {
     '@type': 'Person',
     '@id': personId(member),
-    name: member.name,
-    ...(member.nameEn ? { alternateName: [member.nameEn] } : {}),
-    url,
+    name: en && nameEn ? nameEn : member.name,
+    ...(nameEn ? { alternateName: [en ? member.name : nameEn] } : {}),
+    url: url(lang, `/team/${member.id}`),
     ...(image ? { image: absoluteUrl(image) } : {}),
-    // Both languages: the same URL serves the AR and EN profile.
-    jobTitle: member.roleEn && member.roleEn !== member.role ? [member.role, member.roleEn] : member.role,
-    description: member.shortBio || member.bio,
-    knowsAbout: member.skills || undefined,
+    jobTitle: (en && member.roleEn) || member.role,
+    description: en
+      ? member.shortBioEn || member.bioEn || member.shortBio || member.bio
+      : member.shortBio || member.bio,
+    knowsAbout: (en ? member.skillsEn || member.skills : member.skills) || undefined,
     sameAs: memberProfileUrls(member),
     ...(member.socials?.email ? { email: member.socials.email } : {}),
     worksFor: {
@@ -86,18 +124,19 @@ export function personSchema(member: any, opts: { image?: string | null } = {}) 
   };
 }
 
-export function organization() {
+export function organization(lang: Lang = 'ar') {
+  const en = lang === 'en';
   return {
     '@type': ['Organization', 'ProfessionalService'],
     '@id': ORG_ID,
-    name: ORG.nameAr,
-    alternateName: ORG.nameEn,
-    url: SITE_URL,
+    name: en ? ORG.nameEn : ORG.nameAr,
+    alternateName: en ? ORG.nameAr : ORG.nameEn,
+    url: url(lang, '/'),
     logo: ORG.logo,
     telephone: ORG.telephone,
     email: ORG.email,
     sameAs: [ORG.instagram],
-    founder: abdulghaniPersonSchema(),
+    founder: abdulghaniPersonSchema(lang),
     contactPoint: {
       '@type': 'ContactPoint',
       telephone: ORG.telephone,
@@ -107,9 +146,9 @@ export function organization() {
     },
     address: {
       '@type': 'PostalAddress',
-      streetAddress: ORG.address.streetAddress,
-      addressLocality: ORG.address.addressLocality,
-      addressRegion: ORG.address.addressRegion,
+      streetAddress: en ? ORG.addressEn.streetAddress : ORG.address.streetAddress,
+      addressLocality: en ? ORG.addressEn.addressLocality : ORG.address.addressLocality,
+      addressRegion: en ? ORG.addressEn.addressRegion : ORG.address.addressRegion,
       addressCountry: ORG.address.addressCountry
     },
     geo: {
@@ -118,7 +157,7 @@ export function organization() {
       longitude: ORG.geo.longitude
     },
     hasMap: ORG.hasMap,
-    description: ORG.descriptionAr
+    description: en ? ORG.descriptionEn : ORG.descriptionAr
   };
 }
 
@@ -139,13 +178,14 @@ export const WEBSITE_DESIGNERS = [
   }
 ];
 
-export function website() {
+export function website(lang: Lang = 'ar') {
+  const en = lang === 'en';
   return {
     '@type': 'WebSite',
     '@id': WEBSITE_ID,
     url: SITE_URL,
-    name: ORG.nameAr,
-    alternateName: ORG.nameEn,
+    name: en ? ORG.nameEn : ORG.nameAr,
+    alternateName: en ? ORG.nameAr : ORG.nameEn,
     inLanguage: ['ar', 'en'],
     publisher: {
       '@id': ORG_ID
@@ -161,23 +201,26 @@ export function webPage({
   name,
   description,
   type = 'WebPage',
-  mainEntityId
+  mainEntityId,
+  lang = 'ar'
 }: {
+  /** Language-neutral path ('/about'); the /en prefix is added for English pages. */
   path: string;
   name: string;
   description?: string;
   type?: 'WebPage' | 'CollectionPage' | 'AboutPage' | 'ContactPage' | 'FAQPage' | 'ProfilePage';
   /** @id of the page's main entity (e.g. the Person of a ProfilePage). */
   mainEntityId?: string;
+  lang?: Lang;
 }) {
-  const url = absoluteUrl(path);
+  const pageUrl = url(lang, path);
   return {
     '@type': type,
-    '@id': `${url}#webpage`,
-    url,
+    '@id': `${pageUrl}#webpage`,
+    url: pageUrl,
     name,
     ...(description ? { description } : {}),
-    inLanguage: 'ar',
+    inLanguage: lang,
     isPartOf: {
       '@id': WEBSITE_ID
     },
@@ -188,29 +231,36 @@ export function webPage({
   };
 }
 
-export function breadcrumb(items: { name: string; path: string }[]) {
+export function breadcrumb(items: { name: string; path: string }[], lang: Lang = 'ar') {
   return {
     '@type': 'BreadcrumbList',
     itemListElement: items.map((item, index) => ({
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: absoluteUrl(item.path)
+      item: url(lang, item.path)
     }))
   };
 }
 
-export function blogPosting(article: BlogArticle) {
-  const url = absoluteUrl(`/articles/${article.slug}`);
-  const tags = (article.tags || []).map((t) => t.replace(/_/g, ' ')).join(', ');
+export function blogPosting(article: BlogArticle, lang: Lang = 'ar') {
+  const en = lang === 'en';
+  const pageUrl = url(lang, `/articles/${article.slug}`);
+  const clean = (tags: string[] | undefined) => (tags || []).map((t) => t.replace(/_/g, ' ')).join(', ');
+  const title = en ? article.titleEn || article.title : article.title;
+  const otherTitle = en ? article.title : article.titleEn;
+  const tags = en ? clean(article.tagsEn?.length ? article.tagsEn : article.tags) : clean(article.tags);
+  const headline = title.length > 110 ? title.slice(0, 107) + '...' : title;
 
   return {
     '@type': 'BlogPosting',
-    '@id': `${url}#article`,
-    mainEntityOfPage: url,
-    headline: article.title.length > 110 ? article.title.slice(0, 107) + '...' : article.title,
-    name: article.seoTitle || article.title,
-    description: article.metaDescription || article.excerpt,
+    // One article entity per language copy: the two pages are translations of each other.
+    '@id': `${pageUrl}#article`,
+    mainEntityOfPage: pageUrl,
+    headline,
+    name: en ? title : article.seoTitle || article.title,
+    ...(otherTitle ? { alternativeHeadline: otherTitle } : {}),
+    description: en ? article.excerptEn || article.excerpt : article.metaDescription || article.excerpt,
     image: article.image ? (article.image.startsWith('http') ? article.image : absoluteUrl(article.image)) : absoluteUrl('/og-image.png'),
     datePublished: `${article.publishedAt}T00:00:00+03:00`,
     dateModified: `${article.modifiedAt || article.publishedAt}T00:00:00+03:00`,
@@ -218,11 +268,12 @@ export function blogPosting(article: BlogArticle) {
     author: {
       '@type': 'Person',
       '@id': ABDULGHANI_ID,
-      name: article.author.name,
-      alternateName: [article.author.nameEn, 'المهندس عبد الغني الحمدي', 'Abdalgani Alhamdi'],
-      jobTitle: article.author.role,
-      description: article.author.roleEn,
-      url: ABDULGHANI_URL,
+      name: en ? article.author.nameEn : article.author.name,
+      alternateName: en
+        ? [article.author.name, 'Abdalgani Alhamdi', 'المهندس عبد الغني الحمدي']
+        : [article.author.nameEn, 'المهندس عبد الغني الحمدي', 'Abdalgani Alhamdi'],
+      jobTitle: en ? article.author.roleEn : article.author.role,
+      url: url(lang, ABDULGHANI_PATH),
       image: absoluteUrl(article.author.avatar),
       sameAs: ABDULGHANI_SAME_AS,
       worksFor: { '@id': ORG_ID }
@@ -230,57 +281,47 @@ export function blogPosting(article: BlogArticle) {
     publisher: {
       '@id': ORG_ID
     },
-    inLanguage: ['ar', 'en'],
+    inLanguage: lang,
+    // The same article in the other language.
+    workTranslation: { '@id': `${url(en ? 'ar' : 'en', `/articles/${article.slug}`)}#article` },
     // AEO: voice assistants & answer engines read these sections aloud
     speakable: {
       '@type': 'SpeakableSpecification',
       cssSelector: ['h1', '.article-excerpt', '.article-body > p:first-of-type']
     },
-    articleSection: article.category,
-    ...(article.categoryEn ? { alternateSection: article.categoryEn } : {}),
+    articleSection: en ? article.categoryEn || article.category : article.category,
     ...(tags ? { keywords: tags } : {}),
-    ...(article.titleEn
-      ? {
-          headlineEn: article.titleEn.length > 110 ? article.titleEn.slice(0, 107) + '...' : article.titleEn,
-          alternativeHeadline: article.titleEn,
-          ...(article.excerptEn ? { descriptionEn: article.excerptEn } : {}),
-          ...(article.tagsEn?.length
-            ? { keywordsEn: article.tagsEn.map((t: string) => t.replace(/_/g, ' ')).join(', ') }
-            : {})
-        }
-      : {}),
     isPartOf: {
       '@id': WEBSITE_ID
     }
   };
 }
 
-export function projectWork(project: ProjectItem, opts: { dateModified?: Date } = {}) {
-  const url = absoluteUrl(`/projects/${project.slug}`);
-  const cleanTags = projectTags(project.tags);
+export function projectWork(project: ProjectItem, opts: { dateModified?: Date; lang?: Lang } = {}) {
+  const lang = opts.lang ?? 'ar';
+  const en = lang === 'en';
+  const pageUrl = url(lang, `/projects/${project.slug}`);
+  const cleanTags = projectTags(en && project.tagsEn?.length ? project.tagsEn : project.tags);
+  const name = en ? project.titleEn || project.title : project.title;
+  const otherName = en ? project.title : project.titleEn;
 
   return {
     '@type': 'CreativeWork',
-    '@id': `${url}#project`,
-    name: project.title,
-    headline: project.seoTitle || project.title,
-    description: plainExcerpt(project.metaDesc || project.excerpt),
+    '@id': `${pageUrl}#project`,
+    name,
+    headline: en ? project.seoTitleEn || name : project.seoTitle || project.title,
+    ...(otherName ? { alternativeHeadline: otherName } : {}),
+    description: plainExcerpt(en ? project.metaDescEn || project.excerptEn || project.metaDesc || project.excerpt : project.metaDesc || project.excerpt),
     image: project.image.startsWith('http') ? project.image : absoluteUrl(project.image),
-    url,
-    inLanguage: ['ar', 'en'],
+    url: pageUrl,
+    inLanguage: lang,
+    workTranslation: { '@id': `${url(en ? 'ar' : 'en', `/projects/${project.slug}`)}#project` },
     // AEO: voice assistants read the project title + lead paragraph
     speakable: {
       '@type': 'SpeakableSpecification',
       cssSelector: ['.project-detail-title', '.project-detail-lead']
     },
-    ...(project.titleEn
-      ? {
-          headlineEn: project.seoTitleEn || project.titleEn,
-          alternativeHeadline: project.titleEn,
-          ...(project.metaDescEn ? { descriptionEn: project.metaDescEn } : {})
-        }
-      : {}),
-    genre: project.categoryNameAr,
+    genre: en ? project.categoryNameEn : project.categoryNameAr,
     ...(opts.dateModified ? { dateModified: opts.dateModified.toISOString() } : {}),
     contributor: {
       '@id': ORG_ID
@@ -292,55 +333,43 @@ export function projectWork(project: ProjectItem, opts: { dateModified?: Date } 
   };
 }
 
-export function itemList(items: { name: string; path: string }[]) {
+export function itemList(items: { name: string; path: string }[], lang: Lang = 'ar') {
   return {
     '@type': 'ItemList',
     itemListElement: items.map((item, index) => ({
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      url: absoluteUrl(item.path)
+      url: url(lang, item.path)
     }))
   };
 }
 
-export function faqPageSchema(items: FaqItem[]) {
+export function faqPageSchema(items: FaqItem[], lang: Lang = 'ar') {
+  const en = lang === 'en';
   return {
     '@type': 'FAQPage',
     mainEntity: items.map((item) => ({
       '@type': 'Question',
-      name: item.question,
+      name: (en && item.questionEn) || item.question,
       acceptedAnswer: {
         '@type': 'Answer',
-        text: item.answer
+        text: (en && item.answerEn) || item.answer
       }
     }))
   };
 }
 
-// Questions & answers shown on an article/project page (ContentQA).
-export function qaSchema(items: QAItem[]) {
-  // Bilingual FAQPage: the EN variant is emitted as an extra Question entity when
-  // translations exist (both languages live on the same URL).
-  const entities = items.flatMap((item) => {
-    const ar = {
-      '@type': 'Question',
-      name: item.q,
-      acceptedAnswer: { '@type': 'Answer', text: item.a }
-    };
-    if (!item.qEn && !item.aEn) return [ar];
-    return [
-      ar,
-      {
-        '@type': 'Question',
-        name: item.qEn || item.q,
-        acceptedAnswer: { '@type': 'Answer', text: item.aEn || item.a }
-      }
-    ];
-  });
+// Questions & answers shown on an article/project page (ContentQA), in the page language.
+export function qaSchema(items: QAItem[], lang: Lang = 'ar') {
+  const en = lang === 'en';
   return {
     '@type': 'FAQPage',
-    inLanguage: ['ar', 'en'],
-    mainEntity: entities
+    inLanguage: lang,
+    mainEntity: items.map((item) => ({
+      '@type': 'Question',
+      name: (en && item.qEn) || item.q,
+      acceptedAnswer: { '@type': 'Answer', text: (en && item.aEn) || item.a }
+    }))
   };
 }

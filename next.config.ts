@@ -32,6 +32,8 @@ const nextConfig: NextConfig = {
   // (lucide-react icons, framer-motion exports, gsap plugins).
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion', 'gsap'],
+    // Two root layouts (app/(ar), app/(en)): server-side 404s render app/global-not-found.tsx.
+    globalNotFound: true,
   },
   async redirects() {
     return [
@@ -42,7 +44,16 @@ const nextConfig: NextConfig = {
       { source: '/403', destination: '/access-denied', permanent: false },
       { source: '/access-error', destination: '/access-denied', permanent: false },
       // Duplicate of the ground-robot project (same report); merged into the original page.
-      { source: '/projects/military-war-robot-ai', destination: '/projects/remote-controlled-ground-robot', permanent: true }
+      { source: '/projects/military-war-robot-ai', destination: '/projects/remote-controlled-ground-robot', permanent: true },
+      // English twins of the redirects above (/en/… routes, app/(en)).
+      { source: '/en/index.html', destination: '/en', permanent: true },
+      { source: '/en/500', destination: '/en/server-error', permanent: false },
+      { source: '/en/403', destination: '/en/access-denied', permanent: false },
+      { source: '/en/access-error', destination: '/en/access-denied', permanent: false },
+      { source: '/en/projects/military-war-robot-ai', destination: '/en/projects/remote-controlled-ground-robot', permanent: true },
+      // The team lives on the About page (profiles are /team/<id>).
+      { source: '/team', destination: '/about', permanent: false },
+      { source: '/en/team', destination: '/en/about', permanent: false }
     ];
   },
 };

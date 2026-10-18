@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { useLocalePathname } from '@/i18n/navigation';
 
 interface LoaderContextType {
   isLoaderDone: boolean;
@@ -10,7 +10,7 @@ interface LoaderContextType {
 const LoaderContext = createContext<LoaderContextType>({ isLoaderDone: true });
 
 export function LoaderProvider({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
+  const pathname = useLocalePathname();
   const [isLoaderDone, setIsLoaderDone] = useState(true);
 
   useEffect(() => {

@@ -1,11 +1,10 @@
 'use client';
 
-import Link from 'next/link';
+import Link, { useLocaleRouter } from '@/i18n/navigation';
 import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight, Play } from 'lucide-react';
 import CardSwap, { Card } from '@/features/videos/VideoCardSwap';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
-import { useRouter } from 'next/navigation';
 import SectionBackground from './SectionBackground';
 import { videosList, type VideoItem } from '@/data/videosData';
 import './ProjectsSection.css';
@@ -26,7 +25,7 @@ const VideosSection: React.FC<VideosSectionProps> = ({
   showNavigateButton = true
 }) => {
   const { lang, t } = useThemeLanguage();
-  const router = useRouter();
+  const router = useLocaleRouter();
 
   return (
     <section id="videos" className="videos-section" dir={lang === 'ar' ? 'rtl' : 'ltr'}>

@@ -1,11 +1,11 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useLayoutEffect } from 'react';
-import { usePathname } from 'next/navigation';
 import { translations, type Translations } from '../locales/translations';
+import { switchLocalePath, type Lang } from '@/i18n/locale';
 
 export type Theme = 'dark' | 'light';
-export type Language = 'ar' | 'en';
+export type Language = Lang;
 
 interface ThemeLanguageContextType {
   theme: Theme;
@@ -34,10 +34,11 @@ const getInitialTheme = (): Theme => {
   return 'dark';
 };
 
-export const ThemeLanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+/** `lang` comes from the route (root layout of app/(ar) or app/(en)): the language is
+ *  part of the URL, so server HTML and client state always agree. */
+export const ThemeLanguageProvider: React.FC<{ children: React.ReactNode; lang: Language }> = ({ children, lang }) => {
   // Always initialize with 'dark' so initial client hydration pass matches SSR server-rendered HTML
   const [theme, setTheme] = useState<Theme>('dark');
-  const [lang, setLangState] = useState<Language>('ar');
   const isInitialMount = React.useRef(true);
 
   // Synchronize with document attributes on initial mount
@@ -54,30 +55,7 @@ export const ThemeLanguageProvider: React.FC<{ children: React.ReactNode }> = ({
         setTheme('light');
       }
     }
-    try {
-      const l = localStorage.getItem('techno_lang');
-      if (l === 'en' || l === 'ar') {
-        setLangState(l);
-      }
-    } catch {}
-    document.documentElement.removeAttribute('data-lang-pending');
   }, []);
-
-  // Suppress the one-frame Arabic flash on client-side navigations when the site is in
-  // English: server RSC payloads are rendered with Arabic defaults, so a freshly mounted
-  // route paints Arabic for a frame before the context state applies. Hide the app root
-  // for exactly that paint (same mechanism as the boot script's data-lang-pending).
-  const pathname = usePathname();
-  React.useLayoutEffect(() => {
-    if (lang !== 'en') return;
-    const root = document.getElementById('app-root');
-    if (!root) return;
-    root.style.visibility = 'hidden';
-    // Double rAF: run after the browser has painted the new route.
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      root.style.visibility = '';
-    }));
-  }, [pathname, lang]);
 
   // Listen for browser/system color scheme changes in real time
   useEffect(() => {
@@ -113,15 +91,6 @@ export const ThemeLanguageProvider: React.FC<{ children: React.ReactNode }> = ({
       localStorage.setItem('theme', theme);
     }
   }, [theme]);
-
-  // Update HTML dir and lang
-  useEffect(() => {
-    if (typeof document !== 'undefined') {
-      document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
-      document.documentElement.setAttribute('lang', lang);
-      localStorage.setItem('techno_lang', lang);
-    }
-  }, [lang]);
 
   const toggleTheme = (e?: React.MouseEvent | MouseEvent) => {
     const nextTheme: Theme = theme === 'dark' ? 'light' : 'dark';
@@ -200,8 +169,17 @@ export const ThemeLanguageProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   };
 
+  // Language switch = navigation to the same page in the other language. A full load:
+  // the two languages are separate root layouts (<html lang/dir> differ). Only this
+  // explicit choice is remembered: the boot script then sends a visitor who chose
+  // English from an Arabic URL to its /en twin (landing on /en from search does not).
   const setLang = (newLang: Language) => {
-    setLangState(newLang);
+    if (newLang === lang || typeof window === 'undefined') return;
+    try {
+      localStorage.setItem('techno_lang', newLang);
+    } catch {}
+    const { pathname, search, hash } = window.location;
+    window.location.assign(switchLocalePath(newLang, `${pathname}${search}${hash}`));
   };
 
   const t = translations[lang];

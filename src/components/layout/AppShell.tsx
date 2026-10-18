@@ -1,9 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
+import Link, { useLocalePathname, useLocaleRouter } from '@/i18n/navigation';
 import { ResponsiveImage } from '@/components/ui/ResponsiveImage';
-import { usePathname, useRouter } from 'next/navigation';
 import GooeyNav from './GooeyNav';
 import dynamic from 'next/dynamic';
 // Below-the-fold footer: code-split so its gsap + ScrollTrigger modules are not
@@ -30,8 +29,8 @@ export interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   const { lang, t } = useThemeLanguage();
-  const pathname = usePathname();
-  const router = useRouter();
+  const pathname = useLocalePathname();
+  const router = useLocaleRouter();
 
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [mounted, setMounted] = useState(false);

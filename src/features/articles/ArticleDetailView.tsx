@@ -4,8 +4,7 @@ import TableOfContents from '@/components/ui/TableOfContents';
 import AuthorBioCard from './AuthorBioCard';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import Link, { useLocaleRouter } from '@/i18n/navigation';
 import { 
   ArrowRight, 
   ArrowLeft, 
@@ -25,6 +24,7 @@ import { useSavedProjects } from '@/hooks/useSavedProjects';
 import { requireAuth, apiRequest, AUTH_EVENT } from '@/lib/auth';
 import ArticleComments from './ArticleComments';
 import { SITE_URL } from '@/config/site';
+import { localePath } from '@/i18n/locale';
 import '@/features/projects/ProjectDetailView.css';
 import './ArticleDetailView.css';
 
@@ -53,7 +53,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   children,
   qa
 }) => {
-  const router = useRouter();
+  const router = useLocaleRouter();
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
   const tocItems = isEn && tocEn && tocEn.length ? tocEn : toc;
@@ -104,7 +104,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   const handleCommentCount = useCallback((n: number) => setCommentCount(n), []);
 
   const handleShare = () => {
-    const url = `${SITE_URL}/articles/${article.slug}`;
+    const url = `${SITE_URL}${localePath(lang, `/articles/${article.slug}`)}`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url).then(() => {
         setCopied(true);

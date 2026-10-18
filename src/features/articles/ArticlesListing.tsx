@@ -2,8 +2,7 @@
 import ResponsiveImage from '@/components/ui/ResponsiveImage';
 
 import React, { useState, useMemo, useEffect } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import Link, { useLocaleRouter } from '@/i18n/navigation';
 import { 
   Search, 
   Heart, 
@@ -20,6 +19,7 @@ import { useThemeLanguage } from '@/context/ThemeLanguageContext';
 import { useSavedProjects } from '@/hooks/useSavedProjects';
 import { requireAuth } from '@/lib/auth';
 import { SITE_URL } from '@/config/site';
+import { localePath } from '@/i18n/locale';
 import StickyFilterBar from '@/components/ui/StickyFilterBar';
 import { useSessionState } from '@/lib/useSessionState';
 import './ArticlesListing.css';
@@ -36,7 +36,7 @@ export function ArticlesListing({
   const { lang, t } = useThemeLanguage();
   const isEn = lang === 'en';
   const { isSaved, toggleSave } = useSavedProjects();
-  const router = useRouter();
+  const router = useLocaleRouter();
 
   // Kept per tab so "back" from an article returns to the same filtered list.
   const [searchQuery, setSearchQuery] = useSessionState('te_articles_search', '');
@@ -111,7 +111,7 @@ export function ArticlesListing({
       e.preventDefault();
       e.stopPropagation();
     }
-    const url = `${SITE_URL}/articles/${article.slug}`;
+    const url = `${SITE_URL}${localePath(lang, `/articles/${article.slug}`)}`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url).then(() => {
         setCopiedId(article.id);

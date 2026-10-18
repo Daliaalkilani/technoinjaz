@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useLocaleRouter } from '@/i18n/navigation';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import AuthSwitch from './AuthSwitch';
 import { useThemeLanguage } from '@/context/ThemeLanguageContext';
@@ -16,7 +16,7 @@ import './AuthPage.css';
  * }} [props]
  */
 export default function AuthPage({ initialMode = 'login', onBack, onSuccess } = {}) {
-  const router = useRouter();
+  const router = useLocaleRouter();
   const { lang } = useThemeLanguage();
   const isEn = lang === 'en';
 

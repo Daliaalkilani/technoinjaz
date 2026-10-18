@@ -1,9 +1,8 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
-import Link from 'next/link';
+import Link, { useLocalePathname, useLocaleRouter } from '@/i18n/navigation';
 import { ResponsiveImage } from '@/components/ui/ResponsiveImage';
-import { usePathname, useRouter } from 'next/navigation';
 import {
   X,
   Home,
@@ -37,8 +36,8 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
   onRequireLogin
 }) => {
   const { lang, setLang, theme, toggleTheme, t } = useThemeLanguage();
-  const pathname = usePathname();
-  const router = useRouter();
+  const pathname = useLocalePathname();
+  const router = useLocaleRouter();
   const drawerRef = useRef<HTMLDivElement>(null);
 
   // Close drawer on ESC key

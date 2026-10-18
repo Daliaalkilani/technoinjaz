@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { LANG_HEADER, isEnPath } from '@/i18n/locale';
 
 /**
  * SEO: the worker is reachable on both technoenjaz.com (canonical, attached as a
@@ -19,7 +20,10 @@ export function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
 
   if (host === CANONICAL_HOST || LOCAL_HOST_RE.test(host)) {
-    return NextResponse.next();
+    // Language of the URL for the server-rendered 404 (app/global-not-found.tsx).
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set(LANG_HEADER, isEnPath(url.pathname) ? 'en' : 'ar');
+    return NextResponse.next({ request: { headers: requestHeaders } });
   }
 
   // www, workers.dev or any other host: permanent redirect to the canonical domain

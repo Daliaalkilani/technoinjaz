@@ -1,8 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import Link, { useLocaleRouter } from '@/i18n/navigation';
 import './GooeyNav.css';
 
 
@@ -35,7 +34,7 @@ const GooeyNav = ({
   activeIndex: controlledActiveIndex,
   onItemSelect
 }) => {
-  const router = useRouter();
+  const router = useLocaleRouter();
   const containerRef = useRef(null);
   const navRef = useRef(null);
   const filterRef = useRef(null);
