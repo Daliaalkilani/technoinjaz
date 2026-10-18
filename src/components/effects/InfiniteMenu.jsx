@@ -1356,54 +1356,6 @@ export default function InfiniteMenu({
         </>
       )}
 
-      {activeItem && (
-        <div
-          className={`active-member-card ${isMoving ? 'inactive' : 'active'}`}
-          dir={isEn ? 'ltr' : 'rtl'}
-          onPointerEnter={() => { if (sketchRef.current) sketchRef.current.isHovered = true; }}
-          onPointerLeave={() => { if (sketchRef.current) sketchRef.current.isHovered = false; }}
-        >
-          <div className="active-member-content">
-            <h2 className="member-name">
-              {isEn ? (activeItem.nameEn || activeItem.titleEn || activeItem.name || activeItem.title) : (activeItem.name || activeItem.title)}
-            </h2>
-
-            <p className="member-role">
-              {isEn ? (activeItem.roleEn || activeItem.descriptionEn || activeItem.role || activeItem.description) : (activeItem.role || activeItem.description)}
-            </p>
-
-            {/* Brief bio snippet (نبذة عنه) */}
-            {(activeItem.bio || activeItem.bioEn) && (
-              <>
-                <p className="member-bio-text member-bio-desktop">
-                  {isEn ? (activeItem.bioEn || activeItem.bio) : activeItem.bio}
-                </p>
-                <p className="member-bio-text member-bio-mobile">
-                  {isEn
-                    ? (activeItem.shortBioEn || activeItem.shortBio || activeItem.bioEn || activeItem.bio)
-                    : (activeItem.shortBio || activeItem.bio)}
-                </p>
-              </>
-            )}
-
-            {/* أيقونات التواصل الاجتماعي: لينكد إن، غيت هاب، فيسبوك، إيميل */}
-            {activeItem.socials && (
-              <div className="member-socials-container">
-                <SocialButtons socials={activeItem.socials} size="medium" />
-              </div>
-            )}
-
-            {/* The card had no way into /team/[id] (handleButtonClick was never wired), so
-                profile pages were unreachable by mouse. Placeholder seats have no page. */}
-            {!activeItem.isPlaceholder && activeItem.link && !activeItem.link.startsWith('http') && (
-              <Link href={activeItem.link} className="member-profile-link">
-                {isEn ? 'View full profile' : 'عرض الملف الكامل'}
-                <span aria-hidden="true">{isEn ? ' →' : ' ←'}</span>
-              </Link>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
