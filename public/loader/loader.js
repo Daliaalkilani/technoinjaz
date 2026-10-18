@@ -107,6 +107,11 @@
   let particleBudget = 30, emissionDebt = 0, arrivalPose = null, resetTimer = 0;
   let userMotionOverride = null;
   let fadeOutDone = false;
+  // The timeline below advances by animated frames (max 50ms each). On a busy phone
+  // (hydration stalls, throttled rAF) that clock crawls and the overlay looked stuck,
+  // so a wall-clock timer always ends it.
+  const FAILSAFE_MS = 4500;
+  let failsafeTimer = 0;
 
   const state = {
     phase: 'idle', active: false, progress: 0, indeterminate: false,
@@ -272,6 +277,8 @@
     state.demo = true;
     state.duration = Number(options.duration || 1700);
     state.active = true; state.startedAt = performance.now(); state.elapsed = 0;
+    clearTimeout(failsafeTimer);
+    failsafeTimer = setTimeout(triggerFadeOut, FAILSAFE_MS);
     setPhase('charging');
     audio.start(); audio.chirp(); addWave(point(.489, .834));
     emit('launch');
@@ -511,7 +518,7 @@
   function destroy() {
     if (state.destroyed) return;
     state.destroyed = true; state.active = false;
-    cancelAnimationFrame(rafId); clearTimeout(resetTimer); listeners.abort(); audio.destroy();
+    cancelAnimationFrame(rafId); clearTimeout(resetTimer); clearTimeout(failsafeTimer); listeners.abort(); audio.destroy();
     particles = []; waves = []; trail = [];
     if (loaderEl) loaderEl.style.setProperty('--engine', '0');
     if (ctx) ctx.clearRect(0, 0, width, height);
@@ -534,14 +541,19 @@
     }
   };
 
-  // Optional: click anywhere to skip/speed up launch
+  // Click/tap anywhere skips the launch
   if (loaderEl) {
     loaderEl.addEventListener('click', () => {
-      if (state.active && state.phase === 'flight') {
+      if (state.active) {
         triggerFadeOut();
       }
     });
   }
+
+  // Back/forward cache: a page frozen mid-launch must not come back covered.
+  window.addEventListener('pageshow', e => {
+    if (e.persisted) triggerFadeOut();
+  });
 
   // Initialize
   setCalm(false); resize(); reset(true);

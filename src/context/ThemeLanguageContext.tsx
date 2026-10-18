@@ -177,6 +177,8 @@ export const ThemeLanguageProvider: React.FC<{ children: React.ReactNode; lang: 
     if (newLang === lang || typeof window === 'undefined') return;
     try {
       localStorage.setItem('techno_lang', newLang);
+      // Same visit: the full load into the other language must not replay the intro loader.
+      sessionStorage.setItem('te_loader_seen', '1');
     } catch {}
     const { pathname, search, hash } = window.location;
     window.location.assign(switchLocalePath(newLang, `${pathname}${search}${hash}`));

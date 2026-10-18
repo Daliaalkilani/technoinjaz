@@ -31,9 +31,14 @@ export const THEME_LANG_BOOT = `(function() {
 
     // lang/dir come from the server (the URL decides the language). A visitor who chose
     // English earlier and lands on an Arabic URL is sent to its /en twin before paint.
+    // Not on back/forward: Back from /en to / must land on the Arabic page instead of
+    // bouncing to /en again. The page being left never shows the rocket loader.
     var p = location.pathname;
     var isEn = p === '/en' || p.indexOf('/en/') === 0;
-    if (!isEn && localStorage.getItem('techno_lang') === 'en') {
+    var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+    var traversal = nav && nav.type === 'back_forward';
+    if (!isEn && !traversal && localStorage.getItem('techno_lang') === 'en') {
+      document.documentElement.setAttribute('data-skip-loader', '');
       location.replace('/en' + (p === '/' ? '' : p) + location.search + location.hash);
       return;
     }
