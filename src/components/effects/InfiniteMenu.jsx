@@ -1395,7 +1395,7 @@ export default function InfiniteMenu({
 
             {/* The card had no way into /team/[id] (handleButtonClick was never wired), so
                 profile pages were unreachable by mouse. Placeholder seats have no page. */}
-            {!activeItem.isPlaceholder && activeItem.link && !activeItem.link.startsWith('http') && (
+            {false && !activeItem.isPlaceholder && activeItem.link && !activeItem.link.startsWith('http') && (
               <Link href={activeItem.link} className="member-profile-link">
                 {isEn ? 'View full profile' : 'عرض الملف الكامل'}
                 <span aria-hidden="true">{isEn ? ' →' : ' ←'}</span>
