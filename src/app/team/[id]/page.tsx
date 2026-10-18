@@ -6,7 +6,7 @@ import { JsonLd } from '@/seo/JsonLd';
 import { personSchema, personId, breadcrumb, webPage } from '@/seo/schemas';
 import { absoluteUrl } from '@/config/site';
 import { GOOGLE_BOT_PREVIEW, pageMetadata } from '@/seo/metadata';
-import { memberSeoTitle, memberSeoDescription, memberShareImage } from '@/seo/team';
+import { memberSeoTitle, memberDocumentTitle, memberSeoDescription, memberShareImage } from '@/seo/team';
 
 export const dynamic = 'force-static';
 export const dynamicParams = false;
@@ -30,7 +30,7 @@ export async function generateMetadata({
   const description = memberSeoDescription(member);
   const path = `/team/${member.id}`;
   const shareImage = memberShareImage(member);
-  const base = pageMetadata({ title, description, path, image: shareImage ?? undefined });
+  const base = pageMetadata({ title: memberDocumentTitle(member), absoluteTitle: true, description, path, image: shareImage ?? undefined });
 
   return {
     ...base,
@@ -48,6 +48,7 @@ export async function generateMetadata({
     },
     openGraph: {
       ...base.openGraph,
+      title,
       type: 'profile',
       ...(shareImage ? { images: [{ url: absoluteUrl(shareImage), alt: member.nameEn ? `${member.name} | ${member.nameEn}` : member.name }] } : {})
     }

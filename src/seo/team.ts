@@ -16,8 +16,13 @@ const shortRoleEn = (member: any): string => String(member.roleEn || '').replace
 export function memberSeoTitle(member: any): string {
   const en = plainNameEn(member);
   const role = shortRoleAr(member);
-  return `${member.name}${en ? ` (${en})` : ''}${role ? ` — ${role}` : ''}`;
+  return `${member.title || member.name}${en ? ` (${en})` : ''}${role ? ` — ${role}` : ''}`;
 }
+
+/** Full <title>: the English name already carries the Latin spelling, so the brand
+ *  suffix is Arabic only (the default "| تكنو إنجاز | Techno Enjaz" template pushed
+ *  profile titles past 90 characters). */
+export const memberDocumentTitle = (member: any): string => `${memberSeoTitle(member)} | تكنو إنجاز`;
 
 /** Arabic bio + an English line with name, role and location (~150–165 chars). */
 export function memberSeoDescription(member: any): string {
