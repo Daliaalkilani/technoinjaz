@@ -448,8 +448,8 @@ export const teamMembers = [
     link: '/team/shifaa-kataa',
     bio: 'مطوّرة ويب Full Stack في فريق تكنو إنجاز، تبني تطبيقات ويب متكاملة من الواجهة الأمامية حتى الخدمات الخلفية وقواعد البيانات.',
     bioEn: 'Full-stack web developer at Techno Enjaz, building complete web applications from front-end interfaces to back-end services and databases.',
-    shortBio: 'مطوّرة ويب Full Stack.',
-    shortBioEn: 'Full-stack web developer.',
+    shortBio: 'مطوّرة ويب Full Stack تبني تطبيقات متكاملة من الواجهة حتى الخلفية وقواعد البيانات.',
+    shortBioEn: 'Full-stack developer building complete apps from UI to back-end and databases.',
     skills: [
       'تطوير الواجهات الأمامية',
       'تطوير الخدمات الخلفية',
