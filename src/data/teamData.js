@@ -462,7 +462,8 @@ export const teamMembers = [
     ],
     socials: {
       linkedin: 'https://www.linkedin.com/in/shifaa-kattaa-8884783b6',
-      github: 'https://github.com/shefaa-kattaa'
+      github: 'https://github.com/shefaa-kattaa',
+      email: 'shefaakattaa@gmail.com'
     },
     projects: [],
     projectsEn: [],
