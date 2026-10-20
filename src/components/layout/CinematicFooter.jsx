@@ -332,8 +332,8 @@ export function CinematicFooter() {
             </span>
             <div className="footer-curved-input-box" dir="ltr">
               <CurvedInput
-                placeholder={t.footer?.inputPlaceholder || 'أدخل بريدك الإلكتروني'}
-                buttonText={t.footer?.subscribeBtn || 'اشتراك'}
+                placeholder="Enter your email address"
+                buttonText="Subscribe"
                 theme={theme}
                 bend={28}
                 height={64}
