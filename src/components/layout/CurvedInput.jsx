@@ -412,25 +412,14 @@ const CurvedInput = ({
         )}
 
         <g clipPath={`url(#${clipId})`}>
-          {(() => {
-            const hasArabic = /[\u0600-\u06FF]/.test(display + (placeholder || ''));
-            if (!hasArabic) return (
-              <text ref={textRef} style={{ fontSize: `${fontSize}px`, fontWeight: 500 }} fill={fgColor} xmlSpace="preserve" aria-hidden="true">
-                <textPath href={`#${layoutPathId}`}>{display}</textPath>
-              </text>
-            );
-            // Arabic shaping is broken on SVG textPath — render straight, vertically centered in the band
-            const cy = 0;
-            return (
-              <g>
-                {display ? (
-                  <text ref={textRef} x={geom.W / 2} y={cy} dominantBaseline="central" textAnchor="middle" direction="rtl" style={{ fontSize: `${fontSize}px`, fontWeight: 500 }} fill={fgColor} xmlSpace="preserve" aria-hidden="true">{display}</text>
-                ) : (
-                  <text x={geom.W / 2} y={cy} dominantBaseline="central" textAnchor="middle" direction="rtl" style={{ fontSize: `${fontSize}px`, fontWeight: 500 }} fill={phColor} xmlSpace="preserve" aria-hidden="true">{placeholder}</text>
-                )}
-              </g>
-            );
-          })()}
+          <text ref={textRef} style={{ fontSize: `${fontSize}px`, fontWeight: 500 }} fill={fgColor} xmlSpace="preserve" aria-hidden="true">
+            <textPath href={`#${layoutPathId}`}>{display}</textPath>
+          </text>
+          {!display && placeholder && (
+            <text style={{ fontSize: `${fontSize}px`, fontWeight: 500 }} fill={phColor} xmlSpace="preserve" aria-hidden="true">
+              <textPath href={`#${layoutPathId}`}>{placeholder}</textPath>
+            </text>
+          )}
           {focused && (
             <g
               key={`${display}-${Math.min(caretIndex, display.length)}`}
@@ -463,26 +452,15 @@ const CurvedInput = ({
           >
             <path className="curved-input__button-bg" d={buttonPath} fill={accentColor} />
             <path id={buttonPathId} d={buttonTextPath} fill="none" />
-            {(() => {
-              const btnArabic = /[\u0600-\u06FF]/.test(buttonText || '');
-              if (!btnArabic) return (
-                <text
-                  fill={btnFgColor}
-                  textAnchor="middle"
-                  style={{ fontSize: `${fontSize}px`, fontWeight: 600, pointerEvents: 'none' }}
-                >
-                  <textPath href={`#${buttonPathId}`} startOffset="50%">
-                    {buttonText}
-                  </textPath>
-                </text>
-              );
-              const [bx, by] = geom.point((layout.btnU0 + layout.btnU1) / 2, 0);
-              return (
-                <text x={bx} y={by} fill={btnFgColor} dominantBaseline="central" textAnchor="middle" style={{ fontSize: `${fontSize}px`, fontWeight: 600, pointerEvents: 'none' }}>
-                  {buttonText}
-                </text>
-              );
-            })()}
+            <text
+              fill={btnFgColor}
+              textAnchor="middle"
+              style={{ fontSize: `${fontSize}px`, fontWeight: 600, pointerEvents: 'none' }}
+            >
+              <textPath href={`#${buttonPathId}`} startOffset="50%">
+                {buttonText}
+              </textPath>
+            </text>
           </g>
         )}
 
