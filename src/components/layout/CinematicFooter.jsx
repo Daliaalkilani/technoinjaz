@@ -330,25 +330,26 @@ export function CinematicFooter() {
             <span className="footer-stay-updated-text">
               {t.footer?.stayUpdated || 'ابقَ على اطلاع'}
             </span>
-            <div className="footer-curved-input-box" dir="ltr">
-              <CurvedInput
-                placeholder={t.footer?.inputPlaceholder || 'أدخل بريدك الإلكتروني'}
-                buttonText={t.footer?.subscribeBtn || 'اشتراك'}
-                theme={theme}
-                bend={28}
-                height={64}
-                width={450}
-                cornerRadius={18}
-                borderWidth={1.5}
-                fontSize={15}
-                backgroundColor="var(--curved-input-bg)"
-                textColor="var(--curved-input-text)"
-                borderColor="var(--curved-input-border)"
-                buttonColor="var(--curved-input-btn)"
-                buttonTextColor="#ffffff"
-                shadowSize="md"
-                onSubmit={async (value) => {
-                  if (!value || !value.trim()) {
+            {lang === 'en' ? (
+              <div className="footer-curved-input-box" dir="ltr">
+                <CurvedInput
+                  placeholder={t.footer?.inputPlaceholder || 'أدخل بريدك الإلكتروني'}
+                  buttonText={t.footer?.subscribeBtn || 'اشتراك'}
+                  theme={theme}
+                  bend={28}
+                  height={64}
+                  width={450}
+                  cornerRadius={18}
+                  borderWidth={1.5}
+                  fontSize={15}
+                  backgroundColor="var(--curved-input-bg)"
+                  textColor="var(--curved-input-text)"
+                  borderColor="var(--curved-input-border)"
+                  buttonColor="var(--curved-input-btn)"
+                  buttonTextColor="#ffffff"
+                  shadowSize="md"
+                  onSubmit={async (value) => {
+if (!value || !value.trim()) {
                     setSubFeedback({
                       type: 'error',
                       message: lang === 'en' 
@@ -380,9 +381,64 @@ export function CinematicFooter() {
                       pushGranted: result.pushGranted
                     });
                   }
+                  }}
+                />
+              </div>
+            ) : (
+              <form
+                className="footer-curved-input-box footer-flat-input"
+                dir="rtl"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const value = e.currentTarget.elements.namedItem('nl-email').value;
+                  (async () => {
+if (!value || !value.trim()) {
+                    setSubFeedback({
+                      type: 'error',
+                      message: lang === 'en' 
+                        ? 'Please enter your email address to subscribe.' 
+                        : 'يرجى إدخال بريدك الإلكتروني للاشتراك وتفعيل الإشعارات.'
+                    });
+                    return;
+                  }
+
+                  setSubFeedback({
+                    type: 'loading',
+                    message: lang === 'en' 
+                      ? 'Activating subscription & notifications...' 
+                      : 'جاري تفعيل اشتراكك وإشعارات المنصة...'
+                  });
+
+                  const result = await subscribeUser(value, lang === 'en');
+                  if (!result.success) {
+                    setSubFeedback({
+                      type: 'error',
+                      message: result.message
+                    });
+                  } else {
+                    setIsSubscribedState(true);
+                    setSubscriberEmailState(value.trim());
+                    setSubFeedback({
+                      type: 'success',
+                      message: result.message,
+                      pushGranted: result.pushGranted
+                    });
+                  }
+                  })();
                 }}
-              />
-            </div>
+              >
+                <div className="footer-flat-row">
+                  <input
+                    type="email"
+                    name="nl-email"
+                    required
+                    placeholder={t.footer?.inputPlaceholder || 'أدخل بريدك الإلكتروني'}
+                    aria-label={t.footer?.inputPlaceholder || 'أدخل بريدك الإلكتروني'}
+                  />
+                  <button type="submit">{t.footer?.subscribeBtn || 'اشتراك'}</button>
+                </div>
+              </form>
+            )}
 
             {/* Subscription Feedback Banner */}
             {subFeedback && (
