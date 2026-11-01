@@ -548,10 +548,45 @@ export const teamMembers = [
     location: 'حماة، سوريا',
     locationEn: 'Hama, Syria'
   },
+  {
+    id: 'mustafa-shahab',
+    name: 'م. مصطفى شهاب',
+    nameEn: 'Eng. Mustafa Shahab',
+    title: 'م. مصطفى شهاب',
+    titleEn: 'Eng. Mustafa Shahab',
+    role: 'مهندس برمجيات في فريق تكنو إنجاز',
+    roleEn: 'Software Engineer, Techno Enjaz Team',
+    badge: 'مهندس برمجيات في فريق تكنو إنجاز',
+    badgeEn: 'Software Engineer, Techno Enjaz Team',
+    description: 'مهندس برمجيات في فريق تكنو إنجاز، يطوّر حلولاً برمجية متكاملة',
+    descriptionEn: 'Software engineer at Techno Enjaz building integrated software solutions',
+    department: 'فريق تكنو إنجاز',
+    departmentEn: 'Techno Enjaz Team',
+    specialization: 'هندسة البرمجيات وتطوير الويب',
+    specializationEn: 'Software Engineering & Web Development',
+    image: '/images/team/mustafa-shahab.640.avif',
+    link: '/team/mustafa-shahab',
+    bio: 'مهندس برمجيات في فريق تكنو إنجاز، شغوف ببناء حلول برمجية نظيفة وفعّالة وتطوير تطبيقات ويب عصرية تلبي احتياجات المستخدمين.',
+    bioEn: 'Software engineer at Techno Enjaz, passionate about building clean, efficient solutions and modern web applications that meet user needs.',
+    shortBio: 'مهندس برمجيات يبني حلولاً برمجية وتطبيقات ويب عصرية.',
+    shortBioEn: 'Software engineer building clean solutions and modern web apps.',
+    skills: ['تطوير الويب', 'هندسة البرمجيات', 'حل المشكلات'],
+    skillsEn: ['Web Development', 'Software Engineering', 'Problem Solving'],
+    socials: {
+      facebook: 'https://www.facebook.com/share/1CFxeawR4Q/',
+      email: 'mustafa.sudo@gmail.com'
+    },
+    email: 'mustafa.sudo@gmail.com',
+    projects: [],
+    projectsEn: [],
+    location: 'حماة، سوريا',
+    locationEn: 'Hama, Syria'
+  },
 ];
 
 export const teamCircleSlots = [
   ...teamMembers,
+
   {
     id: 'team-slot-5',
     isPlaceholder: true,

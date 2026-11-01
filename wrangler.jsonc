@@ -11,7 +11,7 @@
   // runs the full Next + OpenNext build and copies the prerendered pages into the
   // uploaded assets (populateCache). Deploying a stale .open-next folder shipped old
   // pages, and skipping populateCache made every /articles, /projects, /team page 404.
-  "build": { "command": "npx opennextjs-cloudflare build && npx opennextjs-cloudflare populateCache local" },
+  "build": { "command": "npx opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion && npx opennextjs-cloudflare populateCache local" },
   "send_email": [
     { "name": "SEND_EMAIL" }
   ],
